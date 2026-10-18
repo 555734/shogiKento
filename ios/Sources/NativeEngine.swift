@@ -11,6 +11,7 @@ struct EngineUpdate {var candidates: [Candidate],depth: Int,nodes: Int,best: Str
 final class NativeEngine: @unchecked Sendable {
     static let shared=NativeEngine()
     private let worker=DispatchQueue(label:"benishogi.usi"),lock=NSLock()
+    private let preparationLock=NSLock()
     private var generation=0,prepared=false,started=false
     private func token()->Int {lock.lock();defer{lock.unlock()};return generation}
     func cancel(){lock.lock();generation+=1;let running=started;lock.unlock();if running{BKSend("stop")}}
@@ -18,11 +19,14 @@ final class NativeEngine: @unchecked Sendable {
     private func read(_ milliseconds:Int32=50)->String? {guard let p=BKRead(milliseconds) else{return nil};defer{BKFree(p)};return String(cString:p)}
     private func until(_ marker:String,timeout:Double=20)throws {let end=ProcessInfo.processInfo.systemUptime+timeout;while ProcessInfo.processInfo.systemUptime<end{if let line=read(){if line==marker{return};if line.contains("Error!") || line.hasPrefix("Error:"){throw ShogiError.message(line)}}};throw ShogiError.message("AIの応答がタイムアウトしました：\(marker)")}
     private func prepare()throws {
+        preparationLock.lock();defer{preparationLock.unlock()}
         if prepared{return};guard let dir=Bundle.main.url(forResource:"ai",withExtension:nil,subdirectory:"GameAssets"),FileManager.default.fileExists(atPath:dir.appendingPathComponent("nn.bin").path),FileManager.default.fileExists(atPath:dir.appendingPathComponent("progress.bin").path) else{throw ShogiError.message("AI評価関数が見つかりません")}
         BKStart();lock.lock();started=true;lock.unlock();send("usi");try until("usiok")
         for option in ["Threads value 1","USI_Hash value 16","USI_Ponder value false","EvalDir value \(dir.path)","FV_SCALE value 24","BookFile value no_book","USI_OwnBook value false","EnteringKingRule value NoEnteringKing","PvInterval value 200"] {send("setoption name "+option)}
         send("isready");try until("readyok");prepared=true
     }
+    func ensureReady()throws {try prepare()}
+    func warmUp(){worker.async{try? self.prepare()}}
     func search(_ position:Position,continuous:Bool,nodes:Int=50000,receive:@escaping (Result<EngineUpdate,Error>)->Void) {
         cancel();let revision=token()
         worker.async { [self] in

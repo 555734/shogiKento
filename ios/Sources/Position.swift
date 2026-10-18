@@ -42,6 +42,8 @@ struct Position: Codable, Equatable {
         let king=board.firstIndex(of:8)!,enemy=board.firstIndex(of:-8)!;if abs(king/9-enemy/9)<=1 && abs(king%9-enemy%9)<=1{return "玉が隣接しています"}
         let counts=(1...8).map{t in board.filter{Self.base($0)==t}.count+hands[0][t]+hands[1][t]};if zip(counts,[18,4,4,4,4,2,2,2]).contains(where:{$0.0>$0.1}){return "駒の枚数が多すぎます"}
         for s in [1,-1]{for c in 0..<9{if (0..<9).filter({board[$0*9+c]==s}).count>1{return "二歩の局面です"}};for i in 0..<81 where board[i]*s>0 {let t=abs(board[i]),r=i/9;if (t==1 || t==2) && r==(s==1 ? 0:8) || t==3 && (s==1 ? r<2:r>6){return "行き先のない駒があります"}}}
+        // Position::set computes NNUE even for rule-only queries. Load it first.
+        do{try NativeEngine.shared.ensureReady()}catch{return error.localizedDescription}
         var opposite=self;opposite.side = -side
         if BKChecked(opposite.sfen)==1{return "手番ではない側の玉に王手がかかっています"}
         return nil
@@ -55,6 +57,6 @@ struct Position: Codable, Equatable {
 enum Rules {
     static func text(_ pointer: UnsafeMutablePointer<CChar>?) throws->String {guard let p=pointer else{throw ShogiError.message("局面または指し手が不正です")};defer{BKFree(p)};return String(cString:p)}
     static func legal(_ p: Position) throws->[Move] {if let error=p.analysisProblem{throw ShogiError.message(error)};return try text(BKLegal(p.sfen)).split(separator:" ").map{Move(usi:String($0))}}
-    static func apply(_ p: Position,_ m: Move)throws->Position {try Position(text(BKApply(p.sfen,m.usi)))}
-    static func checked(_ p: Position)->Bool {BKChecked(p.sfen)==1}
+    static func apply(_ p: Position,_ m: Move)throws->Position {try NativeEngine.shared.ensureReady();return try Position(text(BKApply(p.sfen,m.usi)))}
+    static func checked(_ p: Position)->Bool {guard (try? NativeEngine.shared.ensureReady()) != nil else{return false};return BKChecked(p.sfen)==1}
 }

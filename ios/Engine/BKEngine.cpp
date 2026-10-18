@@ -13,9 +13,11 @@
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
+#include <atomic>
 using namespace YaneuraOu;
 namespace {
 std::once_flag tables, started;
+std::atomic_bool evaluationReady{false};
 void initialize() { std::call_once(tables, [] { Bitboards::init(); Position::init(); }); }
 char *copy(const std::string& s) { auto p=(char*)std::malloc(s.size()+1); if(p) std::memcpy(p,s.c_str(),s.size()+1); return p; }
 struct Input : std::streambuf {
@@ -34,8 +36,8 @@ Input& input(){static auto p=new Input;return *p;} Output& output(){static auto 
 }
 extern "C" void BKStart(){std::call_once(started,[]{initialize();std::ios::sync_with_stdio(false);std::cin.rdbuf(&input());std::cout.rdbuf(&output());static char name[]="BeniShogi";static char *argv[]={name,nullptr};CommandLine::g.set_arg(1,argv);std::thread([]{run_engine_entry();}).detach();});}
 extern "C" void BKSend(const char *s){BKStart();if(s)input().send(s);}
-extern "C" char *BKRead(int ms){auto& o=output();std::unique_lock<std::mutex> hold(o.lock);if(!o.changed.wait_for(hold,std::chrono::milliseconds(ms),[&]{return !o.lines.empty();}))return nullptr;auto s=std::move(o.lines.front());o.lines.pop_front();return copy(s);}
-extern "C" char *BKLegal(const char *s){initialize();if(!s)return nullptr;Position p;StateInfo state;if(p.set(s,&state))return nullptr;std::string result;for(auto m:MoveList<LEGAL_ALL>(p)){if(!result.empty())result+=' ';result+=USIEngine::move(m);}return copy(result);}
-extern "C" char *BKApply(const char *s,const char *move){initialize();if(!s||!move)return nullptr;Position p;StateInfo state,next;if(p.set(s,&state))return nullptr;for(auto m:MoveList<LEGAL_ALL>(p))if(USIEngine::move(m)==move){p.do_move(m,next);return copy(p.sfen());}return nullptr;}
-extern "C" int BKChecked(const char *s){initialize();if(!s)return -1;Position p;StateInfo state;if(p.set(s,&state))return -1;return p.in_check()?1:0;}
+extern "C" char *BKRead(int ms){auto& o=output();std::unique_lock<std::mutex> hold(o.lock);if(!o.changed.wait_for(hold,std::chrono::milliseconds(ms),[&]{return !o.lines.empty();}))return nullptr;auto s=std::move(o.lines.front());o.lines.pop_front();if(s=="readyok")evaluationReady.store(true);return copy(s);}
+extern "C" char *BKLegal(const char *s){initialize();if(!s||!evaluationReady.load())return nullptr;Position p;StateInfo state;if(p.set(s,&state))return nullptr;std::string result;for(auto m:MoveList<LEGAL_ALL>(p)){if(!result.empty())result+=' ';result+=USIEngine::move(m);}return copy(result);}
+extern "C" char *BKApply(const char *s,const char *move){initialize();if(!s||!move||!evaluationReady.load())return nullptr;Position p;StateInfo state,next;if(p.set(s,&state))return nullptr;for(auto m:MoveList<LEGAL_ALL>(p))if(USIEngine::move(m)==move){p.do_move(m,next);return copy(p.sfen());}return nullptr;}
+extern "C" int BKChecked(const char *s){initialize();if(!s||!evaluationReady.load())return -1;Position p;StateInfo state;if(p.set(s,&state))return -1;return p.in_check()?1:0;}
 extern "C" void BKFree(char *s){std::free(s);}
