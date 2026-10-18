@@ -1,0 +1,1 @@
+FAIL: java.lang.AssertionError: screenshot foreground belongs to game; active package=android
