@@ -1,0 +1,7 @@
+NNUE architecture header generator by yaneurao V1.03 , 2026/07/20
+output file path  : eval/nnue/architectures/SFNN_ka2_2048_8_64_progress8.h
+architecture name : SFNN_KA2_2048_8_64_PROGRESS8
+input feature     : ka2
+layers feature    : ['2048', '8', '64', '8']
+..done!
+PASS embedded Apple engine iphoneos arm64-apple-ios16.0 1615408 bytes
