@@ -23,6 +23,7 @@ adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/native_compati
 adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/promotion_popup.txt outputs/ || true
 adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/continuous_study.txt outputs/ || true
 adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/clipboard_import.txt outputs/ || true
+adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/legal_selection.txt outputs/ || true
 adb shell dumpsys meminfo com.presentsoft.shogi3minutes > outputs/meminfo.txt
 adb logcat -d > outputs/logcat.txt
 set -e
