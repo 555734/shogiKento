@@ -1,0 +1,1 @@
+PASS independent python-shogi: all 80 board/hand snapshots, 79 legal moves, final checkmate
