@@ -1,0 +1,952 @@
+Command line invocation:
+    /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/xcodebuild -project BeniShogi.xcodeproj -scheme BeniShogi -configuration Debug -destination "platform=iOS Simulator,id=DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9" -derivedDataPath build/DerivedData -resultBundlePath outputs/Tests.xcresult -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- test
+
+Build settings from command line:
+    CODE_SIGN_IDENTITY = -
+    CODE_SIGNING_ALLOWED = YES
+
+Writing result bundle at path:
+	/Users/runner/work/shogiKento/shogiKento/ios/outputs/Tests.xcresult
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9, OS:18.5, name:iPhone 16 Pro }
+{ platform:iOS Simulator, arch:x86_64, id:DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9, OS:18.5, name:iPhone 16 Pro }
+note: Using codesigning identity override: -
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (3 targets)
+    Target 'BeniShogiUITests' in project 'BeniShogi'
+        ➜ Explicit dependency on target 'BeniShogi' in project 'BeniShogi'
+    Target 'BeniShogiTests' in project 'BeniShogi'
+        ➜ Explicit dependency on target 'BeniShogi' in project 'BeniShogi'
+    Target 'BeniShogi' in project 'BeniShogi' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/runner/work/shogiKento/shogiKento/ios/Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+Build description signature: 74d971128f4d367a6e8d5aea5236221b
+Build description path: /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/XCBuildData/74d971128f4d367a6e8d5aea5236221b.xcbuilddata
+ClangStatCache /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-96ae0914227b19deccb34b33ba7b5dea.sdkstatcache
+    cd /Users/runner/work/shogiKento/shogiKento/ios/BeniShogi.xcodeproj
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -o /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-96ae0914227b19deccb34b33ba7b5dea.sdkstatcache
+
+CreateBuildDirectory /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products
+    cd /Users/runner/work/shogiKento/shogiKento/ios/BeniShogi.xcodeproj
+    builtin-create-build-directory /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products
+
+CreateBuildDirectory /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex
+    cd /Users/runner/work/shogiKento/shogiKento/ios/BeniShogi.xcodeproj
+    builtin-create-build-directory /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi-e7a68c6337750f1f26481dc9c7914395-VFS-iphonesimulator/all-product-headers.yaml
+    cd /Users/runner/work/shogiKento/shogiKento/ios/BeniShogi.xcodeproj
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi-e7a68c6337750f1f26481dc9c7914395-VFS-iphonesimulator/all-product-headers.yaml
+
+CreateBuildDirectory /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator
+    cd /Users/runner/work/shogiKento/shogiKento/ios/BeniShogi.xcodeproj
+    builtin-create-build-directory /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator
+
+CreateBuildDirectory /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator
+    cd /Users/runner/work/shogiKento/shogiKento/ios/BeniShogi.xcodeproj
+    builtin-create-build-directory /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/ProductTypeInfoPlistAdditions.plist (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/ProductTypeInfoPlistAdditions.plist
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/empty-BeniShogiUITests.plist (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/empty-BeniShogiUITests.plist
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.SwiftFileList (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.SwiftFileList
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests_const_extract_protocols.json (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.SwiftConstValuesFileList (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.LinkFileList (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.LinkFileList
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests-OutputFileMap.json (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests-OutputFileMap.json
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/DerivedSources/Entitlements-Simulated.plist (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/DerivedSources/Entitlements-Simulated.plist
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests.hmap (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests.DependencyStaticMetadataFileList (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests.DependencyStaticMetadataFileList
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests.DependencyMetadataFileList (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests.DependencyMetadataFileList
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests-project-headers.hmap (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests-project-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests-own-target-headers.hmap (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests-own-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests-generated-files.hmap (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests-generated-files.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests-all-target-headers.hmap (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests-all-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests-all-non-framework-target-headers.hmap (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests-all-non-framework-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/empty-BeniShogiTests.plist (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/empty-BeniShogiTests.plist
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests_const_extract_protocols.json (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.SwiftFileList (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.SwiftFileList
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.SwiftConstValuesFileList (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.LinkFileList (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.LinkFileList
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests-OutputFileMap.json (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests-OutputFileMap.json
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests.hmap (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests.DependencyStaticMetadataFileList (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests.DependencyStaticMetadataFileList
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests.DependencyMetadataFileList (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests.DependencyMetadataFileList
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests-project-headers.hmap (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests-project-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests-own-target-headers.hmap (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests-own-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests-generated-files.hmap (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests-generated-files.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests-all-target-headers.hmap (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests-all-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests-all-non-framework-target-headers.hmap (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests-all-non-framework-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi_const_extract_protocols.json (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.SwiftFileList (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.SwiftFileList
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.SwiftConstValuesFileList (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.LinkFileList (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.LinkFileList
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi-OutputFileMap.json (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi-OutputFileMap.json
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/DerivedSources/Entitlements-Simulated.plist (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/DerivedSources/Entitlements-Simulated.plist
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi.hmap (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi.DependencyStaticMetadataFileList (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi.DependencyStaticMetadataFileList
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi.DependencyMetadataFileList (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi.DependencyMetadataFileList
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-project-headers.hmap (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-project-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-own-target-headers.hmap (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-own-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-generated-files.hmap (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-generated-files.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-all-target-headers.hmap (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-all-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-all-non-framework-target-headers.hmap (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-all-non-framework-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-DebugDylibPath-normal-arm64.txt (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-DebugDylibPath-normal-arm64.txt
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-DebugDylibInstallName-normal-arm64.txt (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-DebugDylibInstallName-normal-arm64.txt
+
+MkDir /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /bin/mkdir -p /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest
+
+MkDir /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /bin/mkdir -p /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest
+
+MkDir /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /bin/mkdir -p /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns
+
+MkDir /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Frameworks (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /bin/mkdir -p /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Frameworks
+
+MkDir /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /bin/mkdir -p /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app
+
+ProcessProductPackaging "" /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi.app-Simulated.xcent (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    
+    Entitlements:
+    
+    {
+    "application-identifier" = "FAKETEAMID.com.presentsoft.shogi3minutes";
+}
+    
+    builtin-productPackagingUtility -entitlements -format xml -o /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi.app-Simulated.xcent
+
+ProcessProductPackagingDER /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi.app-Simulated.xcent /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi.app-Simulated.xcent.der (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /usr/bin/derq query -f xml -i /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi.app-Simulated.xcent -o /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi.app-Simulated.xcent.der --raw
+
+Ld /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/__preview.dylib normal (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios16.0-simulator -dynamiclib -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -O0 -L/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -F/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -install_name @rpath/BeniShogi.debug.dylib -dead_strip -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -debug_variant -Xlinker -dependency_info -Xlinker /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi_dependency_info.dat -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi.app-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi.app-Simulated.xcent.der -Xlinker -no_adhoc_codesign -o /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/__preview.dylib
+
+MkDir /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/assetcatalog_output/unthinned (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /bin/mkdir -p /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/assetcatalog_output/unthinned
+
+MkDir /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/assetcatalog_output/thinned (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /bin/mkdir -p /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/assetcatalog_output/thinned
+
+GenerateAssetSymbols /Users/runner/work/shogiKento/shogiKento/ios/Assets.xcassets (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/actool /Users/runner/work/shogiKento/shogiKento/ios/Assets.xcassets --compile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app --output-format human-readable-text --notices --warnings --export-dependency-info /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/assetcatalog_dependencies --output-partial-info-plist /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/assetcatalog_generated_info.plist --app-icon AppIcon --compress-pngs --enable-on-demand-resources YES --development-region en --target-device iphone --target-device ipad --minimum-deployment-target 16.0 --platform iphonesimulator --bundle-identifier com.presentsoft.shogi3minutes --generate-swift-asset-symbol-extensions NO --generate-swift-asset-symbols /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/DerivedSources/GeneratedAssetSymbols.swift --generate-objc-asset-symbols /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/DerivedSources/GeneratedAssetSymbols.h --generate-asset-symbol-index /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/* com.apple.actool.compilation-results */
+/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/DerivedSources/GeneratedAssetSymbols.h
+/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/DerivedSources/GeneratedAssetSymbols.swift
+
+
+CpResource /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/GameAssets /Users/runner/work/shogiKento/shogiKento/ios/GameAssets (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/runner/work/shogiKento/shogiKento/ios/GameAssets /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Frameworks/libXCTestSwiftSupport.dylib /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Frameworks
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Frameworks/libXCTestBundleInject.dylib /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestBundleInject.dylib (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestBundleInject.dylib /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Frameworks
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Frameworks/XCUnit.framework /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCUnit.framework (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCUnit.framework /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Frameworks
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Frameworks/XCUIAutomation.framework /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCUIAutomation.framework (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCUIAutomation.framework /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Frameworks
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Frameworks/XCTestSupport.framework /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTestSupport.framework (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTestSupport.framework /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Frameworks
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Frameworks/XCTestCore.framework /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTestCore.framework (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTestCore.framework /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Frameworks
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Frameworks/XCTest.framework /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Frameworks
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Frameworks/XCTAutomationSupport.framework /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTAutomationSupport.framework (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTAutomationSupport.framework /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Frameworks
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Frameworks/Testing.framework /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/Testing.framework (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/Testing.framework /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Frameworks
+
+CompileAssetCatalogVariant thinned /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app /Users/runner/work/shogiKento/shogiKento/ios/Assets.xcassets (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/actool /Users/runner/work/shogiKento/shogiKento/ios/Assets.xcassets --compile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/assetcatalog_output/thinned --output-format human-readable-text --notices --warnings --export-dependency-info /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/assetcatalog_dependencies_thinned --output-partial-info-plist /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/assetcatalog_generated_info.plist_thinned --app-icon AppIcon --compress-pngs --enable-on-demand-resources YES --filter-for-thinning-device-configuration iPhone17,1 --filter-for-device-os-version 18.5 --development-region en --target-device iphone --target-device ipad --minimum-deployment-target 16.0 --platform iphonesimulator
+/* com.apple.actool.document.notices */
+/Users/runner/work/shogiKento/shogiKento/ios/Assets.xcassets:./AppIcon.appiconset/[][ipad][76x76][][][1x][][][][]: notice: 76x76@1x app icons only apply to iPad apps targeting releases of iOS prior to 10.0.
+/* com.apple.actool.compilation-results */
+/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/assetcatalog_generated_info.plist_thinned
+/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/assetcatalog_output/thinned/AppIcon60x60@2x.png
+/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/assetcatalog_output/thinned/AppIcon76x76@2x~ipad.png
+/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/assetcatalog_output/thinned/Assets.car
+
+
+SwiftDriver BeniShogi normal arm64 com.apple.xcode.tools.swift.compiler (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-SwiftDriver -- /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name BeniShogi -Onone -enforce-exclusivity\=checked @/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target arm64-apple-ios16.0-simulator -g -module-cache-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Index.noindex/DataStore -swift-version 5 -I /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -F /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -c -j3 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-96ae0914227b19deccb34b33ba7b5dea.sdkstatcache -output-file-map /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-generated-files.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-own-target-headers.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-project-headers.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/Engine -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi-Swift.h -import-objc-header /Users/runner/work/shogiKento/shogiKento/ios/Engine/Bridging.h -pch-output-dir /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/PrecompiledHeaders -working-directory /Users/runner/work/shogiKento/shogiKento/ios -experimental-emit-module-separately -disable-cmo
+
+SwiftGeneratePch normal arm64 Compiling\ bridging\ header (in target 'BeniShogi' from project 'BeniShogi')
+
+PrecompileSwiftBridgingHeader normal arm64 (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling bridging header (in target 'BeniShogi' from project 'BeniShogi')
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ BeniShogi (in target 'BeniShogi' from project 'BeniShogi')
+EmitSwiftModule normal arm64 (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    
+
+SwiftCompile normal arm64 Compiling\ NativeEngine.swift,\ Position.swift,\ Records.swift /Users/runner/work/shogiKento/shogiKento/ios/Sources/NativeEngine.swift /Users/runner/work/shogiKento/shogiKento/ios/Sources/Position.swift /Users/runner/work/shogiKento/shogiKento/ios/Sources/Records.swift (in target 'BeniShogi' from project 'BeniShogi')
+SwiftCompile normal arm64 /Users/runner/work/shogiKento/shogiKento/ios/Sources/NativeEngine.swift (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    
+
+SwiftCompile normal arm64 /Users/runner/work/shogiKento/shogiKento/ios/Sources/Position.swift (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    
+
+SwiftCompile normal arm64 /Users/runner/work/shogiKento/shogiKento/ios/Sources/Records.swift (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    
+
+SwiftCompile normal arm64 Compiling\ AppAssets.swift,\ AppModel.swift,\ BeniShogiApp.swift /Users/runner/work/shogiKento/shogiKento/ios/Sources/AppAssets.swift /Users/runner/work/shogiKento/shogiKento/ios/Sources/AppModel.swift /Users/runner/work/shogiKento/shogiKento/ios/Sources/BeniShogiApp.swift (in target 'BeniShogi' from project 'BeniShogi')
+SwiftCompile normal arm64 /Users/runner/work/shogiKento/shogiKento/ios/Sources/AppAssets.swift (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    
+
+SwiftCompile normal arm64 /Users/runner/work/shogiKento/shogiKento/ios/Sources/AppModel.swift (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    
+
+SwiftCompile normal arm64 /Users/runner/work/shogiKento/shogiKento/ios/Sources/BeniShogiApp.swift (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    
+
+LinkAssetCatalog /Users/runner/work/shogiKento/shogiKento/ios/Assets.xcassets (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-linkAssetCatalog --thinned /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/assetcatalog_output/thinned --thinned-dependencies /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/assetcatalog_dependencies_thinned --thinned-info-plist-content /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/assetcatalog_generated_info.plist_thinned --unthinned /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/assetcatalog_output/unthinned --unthinned-dependencies /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/assetcatalog_dependencies_unthinned --unthinned-info-plist-content /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/assetcatalog_generated_info.plist_unthinned --output /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app --plist-output /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/assetcatalog_generated_info.plist
+note: Emplaced /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Assets.car (in target 'BeniShogi' from project 'BeniShogi')
+note: Emplaced /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/AppIcon60x60@2x.png (in target 'BeniShogi' from project 'BeniShogi')
+note: Emplaced /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/AppIcon76x76@2x~ipad.png (in target 'BeniShogi' from project 'BeniShogi')
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for BeniShogi (in target 'BeniShogi' from project 'BeniShogi')
+
+SwiftDriver\ Compilation\ Requirements BeniShogi normal arm64 com.apple.xcode.tools.swift.compiler (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name BeniShogi -Onone -enforce-exclusivity\=checked @/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target arm64-apple-ios16.0-simulator -g -module-cache-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Index.noindex/DataStore -swift-version 5 -I /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -F /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -c -j3 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-96ae0914227b19deccb34b33ba7b5dea.sdkstatcache -output-file-map /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-generated-files.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-own-target-headers.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-project-headers.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/Engine -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi-Swift.h -import-objc-header /Users/runner/work/shogiKento/shogiKento/ios/Engine/Bridging.h -pch-output-dir /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/PrecompiledHeaders -working-directory /Users/runner/work/shogiKento/shogiKento/ios -experimental-emit-module-separately -disable-cmo
+
+ProcessInfoPlistFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Info.plist /Users/runner/work/shogiKento/shogiKento/ios/build/Info.plist (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-infoPlistUtility /Users/runner/work/shogiKento/shogiKento/ios/build/Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/assetcatalog_generated_info.plist -o /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Info.plist
+
+SwiftMergeGeneratedHeaders /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/DerivedSources/BeniShogi-Swift.h /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi-Swift.h (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-swiftHeaderTool -arch arm64 /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi-Swift.h -o /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/DerivedSources/BeniShogi-Swift.h
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.swiftmodule/arm64-apple-ios-simulator.swiftmodule /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.swiftmodule (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.swiftmodule /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.swiftmodule/arm64-apple-ios-simulator.swiftmodule
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.swiftmodule/arm64-apple-ios-simulator.swiftdoc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.swiftdoc (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.swiftdoc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.swiftmodule/arm64-apple-ios-simulator.swiftdoc
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.swiftmodule/arm64-apple-ios-simulator.abi.json /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.abi.json (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.abi.json /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.swiftsourceinfo (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.swiftsourceinfo /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo
+
+SwiftCompile normal arm64 Compiling\ Views.swift,\ GeneratedAssetSymbols.swift /Users/runner/work/shogiKento/shogiKento/ios/Sources/Views.swift /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'BeniShogi' from project 'BeniShogi')
+
+SwiftCompile normal arm64 /Users/runner/work/shogiKento/shogiKento/ios/Sources/Views.swift (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    
+
+SwiftCompile normal arm64 /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling NativeEngine.swift, Position.swift, Records.swift (in target 'BeniShogi' from project 'BeniShogi')
+
+ProcessProductPackaging "" /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests.xctest-Simulated.xcent (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    
+    Entitlements:
+    
+    {
+    "application-identifier" = "FAKETEAMID.com.presentsoft.BeniShogiUITests.xctrunner";
+    "keychain-access-groups" =     (
+        "FAKETEAMID.com.presentsoft.BeniShogiUITests.xctrunner"
+    );
+}
+    
+    builtin-productPackagingUtility -entitlements -format xml -o /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests.xctest-Simulated.xcent
+
+ProcessProductPackagingDER /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests.xctest-Simulated.xcent /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests.xctest-Simulated.xcent.der (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /usr/bin/derq query -f xml -i /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests.xctest-Simulated.xcent -o /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests.xctest-Simulated.xcent.der --raw
+
+SwiftDriver BeniShogiTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-SwiftDriver -- /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name BeniShogiTests -Onone -enforce-exclusivity\=checked @/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target arm64-apple-ios16.0-simulator -g -module-cache-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Index.noindex/DataStore -swift-version 5 -I /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -I /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -F /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk/Developer/Library/Frameworks -parse-as-library -c -j3 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-96ae0914227b19deccb34b33ba7b5dea.sdkstatcache -output-file-map /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests-generated-files.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests-own-target-headers.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests-project-headers.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests-Swift.h -working-directory /Users/runner/work/shogiKento/shogiKento/ios -experimental-emit-module-separately -disable-cmo
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ BeniShogiTests (in target 'BeniShogiTests' from project 'BeniShogi')
+SwiftCompile normal arm64 /Users/runner/work/shogiKento/shogiKento/ios/Tests/CoreTests.swift (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    
+
+SwiftCompile normal arm64 Compiling\ CoreTests.swift /Users/runner/work/shogiKento/shogiKento/ios/Tests/CoreTests.swift (in target 'BeniShogiTests' from project 'BeniShogi')
+SwiftCompile normal arm64 /Users/runner/work/shogiKento/shogiKento/ios/Tests/CoreTests.swift (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling Views.swift, GeneratedAssetSymbols.swift (in target 'BeniShogi' from project 'BeniShogi')
+
+SwiftDriverJobDiscovery normal arm64 Compiling AppAssets.swift, AppModel.swift, BeniShogiApp.swift (in target 'BeniShogi' from project 'BeniShogi')
+
+SwiftDriver\ Compilation BeniShogi normal arm64 com.apple.xcode.tools.swift.compiler (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-Swift-Compilation -- /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name BeniShogi -Onone -enforce-exclusivity\=checked @/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target arm64-apple-ios16.0-simulator -g -module-cache-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Index.noindex/DataStore -swift-version 5 -I /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -F /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -c -j3 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-96ae0914227b19deccb34b33ba7b5dea.sdkstatcache -output-file-map /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-generated-files.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-own-target-headers.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-project-headers.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/Engine -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi-Swift.h -import-objc-header /Users/runner/work/shogiKento/shogiKento/ios/Engine/Bridging.h -pch-output-dir /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/PrecompiledHeaders -working-directory /Users/runner/work/shogiKento/shogiKento/ios -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver BeniShogiUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-SwiftDriver -- /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name BeniShogiUITests -Onone -enforce-exclusivity\=checked @/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target arm64-apple-ios16.0-simulator -g -module-cache-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Index.noindex/DataStore -swift-version 5 -I /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -I /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -F /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk/Developer/Library/Frameworks -parse-as-library -c -j3 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-96ae0914227b19deccb34b33ba7b5dea.sdkstatcache -output-file-map /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests-generated-files.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests-own-target-headers.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests-project-headers.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests-Swift.h -working-directory /Users/runner/work/shogiKento/shogiKento/ios -experimental-emit-module-separately -disable-cmo
+
+Ld /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/BeniShogi.debug.dylib normal (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios16.0-simulator -dynamiclib -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -O0 -L/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -F/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -filelist /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.LinkFileList -install_name @rpath/BeniShogi.debug.dylib -Xlinker -rpath -Xlinker @executable_path/Frameworks -dead_strip -Xlinker -object_path_lto -Xlinker /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -debug_variant -Xlinker -dependency_info -Xlinker /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi_dependency_info.dat -fobjc-link-runtime -fprofile-instr-generate -L/Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.swiftmodule -Wl,-force_load,/Users/runner/work/shogiKento/shogiKento/ios/build/engine/iphonesimulator/libBKEngine.a -lc++ -Xlinker -alias -Xlinker _main -Xlinker ___debug_main_executable_dylib_entry_point -Xlinker -no_adhoc_codesign -o /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/BeniShogi.debug.dylib
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ BeniShogiUITests (in target 'BeniShogiUITests' from project 'BeniShogi')
+
+SwiftCompile normal arm64 /Users/runner/work/shogiKento/shogiKento/ios/UITests/FlowTests.swift (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    
+
+ConstructStubExecutorLinkFileList /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-ExecutorLinkFileList-normal-arm64.txt (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    construct-stub-executor-link-file-list /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/BeniShogi.debug.dylib /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor_no_swift_entry_point.a /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor.a --output /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-ExecutorLinkFileList-normal-arm64.txt
+note: Using stub executor library with Swift entry point. (in target 'BeniShogi' from project 'BeniShogi')
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for BeniShogiUITests (in target 'BeniShogiUITests' from project 'BeniShogi')
+
+SwiftDriver\ Compilation\ Requirements BeniShogiUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name BeniShogiUITests -Onone -enforce-exclusivity\=checked @/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target arm64-apple-ios16.0-simulator -g -module-cache-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Index.noindex/DataStore -swift-version 5 -I /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -I /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -F /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk/Developer/Library/Frameworks -parse-as-library -c -j3 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-96ae0914227b19deccb34b33ba7b5dea.sdkstatcache -output-file-map /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests-generated-files.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests-own-target-headers.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests-project-headers.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests-Swift.h -working-directory /Users/runner/work/shogiKento/shogiKento/ios -experimental-emit-module-separately -disable-cmo
+
+Ld /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/BeniShogi normal (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios16.0-simulator -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -O0 -L/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -F/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -Xlinker -rpath -Xlinker @executable_path -Xlinker -rpath -Xlinker @executable_path/Frameworks -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -debug_variant -e ___debug_blank_executor_main -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_dylib -Xlinker /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-DebugDylibPath-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_instlnm -Xlinker /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-DebugDylibInstallName-normal-arm64.txt -Xlinker -filelist -Xlinker /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi-ExecutorLinkFileList-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi.app-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi.app-Simulated.xcent.der /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/BeniShogi.debug.dylib -Xlinker -no_adhoc_codesign -o /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/BeniShogi
+
+SwiftMergeGeneratedHeaders /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/DerivedSources/BeniShogiUITests-Swift.h /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests-Swift.h (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-swiftHeaderTool -arch arm64 /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests-Swift.h -o /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/DerivedSources/BeniShogiUITests-Swift.h
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for BeniShogiTests (in target 'BeniShogiTests' from project 'BeniShogi')
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests.swiftmodule/arm64-apple-ios-simulator.swiftmodule /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.swiftmodule (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.swiftmodule /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests.swiftmodule/arm64-apple-ios-simulator.swiftmodule
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests.swiftmodule/arm64-apple-ios-simulator.swiftdoc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.swiftdoc (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.swiftdoc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests.swiftmodule/arm64-apple-ios-simulator.swiftdoc
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests.swiftmodule/arm64-apple-ios-simulator.abi.json /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.abi.json (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.abi.json /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.swiftsourceinfo (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.swiftsourceinfo /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo
+
+SwiftDriver\ Compilation\ Requirements BeniShogiTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name BeniShogiTests -Onone -enforce-exclusivity\=checked @/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target arm64-apple-ios16.0-simulator -g -module-cache-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Index.noindex/DataStore -swift-version 5 -I /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -I /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -F /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk/Developer/Library/Frameworks -parse-as-library -c -j3 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-96ae0914227b19deccb34b33ba7b5dea.sdkstatcache -output-file-map /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests-generated-files.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests-own-target-headers.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests-project-headers.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests-Swift.h -working-directory /Users/runner/work/shogiKento/shogiKento/ios -experimental-emit-module-separately -disable-cmo
+
+SwiftCompile normal arm64 Compiling\ FlowTests.swift /Users/runner/work/shogiKento/shogiKento/ios/UITests/FlowTests.swift (in target 'BeniShogiUITests' from project 'BeniShogi')
+
+SwiftCompile normal arm64 /Users/runner/work/shogiKento/shogiKento/ios/UITests/FlowTests.swift (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    
+
+SwiftMergeGeneratedHeaders /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/DerivedSources/BeniShogiTests-Swift.h /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests-Swift.h (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-swiftHeaderTool -arch arm64 /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests-Swift.h -o /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/DerivedSources/BeniShogiTests-Swift.h
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiTests.swiftmodule/arm64-apple-ios-simulator.swiftmodule /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.swiftmodule (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.swiftmodule /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiTests.swiftmodule/arm64-apple-ios-simulator.swiftmodule
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiTests.swiftmodule/arm64-apple-ios-simulator.swiftdoc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.swiftdoc (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.swiftdoc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiTests.swiftmodule/arm64-apple-ios-simulator.swiftdoc
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiTests.swiftmodule/arm64-apple-ios-simulator.abi.json /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.abi.json (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.abi.json /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiTests.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiTests.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.swiftsourceinfo (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.swiftsourceinfo /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiTests.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo
+
+ExtractAppIntentsMetadata (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name BeniShogi --sdk-root /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk --xcode-version 16F6 --platform-family iOS --deployment-target 16.0 --bundle-identifier com.presentsoft.shogi3minutes --output /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app --target-triple arm64-apple-ios16.0-simulator --binary-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/BeniShogi --dependency-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi_dependency_info.dat --stringsdata-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.SwiftFileList --metadata-file-list /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi.DependencyMetadataFileList --static-metadata-file-list /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi.DependencyStaticMetadataFileList --swift-const-vals-list /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/Objects-normal/arm64/BeniShogi.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-10-18 19:28:23.795 appintentsmetadataprocessor[10285:34492] Starting appintentsmetadataprocessor export
+2026-10-18 19:28:23.799 appintentsmetadataprocessor[10285:34492] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+
+CopySwiftLibs /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/BeniShogi.debug.dylib --scan-folder /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Frameworks --scan-folder /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns --scan-folder /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/SystemExtensions --scan-folder /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+AppIntentsSSUTraining (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Info.plist --temp-dir-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/ssu --bundle-id com.presentsoft.shogi3minutes --product-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app --extracted-metadata-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/Metadata.appintents --metadata-file-list /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogi.build/BeniShogi.DependencyMetadataFileList --archive-ssu-assets
+2026-10-18 19:28:23.932 appintentsnltrainingprocessor[10332:34588] Parsing options for appintentsnltrainingprocessor
+2026-10-18 19:28:23.932 appintentsnltrainingprocessor[10332:34588] No AppShortcuts found - Skipping.
+
+ProcessInfoPlistFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest/Info.plist /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/empty-BeniShogiTests.plist (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-infoPlistUtility /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/empty-BeniShogiTests.plist -producttype com.apple.product-type.bundle.unit-test -expandbuildsettings -format binary -platform iphonesimulator -o /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest/Info.plist
+
+CpResource /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest/quest79.kif /Users/runner/work/shogiKento/shogiKento/ios/Tests/Fixtures/quest79.kif (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/runner/work/shogiKento/shogiKento/ios/Tests/Fixtures/quest79.kif /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest
+
+CpResource /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest/quest79.json /Users/runner/work/shogiKento/shogiKento/ios/Tests/Fixtures/quest79.json (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/runner/work/shogiKento/shogiKento/ios/Tests/Fixtures/quest79.json /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest
+
+SwiftDriverJobDiscovery normal arm64 Compiling FlowTests.swift (in target 'BeniShogiUITests' from project 'BeniShogi')
+
+SwiftDriver\ Compilation BeniShogiUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-Swift-Compilation -- /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name BeniShogiUITests -Onone -enforce-exclusivity\=checked @/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target arm64-apple-ios16.0-simulator -g -module-cache-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Index.noindex/DataStore -swift-version 5 -I /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -I /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -F /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk/Developer/Library/Frameworks -parse-as-library -c -j3 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-96ae0914227b19deccb34b33ba7b5dea.sdkstatcache -output-file-map /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests-generated-files.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests-own-target-headers.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests-project-headers.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests-Swift.h -working-directory /Users/runner/work/shogiKento/shogiKento/ios -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Compiling CoreTests.swift (in target 'BeniShogiTests' from project 'BeniShogi')
+
+SwiftDriver\ Compilation BeniShogiTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-Swift-Compilation -- /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name BeniShogiTests -Onone -enforce-exclusivity\=checked @/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.SwiftFileList -DDEBUG -plugin-path /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target arm64-apple-ios16.0-simulator -g -module-cache-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -profile-coverage-mapping -profile-generate -enable-testing -index-store-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Index.noindex/DataStore -swift-version 5 -I /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -I /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -F /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk/Developer/Library/Frameworks -parse-as-library -c -j3 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-96ae0914227b19deccb34b33ba7b5dea.sdkstatcache -output-file-map /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests-generated-files.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests-own-target-headers.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests-all-target-headers.hmap -Xcc -iquote -Xcc /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests-project-headers.hmap -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/DerivedSources/arm64 -Xcc -I/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests-Swift.h -working-directory /Users/runner/work/shogiKento/shogiKento/ios -experimental-emit-module-separately -disable-cmo
+
+Ld /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest/BeniShogiTests normal (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios16.0-simulator -bundle -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -O0 -L/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -L/Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -iframework /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -iframework /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk/Developer/Library/Frameworks -filelist /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.LinkFileList -Xlinker -rpath -Xlinker @loader_path/Frameworks -Xlinker -rpath -Xlinker @executable_path/Frameworks -dead_strip -bundle_loader /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/BeniShogi -Xlinker -object_path_lto -Xlinker /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -debug_variant -Xlinker -dependency_info -Xlinker /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests_dependency_info.dat -fobjc-link-runtime -fprofile-instr-generate -L/Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.swiftmodule -framework XCTest -lXCTestSwiftSupport /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/BeniShogi.debug.dylib -Xlinker -no_adhoc_codesign -o /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest/BeniShogiTests
+
+ExtractAppIntentsMetadata (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name BeniShogiTests --sdk-root /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk --xcode-version 16F6 --platform-family iOS --deployment-target 16.0 --bundle-identifier com.presentsoft.BeniShogiTests --output /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest --target-triple arm64-apple-ios16.0-simulator --binary-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest/BeniShogiTests --dependency-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests_dependency_info.dat --stringsdata-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.SwiftFileList --metadata-file-list /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests.DependencyMetadataFileList --static-metadata-file-list /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests.DependencyStaticMetadataFileList --swift-const-vals-list /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/Objects-normal/arm64/BeniShogiTests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-10-18 19:28:24.892 appintentsmetadataprocessor[10440:34822] Starting appintentsmetadataprocessor export
+2026-10-18 19:28:24.896 appintentsmetadataprocessor[10440:34822] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+
+CopySwiftLibs /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest/BeniShogiTests --scan-folder /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest/Frameworks --scan-folder /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest/PlugIns --scan-folder /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest/SystemExtensions --scan-folder /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+AppIntentsSSUTraining (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest/Info.plist --temp-dir-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/ssu --bundle-id com.presentsoft.BeniShogiTests --product-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest --extracted-metadata-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest/Metadata.appintents --metadata-file-list /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiTests.build/BeniShogiTests.DependencyMetadataFileList --archive-ssu-assets
+2026-10-18 19:28:24.930 appintentsnltrainingprocessor[10445:34831] Parsing options for appintentsnltrainingprocessor
+2026-10-18 19:28:24.931 appintentsnltrainingprocessor[10445:34831] No AppShortcuts found - Skipping.
+
+CodeSign /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest
+
+RegisterExecutionPolicyException /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-RegisterExecutionPolicyException /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest
+
+Touch /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest (in target 'BeniShogiTests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /usr/bin/touch -c /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/PlugIns/BeniShogiTests.xctest
+
+CodeSign /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/BeniShogi.debug.dylib (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/BeniShogi.debug.dylib
+
+CodeSign /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/__preview.dylib (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app/__preview.dylib
+
+CodeSign /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app
+
+RegisterExecutionPolicyException /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-RegisterExecutionPolicyException /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app
+
+Validate /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-validationUtility /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app -infoplist-subpath Info.plist
+
+Touch /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /usr/bin/touch -c /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app
+
+Ld /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest/BeniShogiUITests normal (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios16.0-simulator -bundle -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -O0 -L/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -L/Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator -iframework /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -iframework /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk/Developer/Library/Frameworks -filelist /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.LinkFileList -Xlinker -rpath -Xlinker @loader_path/Frameworks -Xlinker -rpath -Xlinker @executable_path/Frameworks -dead_strip -Xlinker -object_path_lto -Xlinker /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -debug_variant -Xlinker -dependency_info -Xlinker /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests_dependency_info.dat -fobjc-link-runtime -fprofile-instr-generate -L/Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.swiftmodule -framework XCTest -lXCTestSwiftSupport -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests.xctest-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests.xctest-Simulated.xcent.der -Xlinker -no_adhoc_codesign -o /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest/BeniShogiUITests
+
+ProcessInfoPlistFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest/Info.plist /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/empty-BeniShogiUITests.plist (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-infoPlistUtility /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/empty-BeniShogiUITests.plist -producttype com.apple.product-type.bundle.ui-testing -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/ProductTypeInfoPlistAdditions.plist -o /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest/Info.plist
+
+ExtractAppIntentsMetadata (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name BeniShogiUITests --sdk-root /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk --xcode-version 16F6 --platform-family iOS --deployment-target 16.0 --bundle-identifier com.presentsoft.BeniShogiUITests --output /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest --target-triple arm64-apple-ios16.0-simulator --binary-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest/BeniShogiUITests --dependency-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests_dependency_info.dat --stringsdata-file /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.SwiftFileList --metadata-file-list /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests.DependencyMetadataFileList --static-metadata-file-list /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests.DependencyStaticMetadataFileList --swift-const-vals-list /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/Objects-normal/arm64/BeniShogiUITests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2026-10-18 19:28:25.609 appintentsmetadataprocessor[10527:35032] Starting appintentsmetadataprocessor export
+2026-10-18 19:28:25.611 appintentsmetadataprocessor[10527:35032] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+
+CopySwiftLibs /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest/BeniShogiUITests --scan-folder /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest/Frameworks --scan-folder /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest/PlugIns --scan-folder /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest/SystemExtensions --scan-folder /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+AppIntentsSSUTraining (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest/Info.plist --temp-dir-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/ssu --bundle-id com.presentsoft.BeniShogiUITests --product-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest --extracted-metadata-path /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest/Metadata.appintents --metadata-file-list /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Intermediates.noindex/BeniShogi.build/Debug-iphonesimulator/BeniShogiUITests.build/BeniShogiUITests.DependencyMetadataFileList --archive-ssu-assets
+2026-10-18 19:28:25.629 appintentsnltrainingprocessor[10531:35040] Parsing options for appintentsnltrainingprocessor
+2026-10-18 19:28:25.630 appintentsnltrainingprocessor[10531:35040] No AppShortcuts found - Skipping.
+
+MkDir /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /bin/mkdir -p /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app
+
+CopyPlistFile /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/Info.plist /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Xcode/Agents/XCTRunner.app/Info.plist (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copyPlist --validate --convert xml1 --macro-expansion WRAPPEDPRODUCTNAME BeniShogiUITests-Runner --macro-expansion WRAPPEDPRODUCTBUNDLEIDENTIFIER com.presentsoft.BeniShogiUITests.xctrunner --macro-expansion TESTPRODUCTNAME BeniShogiUITests --macro-expansion TESTPRODUCTBUNDLEIDENTIFIER com.presentsoft.BeniShogiUITests --copy-value UIDeviceFamily /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest/Info.plist --outdir /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app -- /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Xcode/Agents/XCTRunner.app/Info.plist
+
+CopyAndPreserveArchs /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/BeniShogiUITests-Runner (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Xcode/Agents/XCTRunner.app/XCTRunner -output /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/BeniShogiUITests-Runner -extract arm64
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PkgInfo /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Xcode/Agents/XCTRunner.app/PkgInfo (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Xcode/Agents/XCTRunner.app/PkgInfo /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/Frameworks/libXCTestSwiftSupport.dylib /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/Frameworks
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/Frameworks/XCUnit.framework /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCUnit.framework (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCUnit.framework /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/Frameworks
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/Frameworks/XCUIAutomation.framework /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCUIAutomation.framework (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCUIAutomation.framework /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/Frameworks
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/Frameworks/XCTestSupport.framework /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTestSupport.framework (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTestSupport.framework /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/Frameworks
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/Frameworks/XCTestCore.framework /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTestCore.framework (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTestCore.framework /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/Frameworks
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/Frameworks/XCTest.framework /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/Frameworks
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/Frameworks/XCTAutomationSupport.framework /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTAutomationSupport.framework (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/XCTAutomationSupport.framework /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/Frameworks
+
+Copy /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/Frameworks/Testing.framework /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/Testing.framework (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -exclude Headers -exclude PrivateHeaders -exclude Modules -exclude \*.tbd -resolve-src-symlinks /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/Testing.framework /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/Frameworks
+
+CodeSign /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest
+
+RegisterExecutionPolicyException /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-RegisterExecutionPolicyException /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest
+
+CodeSign /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app
+/Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app: replacing existing signature
+
+Touch /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest (in target 'BeniShogiUITests' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /usr/bin/touch -c /Users/runner/work/shogiKento/shogiKento/ios/build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogiUITests-Runner.app/PlugIns/BeniShogiUITests.xctest
+
+2026-10-18 19:28:59.861527+0000 BeniShogi[11247:37288] [library] load_eligibility_plist: Failed to open /Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/7728990E-4C61-41B8-95AE-CCFEBD97AF2D/private/var/db/eligibilityd/eligibility.plist: No such file or directory(2)
+2026-10-18 19:29:00.031666+0000 BeniShogi[11247:37288] [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x60000020f260> F8BB1C28-BAE8-11D6-9C31-00039315CD46
+Test Suite 'All tests' started at 2026-10-18 19:29:04.389.
+Test Suite 'BeniShogiTests.xctest' started at 2026-10-18 19:29:04.390.
+Test Suite 'CoreTests' started at 2026-10-18 19:29:04.390.
+Test Case '-[BeniShogiTests.CoreTests testClockPauseTimeoutAndMatchRetention]' started.
+Test Case '-[BeniShogiTests.CoreTests testClockPauseTimeoutAndMatchRetention]' passed (0.073 seconds).
+Test Case '-[BeniShogiTests.CoreTests testDurableIndependentArchive]' started.
+2026-10-18 19:29:32.566412+0000 BeniShogi[12912:41450] [library] load_eligibility_plist: Failed to open /Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/7728990E-4C61-41B8-95AE-CCFEBD97AF2D/private/var/db/eligibilityd/eligibility.plist: No such file or directory(2)
+2026-10-18 19:29:32.721355+0000 BeniShogi[12912:41450] [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x600000225020> F8BB1C28-BAE8-11D6-9C31-00039315CD46
+2026-10-18 19:29:33.377351+0000 BeniShogi[12912:41546] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+2026-10-18 19:29:33.461716+0000 BeniShogi[12912:41546] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+
+Restarting after unexpected exit, crash, or test timeout; summary will include totals from previous launches.
+
+Test Suite 'Selected tests' started at 2026-10-18 19:29:36.054.
+Test Suite 'BeniShogiTests.xctest' started at 2026-10-18 19:29:36.057.
+Test Suite 'CoreTests' started at 2026-10-18 19:29:36.058.
+Test Case '-[BeniShogiTests.CoreTests testLegalTargetsPinsDropsAndPromotion]' started.
+2026-10-18 19:29:40.363626+0000 BeniShogi[13063:42002] [library] load_eligibility_plist: Failed to open /Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/7728990E-4C61-41B8-95AE-CCFEBD97AF2D/private/var/db/eligibilityd/eligibility.plist: No such file or directory(2)
+2026-10-18 19:29:40.456446+0000 BeniShogi[13063:42002] [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x600000225600> F8BB1C28-BAE8-11D6-9C31-00039315CD46
+
+Restarting after unexpected exit, crash, or test timeout; summary will include totals from previous launches.
+
+Test Suite 'Selected tests' started at 2026-10-18 19:29:43.396.
+Test Suite 'BeniShogiTests.xctest' started at 2026-10-18 19:29:43.397.
+Test Suite 'CoreTests' started at 2026-10-18 19:29:43.398.
+Test Case '-[BeniShogiTests.CoreTests testLegalTargetsPinsDropsAndPromotion]' started.
+2026-10-18 19:29:47.828590+0000 BeniShogiUITests-Runner[13086:42320] [Default] Running tests...
+2026-10-18 19:29:47.859727+0000 BeniShogiUITests-Runner[13086:42337] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+2026-10-18 19:29:50.236310+0000 BeniShogiUITests-Runner[13086:42331] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'All tests' started at 2026-10-18 19:29:57.187.
+Test Suite 'BeniShogiUITests.xctest' started at 2026-10-18 19:29:57.196.
+Test Suite 'FlowTests' started at 2026-10-18 19:29:57.196.
+Test Case '-[BeniShogiUITests.FlowTests testNativeHomeSettingsMatchAndQuestStudy]' started.
+    t =     0.00s Start Test at 2026-10-18 19:29:57.197
+    t =     0.98s Set Up
+    t =     1.01s Open com.presentsoft.shogi3minutes
+    t =     1.01s     Launch com.presentsoft.shogi3minutes
+    t =     1.97s         Setting up automation session
+    t =     3.73s         Wait for com.presentsoft.shogi3minutes to idle
+    t =     5.93s Waiting 15.0s for "settings" Button to exist
+    t =     6.98s     Checking `Expect predicate `existsNoRetry == 1` for object "settings" Button`
+    t =     6.98s         Checking existence of `"settings" Button`
+    t =     7.19s Tap "settings" Button
+    t =     7.19s     Wait for com.presentsoft.shogi3minutes to idle
+    t =     7.20s     Find the "settings" Button
+    t =     7.26s     Check for interrupting elements affecting "settings" Button
+    t =     7.41s     Synthesize event
+    t =     7.90s     Wait for com.presentsoft.shogi3minutes to idle
+    t =     8.79s Checking existence of `"volume" Slider`
+    t =     9.23s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =     9.49s Added attachment named '02-settings'
+    t =     9.50s Set normalized position of "volume" Slider to 0.37
+    t =     9.50s     Wait for com.presentsoft.shogi3minutes to idle
+    t =     9.50s     Find the "volume" Slider
+    t =     9.55s     Check for interrupting elements affecting "volume" Slider
+    t =     9.61s     Synthesize event
+    t =    10.27s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    10.28s Tap "sound" Switch
+    t =    10.28s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    10.29s     Find the "sound" Switch
+    t =    10.34s     Check for interrupting elements affecting "sound" Switch
+    t =    10.41s     Synthesize event
+    t =    10.74s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    10.74s Tap "vibration" Switch
+    t =    10.74s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    10.77s     Find the "vibration" Switch
+    t =    10.86s     Check for interrupting elements affecting "vibration" Switch
+    t =    10.93s     Synthesize event
+    t =    11.26s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    11.27s Find the "sound" Switch
+    t =    11.35s Find the "vibration" Switch
+    t =    11.41s Find the "volume" Slider
+    t =    11.47s Waiting 15.0s for "閉じる" Button to exist
+    t =    12.52s     Checking `Expect predicate `existsNoRetry == 1` for object "閉じる" Button`
+    t =    12.52s         Checking existence of `"閉じる" Button`
+    t =    12.58s Tap "閉じる" Button
+    t =    12.58s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    12.59s     Find the "閉じる" Button
+    t =    12.68s     Check for interrupting elements affecting "閉じる" Button
+    t =    12.74s     Synthesize event
+    t =    13.09s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    13.56s Terminate com.presentsoft.shogi3minutes:13483
+    t =    14.60s Open com.presentsoft.shogi3minutes
+    t =    14.60s     Launch com.presentsoft.shogi3minutes
+    t =    15.31s         Setting up automation session
+    t =    16.70s         Wait for com.presentsoft.shogi3minutes to idle
+    t =    18.67s Waiting 15.0s for "settings" Button to exist
+    t =    19.72s     Checking `Expect predicate `existsNoRetry == 1` for object "settings" Button`
+    t =    19.72s         Checking existence of `"settings" Button`
+    t =    19.85s Tap "settings" Button
+    t =    19.86s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    19.87s     Find the "settings" Button
+    t =    19.94s     Check for interrupting elements affecting "settings" Button
+    t =    20.03s     Synthesize event
+    t =    20.35s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    20.55s Find the "sound" Switch
+    t =    20.83s Find the "vibration" Switch
+    t =    21.02s Find the "volume" Slider
+    t =    21.20s Waiting 15.0s for "閉じる" Button to exist
+    t =    22.26s     Checking `Expect predicate `existsNoRetry == 1` for object "閉じる" Button`
+    t =    22.26s         Checking existence of `"閉じる" Button`
+    t =    22.31s Tap "閉じる" Button
+    t =    22.31s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    22.32s     Find the "閉じる" Button
+    t =    22.37s     Check for interrupting elements affecting "閉じる" Button
+    t =    22.42s     Synthesize event
+    t =    22.72s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    23.17s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    23.57s Added attachment named '01-home'
+    t =    23.58s Waiting 15.0s for "mode_match" Button to exist
+    t =    24.61s     Checking `Expect predicate `existsNoRetry == 1` for object "mode_match" Button`
+    t =    24.61s         Checking existence of `"mode_match" Button`
+    t =    24.64s Tap "mode_match" Button
+    t =    24.64s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    24.65s     Find the "mode_match" Button
+    t =    24.67s     Check for interrupting elements affecting "mode_match" Button
+    t =    24.70s     Synthesize event
+    t =    25.02s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    26.39s Waiting 15.0s for "start_match" Button to exist
+    t =    27.43s     Checking `Expect predicate `existsNoRetry == 1` for object "start_match" Button`
+    t =    27.44s         Checking existence of `"start_match" Button`
+    t =    27.71s Tap "start_match" Button
+    t =    27.71s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    27.71s     Find the "start_match" Button
+    t =    27.80s     Check for interrupting elements affecting "start_match" Button
+    t =    27.91s     Synthesize event
+    t =    28.30s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    28.31s Waiting 15.0s for "cell_6_0" Button to exist
+    t =    29.39s     Checking `Expect predicate `existsNoRetry == 1` for object "cell_6_0" Button`
+    t =    29.39s         Checking existence of `"cell_6_0" Button`
+    t =    29.56s Tap "cell_6_0" Button
+    t =    29.56s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    29.56s     Find the "cell_6_0" Button
+    t =    29.75s     Check for interrupting elements affecting "cell_6_0" Button
+    t =    29.97s     Synthesize event
+    t =    30.41s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    30.42s Unable to monitor event loop
+    t =    30.42s Unable to monitor animations
+    t =    30.43s Find the "cell_5_0" Button
+    t =    31.44s     Find the "cell_5_0" Button (retry 1)
+    t =    31.44s     Collecting debug information to assist test failure triage
+/Users/runner/work/shogiKento/shogiKento/ios/UITests/FlowTests.swift:10: error: -[BeniShogiUITests.FlowTests testNativeHomeSettingsMatchAndQuestStudy] : Failed to get matching snapshot: Lost connection to the application (pid 13664). (Underlying Error: Couldn’t communicate with a helper application. Try your operation again. If that fails, quit and relaunch the application and try again. The connection to service created from an endpoint was invalidated: failed to check-in, peer may have been unloaded: mach_error=10000003.)
+    t =    51.07s Tear Down
+    t =    51.33s     Checking for crash reports corresponding to unexpected termination of com.presentsoft.shogi3minutes
+Test Case '-[BeniShogiUITests.FlowTests testNativeHomeSettingsMatchAndQuestStudy]' failed (71.364 seconds).
+Test Suite 'FlowTests' failed at 2026-10-18 19:31:08.563.
+	 Executed 1 test, with 1 failure (0 unexpected) in 71.364 (71.367) seconds
+Test Suite 'BeniShogiUITests.xctest' failed at 2026-10-18 19:31:08.565.
+	 Executed 1 test, with 1 failure (0 unexpected) in 71.364 (71.369) seconds
+Test Suite 'All tests' failed at 2026-10-18 19:31:08.566.
+	 Executed 1 test, with 1 failure (0 unexpected) in 71.364 (71.379) seconds
+2026-10-18 19:31:54.567 xcodebuild[7118:26218] [MT] IDETestOperationsObserverDebug: 208.690 elapsed -- Testing started completed.
+2026-10-18 19:31:54.568 xcodebuild[7118:26218] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-18 19:31:54.568 xcodebuild[7118:26218] [MT] IDETestOperationsObserverDebug: 208.690 sec, +208.690 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/shogiKento/shogiKento/ios/outputs/Tests.xcresult
+
+Testing failed:
+	Run test suite CoreTests encountered an error (Exceeded max restart count of 2. (Underlying Error: Crash: BeniShogi (13063) implicit closure #1 in CoreTests.testLegalTargetsPinsDropsAndPromotion()))
+
+Failing tests:
+	CoreTests.testDurableIndependentArchive()
+	FlowTests.testNativeHomeSettingsMatchAndQuestStudy()
+
+** TEST FAILED **
+
+Testing started
