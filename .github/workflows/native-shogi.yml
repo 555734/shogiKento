@@ -29,8 +29,9 @@ jobs:
       - name: Rule and clock assertions
         run: |
           mkdir -p test-classes outputs
-          javac -d test-classes app/src/main/java/com/presentsoft/shogi3minutes/ShogiGame.java app/src/main/java/com/presentsoft/shogi3minutes/MatchClock.java app/src/main/java/com/presentsoft/shogi3minutes/UsiPosition.java app/src/main/java/com/presentsoft/shogi3minutes/StudySession.java app/src/main/java/com/presentsoft/shogi3minutes/StudyAnalysis.java app/src/main/java/com/presentsoft/shogi3minutes/EvaluationHistory.java tests/EvaluationTest.java tests/AnalysisTest.java tests/StudyTest.java tests/RulesTest.java tests/RuleProbe.java app/src/main/java/com/presentsoft/shogi3minutes/UsiProcess.java tests/ProtocolTest.java
+          javac -d test-classes app/src/main/java/com/presentsoft/shogi3minutes/ShogiGame.java app/src/main/java/com/presentsoft/shogi3minutes/MatchClock.java app/src/main/java/com/presentsoft/shogi3minutes/UsiPosition.java app/src/main/java/com/presentsoft/shogi3minutes/StudySession.java app/src/main/java/com/presentsoft/shogi3minutes/StudyAnalysis.java app/src/main/java/com/presentsoft/shogi3minutes/EvaluationHistory.java tests/EvaluationTest.java tests/AnalysisTest.java tests/StudyTest.java tests/RulesTest.java tests/RuleProbe.java app/src/main/java/com/presentsoft/shogi3minutes/UsiProcess.java tests/ProtocolTest.java tests/StudyHistoryTest.java
           chmod +x tests/fake_usi.py
+          java -cp test-classes com.presentsoft.shogi3minutes.StudyHistoryTest | tee outputs/graph_history.txt
           java -cp test-classes com.presentsoft.shogi3minutes.ProtocolTest tests/fake_usi.py | tee outputs/protocol.txt
           java -cp test-classes com.presentsoft.shogi3minutes.RulesTest | tee outputs/rules.txt
           java -cp test-classes com.presentsoft.shogi3minutes.StudyTest | tee outputs/study.txt
@@ -93,6 +94,7 @@ jobs:
             for p in Path('.').rglob('*'):
               if p.is_file() and not any(x in p.parts for x in ['.gradle','build','outputs','test-classes','.git','.ai-cache','host-bench','.cxx','__pycache__','jniLibs']) and p.name!='local.properties':
                 z.write(p,Path('shogi_3min_complete_native')/p)
+            z.write('../.github/workflows/native-shogi.yml',Path('shogi_3min_complete_native')/'ci/native-shogi.yml')
           PY
       - name: Save APK, source and verification to build branch
         if: always()
@@ -105,4 +107,5 @@ jobs:
           git add -f outputs/
           git commit -m "Native shogi build $GITHUB_RUN_ID outputs"
           git push origin HEAD
+
 

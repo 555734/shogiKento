@@ -32,11 +32,32 @@ final class UsiProcess implements Closeable {
   return r==null?null:r.bestMove+"|"+r.nodes+"|"+r.millis+"|"+r.depth;
  }
  StudyAnalysis.Result analyze(String sfen,int nodes,int millis,BooleanSupplier cancelled,int count)throws Exception{return run(sfen,nodes,millis,cancelled,Math.max(1,Math.min(3,count)));}
+ /** One unbounded USI search, publishing only completed, same-depth MultiPV iterations. */
+ void analyzeContinuous(String sfen,BooleanSupplier cancelled,int count,java.util.function.Consumer<StudyAnalysis.Result> update)throws Exception{
+  count=Math.max(1,Math.min(3,count));StudyAnalysis.Collector scores=new StudyAnalysis.Collector();
+  send("isready");until("readyok",10000);
+  synchronized(this){if(cancelled.getAsBoolean())return;send("setoption name MultiPV value "+count);send("setoption name PvInterval value 200");send("position sfen "+sfen);send("go infinite");}
+  long start=System.nanoTime(),lastReport=0,stopDeadline=Long.MAX_VALUE,visited=0;int lastDepth=0;boolean stopped=false;
+  while(true){
+   if(cancelled.getAsBoolean()&&!stopped){stop();stopped=true;stopDeadline=System.nanoTime()+5000000000L;}
+   String line=lines.poll(25,TimeUnit.MILLISECONDS);
+   if(line==null){if(stopped&&System.nanoTime()>stopDeadline){IOException e=failure("継続解析の停止がタイムアウトしました");close();throw e;}continue;}
+   if(line.equals("__EOF__"))throw failure("AIプロセスが終了しました");remember(line);
+   boolean finished=line.startsWith("bestmove ");
+   if(line.startsWith("info ")&&!line.startsWith("info string ")){scores.accept(line);String[] a=line.split(" ");for(int i=1;i+1<a.length;i++){if(a[i].equals("pv"))break;if(a[i].equals("nodes"))visited=Long.parseLong(a[i+1]);}}
+   long now=System.nanoTime();if(!cancelled.getAsBoolean()&&(finished||now-lastReport>=250000000L)){
+    java.util.List<StudyAnalysis.Candidate> rows=scores.finish(count);if(rows.size()==count&&rows.get(0).depth>=lastDepth){
+     lastDepth=rows.get(0).depth;lastReport=now;update.accept(new StudyAnalysis.Result(rows.get(0).move,rows,visited,(now-start)/1000000.0,lastDepth));
+    }
+   }
+   if(finished)return;
+  }
+ }
  private StudyAnalysis.Result run(String sfen,int nodes,int millis,BooleanSupplier cancelled,int count)throws Exception{
   StudyAnalysis.Collector scores=new StudyAnalysis.Collector();
   // Drain all output from the previous request before accepting a new bestmove.
   send("isready");until("readyok",10000);
-  synchronized(this){if(cancelled.getAsBoolean())return null;send("setoption name MultiPV value "+count);send("position sfen "+sfen);send("go nodes "+nodes+" movetime "+millis);}
+  synchronized(this){if(cancelled.getAsBoolean())return null;send("setoption name MultiPV value "+count);send("setoption name PvInterval value 0");send("position sfen "+sfen);send("go nodes "+nodes+" movetime "+millis);}
   long start=System.nanoTime(),end=start+(millis+5000L)*1000000L,visited=0;int depth=0;boolean stopped=false;
   while(true){if(cancelled.getAsBoolean()&&!stopped){stop();stopped=true;}if(!stopped&&System.nanoTime()-start>=(millis+100L)*1000000L){stop();stopped=true;}
    String line=lines.poll(25,TimeUnit.MILLISECONDS);if(line==null){if(System.nanoTime()>end){IOException error=failure("AI停止がタイムアウトしました");close();throw error;}continue;}
