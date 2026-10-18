@@ -1,0 +1,1 @@
+PASS actual native go infinite: multiple updates over 2.2 seconds, more nodes/nondecreasing depth, same process/search, no automatic moves/clocks; removed toolbar hit regions inactive; OS-routed graph taps restore initial/capture/promotion/drop/future; edit branches; pause/resume cancels and restarts current position.
