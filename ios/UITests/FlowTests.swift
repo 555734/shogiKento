@@ -1,5 +1,6 @@
 import XCTest
 final class FlowTests:XCTestCase {
+    override func setUp(){super.setUp();continueAfterFailure=false}
     func shot(_ name:String){let image=XCTAttachment(screenshot:XCUIApplication().screenshot());image.name=name;image.lifetime = .keepAlways;add(image)}
     func tap(_ id:String,_ app:XCUIApplication,timeout:Double=15){let button=app.buttons[id];XCTAssertTrue(button.waitForExistence(timeout:timeout),id);button.tap()}
     func testNativeHomeSettingsMatchAndQuestStudy()throws {

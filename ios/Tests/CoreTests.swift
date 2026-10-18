@@ -27,7 +27,8 @@ final class CoreTests:XCTestCase {
         let drops=try Rules.legal(pin).filter{$0.drop==1};XCTAssertFalse(drops.contains{$0.destination%9==0 || $0.destination/9==0})
         let pro=try Position("4k4/P8/9/9/9/9/9/9/4K4 b - 1");let promotion=try Rules.legal(pro).filter{$0.source==9};XCTAssertEqual(promotion.count,1);XCTAssertTrue(promotion[0].promotes)
         var free=try Position();XCTAssertTrue(free.freeMove(source:54,drop:0,side:1,to:36));XCTAssertEqual(free.board[36],1);XCTAssertEqual(free.board[54],0)
-        free.hands[0][1]=1;XCTAssertTrue(free.freeMove(source:nil,drop:1,side:1,to:45));XCTAssertEqual(free.analysisProblem,"二歩の局面です")
+        // Transfer one opposing pawn to hand, keeping the legal total of 18 pawns.
+        free.board[18]=0;free.hands[0][1]=1;XCTAssertTrue(free.freeMove(source:nil,drop:1,side:1,to:45));XCTAssertEqual(free.analysisProblem,"二歩の局面です")
         XCTAssertThrowsError(try Rules.legal(free))
         let illegalTurn=try Position("4k4/9/4R4/9/9/9/9/9/4K4 b - 1")
         XCTAssertEqual(illegalTurn.analysisProblem,"手番ではない側の玉に王手がかかっています")
