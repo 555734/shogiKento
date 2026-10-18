@@ -22,7 +22,7 @@ public final class MainActivity extends Activity {
   final MoveSound sounds=new MoveSound(MainActivity.this);
   final AiEngine ai=AiEngine.get(MainActivity.this);int aiModel=0,nodeBudget=getPreferences(MODE_PRIVATE).getInt("nnue_nodes_v13",50000);String aiError,lastAiStats="";int nativeReplies;
   int analysisSide=getPreferences(MODE_PRIVATE).getInt("study_analysis_side",1),analysisRevision;boolean analyzing;
-  String analysisStatus="局面を解析します",analyzedPosition="";StudyAnalysis.Result analysisResult;ShogiGame analysisBoard;List<String> analysisMoves=Collections.emptyList();
+  int analysisUpdates;long lastAnalysisSaved;String analysisStatus="局面を解析します",analyzedPosition="";StudyAnalysis.Result analysisResult;ShogiGame analysisBoard;List<String> analysisMoves=Collections.emptyList();
   final Runnable analysisTask=()->startAnalysis();
   int selectedR=-1,selectedC=-1,selectedHand,selectedSide=1;ShogiGame.Move lastMove;List<ShogiGame.Move> highlights=Collections.emptyList();
   final Runnable ticker=new Runnable(){long displayed=Long.MIN_VALUE;public void run(){if(!resumed||mode!=MATCH)return;clock.settle(SystemClock.elapsedRealtime());long signature=((game.remaining[0]+999)/1000)*10000+((game.remaining[1]+999)/1000)*10+game.winner+2;if(signature!=displayed){displayed=signature;invalidate();}handler.postDelayed(this,50);}};
@@ -39,7 +39,7 @@ public final class MainActivity extends Activity {
   void restore(){try{String encoded=getPreferences(MODE_PRIVATE).getString("match_v2",null);if(encoded!=null)try(ObjectInputStream in=new ObjectInputStream(new ByteArrayInputStream(Base64.decode(encoded,Base64.DEFAULT)))){matchStarted=in.readBoolean();match=(ShogiGame)in.readObject();}}catch(Exception e){android.util.Log.e("Shogi","Invalid match",e);}if(match==null)match=new ShogiGame();try{String encoded=getPreferences(MODE_PRIVATE).getString("study_v1",null);if(encoded!=null)try(ObjectInputStream in=new ObjectInputStream(new ByteArrayInputStream(Base64.decode(encoded,Base64.DEFAULT)))){study=(StudySession)in.readObject();try{evalHistory=(EvaluationHistory)in.readObject();}catch(EOFException oldVersion){evalHistory=new EvaluationHistory();}}}catch(Exception e){android.util.Log.e("Shogi","Invalid study",e);}if(study==null)study=new StudySession();if(evalHistory==null)evalHistory=new EvaluationHistory();evalHistory.sync(EvaluationHistory.key(study.game));}
   void cancelCpu(){handler.removeCallbacks(cpu);handler.removeCallbacks(analysisTask);analysisRevision++;ai.cancel();thinking=false;analyzing=false;}
   void refreshAnalysis(){
-   if(mode!=STUDY)return;evalHistory.sync(EvaluationHistory.key(game));evalHistory.points.get(evalHistory.cursor).score=null;displayScore=null;cancelCpu();analysisResult=null;analysisBoard=null;analyzedPosition="";analysisStatus="解析中…";analyzing=true;
+   if(mode!=STUDY)return;evalHistory.sync(EvaluationHistory.key(game));evalHistory.side(analysisSide);displayScore=null;analysisUpdates=0;cancelCpu();analysisResult=null;analysisBoard=null;analyzedPosition="";analysisStatus="解析中…";analyzing=true;
    if(resumed)handler.postDelayed(analysisTask,180);invalidate();
   }
   void setAnalysisSide(int side){analysisSide=side;getPreferences(MODE_PRIVATE).edit().putInt("study_analysis_side",side).apply();refreshAnalysis();}
@@ -48,13 +48,14 @@ public final class MainActivity extends Activity {
    String invalid=StudyAnalysis.invalid(position);if(invalid!=null){analyzing=false;analysisStatus=invalid;invalidate();return;}
    List<ShogiGame.Move> legal=position.legal(position.turn);if(legal.isEmpty()){analyzing=false;if(position.checked(position.turn)){displayScore=new EvaluationHistory.Score(-position.turn,true,0);evalHistory.complete(EvaluationHistory.key(position),displayScore);save();}analysisStatus=(analysisSide==1?"先手":"後手")+(position.checked(position.turn)?"の玉が詰みです・候補手なし":"に合法手がありません");invalidate();return;}
    if(!ai.ready){analysisStatus="AI読み込み中…";configureAi();return;}
-   final String sfen=UsiPosition.sfen(position);ai.analyze(sfen,nodeBudget,750,Math.min(3,legal.size()),(answer,error)->{
+   final String sfen=UsiPosition.sfen(position);ai.analyzeContinuously(sfen,Math.min(3,legal.size()),(answer,error)->{
     if(mode!=STUDY||!resumed||revision!=analysisRevision||!UsiPosition.sfen(StudyAnalysis.snapshot(game,analysisSide)).equals(sfen))return;
-    analyzing=false;analysisResult=null;analysisBoard=null;aiError=error;
-    if(error!=null||answer==null){analysisStatus="AIエラー・タップで再試行";invalidate();return;}
-    ArrayList<String> labels=new ArrayList<>();for(StudyAnalysis.Candidate candidate:answer.candidates){ShogiGame.Move move=UsiPosition.legalMove(position,candidate.move);if(move==null){analysisStatus="候補手を検証できません・タップで再試行";invalidate();return;}labels.add(StudyAnalysis.notation(position,move));}
-    if(answer.candidates.isEmpty()){analysisStatus="評価値を取得できません・タップで再試行";invalidate();return;}
-    analysisResult=answer;analysisBoard=position;analysisMoves=labels;analyzedPosition=sfen;analysisStatus="";displayScore=EvaluationHistory.Score.from(answer.candidates.get(0),position.turn);evalHistory.complete(EvaluationHistory.key(position),displayScore);save();invalidate();
+    analysisResult=null;analysisBoard=null;aiError=error;
+    if(error!=null||answer==null){analyzing=false;displayScore=null;analysisStatus="AIエラー・タップで再試行";invalidate();return;}
+    ArrayList<String> labels=new ArrayList<>();for(StudyAnalysis.Candidate candidate:answer.candidates){ShogiGame.Move move=UsiPosition.legalMove(position,candidate.move);if(move==null){cancelCpu();displayScore=null;analysisStatus="候補手を検証できません・タップで再試行";invalidate();return;}labels.add(StudyAnalysis.notation(position,move));}
+    if(answer.candidates.isEmpty()){cancelCpu();displayScore=null;analysisStatus="評価値を取得できません・タップで再試行";invalidate();return;}
+    analyzing=true;analysisUpdates++;analysisResult=answer;analysisBoard=position;analysisMoves=labels;analyzedPosition=sfen;analysisStatus="";displayScore=EvaluationHistory.Score.from(answer.candidates.get(0),position.turn);evalHistory.complete(EvaluationHistory.key(position),displayScore);
+    long now=SystemClock.uptimeMillis();if(now-lastAnalysisSaved>=2000){lastAnalysisSaved=now;save();}invalidate();
    });
   }
   void showAnalysisError(){choiceDialog=new AlertDialog.Builder(MainActivity.this).setTitle("AI解析のエラー詳細").setMessage(aiError==null?"解析結果を取得できませんでした":aiError).setPositiveButton("再試行",(d,k)->refreshAnalysis()).setNegativeButton("閉じる",null).create();choiceDialog.setOnDismissListener(d->choiceDialog=null);choiceDialog.show();}
@@ -65,7 +66,7 @@ public final class MainActivity extends Activity {
       cancelCpu();String[] choices={"低負荷・3,000ノード","標準・10,000ノード","強い・50,000ノード（初期設定）"};int[] budgets={3000,10000,50000};int selected=nodeBudget==3000?0:nodeBudget==10000?1:2;
       new AlertDialog.Builder(MainActivity.this).setTitle("やねうら王 / つようら王11micro").setSingleChoiceItems(choices,selected,(d,k)->{aiModel=0;nodeBudget=budgets[k];getPreferences(MODE_PRIVATE).edit().putInt("nnue_nodes_v13",nodeBudget).apply();d.dismiss();configureAi();
       }).setNeutralButton("ライセンス",(d,k)->{try{String notice;try(InputStream input=getAssets().open("licenses/YaneuraOu-GPL-3.0.txt");ByteArrayOutputStream bytes=new ByteArrayOutputStream()){byte[] buffer=new byte[2048];int n;while((n=input.read(buffer))!=-1)bytes.write(buffer,0,n);notice=bytes.toString("UTF-8");try(InputStream mit=getAssets().open("licenses/TsuyouraOu11micro-MIT.txt")){ByteArrayOutputStream m=new ByteArrayOutputStream();byte[] b=new byte[2048];int z;while((z=mit.read(b))!=-1)m.write(b,0,z);notice+="\n\n"+m.toString("UTF-8");}}
-        new AlertDialog.Builder(MainActivity.this).setTitle("エンジン GPL v3 / 評価関数 MIT").setMessage("やねうら王 9.80git (2026-09-14)\nつようら王11micro (2026-10-14) / FV_SCALE 24\n同じ評価関数・1スレッド・最大750ms・Hash 16MiB\nエンジンはGPL v3、評価関数nn.bin/progress.binはMIT。対応ソース、全パラメーター、権利表記、ビルド手順はソースZIPに同梱。\nhttps://github.com/555734/shogidopa/pull/10\nhttps://github.com/yaneurao/YaneuraOu\nhttps://yaneurao.fanbox.cc/posts/12761272\n\n"+notice).setPositiveButton("閉じる",(x,j)->scheduleCpu()).setOnCancelListener(x->scheduleCpu()).show();
+        new AlertDialog.Builder(MainActivity.this).setTitle("エンジン GPL v3 / 評価関数 MIT").setMessage("やねうら王 9.80git (2026-09-14)\nつようら王11micro (2026-10-14) / FV_SCALE 24\n同じ評価関数・1スレッド・Hash 16MiB\n対局：最大750ms／検討：局面が変わるまで継続探索\nエンジンはGPL v3、評価関数nn.bin/progress.binはMIT。対応ソース、全パラメーター、権利表記、ビルド手順はソースZIPに同梱。\nhttps://github.com/555734/shogidopa/pull/10\nhttps://github.com/yaneurao/YaneuraOu\nhttps://yaneurao.fanbox.cc/posts/12761272\n\n"+notice).setPositiveButton("閉じる",(x,j)->scheduleCpu()).setOnCancelListener(x->scheduleCpu()).show();
         }catch(IOException e){aiError=e.toString();}}).setNegativeButton("閉じる",(d,k)->scheduleCpu()).setOnCancelListener(d->scheduleCpu()).show();
     }
     Bitmap load(String path){Bitmap b=images.get(path);if(b!=null)return b;
@@ -126,19 +127,25 @@ public final class MainActivity extends Activity {
   }
   @Override protected void onSizeChanged(int w,int h,int ow,int oh){layoutBoard(w,h);}
   void layoutBoard(int w,int h){
-   if(w<=0||h<=0)return;scale=w/400f;offsetX=0;H=h/scale;boardSize=400;boardHeight=boardSize*BOARD_HEIGHT_RATIO;boardX=0;boardY=80;
+   if(w<=0||h<=0)return;scale=w/400f;offsetX=0;H=h/scale;boardSize=400;boardHeight=boardSize*BOARD_HEIGHT_RATIO;boardX=0;boardY=mode==STUDY?46:80;
    studyContentHeight=Math.max(H,analysisY()+ANALYSIS_HEIGHT+8);studyScroll=Math.max(0,Math.min(studyScroll,maxStudyScroll()));
   }
   float homeMatchY(){return H/2-76;}float homeStudyY(){return H/2+24;}
   @Override protected void onDraw(Canvas c){super.onDraw(c);c.save();c.clipRect(0,0,getWidth(),getHeight());fitted(c,"backgrounds/background_red_gold_9x16.png",new RectF(0,0,getWidth(),getHeight()),true);c.translate(offsetX,mode==STUDY?-studyScroll*scale:0);c.scale(scale,scale);
-   if(mode==HOME){text(c,"紅将棋 3分",200,H/2-140,30,0xffffe3ae);tray(c,homeMatchY());text(c,"対局モード",200,homeMatchY()+33,21,Color.WHITE);text(c,"CPUと3分切れ負け",200,homeMatchY()+73,13,Color.WHITE);tray(c,homeStudyY());text(c,"検討モード",200,homeStudyY()+33,21,Color.WHITE);text(c,"先後自由に配置・AI候補手と評価値",200,homeStudyY()+73,13,Color.WHITE);c.restore();return;}
-   darkPanel(c,new RectF(4,0,396,32));text(c,"モード",45,22,11,0xfff5e4c8);
-   if(mode==MATCH){text(c,"やり直し",145,22,10.5f,Color.WHITE);text(c,"AI設定",253,22,10.5f,Color.WHITE);paint.setColor(0xff285681);c.drawRoundRect(320,4,391,29,3,3,paint);text(c,"投了",355,22,11,Color.WHITE);}
-   else{text(c,"初期配置",200,22,11,Color.WHITE);text(c,"一手戻す",345,22,11,Color.WHITE);}
+   if(mode==HOME){text(c,"紅将棋 3分",200,H/2-140,30,0xffffe3ae);tray(c,homeMatchY());text(c,"対局モード",200,homeMatchY()+33,21,Color.WHITE);text(c,"CPUと3分切れ負け",200,homeMatchY()+73,13,Color.WHITE);tray(c,homeStudyY());text(c,"検討モード",200,homeStudyY()+33,21,Color.WHITE);text(c,"先後自由に配置・AIが継続解析",200,homeStudyY()+73,13,Color.WHITE);c.restore();return;}
+   if(mode==MATCH){darkPanel(c,new RectF(4,0,396,32));text(c,"モード",45,22,11,0xfff5e4c8);text(c,"やり直し",145,22,10.5f,Color.WHITE);text(c,"AI設定",253,22,10.5f,Color.WHITE);paint.setColor(0xff285681);c.drawRoundRect(320,4,391,29,3,3,paint);text(c,"投了",355,22,11,Color.WHITE);}
    hand(c,-1,topHandY());board(c);if(lastMove!=null)fitted(c,"ui/highlight_move_target_pink.png",cell(lastMove.row,lastMove.col),false);if(selectedR>=0)fitted(c,"ui/highlight_selected_gold.png",cell(selectedR,selectedC),false);Set<Integer> shown=new HashSet<>();for(ShogiGame.Move m:highlights)if(shown.add(m.row*9+m.col))fitted(c,"ui/highlight_move_target_pink.png",cell(m.row,m.col),false);for(int r=0;r<9;r++)for(int col=0;col<9;col++)if(game.board[r][col]!=0)boardPiece(c,game.board[r][col],cell(r,col));hand(c,1,bottomHandY());
    if(mode==MATCH){String status=game.winner==2?game.result:game.winner!=0?(game.winner==1?"勝利":"敗北")+"・"+game.result:!ai.ready?(aiError==null?"AI読み込み中…":"AIエラー・AI設定から再試行"):!started?"タップして対局開始":game.turn==1?(game.checked(1)?"王手です・あなたの手番":"あなたの手番"):"CPUの手番";text(c,status,200,bottomHandY()+64,12,Color.WHITE);if(!started){paint.setColor(0xe0300909);c.drawRoundRect(75,H/2-35,325,H/2+35,12,12,paint);text(c,ai.ready?"対局開始":"AI読み込み中…",200,H/2+7,25,0xffffdd8b);}}else analysisPanel(c);c.restore();
   }
   float analysisY(){return boardY+boardHeight+50;}
+  RectF graphRect(){float y=analysisY();return new RectF(43,y+159,386,y+220);}
+  int graphSpan(){return Math.max(10,evalHistory.points.size()-1);}
+  float graphPointX(int index){RectF r=graphRect();return r.left+r.width()*index/graphSpan();}
+  int graphIndexAt(float x){RectF r=graphRect();return Math.max(0,Math.min(evalHistory.points.size()-1,Math.round((x-r.left)/r.width()*graphSpan())));}
+  void jumpStudy(int index){
+   if(mode!=STUDY||index==evalHistory.cursor||!study.seek(evalHistory.keys(),index))return;
+   cancelCpu();evalHistory.seek(index);lastMove=null;clearSelection();setAnalysisSide(evalHistory.side());save();
+  }
   void leftText(Canvas c,String s,float x,float y,float size,int color){text(c,"",x,y,size,color);paint.setTextAlign(Paint.Align.LEFT);c.drawText(s,x,y,paint);}
   float maxStudyScroll(){return mode==STUDY?Math.max(0,studyContentHeight-H):0;}
   void scrollStudy(float amount){studyScroll=Math.max(0,Math.min(maxStudyScroll(),studyScroll+amount));awakenScrollBars();invalidate();}
@@ -155,7 +162,7 @@ public final class MainActivity extends Activity {
     paint.setShader(new LinearGradient(bar.left,0,bar.right,0,0xffdb3a35,0xffa51d29,Shader.TileMode.CLAMP));c.drawRect(middle,bar.top,bar.right,bar.bottom,paint);paint.setShader(null);c.restore();
     paint.setColor(Color.WHITE);paint.setStrokeWidth(1.3f);c.drawLine(middle,bar.top-2,middle,bar.bottom+2,paint);
    }
-   text(c,displayScore==null?(analyzing?"形勢 解析中…":"形勢の目安 ―"):"形勢の目安",200,y+51,8.5f,0xffc9c4bc);
+   text(c,displayScore==null?(analyzing?"形勢 解析中…":"形勢の目安 ―"):analysisResult==null?"形勢の目安":"形勢の目安  ·  探索中 深さ "+analysisResult.depth+" / "+String.format(Locale.US,"%,d",analysisResult.nodes)+"ノード",200,y+51,8.5f,0xffc9c4bc);
    paint.reset();paint.setColor(0xff5a4c3d);paint.setStrokeWidth(.5f);c.drawLine(13,y+57,387,y+57,paint);
    leftText(c,"候補手 / 評価値は先手基準",13,y+73,10,0xffdfd8cc);text(c,"解析："+(analysisSide==1?"先手":"後手")+" ▾",324,y+73,10,Color.WHITE);
    if(analysisResult==null){text(c,analysisStatus,200,y+96,11,Color.WHITE);text(c,aiError!=null?"タップで原因の詳細と再試行":"成りは移動時に選択・長押しで変更",200,y+121,9,0xffc9c4bc);}
@@ -165,14 +172,14 @@ public final class MainActivity extends Activity {
    evaluationGraph(c,y);
   }
   void evaluationGraph(Canvas c,float y){
-   leftText(c,"評価値の推移（先手基準）",13,y+150,10,0xffdfd8cc);text(c,"編集 "+evalHistory.currentEdit(),353,y+150,9,Color.WHITE);text(c,"破線＝上下限",247,y+150,7,0xffbfbab3);
-   RectF chart=new RectF(43,y+159,386,y+220);paint.reset();paint.setAntiAlias(true);paint.setColor(0xff172332);c.drawRect(chart,paint);
+   leftText(c,"評価値の推移（先手基準）",13,y+150,10,0xffdfd8cc);text(c,evalHistory.currentEdit()+"手目",353,y+150,9,Color.WHITE);text(c,"タップで局面移動",247,y+150,7,0xffbfbab3);
+   RectF chart=graphRect();paint.reset();paint.setAntiAlias(true);paint.setColor(0xff172332);c.drawRect(chart,paint);
    paint.setStrokeWidth(.5f);for(int i=0;i<=4;i++){float py=chart.top+chart.height()*i/4;paint.setColor(i==2?0xffa9b3bd:0xff3d4855);if(i==2)paint.setPathEffect(new DashPathEffect(new float[]{2,2},0));c.drawLine(chart.left,py,chart.right,py,paint);paint.setPathEffect(null);}
    for(int i=0;i<=4;i++){float px=chart.left+chart.width()*i/4;paint.setColor(0xff415569);c.drawLine(px,chart.top,px,chart.bottom,paint);}
    text(c,"+2000",24,chart.top+4,7,0xffe6d5b8);text(c,"0",30,chart.centerY()+3,7,0xffe6d5b8);text(c,"−2000",24,chart.bottom,7,0xffe6d5b8);
-   int first=Math.max(0,evalHistory.cursor-60),span=Math.max(10,evalHistory.cursor-first);float previousX=0,previousY=0;EvaluationHistory.Score previous=null;boolean any=false;
+   int first=0,span=graphSpan();float previousX=0,previousY=0;EvaluationHistory.Score previous=null;boolean any=false;
    c.save();c.clipRect(chart.left-2,chart.top-2,chart.right+2,chart.bottom+2);
-   for(int i=first;i<=evalHistory.cursor&&i<evalHistory.points.size();i++){EvaluationHistory.Score score=evalHistory.points.get(i).score;
+   for(int i=first;i<evalHistory.points.size();i++){EvaluationHistory.Score score=evalHistory.points.get(i).score;
     if(score==null){previous=null;continue;}any=true;float px=chart.left+(i-first)*chart.width()/span,py=chart.centerY()-score.graphValue()*chart.height()/4000f;
     paint.reset();paint.setAntiAlias(true);paint.setColor(0xff65c9ff);paint.setStrokeWidth(1.8f);
     if(previous!=null){if(score.bound!=0||previous.bound!=0)paint.setPathEffect(new DashPathEffect(new float[]{3,2},0));c.drawLine(previousX,previousY,px,py,paint);paint.setPathEffect(null);}
@@ -180,7 +187,7 @@ public final class MainActivity extends Activity {
    }
    float cursorX=chart.left+(evalHistory.cursor-first)*chart.width()/span;paint.reset();paint.setColor(0xff81d8ed);paint.setStrokeWidth(1);c.drawLine(cursorX,chart.top,cursorX,chart.bottom,paint);c.restore();
    if(!any)text(c,"解析結果がここに記録されます",chart.centerX(),chart.centerY()+3,9,0xffcbd5df);
-   leftText(c,"編集 "+(evalHistory.firstEdit+first),chart.left,y+233,8,0xfff2d4a8);text(c,"編集 "+String.format(Locale.US,"%.1f",evalHistory.firstEdit+first+span/2.0),chart.centerX(),y+233,8,0xfff2d4a8);text(c,"編集 "+(evalHistory.firstEdit+first+span),359,y+233,8,0xfff2d4a8);
+   leftText(c,(evalHistory.firstEdit+first)+"手",chart.left,y+233,8,0xfff2d4a8);int middle=span/2;text(c,(evalHistory.firstEdit+first+middle)+"手",chart.left+chart.width()*middle/span,y+233,8,0xfff2d4a8);text(c,(evalHistory.firstEdit+first+span)+"手",372,y+233,8,0xfff2d4a8);
   }
   void placementSound(){if(resumed&&mode!=HOME)sounds.play();}
   void clearSelection(){selectedR=selectedC=-1;selectedHand=0;highlights=Collections.emptyList();invalidate();}
@@ -218,8 +225,8 @@ public final class MainActivity extends Activity {
   boolean tapHand(float x,float y,int side,float top){if(y<top||y>=top+44)return false;int count=handCount(side),i=0;for(int n=1;n<=handLimit();n++)if(game.hands[side==1?0:1][n]>0){if(Math.abs(x-handX(i,count))<handStep(count)/2){selectedR=selectedC=-1;selectedHand=n;selectedSide=side;if(mode==MATCH)select();else invalidate();return true;}i++;}return false;}
   @Override public boolean onTouchEvent(MotionEvent e){if(e.getAction()==MotionEvent.ACTION_DOWN){longPressed=false;dragged=false;}gestures.onTouchEvent(e);if(e.getAction()!=MotionEvent.ACTION_UP)return true;performClick();if(dialogOpen||longPressed||dragged)return true;float x=(e.getX()-offsetX)/scale,y=e.getY()/scale+studyScroll;
    if(mode==HOME){if(x>=12&&x<=388){if(y>=homeMatchY()&&y<=homeMatchY()+52)enterMode(MATCH);else if(y>=homeStudyY()&&y<=homeStudyY()+52)enterMode(STUDY);}return true;}
-   if(mode==MATCH)clock.settle(SystemClock.elapsedRealtime());if(y<32){if(x<90){enterMode(HOME);return true;}if(mode==STUDY){if(x<280)new AlertDialog.Builder(MainActivity.this).setMessage("初期配置に戻しますか？").setNegativeButton("キャンセル",null).setPositiveButton("戻す",(d,k)->restart()).show();else{if(study.undo())evalHistory.undo(EvaluationHistory.key(game));lastMove=null;clearSelection();save();if(mode==STUDY)refreshAnalysis();}return true;}if(x<200){new AlertDialog.Builder(MainActivity.this).setMessage("対局をやり直しますか？").setNegativeButton("キャンセル",null).setPositiveButton("やり直す",(d,k)->restart()).show();}else if(x<300)aiSettings();else if(started&&game.winner==0)new AlertDialog.Builder(MainActivity.this).setMessage("投了しますか？").setNegativeButton("戻る",null).setPositiveButton("投了",(d,k)->{clock.settle(SystemClock.elapsedRealtime());game.resign(1);clearSelection();save();}).show();return true;}
-   if(mode==STUDY&&y>=analysisY()&&y<=analysisY()+ANALYSIS_HEIGHT){if(y>=analysisY()+57&&y<=analysisY()+78&&x>=265)setAnalysisSide(-analysisSide);else if(analysisResult==null&&!analyzing){if(aiError!=null)showAnalysisError();else refreshAnalysis();}return true;}
+   if(mode==MATCH)clock.settle(SystemClock.elapsedRealtime());if(mode==MATCH&&y<32){if(x<90){enterMode(HOME);return true;}if(x<200){new AlertDialog.Builder(MainActivity.this).setMessage("対局をやり直しますか？").setNegativeButton("キャンセル",null).setPositiveButton("やり直す",(d,k)->restart()).show();}else if(x<300)aiSettings();else if(started&&game.winner==0)new AlertDialog.Builder(MainActivity.this).setMessage("投了しますか？").setNegativeButton("戻る",null).setPositiveButton("投了",(d,k)->{clock.settle(SystemClock.elapsedRealtime());game.resign(1);clearSelection();save();}).show();return true;}
+   if(mode==STUDY&&y>=analysisY()&&y<=analysisY()+ANALYSIS_HEIGHT){if(graphRect().contains(x,y)){jumpStudy(graphIndexAt(x));return true;}if(y>=analysisY()+57&&y<=analysisY()+78&&x>=265)setAnalysisSide(-analysisSide);else if(analysisResult==null&&!analyzing){if(aiError!=null)showAnalysisError();else refreshAnalysis();}return true;}
    if(mode==MATCH){if(!started){if(ai.ready){started=true;clock.resume(SystemClock.elapsedRealtime(),true);save();invalidate();}return true;}if(game.winner!=0||game.turn!=1||thinking)return true;}
    for(int r=0;r<9;r++)for(int col=0;col<9;col++)if(cell(r,col).contains(x,y)){if(mode==STUDY)chooseStudy(r,col);else choose(r,col);return true;}
    if(tapHand(x,y,1,bottomHandY())||mode==STUDY&&tapHand(x,y,-1,topHandY()))return true;clearSelection();return true;

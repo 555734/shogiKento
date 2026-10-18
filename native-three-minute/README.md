@@ -1,3 +1,19 @@
+# Shogi Kento v1.9.0
+
+開発リポジトリ: https://github.com/555734/shogiKento
+
+検討画面から「モード」「初期配置」「一手戻す」を除去し、空いた上部を詰めています。画面を戻るにはAndroidの戻る操作を使用します。対局画面の操作は維持します。
+
+評価グラフをタップすると最も近い記録手数の盤面へ移動します。盤上の駒、成り状態、両者の持ち駒、解析側を復元します。先の履歴は残るため前後に移動できます。過去の局面で新しい手を指すと、その先の履歴を置き換えます。自由配置モードのため、記録の1手は自由編集の1操作です。最大300操作前まで保持します。
+
+検討は `go infinite` による同じ局面の継続解析です。ノード・750msで打ち切らず、同じ深さで揃ったMultiPV最大3候補を最大4Hzで更新します。結果が変われば候補手・先手基準評価値・形勢の割合・現在のグラフ点へ反映し、探索の深さとノード数も表示します。数値や候補手が必ず変わるという意味ではありません。局面変更、解析側変更、履歴移動、画面終了、バックグラウンドでは停止し、古い結果を破棄します。復帰時は表示中の局面を再解析します。違法配置や詰みでは従来通り理由・終局状態を表示します。
+
+画像・背景・対局時計・成り選択・着手音・やねうら王＋つようら王11microはv1.8.4と同じです。検討は1スレッドで探索を続けます。対局CPUの3,000/10,000/50,000ノード設定と最大750msは維持します。
+
+## Build and tests
+
+GitHub Actions: `.github/workflows/native-shogi.yml` at repository root. Java 17 / Gradle 8.9 / Android SDK 35. CI tests rule/editor/history/protocol/analysis behavior, independent python-shogi legality, exact APK ARM64 normal/scalar engines, emulator installation and UI operations. The native cache is local to this repository; the previous private repository is not required. Full pinned GPL engine source, MIT evaluation parameters and licenses are prepared and included in the complete source ZIP. Corresponding engine source and cached binaries are linked by the cache manifest's recipe hash.
+
 # Native shogi v1.8.4 — reference layout
 
 This version adopts the supplied reference's broad golden pieces, thin amber board frame, compact player/clock/hand strips, dark analysis panel, blue/red percentage display and cyan score-history line. The existing red/gold Japanese background is retained byte-for-byte. Promotion selection remains available for both match and study modes.
