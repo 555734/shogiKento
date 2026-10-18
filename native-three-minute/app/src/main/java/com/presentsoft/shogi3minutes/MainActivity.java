@@ -152,7 +152,7 @@ public final class MainActivity extends Activity {
   }
   void importRecord(KifRecord record){
    StudySession replacement=new StudySession();if(!replacement.seek(record.positions,record.positions.size()-1))return;
-   pauseMode();save();study=replacement;evalHistory=new EvaluationHistory();evalHistory.load(record);mode=STUDY;game=study.game;analysisSide=evalHistory.side();game.turn=analysisSide;game.movesPlayed=evalHistory.currentEdit();started=true;clock=new MatchClock(game);lastMove=null;studyScroll=0;clearSelection();layoutBoard(getWidth(),getHeight());setContentDescription("検討モード・読み込んだ棋譜");save();if(resumed)resumeMode();
+   pauseMode();save();study=replacement;evalHistory=new EvaluationHistory();evalHistory.load(record);mode=STUDY;game=study.game;analysisSide=evalHistory.side();getPreferences(MODE_PRIVATE).edit().putInt("study_analysis_side",analysisSide).apply();game.turn=analysisSide;game.movesPlayed=evalHistory.currentEdit();started=true;clock=new MatchClock(game);lastMove=null;studyScroll=0;clearSelection();layoutBoard(getWidth(),getHeight());setContentDescription("検討モード・読み込んだ棋譜");save();if(resumed)resumeMode();
   }
   void studyMoves(){
    String[] labels=new String[evalHistory.points.size()];for(int i=0;i<labels.length;i++){EvaluationHistory.Point p=evalHistory.points.get(i);labels[i]=p.label==null?(evalHistory.firstEdit+i)+"手目":p.label;}
