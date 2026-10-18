@@ -1,0 +1,22 @@
+{
+  "generator": "built-in image_gen",
+  "reference": "user-provided 6401.jpg (style reference)",
+  "assets": [
+    {
+      "file": "home_background_v112.webp",
+      "width": 941,
+      "height": 1672,
+      "sha256": "5b9f2ebffa11cab244e373b7f40c9f76f1ba819aaa86b642f355f0e8447cb446",
+      "bytes": 218064,
+      "alpha": false
+    },
+    {
+      "file": "home_title_v112.webp",
+      "width": 2032,
+      "height": 774,
+      "sha256": "1586ea63ec3a35bd340e6a0d1507953e914695906882b91bbf83eec607f43c53",
+      "bytes": 430794,
+      "alpha": true
+    }
+  ]
+}

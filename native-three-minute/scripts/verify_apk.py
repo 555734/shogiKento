@@ -21,6 +21,8 @@ with zipfile.ZipFile(apk) as z:
   art=json.loads(z.read('assets/generated/'+stem+'.json'))
   assert art['file']==stem+'.webp' and art['width']>0 and art['height']>0
   assert art['lossless'] is True and hashlib.sha256(z.read('assets/generated/'+art['file'])).hexdigest()==art['sha256'],'lacquer design asset changed: '+stem
+ for art in json.loads(z.read('assets/generated/home_v112.json'))['assets']:
+  assert hashlib.sha256(z.read('assets/generated/'+art['file'])).hexdigest()==art['sha256'],'home artwork mismatch'
  assert not any(n.lower().endswith(('.html','.htm','.js','.jsx','.tsx')) for n in names)
  for n in names:
   if n.endswith('.dex'):assert b'Landroid/webkit/WebView;' not in z.read(n),'WebView dependency'
