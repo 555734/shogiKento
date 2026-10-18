@@ -1,0 +1,79 @@
+name: iOS native build and simulator verification
+on:
+  workflow_dispatch:
+  pull_request:
+    paths: ['ios/**', '.github/workflows/ios.yml']
+permissions:
+  contents: write
+jobs:
+  ios:
+    runs-on: macos-15
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare pinned engine, model, artwork and independent Quest fixture
+        run: |
+          set -euo pipefail
+          python -m pip install py7zr==1.1.4 python-shogi==1.1.1 Pillow==11.3.0
+          python native-three-minute/scripts/prepare_yaneura.py
+          python ios/scripts/prepare.py
+          if ! command -v xcodegen >/dev/null; then brew install xcodegen; fi
+          cd ios
+          xcodegen generate
+          mkdir -p outputs
+          xcodebuild -version | tee outputs/xcode-version.txt
+      - name: Build embedded engine for iPhone and Simulator
+        run: |
+          set -euo pipefail
+          python ios/scripts/build_engine.py --sdk iphoneos 2>&1 | tee ios/outputs/engine-iphoneos.txt
+          python ios/scripts/build_engine.py --sdk iphonesimulator 2>&1 | tee ios/outputs/engine-simulator.txt
+      - name: Archive unsigned iPhone application
+        working-directory: ios
+        run: |
+          set -euo pipefail
+          xcodebuild -project BeniShogi.xcodeproj -scheme BeniShogi -configuration Release -destination 'generic/platform=iOS' -archivePath build/BeniShogi.xcarchive CODE_SIGNING_ALLOWED=NO archive 2>&1 | tee outputs/archive-build.txt
+      - name: Install and test real iOS application
+        working-directory: ios
+        timeout-minutes: 20
+        run: |
+          set -euo pipefail
+          xcrun simctl list devices available -j > outputs/simulators.json
+          UDID=$(python -c 'import json; d=json.load(open("outputs/simulators.json")); print(next(v["udid"] for a in d["devices"].values() for v in a if v["name"].startswith("iPhone")))')
+          echo "$UDID" > outputs/simulator-udid.txt
+          xcrun simctl boot "$UDID" || true
+          xcrun simctl bootstatus "$UDID" -b
+          xcrun simctl pbcopy "$UDID" < ../native-three-minute/tests/fixtures/shogi_quest_79.kif
+          xcodebuild -project BeniShogi.xcodeproj -scheme BeniShogi -configuration Debug -destination "platform=iOS Simulator,id=$UDID" -derivedDataPath build/DerivedData -resultBundlePath outputs/Tests.xcresult -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- test 2>&1 | tee outputs/simulator-tests.txt
+          xcrun simctl launch "$UDID" com.presentsoft.shogi3minutes || true
+          sleep 3
+          xcrun simctl io "$UDID" screenshot outputs/home.png
+      - name: Collect test attachments and reproducible build artifacts
+        if: always()
+        run: |
+          mkdir -p ios/outputs
+          if test -d ios/outputs/Tests.xcresult; then xcrun xcresulttool export attachments --path ios/outputs/Tests.xcresult --output-path ios/outputs/screenshots || true; fi
+          python ios/scripts/package.py
+      - name: Upload build and test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: BeniShogi-iOS-${{ github.run_id }}
+          path: ios/outputs/
+          retention-days: 14
+      - name: Save downloads to GitHub build branch
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin main
+          git checkout -b "build/ios-$GITHUB_RUN_ID" FETCH_HEAD
+          git add -f ios/outputs/*.zip ios/outputs/*.ipa ios/outputs/*.json ios/outputs/*.txt ios/outputs/*.png ios/outputs/README.md
+          git commit -m "iOS build $GITHUB_RUN_ID outputs"
+          git push origin HEAD

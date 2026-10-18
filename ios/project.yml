@@ -1,0 +1,63 @@
+name: BeniShogi
+options:
+  bundleIdPrefix: com.presentsoft
+  deploymentTarget:
+    iOS: '16.0'
+settings:
+  base:
+    SWIFT_VERSION: '5.0'
+    GENERATE_INFOPLIST_FILE: YES
+    SWIFT_STRICT_CONCURRENCY: minimal
+    IPHONEOS_DEPLOYMENT_TARGET: '16.0'
+    CODE_SIGNING_ALLOWED: NO
+    CURRENT_PROJECT_VERSION: '19'
+    MARKETING_VERSION: '1.12.0'
+targets:
+  BeniShogi:
+    type: application
+    platform: iOS
+    sources:
+      - path: Sources
+      - path: Assets.xcassets
+      - path: Resources
+        type: folder
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.presentsoft.shogi3minutes
+        SWIFT_OBJC_BRIDGING_HEADER: Engine/Bridging.h
+        HEADER_SEARCH_PATHS: '$(SRCROOT)/Engine'
+        OTHER_LDFLAGS: '$(inherited) -Wl,-force_load,$(SRCROOT)/build/engine/$(PLATFORM_NAME)/libBKEngine.a -lc++'
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        TARGETED_DEVICE_FAMILY: '1,2'
+    info:
+      path: build/Info.plist
+      properties:
+        CFBundleDisplayName: 紅将棋 3分
+        CFBundleShortVersionString: '1.12.0'
+        CFBundleVersion: '19'
+        UILaunchScreen: {}
+        UIRequiresFullScreen: true
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        ITSAppUsesNonExemptEncryption: false
+  BeniShogiTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests
+    dependencies:
+      - target: BeniShogi
+  BeniShogiUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: UITests
+    dependencies:
+      - target: BeniShogi
+schemes:
+  BeniShogi:
+    build:
+      targets:
+        BeniShogi: all
+    test:
+      targets: [BeniShogiTests, BeniShogiUITests]
+      gatherCoverageData: true
