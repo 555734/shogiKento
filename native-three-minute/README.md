@@ -14,7 +14,11 @@
 
 GitHub Actions: `.github/workflows/native-shogi.yml` at repository root. Java 17 / Gradle 8.9 / Android SDK 35. CI tests rule/editor/history/protocol/analysis behavior, independent python-shogi legality, exact APK ARM64 normal/scalar engines, emulator installation and UI operations. The native cache is local to this repository; the previous private repository is not required. Full pinned GPL engine source, MIT evaluation parameters and licenses are prepared and included in the complete source ZIP. Corresponding engine source and cached binaries are linked by the cache manifest's recipe hash.
 
-# Native shogi v1.8.4 — reference layout
+# Native shogi v1.9.1 — vermilion lacquer
+
+採用されたデザイン案③「朱漆の艶」を反映。赤い漆の背景と、山水画を除いた温かい木目の盤へ変更しました。金色の駒、全幅の盤、暗い持ち駒・解析パネルは維持。v1.9.0の連続解析・グラフからの局面移動も引き継ぎます。versionCode 15。新しい背景・盤は独立した生成素材として追加し、元素材は保持します。採用案、生成プロンプト、可逆WebPのハッシュは `GENERATED_ASSETS.md` と `design/generated/` に記録。
+
+# Native shogi v1.8.4 — reference layout (historical)
 
 This version adopts the supplied reference's broad golden pieces, thin amber board frame, compact player/clock/hand strips, dark analysis panel, blue/red percentage display and cyan score-history line. The existing red/gold Japanese background is retained byte-for-byte. Promotion selection remains available for both match and study modes.
 

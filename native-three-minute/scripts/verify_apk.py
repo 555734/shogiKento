@@ -15,6 +15,10 @@ with zipfile.ZipFile(apk) as z:
  assert [t['glyph_color'] for t in current['tiles']]==['black']*9+['red']*6,'promoted glyphs must be red'
  wood=json.loads(z.read('assets/generated/board_v184.json'))
  assert hashlib.sha256(z.read('assets/generated/board_v184.webp')).hexdigest()==wood['sha256'] and wood['lossless'] is True,'generated board changed'
+ for stem in ['background_red_lacquer_v191','board_v191']:
+  art=json.loads(z.read('assets/generated/'+stem+'.json'))
+  assert art['file']==stem+'.webp' and art['width']>0 and art['height']>0
+  assert art['lossless'] is True and hashlib.sha256(z.read('assets/generated/'+art['file'])).hexdigest()==art['sha256'],'lacquer design asset changed: '+stem
  assert not any(n.lower().endswith(('.html','.htm','.js','.jsx','.tsx')) for n in names)
  for n in names:
   if n.endswith('.dex'):assert b'Landroid/webkit/WebView;' not in z.read(n),'WebView dependency'
@@ -35,7 +39,7 @@ with zipfile.ZipFile(apk) as z:
   data=z.read('lib/'+abi+'/libyaneuraou_compat.so');assert data[:4]==b'\x7fELF';assert int.from_bytes(data[18:20],'little')==(183 if abi=='arm64-v8a' else 62)
   data=z.read('lib/'+abi+'/libyaneuraou.so');assert data[:4]==b'\x7fELF';assert int.from_bytes(data[18:20],'little')==(183 if abi=='arm64-v8a' else 62)
  assert 'AndroidManifest.xml'  in names and 'classes.dex' in names
- result={'apk':apk.name,'bytes':apk.stat().st_size,'sha256':hashlib.sha256(apk.read_bytes()).hexdigest(),'original_pngs':len(manifest),'all_original_hashes_match':True,'legacy_generated_atlas_retained':True,'reference_piece_atlas_verified':True,'reference_board_verified':True,'no_html_or_webview':True,'micro_model_progress_and_licenses_verified':True,'legacy_model_absent':True,'original_placement_audio_verified':True,'model_parameters_bytes':4867714,'previous_apk_bytes':47017269,'apk_reduction_percent':(1-apk.stat().st_size/47017269)*100,'native_abis':['arm64-v8a','x86_64'],'apk_entries':names}
+ result={'apk':apk.name,'bytes':apk.stat().st_size,'sha256':hashlib.sha256(apk.read_bytes()).hexdigest(),'original_pngs':len(manifest),'all_original_hashes_match':True,'legacy_generated_atlas_retained':True,'reference_piece_atlas_verified':True,'reference_board_verified':True,'vermilion_lacquer_artwork_verified':True,'no_html_or_webview':True,'micro_model_progress_and_licenses_verified':True,'legacy_model_absent':True,'original_placement_audio_verified':True,'model_parameters_bytes':4867714,'previous_apk_bytes':47017269,'apk_reduction_percent':(1-apk.stat().st_size/47017269)*100,'native_abis':['arm64-v8a','x86_64'],'apk_entries':names}
  pathlib.Path('outputs/verification.json').write_text(json.dumps(result,ensure_ascii=False,indent=2));print(json.dumps({k:v for k,v in result.items() if k!='apk_entries'}))
 
 
