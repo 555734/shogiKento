@@ -33,11 +33,11 @@ jobs:
           set -euo pipefail
           python ios/scripts/build_engine.py --sdk iphoneos 2>&1 | tee ios/outputs/engine-iphoneos.txt
           python ios/scripts/build_engine.py --sdk iphonesimulator 2>&1 | tee ios/outputs/engine-simulator.txt
-      - name: Archive unsigned iPhone application
+      - name: Build unsigned iPhone application
         working-directory: ios
         run: |
           set -euo pipefail
-          xcodebuild -project BeniShogi.xcodeproj -scheme BeniShogi -configuration Release -destination 'generic/platform=iOS' -archivePath "$PWD/build/BeniShogi.xcarchive" -resultBundlePath "$PWD/outputs/Archive.xcresult" CODE_SIGNING_ALLOWED=NO archive 2>&1 | tee outputs/archive-build.txt
+          xcodebuild -project BeniShogi.xcodeproj -scheme BeniShogi -configuration Release -destination 'generic/platform=iOS' -derivedDataPath "$PWD/build/DeviceData" -resultBundlePath "$PWD/outputs/DeviceBuild.xcresult" CODE_SIGNING_ALLOWED=NO build 2>&1 | tee outputs/device-build.txt
       - name: Install and test real iOS application
         working-directory: ios
         timeout-minutes: 20

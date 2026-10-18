@@ -18,7 +18,7 @@ iOS版はホームの「棋譜を貼り付け」→OS標準PasteButton→「棋�
 
 ## ビルド
 
-初回追加はドラフトPRのチェックとして`.github/workflows/ios.yml`を実行します。ワークフローが既定ブランチへ入った後はworkflow_dispatchでも実行できます。macOS / Xcode / Python 3.12 / XcodeGenを使用し、Appleの署名情報を要求せずに端末向けarm64のRelease ArchiveとSimulator版を作ります。
+初回追加はドラフトPRのチェックとして`.github/workflows/ios.yml`を実行します。ワークフローが既定ブランチへ入った後はworkflow_dispatchでも実行できます。macOS / Xcode / Python 3.12 / XcodeGenを使用し、Appleの署名情報を要求せずに端末向けarm64のReleaseビルドとSimulator版を作ります。
 
 ```sh
 python -m pip install py7zr==1.1.4 python-shogi==1.1.1 Pillow==11.3.0
@@ -28,14 +28,14 @@ python ios/scripts/build_engine.py --sdk iphoneos
 python ios/scripts/build_engine.py --sdk iphonesimulator
 cd ios
 xcodegen generate
-xcodebuild -project BeniShogi.xcodeproj -scheme BeniShogi -configuration Release -destination 'generic/platform=iOS' -archivePath build/BeniShogi.xcarchive CODE_SIGNING_ALLOWED=NO archive
+xcodebuild -project BeniShogi.xcodeproj -scheme BeniShogi -configuration Release -destination 'generic/platform=iOS' -derivedDataPath build/DeviceData CODE_SIGNING_ALLOWED=NO build
 ```
 
 ActionsはSimulatorで実NNUE・合法手・KIF全80局面・保存・時計を単体テストし、ホーム・設定保持・実CPU応手・標準貼り付け・最終詰み・解析・手順移動・再起動後の一覧をUIテストします。実行成否は各runで確認してください。初回追加時のコードだけで全項目が検証済みとは扱いません。
 
 ## 成果物と署名の境界
 
-- `BeniShogi-unsigned.ipa` / `BeniShogi-unsigned.xcarchive.zip`：端末向けarm64のビルド。Appleの配布証明書・プロビジョニングによる署名はありません。iPhoneへそのままインストールできる配布IPA・TestFlight公開ではありません。
+- `BeniShogi-unsigned.ipa`：端末向けarm64のビルド。Appleの配布証明書・プロビジョニングによる署名はありません。iPhoneへそのままインストールできる配布IPA・TestFlight公開ではありません。
 - `BeniShogi-simulator.app.zip`：Simulator専用。実機にはインストールできません。
 - `BeniShogi-complete-source.zip`：対応するGPLエンジンの固定ソース、MITモデル・ライセンス、iOSソースとブリッジ、素材・ビルド手順。
 - Actions Artifact：上記に加えてxcresult・テスト添付画像・ビルドログ。永続ダウンロードは`build/ios-<run ID>`ブランチの`ios/outputs`。

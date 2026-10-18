@@ -1,9 +1,9 @@
 """Package device build honestly as unsigned; simulator ZIP is a separate product."""
 import hashlib,json,os,pathlib,plistlib,shutil,subprocess,zipfile
 ROOT=pathlib.Path(__file__).resolve().parents[1];OUT=ROOT/'outputs';OUT.mkdir(exist_ok=True)
-app=ROOT/'build/BeniShogi.xcarchive/Products/Applications/BeniShogi.app'
+app=ROOT/'build/DeviceData/Build/Products/Release-iphoneos/BeniShogi.app'
 report={'source_sha':os.environ.get('GITHUB_SHA'),'run_id':os.environ.get('GITHUB_RUN_ID'),'device_build':False,'apple_distribution_signed':False,'simulator_tests_passed':False}
-if app.is_dir() and (ROOT/'build/BeniShogi.xcarchive/Info.plist').is_file():
+if app.is_dir() and '** BUILD SUCCEEDED **' in (OUT/'device-build.txt').read_text(errors='replace'):
  info=plistlib.loads((app/'Info.plist').read_bytes());assert info['CFBundleIdentifier']=='com.presentsoft.shogi3minutes';assert info['CFBundleExecutable']=='BeniShogi'
  executable=app/'BeniShogi';architecture=subprocess.check_output(['xcrun','lipo','-archs',str(executable)],text=True).strip();assert architecture=='arm64',architecture
  signed=subprocess.run(['codesign','--display',str(app)],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0
@@ -11,7 +11,6 @@ if app.is_dir() and (ROOT/'build/BeniShogi.xcarchive/Info.plist').is_file():
  assert not (app/'embedded.mobileprovision').exists(),'Unexpected provisioning profile in unsigned build'
  payload=ROOT/'build/Unsigned/Payload';payload.mkdir(parents=True,exist_ok=True);shutil.copytree(app,payload/app.name,dirs_exist_ok=True)
  subprocess.run(['ditto','-c','-k','--keepParent','Payload',str(OUT/'BeniShogi-unsigned.ipa')],cwd=payload.parent,check=True)
- subprocess.run(['ditto','-c','-k','--keepParent',str(ROOT/'build/BeniShogi.xcarchive'),str(OUT/'BeniShogi-unsigned.xcarchive.zip')],check=True)
  manifest=json.loads((app/'Resources/asset-manifest.json').read_text())
  for name,expected in manifest.items():assert hashlib.sha256((app/'Resources'/name).read_bytes()).hexdigest()==expected,name
  report.update(device_build=True,device_architecture=architecture,ad_hoc_code_signature=signed,bundled_asset_hashes_verified=len(manifest),ipa_sha256=hashlib.sha256((OUT/'BeniShogi-unsigned.ipa').read_bytes()).hexdigest())
@@ -34,7 +33,7 @@ with zipfile.ZipFile(OUT/'BeniShogi-complete-source.zip','w',zipfile.ZIP_DEFLATE
 (OUT/'build-info.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
 (OUT/'README.md').write_text('''# 紅将棋 iOS build
 
-`BeniShogi-unsigned.ipa` / `BeniShogi-unsigned.xcarchive.zip` は端末向けarm64ビルドです。Appleの配布証明書・プロビジョニングによる署名は含みません。そのままiPhoneへインストールする配布物やTestFlight公開ではありません。
+`BeniShogi-unsigned.ipa` は端末向けarm64ビルドです。Appleの配布証明書・プロビジョニングによる署名は含みません。そのままiPhoneへインストールする配布物やTestFlight公開ではありません。
 
 `BeniShogi-simulator.app.zip` はSimulator用です。実機へはインストールできません。
 
