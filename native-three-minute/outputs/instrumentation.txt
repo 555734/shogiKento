@@ -1,0 +1,1 @@
+FAIL: java.io.FileNotFoundException: /data/user/0/com.presentsoft.shogi3minutes/files/records/kif-4f71333acbe562c8725782332eb5b9740aeb21123777611b6b97743dc2c2a543.record: open failed: ENOENT (No such file or directory)
