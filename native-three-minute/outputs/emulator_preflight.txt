@@ -1,0 +1,4 @@
+Emulator preflight: selected Wait on observed cold-boot Pixel Launcher dialog.
+Emulator preflight: selected Wait on observed cold-boot Pixel Launcher dialog.
+Emulator preflight: selected Wait on observed cold-boot Pixel Launcher dialog.
+Emulator preflight complete; instrumentation screenshots require the app to own the active window.
