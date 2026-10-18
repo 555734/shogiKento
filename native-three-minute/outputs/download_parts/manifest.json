@@ -1,0 +1,392 @@
+[
+  {
+    "file": "Shogi_3min.apk",
+    "size": 24642097,
+    "sha256": "46a68210f2164fba22a281f094eb78b9a4c06bd7754e36067979e9a7df9c43be",
+    "parts": [
+      "Shogi_3min.apk.part000",
+      "Shogi_3min.apk.part001",
+      "Shogi_3min.apk.part002",
+      "Shogi_3min.apk.part003",
+      "Shogi_3min.apk.part004",
+      "Shogi_3min.apk.part005",
+      "Shogi_3min.apk.part006",
+      "Shogi_3min.apk.part007",
+      "Shogi_3min.apk.part008",
+      "Shogi_3min.apk.part009",
+      "Shogi_3min.apk.part010",
+      "Shogi_3min.apk.part011",
+      "Shogi_3min.apk.part012",
+      "Shogi_3min.apk.part013",
+      "Shogi_3min.apk.part014",
+      "Shogi_3min.apk.part015",
+      "Shogi_3min.apk.part016",
+      "Shogi_3min.apk.part017",
+      "Shogi_3min.apk.part018",
+      "Shogi_3min.apk.part019",
+      "Shogi_3min.apk.part020",
+      "Shogi_3min.apk.part021",
+      "Shogi_3min.apk.part022",
+      "Shogi_3min.apk.part023",
+      "Shogi_3min.apk.part024",
+      "Shogi_3min.apk.part025",
+      "Shogi_3min.apk.part026",
+      "Shogi_3min.apk.part027",
+      "Shogi_3min.apk.part028",
+      "Shogi_3min.apk.part029",
+      "Shogi_3min.apk.part030",
+      "Shogi_3min.apk.part031",
+      "Shogi_3min.apk.part032",
+      "Shogi_3min.apk.part033",
+      "Shogi_3min.apk.part034",
+      "Shogi_3min.apk.part035",
+      "Shogi_3min.apk.part036",
+      "Shogi_3min.apk.part037",
+      "Shogi_3min.apk.part038",
+      "Shogi_3min.apk.part039",
+      "Shogi_3min.apk.part040",
+      "Shogi_3min.apk.part041"
+    ]
+  },
+  {
+    "file": "Shogi_3min_complete_source.zip",
+    "size": 26351881,
+    "sha256": "ee947c9f7262c9e78e0ad030b09f0a0c01810d86491be07c060094b3fb3845e2",
+    "parts": [
+      "Shogi_3min_complete_source.zip.part000",
+      "Shogi_3min_complete_source.zip.part001",
+      "Shogi_3min_complete_source.zip.part002",
+      "Shogi_3min_complete_source.zip.part003",
+      "Shogi_3min_complete_source.zip.part004",
+      "Shogi_3min_complete_source.zip.part005",
+      "Shogi_3min_complete_source.zip.part006",
+      "Shogi_3min_complete_source.zip.part007",
+      "Shogi_3min_complete_source.zip.part008",
+      "Shogi_3min_complete_source.zip.part009",
+      "Shogi_3min_complete_source.zip.part010",
+      "Shogi_3min_complete_source.zip.part011",
+      "Shogi_3min_complete_source.zip.part012",
+      "Shogi_3min_complete_source.zip.part013",
+      "Shogi_3min_complete_source.zip.part014",
+      "Shogi_3min_complete_source.zip.part015",
+      "Shogi_3min_complete_source.zip.part016",
+      "Shogi_3min_complete_source.zip.part017",
+      "Shogi_3min_complete_source.zip.part018",
+      "Shogi_3min_complete_source.zip.part019",
+      "Shogi_3min_complete_source.zip.part020",
+      "Shogi_3min_complete_source.zip.part021",
+      "Shogi_3min_complete_source.zip.part022",
+      "Shogi_3min_complete_source.zip.part023",
+      "Shogi_3min_complete_source.zip.part024",
+      "Shogi_3min_complete_source.zip.part025",
+      "Shogi_3min_complete_source.zip.part026",
+      "Shogi_3min_complete_source.zip.part027",
+      "Shogi_3min_complete_source.zip.part028",
+      "Shogi_3min_complete_source.zip.part029",
+      "Shogi_3min_complete_source.zip.part030",
+      "Shogi_3min_complete_source.zip.part031",
+      "Shogi_3min_complete_source.zip.part032",
+      "Shogi_3min_complete_source.zip.part033",
+      "Shogi_3min_complete_source.zip.part034",
+      "Shogi_3min_complete_source.zip.part035",
+      "Shogi_3min_complete_source.zip.part036",
+      "Shogi_3min_complete_source.zip.part037",
+      "Shogi_3min_complete_source.zip.part038",
+      "Shogi_3min_complete_source.zip.part039",
+      "Shogi_3min_complete_source.zip.part040",
+      "Shogi_3min_complete_source.zip.part041",
+      "Shogi_3min_complete_source.zip.part042",
+      "Shogi_3min_complete_source.zip.part043"
+    ]
+  },
+  {
+    "file": "verification_logs.zip",
+    "size": 1267905,
+    "sha256": "ecd29d649d9ea2228a76b79c42f397ac9f138b76159b7765439b32026198da47",
+    "parts": [
+      "verification_logs.zip.part000",
+      "verification_logs.zip.part001",
+      "verification_logs.zip.part002"
+    ]
+  },
+  {
+    "file": "00_launch.png",
+    "size": 2698499,
+    "sha256": "3ca0499eb37cbe2edca61ac9613a9f0678429ac4ef530a3f1a81f96b79acc909",
+    "parts": [
+      "00_launch.png.part000",
+      "00_launch.png.part001",
+      "00_launch.png.part002",
+      "00_launch.png.part003",
+      "00_launch.png.part004"
+    ]
+  },
+  {
+    "file": "00_mode_selection.png",
+    "size": 2364333,
+    "sha256": "78fedce6591d98231c3500cd442033fc196b7729c3259155b397ba025cf3e19f",
+    "parts": [
+      "00_mode_selection.png.part000",
+      "00_mode_selection.png.part001",
+      "00_mode_selection.png.part002",
+      "00_mode_selection.png.part003"
+    ]
+  },
+  {
+    "file": "01_initial_and_cpu.png",
+    "size": 2618257,
+    "sha256": "1c1e1a9f89927453c1e8e74cdbb77591cd1e7d707a591b333fdd33502a7e1ea1",
+    "parts": [
+      "01_initial_and_cpu.png.part000",
+      "01_initial_and_cpu.png.part001",
+      "01_initial_and_cpu.png.part002",
+      "01_initial_and_cpu.png.part003",
+      "01_initial_and_cpu.png.part004"
+    ]
+  },
+  {
+    "file": "02_promotion_capture_drop.png",
+    "size": 2489007,
+    "sha256": "1362d33bdde7bfc3bdcc219c7fb45cdd9c99f96aa2ac2a3455ed4e920b35cac5",
+    "parts": [
+      "02_promotion_capture_drop.png.part000",
+      "02_promotion_capture_drop.png.part001",
+      "02_promotion_capture_drop.png.part002",
+      "02_promotion_capture_drop.png.part003",
+      "02_promotion_capture_drop.png.part004"
+    ]
+  },
+  {
+    "file": "03_timeout.png",
+    "size": 2489453,
+    "sha256": "bc5e43f1e189759904733e25b7ba590e57e8acd3b81aa625de44b50fc2d4c375",
+    "parts": [
+      "03_timeout.png.part000",
+      "03_timeout.png.part001",
+      "03_timeout.png.part002",
+      "03_timeout.png.part003",
+      "03_timeout.png.part004"
+    ]
+  },
+  {
+    "file": "04_enlarged_native_ai.png",
+    "size": 2603633,
+    "sha256": "ed575184980ccfb9f671652f6459de1a8ce2eae78cbc0aa2e9725980e2bb244d",
+    "parts": [
+      "04_enlarged_native_ai.png.part000",
+      "04_enlarged_native_ai.png.part001",
+      "04_enlarged_native_ai.png.part002",
+      "04_enlarged_native_ai.png.part003",
+      "04_enlarged_native_ai.png.part004"
+    ]
+  },
+  {
+    "file": "05_uniform_all_types.png",
+    "size": 2822797,
+    "sha256": "e3d8ab745092891cd69ed8667fdd5f79291a4cef14b9dfad7f18cd4523e3aea4",
+    "parts": [
+      "05_uniform_all_types.png.part000",
+      "05_uniform_all_types.png.part001",
+      "05_uniform_all_types.png.part002",
+      "05_uniform_all_types.png.part003",
+      "05_uniform_all_types.png.part004"
+    ]
+  },
+  {
+    "file": "06_study_free_moves.png",
+    "size": 2169580,
+    "sha256": "d4fae54260e5c85d2642cab19a77afabd0cc8daea492aa5e816e61c84c6c7d86",
+    "parts": [
+      "06_study_free_moves.png.part000",
+      "06_study_free_moves.png.part001",
+      "06_study_free_moves.png.part002",
+      "06_study_free_moves.png.part003"
+    ]
+  },
+  {
+    "file": "07_study_analysis_initial.png",
+    "size": 2137923,
+    "sha256": "c980d4a54ae2bbdcf6767f69fddb9b4a2998c70c085d79de6155e8e301c3054f",
+    "parts": [
+      "07_study_analysis_initial.png.part000",
+      "07_study_analysis_initial.png.part001",
+      "07_study_analysis_initial.png.part002",
+      "07_study_analysis_initial.png.part003"
+    ]
+  },
+  {
+    "file": "08_study_analysis_gote.png",
+    "size": 2147048,
+    "sha256": "f011e0b1f63a272b94dc5cbc52a19d3145d52fc098c3723a29294a649fa4dd35",
+    "parts": [
+      "08_study_analysis_gote.png.part000",
+      "08_study_analysis_gote.png.part001",
+      "08_study_analysis_gote.png.part002",
+      "08_study_analysis_gote.png.part003"
+    ]
+  },
+  {
+    "file": "09_study_invalid_position.png",
+    "size": 2145700,
+    "sha256": "54d0c94a3238880327a5d8ed8bcd3c77792d5e929be9c6564a1162e48d708b1f",
+    "parts": [
+      "09_study_invalid_position.png.part000",
+      "09_study_invalid_position.png.part001",
+      "09_study_invalid_position.png.part002",
+      "09_study_invalid_position.png.part003"
+    ]
+  },
+  {
+    "file": "10_study_analysis_final.png",
+    "size": 2136957,
+    "sha256": "dc81c1c70682782f5c09cc0a96c56fccdcaea0b1c1fa0823bde33146605287f4",
+    "parts": [
+      "10_study_analysis_final.png.part000",
+      "10_study_analysis_final.png.part001",
+      "10_study_analysis_final.png.part002",
+      "10_study_analysis_final.png.part003"
+    ]
+  },
+  {
+    "file": "11_evaluation_graph_sente.png",
+    "size": 2155792,
+    "sha256": "69c6a670189ff1279fec35674460805791d2f96d7bc5fdb5b91e20545f6e283b",
+    "parts": [
+      "11_evaluation_graph_sente.png.part000",
+      "11_evaluation_graph_sente.png.part001",
+      "11_evaluation_graph_sente.png.part002",
+      "11_evaluation_graph_sente.png.part003"
+    ]
+  },
+  {
+    "file": "12_evaluation_graph_history.png",
+    "size": 2165244,
+    "sha256": "49e7e00d54db44ce78a939e1ccead5f5c4faf0c49c9317e75a610dab9b336017",
+    "parts": [
+      "12_evaluation_graph_history.png.part000",
+      "12_evaluation_graph_history.png.part001",
+      "12_evaluation_graph_history.png.part002",
+      "12_evaluation_graph_history.png.part003"
+    ]
+  },
+  {
+    "file": "13_evaluation_graph_restored.png",
+    "size": 2157570,
+    "sha256": "91688ee566d10c43113d0bc85261cf8859b20ec4cc2caa10220cb13a98761bdc",
+    "parts": [
+      "13_evaluation_graph_restored.png.part000",
+      "13_evaluation_graph_restored.png.part001",
+      "13_evaluation_graph_restored.png.part002",
+      "13_evaluation_graph_restored.png.part003"
+    ]
+  },
+  {
+    "file": "14_reported_position.png",
+    "size": 2155039,
+    "sha256": "5228b0349ea83c10f782732c0fdddbae6c53a8312bd59605cca133c14e335f30",
+    "parts": [
+      "14_reported_position.png.part000",
+      "14_reported_position.png.part001",
+      "14_reported_position.png.part002",
+      "14_reported_position.png.part003"
+    ]
+  },
+  {
+    "file": "15_ai_recovery.png",
+    "size": 2155039,
+    "sha256": "5228b0349ea83c10f782732c0fdddbae6c53a8312bd59605cca133c14e335f30",
+    "parts": [
+      "15_ai_recovery.png.part000",
+      "15_ai_recovery.png.part001",
+      "15_ai_recovery.png.part002",
+      "15_ai_recovery.png.part003"
+    ]
+  },
+  {
+    "file": "16_match_promotion_popup.png",
+    "size": 1541112,
+    "sha256": "cb7b2a6bcadf3e62ccf89393de4ddff9765a7ebe9e58018904a90cb98c8e9df8",
+    "parts": [
+      "16_match_promotion_popup.png.part000",
+      "16_match_promotion_popup.png.part001",
+      "16_match_promotion_popup.png.part002"
+    ]
+  },
+  {
+    "file": "17_study_promotion_popup.png",
+    "size": 1237880,
+    "sha256": "2128f841e5ddbcec42cde6bfd73f60beb76fa512d8bd9546e4362600beeda236",
+    "parts": [
+      "17_study_promotion_popup.png.part000",
+      "17_study_promotion_popup.png.part001",
+      "17_study_promotion_popup.png.part002"
+    ]
+  },
+  {
+    "file": "18_study_promoted_piece.png",
+    "size": 2004346,
+    "sha256": "d92dc77cdd48ffa30c3fefd7d0a1230d98157a3c454072fc8796d27471b15cee",
+    "parts": [
+      "18_study_promoted_piece.png.part000",
+      "18_study_promoted_piece.png.part001",
+      "18_study_promoted_piece.png.part002",
+      "18_study_promoted_piece.png.part003"
+    ]
+  },
+  {
+    "file": "19_reference_study_layout.png",
+    "size": 2136485,
+    "sha256": "925306b2f1a923e39baf2d7014c67281162ecd9decf8b2a86d3e87e391607ab7",
+    "parts": [
+      "19_reference_study_layout.png.part000",
+      "19_reference_study_layout.png.part001",
+      "19_reference_study_layout.png.part002",
+      "19_reference_study_layout.png.part003"
+    ]
+  },
+  {
+    "file": "20_reference_match_layout.png",
+    "size": 2605024,
+    "sha256": "ec7f133b0c9ca85b9b74e559b600c17801b5074bba991578b364dc5e109bb997",
+    "parts": [
+      "20_reference_match_layout.png.part000",
+      "20_reference_match_layout.png.part001",
+      "20_reference_match_layout.png.part002",
+      "20_reference_match_layout.png.part003",
+      "20_reference_match_layout.png.part004"
+    ]
+  },
+  {
+    "file": "21_continuous_initial.png",
+    "size": 2137628,
+    "sha256": "5da9a8fb839b1d563f9b031173f07b92f4ee4918e335a38c8c2ff38b25ec97e0",
+    "parts": [
+      "21_continuous_initial.png.part000",
+      "21_continuous_initial.png.part001",
+      "21_continuous_initial.png.part002",
+      "21_continuous_initial.png.part003"
+    ]
+  },
+  {
+    "file": "22_continuous_later.png",
+    "size": 2136522,
+    "sha256": "2e737938f817b6074294c81757fe02dedb034e814c682c9f301cf2d84e656c25",
+    "parts": [
+      "22_continuous_later.png.part000",
+      "22_continuous_later.png.part001",
+      "22_continuous_later.png.part002",
+      "22_continuous_later.png.part003"
+    ]
+  },
+  {
+    "file": "23_graph_selected_ply.png",
+    "size": 2144562,
+    "sha256": "fdedfc2da1b67eb3ca3685f9184c91e55af60575a2236da0066f6f39ee1b860d",
+    "parts": [
+      "23_graph_selected_ply.png.part000",
+      "23_graph_selected_ply.png.part001",
+      "23_graph_selected_ply.png.part002",
+      "23_graph_selected_ply.png.part003"
+    ]
+  }
+]
