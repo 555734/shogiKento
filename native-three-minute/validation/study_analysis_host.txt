@@ -1,0 +1,13 @@
+0 side=1 depth=12 nodes=50012 first=7g7f score=+74
+1 side=-1 depth=12 nodes=50063 first=3c3d score=+13
+2 side=1 depth=13 nodes=50048 first=2g2f score=+32
+3 side=-1 depth=12 nodes=50029 first=3c3d score=≥+56
+4 side=1 depth=11 nodes=50042 first=6g6f score=+36
+5 side=-1 depth=11 nodes=50049 first=3a3b score=≥+38
+6 side=1 depth=12 nodes=50028 first=1g1f score=+106
+7 side=-1 depth=14 nodes=50007 first=7a6b score=≤+20
+8 side=1 depth=12 nodes=50039 first=3i4h score=-13
+9 side=-1 depth=12 nodes=50038 first=7a6b score=+3
+10 side=1 depth=13 nodes=50018 first=2f2e score=-10
+11 side=-1 depth=12 nodes=50038 first=7b6c score=-15
+PASS host native MultiPV and switch back to match search: 48 legal moves

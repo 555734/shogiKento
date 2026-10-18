@@ -1,0 +1,298 @@
+[
+  {
+    "file": "backgrounds/background_red_gold_9x16.png",
+    "width": 941,
+    "height": 1672,
+    "transparency": false,
+    "usage": "native live UI",
+    "sha256": "e71ebc89daf63fb0024c436100ea278deab6e14a300f249f30e6d125b02a8bc6"
+  },
+  {
+    "file": "board/shogi_board_9x9.png",
+    "width": 1254,
+    "height": 1254,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "d3e87cf4022aaa095543f27ed5b671bbd4adb6e8a868b609a86a82197b84afe7"
+  },
+  {
+    "file": "digits/0.png",
+    "width": 133,
+    "height": 188,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "df04c7f579c022e21b9ce8c73bf0d91247994c2f893b8708b1e826189880cfdd"
+  },
+  {
+    "file": "digits/1.png",
+    "width": 79,
+    "height": 185,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "2e5dbd1412ab3ed29bcbbbb650201a813450b1555db246cfec92a3d05ccc97ff"
+  },
+  {
+    "file": "digits/2.png",
+    "width": 125,
+    "height": 186,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "d7e12ef9d63371d37af3ba1e78b50bdcaf666f54cd23c89e3f3a27c51cd2bfca"
+  },
+  {
+    "file": "digits/3.png",
+    "width": 129,
+    "height": 188,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "6ae8cf7bbddb3b9decc66e340a593a4479e6c408279aefa2189ed65e9b6596d8"
+  },
+  {
+    "file": "digits/4.png",
+    "width": 136,
+    "height": 185,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "606ddf385ec6c2ed03b95608ae9dfe04434baa5abdcaea483a258ea553c41fac"
+  },
+  {
+    "file": "digits/5.png",
+    "width": 129,
+    "height": 188,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "00ca326bf994a313beac624de74378d41f7c3cebd5ae30f826db6c28e2b160b0"
+  },
+  {
+    "file": "digits/6.png",
+    "width": 134,
+    "height": 188,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "2c5836e6693b4744b79199bac9d45a42962a1e648dab78f326f563979e420c3c"
+  },
+  {
+    "file": "digits/7.png",
+    "width": 130,
+    "height": 186,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "9ad0c3a45a2c797db208128a35c776476f28212c61a0183da1e186f9e8257ee2"
+  },
+  {
+    "file": "digits/8.png",
+    "width": 134,
+    "height": 188,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "c6900de47bbb8e20f9cbb41bec9d831cc8545174f9af92bc89efec0fa42e9520"
+  },
+  {
+    "file": "digits/9.png",
+    "width": 131,
+    "height": 187,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "3c1619fb094e03f4dac8117335527f7acf40e1bcd41ddacf8ed5259d13fe2651"
+  },
+  {
+    "file": "digits/colon.png",
+    "width": 58,
+    "height": 137,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "e55a59f60c53ba5f582dbd03262850de37d9c336181206167444bc1c024d80a7"
+  },
+  {
+    "file": "pieces/normal/fu.png",
+    "width": 291,
+    "height": 312,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "57e394a7d24ebd93090000e0aa7ed143def8b5e8b6fedc9fa069141048786255"
+  },
+  {
+    "file": "pieces/normal/gin.png",
+    "width": 306,
+    "height": 315,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "e0113a4e7ab0545103ec8f5a9d3f62dc732705a19ec2f0c13e0686acebd1f4df"
+  },
+  {
+    "file": "pieces/normal/gyoku.png",
+    "width": 302,
+    "height": 314,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "af66859acf5c237fcc5440693713e5abd507935dde56ed85683e8d7f308d9466"
+  },
+  {
+    "file": "pieces/normal/hisha.png",
+    "width": 302,
+    "height": 315,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "0b9956302cdea95cb12f4a6376fe726a75336a836e4f1703b4ae86d29383f484"
+  },
+  {
+    "file": "pieces/normal/kaku.png",
+    "width": 305,
+    "height": 315,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "feb7cb22b4ac8fead7e31ac7e46d6c6b290129a9fb38d715e945b529f7ea59ae"
+  },
+  {
+    "file": "pieces/normal/kei.png",
+    "width": 306,
+    "height": 313,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "50b94b6abfe123209d4f89cfb8f0619b242e296d6ff97ca6e46fef1d00c64648"
+  },
+  {
+    "file": "pieces/normal/kin.png",
+    "width": 308,
+    "height": 315,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "4aaba164145f88dc9a6b642d42192b8d286cd5146293956e3ac8b4390077eecb"
+  },
+  {
+    "file": "pieces/normal/kyo.png",
+    "width": 299,
+    "height": 311,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "dbcc925106d3e68d699e1bfe676396fa6bca1501e57abb0733669741d799053d"
+  },
+  {
+    "file": "pieces/normal/ou.png",
+    "width": 301,
+    "height": 315,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "8fcbe853af877ddc275c65517dfe76c315bb47e968a10ccc2071f25a3ee35894"
+  },
+  {
+    "file": "pieces/promoted/narigin.png",
+    "width": 392,
+    "height": 435,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "d841a9accec52bff4e5806300c66c992811b578716ea905ace81535d48ceed02"
+  },
+  {
+    "file": "pieces/promoted/narikei.png",
+    "width": 383,
+    "height": 433,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "1da12d347f2bc1f63b67dec30d63306f69f438c09c249dd04ba88a4b6797e5e0"
+  },
+  {
+    "file": "pieces/promoted/narikyo.png",
+    "width": 385,
+    "height": 436,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "8f5f71407271235b568449d6c47abe0e44d1d21e0271d351d4b060184b63b7b2"
+  },
+  {
+    "file": "pieces/promoted/ryu.png",
+    "width": 393,
+    "height": 438,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "e7a629276b263ad1d440769fe100bc630e9aa85701ead36637206ae1482d1bd6"
+  },
+  {
+    "file": "pieces/promoted/to.png",
+    "width": 382,
+    "height": 433,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "1e1529a447189be3ddad19623d1a03c100303617be526967778ef1bf6dc2c4cf"
+  },
+  {
+    "file": "pieces/promoted/uma.png",
+    "width": 390,
+    "height": 437,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "4c86ccb37db2674c9d237763d583b57518db0870343ef953c07b03da84a757ec"
+  },
+  {
+    "file": "sheets/normal_pieces_grid.png",
+    "width": 1448,
+    "height": 1086,
+    "transparency": true,
+    "usage": "reference (retained only)",
+    "sha256": "d6ce73afc7539ff1b10435bb5f1b91a476b60b7c98ad310a2d39d3b1efd056c2"
+  },
+  {
+    "file": "sheets/promoted_pieces_red_text_grid.png",
+    "width": 1536,
+    "height": 1024,
+    "transparency": true,
+    "usage": "reference (retained only)",
+    "sha256": "32d630bdd6bcdcc4fa3ae870ae3f95f0a08be81b49a6ca54e3b3548af4281272"
+  },
+  {
+    "file": "sheets/selection_and_move_highlights_sheet.png",
+    "width": 1536,
+    "height": 1024,
+    "transparency": true,
+    "usage": "reference (retained only)",
+    "sha256": "98bf2168f63ff7514a9b56d2a8b64c952827b58a890b94f09a92bf8150054c07"
+  },
+  {
+    "file": "sheets/timer_digits_sheet.png",
+    "width": 2172,
+    "height": 724,
+    "transparency": true,
+    "usage": "reference (retained only)",
+    "sha256": "4be811c26f76ddb2ef2acfc66248823feb3904b0d8a545f4159a0076d88f7a97"
+  },
+  {
+    "file": "ui/highlight_move_target_pink.png",
+    "width": 563,
+    "height": 548,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "b32f25c3b11aec1047b407a5f585f9b3a5709fb6fab79ee82bef488767cac92c"
+  },
+  {
+    "file": "ui/highlight_selected_gold.png",
+    "width": 660,
+    "height": 624,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "3c88a947eba8dc7b98f2b97a0d929d2145882c3c32e6dfb727bcfa4186ca1c8f"
+  },
+  {
+    "file": "ui/nameplate_ponaq30_8kyu.png",
+    "width": 2172,
+    "height": 724,
+    "transparency": true,
+    "usage": "reference (retained only)",
+    "sha256": "19c3c84ce0c852773172538d9d49b00ebfb06cb71783bb8dcf7f2722175bdfe2"
+  },
+  {
+    "file": "ui/piece_tray_fu_kei_gin.png",
+    "width": 2172,
+    "height": 724,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "a6d8df61f13b5eb776fd1e69c58d14111f097d0fbbff37833fb965fe35bfcc2a"
+  },
+  {
+    "file": "ui/timer_panel_03_00.png",
+    "width": 2172,
+    "height": 724,
+    "transparency": true,
+    "usage": "native live UI",
+    "sha256": "8a6237dfabe4302661d233f13ea67ddaa18076d48dcd001e13f73f6aa5e2d2f0"
+  }
+]

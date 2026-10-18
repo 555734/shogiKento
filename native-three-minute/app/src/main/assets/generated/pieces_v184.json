@@ -1,0 +1,281 @@
+{
+  "file": "pieces_v184.png",
+  "sha256": "258982ae6e5a594ac95eaaad31b00b4f26d7a0e3aec8c9ebf343e73d21526005",
+  "width": 1254,
+  "height": 1254,
+  "alpha": true,
+  "generator": "built-in image_gen",
+  "tiles": [
+    {
+      "name": "fu",
+      "body": [
+        49,
+        35,
+        295,
+        303
+      ],
+      "source": [
+        46,
+        32,
+        298,
+        306
+      ],
+      "height_to_width": 1.089430894308943,
+      "glyph": "歩",
+      "glyph_color": "black"
+    },
+    {
+      "name": "kyo",
+      "body": [
+        353,
+        35,
+        600,
+        303
+      ],
+      "source": [
+        350,
+        32,
+        603,
+        306
+      ],
+      "height_to_width": 1.0850202429149798,
+      "glyph": "香",
+      "glyph_color": "black"
+    },
+    {
+      "name": "kei",
+      "body": [
+        653,
+        35,
+        901,
+        303
+      ],
+      "source": [
+        650,
+        32,
+        904,
+        306
+      ],
+      "height_to_width": 1.0806451612903225,
+      "glyph": "桂",
+      "glyph_color": "black"
+    },
+    {
+      "name": "gin",
+      "body": [
+        956,
+        35,
+        1205,
+        303
+      ],
+      "source": [
+        953,
+        32,
+        1208,
+        306
+      ],
+      "height_to_width": 1.0763052208835342,
+      "glyph": "銀",
+      "glyph_color": "black"
+    },
+    {
+      "name": "kin",
+      "body": [
+        48,
+        341,
+        297,
+        609
+      ],
+      "source": [
+        45,
+        338,
+        300,
+        612
+      ],
+      "height_to_width": 1.0763052208835342,
+      "glyph": "金",
+      "glyph_color": "black"
+    },
+    {
+      "name": "kaku",
+      "body": [
+        351,
+        340,
+        602,
+        609
+      ],
+      "source": [
+        348,
+        337,
+        605,
+        612
+      ],
+      "height_to_width": 1.0717131474103585,
+      "glyph": "角",
+      "glyph_color": "black"
+    },
+    {
+      "name": "hisha",
+      "body": [
+        652,
+        341,
+        901,
+        609
+      ],
+      "source": [
+        649,
+        338,
+        904,
+        612
+      ],
+      "height_to_width": 1.0763052208835342,
+      "glyph": "飛",
+      "glyph_color": "black"
+    },
+    {
+      "name": "gyoku",
+      "body": [
+        955,
+        340,
+        1206,
+        608
+      ],
+      "source": [
+        952,
+        337,
+        1209,
+        611
+      ],
+      "height_to_width": 1.0677290836653386,
+      "glyph": "玉",
+      "glyph_color": "black"
+    },
+    {
+      "name": "ou",
+      "body": [
+        48,
+        646,
+        298,
+        915
+      ],
+      "source": [
+        45,
+        643,
+        301,
+        918
+      ],
+      "height_to_width": 1.076,
+      "glyph": "王",
+      "glyph_color": "black"
+    },
+    {
+      "name": "to",
+      "body": [
+        349,
+        645,
+        603,
+        915
+      ],
+      "source": [
+        346,
+        642,
+        606,
+        918
+      ],
+      "height_to_width": 1.062992125984252,
+      "glyph": "と",
+      "glyph_color": "red"
+    },
+    {
+      "name": "narikyo",
+      "body": [
+        652,
+        645,
+        901,
+        915
+      ],
+      "source": [
+        649,
+        642,
+        904,
+        918
+      ],
+      "height_to_width": 1.0843373493975903,
+      "glyph": "杏",
+      "glyph_color": "red"
+    },
+    {
+      "name": "narikei",
+      "body": [
+        954,
+        645,
+        1206,
+        915
+      ],
+      "source": [
+        951,
+        642,
+        1209,
+        918
+      ],
+      "height_to_width": 1.0714285714285714,
+      "glyph": "圭",
+      "glyph_color": "red"
+    },
+    {
+      "name": "narigin",
+      "body": [
+        48,
+        948,
+        298,
+        1214
+      ],
+      "source": [
+        45,
+        945,
+        301,
+        1217
+      ],
+      "height_to_width": 1.064,
+      "glyph": "全",
+      "glyph_color": "red"
+    },
+    {
+      "name": "uma",
+      "body": [
+        350,
+        948,
+        603,
+        1214
+      ],
+      "source": [
+        347,
+        945,
+        606,
+        1217
+      ],
+      "height_to_width": 1.051383399209486,
+      "glyph": "馬",
+      "glyph_color": "red"
+    },
+    {
+      "name": "ryu",
+      "body": [
+        651,
+        948,
+        902,
+        1214
+      ],
+      "source": [
+        648,
+        945,
+        905,
+        1217
+      ],
+      "height_to_width": 1.0597609561752988,
+      "glyph": "龍",
+      "glyph_color": "red"
+    }
+  ],
+  "usage": "All board and hand pieces; uniform visible height, original sprite aspect preserved."
+}

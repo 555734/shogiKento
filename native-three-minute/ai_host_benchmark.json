@@ -1,0 +1,432 @@
+{
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.39 x86_64; NOT Motorola g55",
+  "time_limit_ms": 5000,
+  "results": [
+    {
+      "model": "full",
+      "node_limit": 500,
+      "positions": 10,
+      "init_ms": 47.6543,
+      "peak_rss_kib": 71084,
+      "median_search_ms": 0.9816195000000001,
+      "max_search_ms": 1.38426,
+      "rows": [
+        {
+          "move": "7g7f",
+          "nodes": 500,
+          "ms": 1.38426,
+          "depth": 14
+        },
+        {
+          "move": "2g2f",
+          "nodes": 500,
+          "ms": 0.692665,
+          "depth": 14
+        },
+        {
+          "move": "4g4f",
+          "nodes": 500,
+          "ms": 0.670131,
+          "depth": 14
+        },
+        {
+          "move": "3a4b",
+          "nodes": 500,
+          "ms": 0.797934,
+          "depth": 10
+        },
+        {
+          "move": "9h9c+",
+          "nodes": 500,
+          "ms": 1.00333,
+          "depth": 10
+        },
+        {
+          "move": "5g5f",
+          "nodes": 500,
+          "ms": 1.13048,
+          "depth": 10
+        },
+        {
+          "move": "6g5h",
+          "nodes": 500,
+          "ms": 0.959909,
+          "depth": 10
+        },
+        {
+          "move": "5h3f",
+          "nodes": 500,
+          "ms": 0.806787,
+          "depth": 10
+        },
+        {
+          "move": "8c9b",
+          "nodes": 500,
+          "ms": 1.11461,
+          "depth": 10
+        },
+        {
+          "move": "1i1h",
+          "nodes": 500,
+          "ms": 1.10867,
+          "depth": 6
+        }
+      ]
+    },
+    {
+      "model": "full",
+      "node_limit": 3000,
+      "positions": 10,
+      "init_ms": 45.6997,
+      "peak_rss_kib": 70968,
+      "median_search_ms": 4.174525,
+      "max_search_ms": 5.33526,
+      "rows": [
+        {
+          "move": "7g7f",
+          "nodes": 3000,
+          "ms": 4.23749,
+          "depth": 30
+        },
+        {
+          "move": "7i8h",
+          "nodes": 3000,
+          "ms": 3.3574,
+          "depth": 18
+        },
+        {
+          "move": "5i6h",
+          "nodes": 3000,
+          "ms": 4.23187,
+          "depth": 22
+        },
+        {
+          "move": "8d8e",
+          "nodes": 3000,
+          "ms": 3.34416,
+          "depth": 26
+        },
+        {
+          "move": "9h9c+",
+          "nodes": 3000,
+          "ms": 3.30536,
+          "depth": 26
+        },
+        {
+          "move": "5g5f",
+          "nodes": 3000,
+          "ms": 4.11718,
+          "depth": 22
+        },
+        {
+          "move": "6g5h",
+          "nodes": 3000,
+          "ms": 4.00434,
+          "depth": 18
+        },
+        {
+          "move": "5h3f",
+          "nodes": 3000,
+          "ms": 4.29888,
+          "depth": 18
+        },
+        {
+          "move": "8c9b",
+          "nodes": 3000,
+          "ms": 5.33526,
+          "depth": 18
+        },
+        {
+          "move": "9d6a",
+          "nodes": 3000,
+          "ms": 5.26982,
+          "depth": 10
+        }
+      ]
+    },
+    {
+      "model": "full",
+      "node_limit": 10000,
+      "positions": 10,
+      "init_ms": 47.0328,
+      "peak_rss_kib": 71012,
+      "median_search_ms": 13.907,
+      "max_search_ms": 22.074,
+      "rows": [
+        {
+          "move": "7g7f",
+          "nodes": 10000,
+          "ms": 10.3844,
+          "depth": 42
+        },
+        {
+          "move": "7i8h",
+          "nodes": 10000,
+          "ms": 10.9793,
+          "depth": 26
+        },
+        {
+          "move": "5i6h",
+          "nodes": 10000,
+          "ms": 12.4848,
+          "depth": 34
+        },
+        {
+          "move": "8d8e",
+          "nodes": 10000,
+          "ms": 12.5965,
+          "depth": 34
+        },
+        {
+          "move": "9h9c+",
+          "nodes": 10000,
+          "ms": 13.965,
+          "depth": 30
+        },
+        {
+          "move": "5g5f",
+          "nodes": 10000,
+          "ms": 14.9114,
+          "depth": 30
+        },
+        {
+          "move": "6g5h",
+          "nodes": 10000,
+          "ms": 14.0883,
+          "depth": 26
+        },
+        {
+          "move": "P*4f",
+          "nodes": 10000,
+          "ms": 13.849,
+          "depth": 30
+        },
+        {
+          "move": "8c9b",
+          "nodes": 10000,
+          "ms": 22.074,
+          "depth": 26
+        },
+        {
+          "move": "9d6a",
+          "nodes": 10000,
+          "ms": 19.1524,
+          "depth": 14
+        }
+      ]
+    },
+    {
+      "model": "light",
+      "node_limit": 500,
+      "positions": 10,
+      "init_ms": 25.9294,
+      "peak_rss_kib": 28396,
+      "median_search_ms": 0.641478,
+      "max_search_ms": 1.66647,
+      "rows": [
+        {
+          "move": "2g2f",
+          "nodes": 500,
+          "ms": 1.66647,
+          "depth": 14
+        },
+        {
+          "move": "2g2f",
+          "nodes": 500,
+          "ms": 0.643791,
+          "depth": 10
+        },
+        {
+          "move": "5i5h",
+          "nodes": 500,
+          "ms": 0.441977,
+          "depth": 10
+        },
+        {
+          "move": "2c2d",
+          "nodes": 500,
+          "ms": 0.639165,
+          "depth": 10
+        },
+        {
+          "move": "9h9c+",
+          "nodes": 500,
+          "ms": 0.791445,
+          "depth": 10
+        },
+        {
+          "move": "5g5f",
+          "nodes": 500,
+          "ms": 0.570561,
+          "depth": 0
+        },
+        {
+          "move": "B*9e",
+          "nodes": 500,
+          "ms": 0.310789,
+          "depth": 0
+        },
+        {
+          "move": "5h2e",
+          "nodes": 500,
+          "ms": 0.832797,
+          "depth": 10
+        },
+        {
+          "move": "9h9d",
+          "nodes": 500,
+          "ms": 0.522258,
+          "depth": 0
+        },
+        {
+          "move": "1i1h",
+          "nodes": 500,
+          "ms": 0.76169,
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "model": "light",
+      "node_limit": 3000,
+      "positions": 10,
+      "init_ms": 25.2197,
+      "peak_rss_kib": 28400,
+      "median_search_ms": 2.4363349999999997,
+      "max_search_ms": 3.8536,
+      "rows": [
+        {
+          "move": "2g2f",
+          "nodes": 3000,
+          "ms": 2.48868,
+          "depth": 30
+        },
+        {
+          "move": "4g4f",
+          "nodes": 3000,
+          "ms": 2.34113,
+          "depth": 14
+        },
+        {
+          "move": "5i5h",
+          "nodes": 3000,
+          "ms": 2.38399,
+          "depth": 22
+        },
+        {
+          "move": "4a5b",
+          "nodes": 3000,
+          "ms": 2.14301,
+          "depth": 22
+        },
+        {
+          "move": "P*9d",
+          "nodes": 3000,
+          "ms": 3.30678,
+          "depth": 22
+        },
+        {
+          "move": "5g5f",
+          "nodes": 3000,
+          "ms": 3.8536,
+          "depth": 18
+        },
+        {
+          "move": "1g1f",
+          "nodes": 3000,
+          "ms": 2.346,
+          "depth": 18
+        },
+        {
+          "move": "5h2e",
+          "nodes": 3000,
+          "ms": 3.12886,
+          "depth": 14
+        },
+        {
+          "move": "8c9b",
+          "nodes": 3000,
+          "ms": 3.29369,
+          "depth": 18
+        },
+        {
+          "move": "1i1h",
+          "nodes": 3000,
+          "ms": 1.47949,
+          "depth": 0
+        }
+      ]
+    },
+    {
+      "model": "light",
+      "node_limit": 10000,
+      "positions": 10,
+      "init_ms": 26.2691,
+      "peak_rss_kib": 28400,
+      "median_search_ms": 10.3079,
+      "max_search_ms": 19.1384,
+      "rows": [
+        {
+          "move": "2g2f",
+          "nodes": 10000,
+          "ms": 6.94276,
+          "depth": 46
+        },
+        {
+          "move": "4g4f",
+          "nodes": 10000,
+          "ms": 8.61455,
+          "depth": 22
+        },
+        {
+          "move": "5i5h",
+          "nodes": 10000,
+          "ms": 7.81772,
+          "depth": 30
+        },
+        {
+          "move": "4a5b",
+          "nodes": 10000,
+          "ms": 8.90746,
+          "depth": 30
+        },
+        {
+          "move": "P*9d",
+          "nodes": 10000,
+          "ms": 10.3957,
+          "depth": 26
+        },
+        {
+          "move": "1a2a",
+          "nodes": 10000,
+          "ms": 19.1384,
+          "depth": 26
+        },
+        {
+          "move": "1g1f",
+          "nodes": 10000,
+          "ms": 10.2201,
+          "depth": 30
+        },
+        {
+          "move": "5h3f",
+          "nodes": 10000,
+          "ms": 11.2595,
+          "depth": 22
+        },
+        {
+          "move": "8c9b",
+          "nodes": 10000,
+          "ms": 12.861,
+          "depth": 26
+        },
+        {
+          "move": "9d6a",
+          "nodes": 10000,
+          "ms": 12.6632,
+          "depth": 14
+        }
+      ]
+    }
+  ]
+}

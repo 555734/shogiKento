@@ -1,0 +1,48 @@
+{
+  "device": "Host x86_64 SSE2; not Motorola g55; not a strength test",
+  "legal_moves": 60,
+  "results": [
+    {
+      "model": "micro",
+      "node_limit": 3000,
+      "positions": 10,
+      "median_ms": 7.8966494999122006,
+      "max_ms": 9.161840999922788
+    },
+    {
+      "model": "micro",
+      "node_limit": 10000,
+      "positions": 10,
+      "median_ms": 26.056014499999947,
+      "max_ms": 32.879398999966725
+    },
+    {
+      "model": "micro",
+      "node_limit": 50000,
+      "positions": 10,
+      "median_ms": 136.6454064999516,
+      "max_ms": 177.9888150001625
+    },
+    {
+      "model": "mini",
+      "node_limit": 3000,
+      "positions": 10,
+      "median_ms": 14.289451999957237,
+      "max_ms": 20.9263120000287
+    },
+    {
+      "model": "mini",
+      "node_limit": 10000,
+      "positions": 10,
+      "median_ms": 46.1375044998249,
+      "max_ms": 65.22721600003933
+    },
+    {
+      "model": "mini",
+      "node_limit": 50000,
+      "positions": 10,
+      "median_ms": 245.44240199998058,
+      "max_ms": 346.854040999915
+    }
+  ]
+}

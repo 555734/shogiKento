@@ -1,0 +1,7 @@
+.gradle/
+**/build/
+**/outputs/
+**/test-classes/
+**/.ai-cache/
+**/__pycache__/
+**/local.properties

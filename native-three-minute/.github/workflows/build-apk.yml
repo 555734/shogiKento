@@ -1,0 +1,51 @@
+name: Build native shogi APK
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+      - name: Check exact original PNG package
+        run: |
+          test -s app/src/main/assets/original/backgrounds/background_red_gold_9x16.png
+          test -s app/src/main/assets/original/board/shogi_board_9x9.png
+          test -s app/src/main/assets/original/pieces/promoted/to.png
+          test "$(find app/src/main/assets/original -type f | wc -l)" -eq 38
+      - name: Assemble installable debug APK
+        run: gradle :app:assembleDebug --no-daemon
+      - name: Verify all original artwork in APK
+        run: |
+          APK=app/build/outputs/apk/debug/app-debug.apk
+          test -s "$APK"
+          python3 - <<'PYTHON'
+          import zipfile,pathlib
+          src=pathlib.Path('app/src/main/assets/original')
+          a=zipfile.ZipFile('app/build/outputs/apk/debug/app-debug.apk')
+          for f in src.rglob('*'):
+            if f.is_file():
+              name='assets/original/'+str(f.relative_to(src))
+              assert name in a.namelist(), f'Missing file: {name}'
+              assert a.read(name)==f.read_bytes(), f'Asset bytes modified: {name}'
+          print('All 38 original files verified byte-identical inside APK')
+          PYTHON
+      - uses: actions/upload-artifact@v4
+        with:
+          name: shogi-3min-complete-native-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 14

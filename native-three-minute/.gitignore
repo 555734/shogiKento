@@ -1,0 +1,11 @@
+.gradle/
+**/build/
+**/.cxx/
+.ai-cache/
+third_party/
+host-bench/
+outputs/
+test-classes/
+local.properties
+
+app/src/main/jniLibs/

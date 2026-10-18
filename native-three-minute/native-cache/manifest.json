@@ -1,0 +1,36 @@
+{
+  "source_repository": "555734/shogidopa",
+  "source_run": 39093678776,
+  "source_apk_sha256": "b26f5d68954798ca3306f3629752c95cd7b9be3560f8071958a3c936a7879484",
+  "recipe_sha256": "1ad312d1a6271f7878f02e30943fb393f5858d7a38d617e3ce92072f2570192f",
+  "files": [
+    {
+      "path": "native-cache/arm64-v8a/libyaneuraou.so.gz",
+      "sha256": "a3fc42ecd6a3d8bb490e9ceabbbb4cfe08f228608ad4c5c6d8b48590afe5cc8f",
+      "gzip_sha256": "abe86a709256853b99dc0b0288bfebacafe70438d1ec5b97c404f0c6e05d5a40",
+      "bytes": 1717648,
+      "gzip_bytes": 616264
+    },
+    {
+      "path": "native-cache/arm64-v8a/libyaneuraou_compat.so.gz",
+      "sha256": "b43e65c29abc7d0fad340d2b7f90eb222cc50a6883bb0c399eeb5cbb31b2ba28",
+      "gzip_sha256": "eef5bd78983ee9a7ffeb54cb8553ce7d54f77a21dbe7602f0499f9a4da3cbfce",
+      "bytes": 1711984,
+      "gzip_bytes": 614604
+    },
+    {
+      "path": "native-cache/x86_64/libyaneuraou.so.gz",
+      "sha256": "100b5026da38494a7ec2fd01d23f0d9c49d07bcf7d43bd974995c1b5d8da9932",
+      "gzip_sha256": "4eedbbd0df487073b0f2d9e195f5571ae3f02ac4a933741a55975911404cd07c",
+      "bytes": 1777192,
+      "gzip_bytes": 638293
+    },
+    {
+      "path": "native-cache/x86_64/libyaneuraou_compat.so.gz",
+      "sha256": "d5c87d5551d0ea6627ab6788659933955f014ad8bde47217707675eda9283943",
+      "gzip_sha256": "3cfb12b8f993e82453ae7a58c594d1fddf0595639c5cae77b4f79dd0708f91f5",
+      "bytes": 1757704,
+      "gzip_bytes": 639176
+    }
+  ]
+}
