@@ -1,9 +1,10 @@
 """Package device build honestly as unsigned; simulator ZIP is a separate product."""
-import hashlib,json,os,pathlib,shutil,subprocess,zipfile
+import hashlib,json,os,pathlib,plistlib,shutil,subprocess,zipfile
 ROOT=pathlib.Path(__file__).resolve().parents[1];OUT=ROOT/'outputs';OUT.mkdir(exist_ok=True)
 app=ROOT/'build/BeniShogi.xcarchive/Products/Applications/BeniShogi.app'
 report={'source_sha':os.environ.get('GITHUB_SHA'),'run_id':os.environ.get('GITHUB_RUN_ID'),'device_build':False,'apple_distribution_signed':False,'simulator_tests_passed':False}
-if app.is_dir():
+if app.is_dir() and (ROOT/'build/BeniShogi.xcarchive/Info.plist').is_file():
+ info=plistlib.loads((app/'Info.plist').read_bytes());assert info['CFBundleIdentifier']=='com.presentsoft.shogi3minutes';assert info['CFBundleExecutable']=='BeniShogi'
  executable=app/'BeniShogi';architecture=subprocess.check_output(['xcrun','lipo','-archs',str(executable)],text=True).strip();assert architecture=='arm64',architecture
  signed=subprocess.run(['codesign','--display',str(app)],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0
  # A linker ad-hoc signature, if present, is still not Apple distribution signing.
