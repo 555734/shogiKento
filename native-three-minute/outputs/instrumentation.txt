@@ -1,0 +1,1 @@
+PASS native instrumentation: 2575 assertions; UI screenshots saved
