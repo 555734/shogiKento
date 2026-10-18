@@ -3,7 +3,7 @@ enum AppAssets {
     private static let cache=NSCache<NSString,UIImage>()
     static func image(_ name:String)->UIImage {
         if let image=cache.object(forKey:name as NSString){return image}
-        guard let url=Bundle.main.url(forResource:name,withExtension:"png",subdirectory:"Resources"),let image=UIImage(contentsOfFile:url.path) else{return UIImage()}
+        guard let url=Bundle.main.url(forResource:name,withExtension:"png",subdirectory:"GameAssets"),let image=UIImage(contentsOfFile:url.path) else{return UIImage()}
         cache.setObject(image,forKey:name as NSString);return image
     }
     static func piece(_ value:Int)->UIImage {

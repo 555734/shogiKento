@@ -34,7 +34,7 @@ import UIKit
     var humanInput:Bool {active && (screen == .study || screen == .match && session.matchStarted && session.winner==0 && position.side==1 && !thinking)}
     init(store testStore:RecordStore?=nil){
         do {let store=try testStore ?? RecordStore();self.store=store;if FileManager.default.fileExists(atPath:store.root.appendingPathComponent("current.json").path){session=try store.current()}}catch{self.error="保存データを読み込めません：\(error.localizedDescription)"}
-        if let file=Bundle.main.url(forResource:"piece_place",withExtension:"wav",subdirectory:"Resources"){audio=try? AVAudioPlayer(contentsOf:file);audio?.prepareToPlay()}
+        if let file=Bundle.main.url(forResource:"piece_place",withExtension:"wav",subdirectory:"GameAssets"){audio=try? AVAudioPlayer(contentsOf:file);audio?.prepareToPlay()}
         try? AVAudioSession.sharedInstance().setCategory(.ambient,mode:.default,options:.mixWithOthers)
     }
     func save(){do{guard let store else{throw ShogiError.message("保存先を利用できません")};if session.matchStarted || session.match.moves>0 || session.winner != 0{try store.save(session.match)};try store.saveCurrent(session)}catch{self.error="棋譜を保存できません：\(error.localizedDescription)"}}

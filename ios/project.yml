@@ -19,7 +19,7 @@ targets:
     sources:
       - path: Sources
       - path: Assets.xcassets
-      - path: Resources
+      - path: GameAssets
         type: folder
     settings:
       base:

@@ -11,8 +11,8 @@ if app.is_dir() and '** BUILD SUCCEEDED **' in (OUT/'device-build.txt').read_tex
  assert not (app/'embedded.mobileprovision').exists(),'Unexpected provisioning profile in unsigned build'
  payload=ROOT/'build/Unsigned/Payload';payload.mkdir(parents=True,exist_ok=True);shutil.copytree(app,payload/app.name,dirs_exist_ok=True)
  subprocess.run(['ditto','-c','-k','--keepParent','Payload',str(OUT/'BeniShogi-unsigned.ipa')],cwd=payload.parent,check=True)
- manifest=json.loads((app/'Resources/asset-manifest.json').read_text())
- for name,expected in manifest.items():assert hashlib.sha256((app/'Resources'/name).read_bytes()).hexdigest()==expected,name
+ manifest=json.loads((app/'GameAssets/asset-manifest.json').read_text())
+ for name,expected in manifest.items():assert hashlib.sha256((app/'GameAssets'/name).read_bytes()).hexdigest()==expected,name
  report.update(device_build=True,device_architecture=architecture,ad_hoc_code_signature=signed,bundled_asset_hashes_verified=len(manifest),ipa_sha256=hashlib.sha256((OUT/'BeniShogi-unsigned.ipa').read_bytes()).hexdigest())
 sim=ROOT/'build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app'
 if sim.is_dir():subprocess.run(['ditto','-c','-k','--keepParent',str(sim),str(OUT/'BeniShogi-simulator.app.zip')],check=True)

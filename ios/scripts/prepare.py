@@ -1,7 +1,7 @@
 """Reuse Android artwork, original SE, verified NNUE model and complete licenses."""
 import hashlib,json,pathlib,shutil
 from PIL import Image
-ROOT=pathlib.Path(__file__).resolve().parents[1];ANDROID=ROOT.parent/'native-three-minute';ASSETS=ANDROID/'app/src/main/assets';OUT=ROOT/'Resources';OUT.mkdir(exist_ok=True)
+ROOT=pathlib.Path(__file__).resolve().parents[1];ANDROID=ROOT.parent/'native-three-minute';ASSETS=ANDROID/'app/src/main/assets';OUT=ROOT/'GameAssets';OUT.mkdir(exist_ok=True)
 for source,target in [('home_background_v112.webp','home_background'),('home_title_v112.webp','home_title'),('board_v191.webp','board'),('background_red_lacquer_v191.webp','background'),('pieces_v184.png','pieces')]:Image.open(ASSETS/'generated'/source).save(OUT/(target+'.png'))
 shutil.copy(ANDROID/'app/src/main/res/raw/piece_place.wav',OUT/'piece_place.wav')
 (OUT/'ai').mkdir(exist_ok=True)
