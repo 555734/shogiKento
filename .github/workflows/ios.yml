@@ -74,6 +74,8 @@ jobs:
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git fetch origin main
           git checkout -b "build/ios-$GITHUB_RUN_ID" FETCH_HEAD
-          git add -f ios/outputs/*.zip ios/outputs/*.ipa ios/outputs/*.json ios/outputs/*.txt ios/outputs/*.png ios/outputs/README.md
+          shopt -s nullglob
+          downloads=(ios/outputs/*.zip ios/outputs/*.ipa ios/outputs/*.json ios/outputs/*.txt ios/outputs/*.png ios/outputs/README.md)
+          git add -f -- "${downloads[@]}"
           git commit -m "iOS build $GITHUB_RUN_ID outputs"
           git push origin HEAD

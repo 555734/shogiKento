@@ -18,7 +18,7 @@ iOS版はホームの「棋譜を貼り付け」→OS標準PasteButton→「棋�
 
 ## ビルド
 
-`.github/workflows/ios.yml` をworkflow_dispatchで実行します。macOS / Xcode / Python 3.12 / XcodeGenを使用し、Appleの署名情報を要求せずに端末向けarm64のRelease ArchiveとSimulator版を作ります。
+初回追加はドラフトPRのチェックとして`.github/workflows/ios.yml`を実行します。ワークフローが既定ブランチへ入った後はworkflow_dispatchでも実行できます。macOS / Xcode / Python 3.12 / XcodeGenを使用し、Appleの署名情報を要求せずに端末向けarm64のRelease ArchiveとSimulator版を作ります。
 
 ```sh
 python -m pip install py7zr==1.1.4 python-shogi==1.1.1 Pillow==11.3.0

@@ -38,7 +38,7 @@ final class CoreTests:XCTestCase {
         let reopened=try RecordStore(root:dir).read(original.id);XCTAssertEqual(reopened,original)
         var working=reopened;working.positions=Array(working.positions.prefix(41));working.labels=Array(working.labels.prefix(41));XCTAssertEqual(try store.read(original.id).moves,79)
         var current=CurrentSession();current.study=working;current.cursor=40;try store.saveCurrent(current);XCTAssertEqual(try RecordStore(root:dir).current().study,working)
-        var match=GameRecord();let p=try Position(),move=try XCTUnwrap(Rules.legal(p).first),after=try Rules.apply(p,move);match.positions.append(after.sfen);match.labels.append("1手目 "+p.notation(move));try store.save(match);match.result="後手勝ち・投了";try store.save(match)
+        var match=GameRecord();let p=try Position(),move=try XCTUnwrap(try Rules.legal(p).first),after=try Rules.apply(p,move);match.positions.append(after.sfen);match.labels.append("1手目 "+p.notation(move));try store.save(match);match.result="後手勝ち・投了";try store.save(match)
         XCTAssertEqual(try store.list().count,2);XCTAssertEqual(try store.read(match.id).moves,1);XCTAssertTrue(try store.read(match.id).result.contains("投了"))
         try Data("corrupted".utf8).write(to:dir.appendingPathComponent("broken.record.json"));XCTAssertEqual(try store.list().count,2);XCTAssertEqual(store.damaged,1)
         XCTAssertThrowsError(try store.read("../escape"))

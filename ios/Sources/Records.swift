@@ -41,7 +41,7 @@ enum KifParser {
         for raw in text.components(separatedBy:.newlines) {
             let line=raw.trimmingCharacters(in:.whitespacesAndNewlines);if line.isEmpty || line.hasPrefix("#") || line.hasPrefix("*") || line.hasPrefix("手数") || line.hasPrefix("まで"){continue}
             if ["変化","後手番","先手の持駒","後手の持駒","|"].contains(where:line.hasPrefix){throw ShogiError.message("平手の本譜のみ対応しています（変化・途中配置は未対応）")}
-            if let header=groups("^([^:]+)\\s*:\\s*(.*)$",line){switch header[1].trimmingCharacters(in:.whitespaces){case "手合割":guard header[2]=="平手" else{throw ShogiError.message("手合割は平手のみ対応しています")};case "棋戦":record.title=header[2];case "先手":record.sente=header[2];case "後手":record.gote=header[2];default:break};continue}
+            if line.first?.isNumber != true,let header=groups("^([^:]+)\\s*:\\s*(.*)$",line){switch header[1].trimmingCharacters(in:.whitespaces){case "手合割":guard header[2]=="平手" else{throw ShogiError.message("手合割は平手のみ対応しています")};case "棋戦":record.title=header[2];case "先手":record.sente=header[2];case "後手":record.gote=header[2];default:break};continue}
             guard let row=groups("^(\\d+)\\s+(.+)$",line),let number=Int(row[1]),number==next else{throw ShogiError.message("\(next)手目：手数または棋譜の行が不正です")}
             guard !ended else{throw ShogiError.message("\(number)手目：終局後に指し手があります")}
             let body=row[2].replacingOccurrences(of:"\\s*\\(\\s*\\d+\\s*:.*$",with:"",options:.regularExpression).replacingOccurrences(of:"\\s+",with:"",options:.regularExpression)
@@ -52,6 +52,7 @@ enum KifParser {
             let dest: Int;if m[1]=="同"{guard let p=previous else{throw ShogiError.message("\(number)手目：「同」の直前の着手がありません")};dest=p}else{let a=Array(m[1]);let r=a[1].wholeNumberValue.map{$0-1} ?? ranks.firstIndex(of:a[1])!;dest=r*9+9-a[0].wholeNumberValue!}
             var source: Int?,drop=m[3]=="打";if !m[4].isEmpty{let f=Int(m[4])!,r=Int(m[5])!;if f==0 && r==0{drop=true}else{guard f>0,r>0 else{throw ShogiError.message("\(number)手目：移動元が不正です")};source=(r-1)*9+9-f}}
             guard !(drop && (source != nil || type>7 || m[3]=="成" || m[3]=="不成")) else{throw ShogiError.message("\(number)手目：駒打ちの表記が不正です")}
+            if !drop && !m[3].isEmpty && (type>8 || type==5 || type==8){throw ShogiError.message("\(number)手目：成りの表記が不正です")}
             let candidates=try Rules.legal(position).filter{candidate in candidate.destination==dest && candidate.promotes==(m[3]=="成") && (drop ? candidate.drop==type:candidate.drop==0 && candidate.source.map{abs(position.board[$0])==type && (source==nil || source==$0)}==true)}
             guard candidates.count==1 else{throw ShogiError.message("\(number)手目：\(candidates.isEmpty ? "合法な指し手ではありません":"移動元を特定できません")：\(moveBody)")}
             position=try Rules.apply(position,candidates[0]);record.positions.append(position.sfen);record.labels.append("\(number)手目  \(moveBody)");previous=dest;next+=1
