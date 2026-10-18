@@ -29,8 +29,9 @@ jobs:
       - name: Rule and clock assertions
         run: |
           mkdir -p test-classes outputs
-          javac -d test-classes app/src/main/java/com/presentsoft/shogi3minutes/ShogiGame.java app/src/main/java/com/presentsoft/shogi3minutes/MatchClock.java app/src/main/java/com/presentsoft/shogi3minutes/UsiPosition.java app/src/main/java/com/presentsoft/shogi3minutes/StudySession.java app/src/main/java/com/presentsoft/shogi3minutes/StudyAnalysis.java app/src/main/java/com/presentsoft/shogi3minutes/EvaluationHistory.java tests/EvaluationTest.java tests/AnalysisTest.java tests/StudyTest.java tests/RulesTest.java tests/RuleProbe.java app/src/main/java/com/presentsoft/shogi3minutes/UsiProcess.java tests/ProtocolTest.java tests/StudyHistoryTest.java
+          javac -d test-classes app/src/main/java/com/presentsoft/shogi3minutes/ShogiGame.java app/src/main/java/com/presentsoft/shogi3minutes/MatchClock.java app/src/main/java/com/presentsoft/shogi3minutes/UsiPosition.java app/src/main/java/com/presentsoft/shogi3minutes/StudySession.java app/src/main/java/com/presentsoft/shogi3minutes/StudyAnalysis.java app/src/main/java/com/presentsoft/shogi3minutes/EvaluationHistory.java tests/EvaluationTest.java tests/AnalysisTest.java tests/StudyTest.java tests/RulesTest.java tests/RuleProbe.java app/src/main/java/com/presentsoft/shogi3minutes/UsiProcess.java tests/ProtocolTest.java tests/StudyHistoryTest.java app/src/main/java/com/presentsoft/shogi3minutes/KifRecord.java tests/KifRecordTest.java
           chmod +x tests/fake_usi.py
+          java -cp test-classes com.presentsoft.shogi3minutes.KifRecordTest tests/fixtures/shogi_quest_79.kif outputs/kif_positions.txt | tee outputs/kif_import_host.txt
           java -cp test-classes com.presentsoft.shogi3minutes.StudyHistoryTest | tee outputs/graph_history.txt
           java -cp test-classes com.presentsoft.shogi3minutes.ProtocolTest tests/fake_usi.py | tee outputs/protocol.txt
           java -cp test-classes com.presentsoft.shogi3minutes.RulesTest | tee outputs/rules.txt
@@ -39,6 +40,7 @@ jobs:
           java -cp test-classes com.presentsoft.shogi3minutes.EvaluationTest | tee outputs/evaluation.txt
           pip install python-shogi==1.1.1 py7zr==1.1.4
           python tests/differential.py test-classes | tee outputs/differential.txt
+          python tests/verify_quest_record.py tests/fixtures/shogi_quest_79.kif outputs/kif_positions.txt | tee outputs/kif_independent.txt
       - name: Prepare pinned micro model and complete GPL source
         run: python scripts/prepare_yaneura.py
       - name: Build installable native APKs

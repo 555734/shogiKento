@@ -3,11 +3,13 @@ import android.app.*;import android.graphics.*;import android.os.*;import androi
 public final class MainActivity extends Activity {
  static final int HOME=0,MATCH=1,STUDY=2;
  static final String BACKGROUND_ART="generated/background_red_lacquer_v191.webp",BOARD_ART="generated/board_v191.webp";
- BoardView view;boolean resumed;AlertDialog choiceDialog;
- @Override public void onCreate(Bundle b){super.onCreate(b);setVolumeControlStream(android.media.AudioManager.STREAM_MUSIC);getWindow().setStatusBarColor(0xff400b0c);getWindow().setNavigationBarColor(0xff400b0c);getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);view=new BoardView();setContentView(view);if(b!=null)view.enterMode(b.getInt("screen_mode",HOME));}
- @Override protected void onResume(){super.onResume();resumed=true;view.resumeMode();}
- @Override protected void onPause(){view.pauseMode();resumed=false;view.save();super.onPause();}
- @Override protected void onDestroy(){view.handler.removeCallbacksAndMessages(null);view.ai.destroy();view.sounds.close();super.onDestroy();}
+ BoardView view;boolean resumed;AlertDialog choiceDialog;ClipboardKifImport clipboardImport;
+ @Override public void onCreate(Bundle b){super.onCreate(b);setVolumeControlStream(android.media.AudioManager.STREAM_MUSIC);getWindow().setStatusBarColor(0xff400b0c);getWindow().setNavigationBarColor(0xff400b0c);getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);view=new BoardView();setContentView(view);clipboardImport=new ClipboardKifImport(this);if(b!=null)view.enterMode(b.getInt("screen_mode",HOME));}
+ @Override protected void onResume(){super.onResume();resumed=true;view.resumeMode();clipboardImport.resume();}
+ @Override protected void onPause(){clipboardImport.pause();view.pauseMode();resumed=false;view.save();super.onPause();}
+ @Override protected void onDestroy(){clipboardImport.close();view.handler.removeCallbacksAndMessages(null);view.ai.destroy();view.sounds.close();super.onDestroy();}
+ @Override public void onWindowFocusChanged(boolean focus){super.onWindowFocusChanged(focus);if(focus&&clipboardImport!=null)clipboardImport.schedule();}
+ void showChoice(AlertDialog dialog){choiceDialog=dialog;dialog.setOnDismissListener(d->{if(choiceDialog==dialog)choiceDialog=null;clipboardImport.schedule();});dialog.show();}
  @Override protected void onSaveInstanceState(Bundle b){b.putInt("screen_mode",view.mode);view.save();super.onSaveInstanceState(b);}
  @Override public void onBackPressed(){if(view.mode!=HOME)view.enterMode(HOME);else super.onBackPressed();}
  final class BoardView extends View {
@@ -15,7 +17,7 @@ public final class MainActivity extends Activity {
   final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);final Map<String,Bitmap> images=new HashMap<>();final Map<String,Rect> inkBounds=new HashMap<>();final Handler handler=new Handler(Looper.getMainLooper());
   final String[] normal={"","fu","kyo","kei","gin","kin","kaku","hisha","gyoku"},promoted={"","to","narikyo","narikei","narigin","","uma","ryu"};
   float scale=1,offsetX,H=720,boardY,boardX,boardSize=400,boardHeight=418.6f;static final float BOARD_HEIGHT_RATIO=1283f/1226f;
-  float studyScroll,studyContentHeight;static final float ANALYSIS_HEIGHT=240;
+  float studyScroll,studyContentHeight;static final float ANALYSIS_HEIGHT=286;
   EvaluationHistory evalHistory=new EvaluationHistory();EvaluationHistory.Score displayScore;
   Bitmap pieceAtlas,panelTexture;
   final String[] atlasNames={"fu","kyo","kei","gin","kin","kaku","hisha","gyoku","ou","to","narikyo","narikei","narigin","uma","ryu"};
@@ -132,8 +134,9 @@ public final class MainActivity extends Activity {
    studyContentHeight=Math.max(H,analysisY()+ANALYSIS_HEIGHT+8);studyScroll=Math.max(0,Math.min(studyScroll,maxStudyScroll()));
   }
   float homeMatchY(){return H/2-76;}float homeStudyY(){return H/2+24;}
+  float homeImportY(){return homeStudyY()+108;}
   @Override protected void onDraw(Canvas c){super.onDraw(c);c.save();c.clipRect(0,0,getWidth(),getHeight());fitted(c,BACKGROUND_ART,new RectF(0,0,getWidth(),getHeight()),true);c.translate(offsetX,mode==STUDY?-studyScroll*scale:0);c.scale(scale,scale);
-   if(mode==HOME){text(c,"紅将棋 3分",200,H/2-140,30,0xffffe3ae);tray(c,homeMatchY());text(c,"対局モード",200,homeMatchY()+33,21,Color.WHITE);text(c,"CPUと3分切れ負け",200,homeMatchY()+73,13,Color.WHITE);tray(c,homeStudyY());text(c,"検討モード",200,homeStudyY()+33,21,Color.WHITE);text(c,"先後自由に配置・AIが継続解析",200,homeStudyY()+73,13,Color.WHITE);c.restore();return;}
+   if(mode==HOME){text(c,"紅将棋 3分",200,H/2-140,30,0xffffe3ae);tray(c,homeMatchY());text(c,"対局モード",200,homeMatchY()+33,21,Color.WHITE);text(c,"CPUと3分切れ負け",200,homeMatchY()+73,13,Color.WHITE);tray(c,homeStudyY());text(c,"検討モード",200,homeStudyY()+33,21,Color.WHITE);text(c,"先後自由に配置・AIが継続解析",200,homeStudyY()+73,13,Color.WHITE);darkPanel(c,new RectF(40,homeImportY(),360,homeImportY()+44));text(c,"棋譜を貼り付け",200,homeImportY()+28,15,Color.WHITE);c.restore();return;}
    if(mode==MATCH){darkPanel(c,new RectF(4,0,396,32));text(c,"モード",45,22,11,0xfff5e4c8);text(c,"やり直し",145,22,10.5f,Color.WHITE);text(c,"AI設定",253,22,10.5f,Color.WHITE);paint.setColor(0xff285681);c.drawRoundRect(320,4,391,29,3,3,paint);text(c,"投了",355,22,11,Color.WHITE);}
    hand(c,-1,topHandY());board(c);if(lastMove!=null)fitted(c,"ui/highlight_move_target_pink.png",cell(lastMove.row,lastMove.col),false);if(selectedR>=0)fitted(c,"ui/highlight_selected_gold.png",cell(selectedR,selectedC),false);Set<Integer> shown=new HashSet<>();for(ShogiGame.Move m:highlights)if(shown.add(m.row*9+m.col))fitted(c,"ui/highlight_move_target_pink.png",cell(m.row,m.col),false);for(int r=0;r<9;r++)for(int col=0;col<9;col++)if(game.board[r][col]!=0)boardPiece(c,game.board[r][col],cell(r,col));hand(c,1,bottomHandY());
    if(mode==MATCH){String status=game.winner==2?game.result:game.winner!=0?(game.winner==1?"勝利":"敗北")+"・"+game.result:!ai.ready?(aiError==null?"AI読み込み中…":"AIエラー・AI設定から再試行"):!started?"タップして対局開始":game.turn==1?(game.checked(1)?"王手です・あなたの手番":"あなたの手番"):"CPUの手番";text(c,status,200,bottomHandY()+64,12,Color.WHITE);if(!started){paint.setColor(0xe0300909);c.drawRoundRect(75,H/2-35,325,H/2+35,12,12,paint);text(c,ai.ready?"対局開始":"AI読み込み中…",200,H/2+7,25,0xffffdd8b);}}else analysisPanel(c);c.restore();
@@ -145,7 +148,15 @@ public final class MainActivity extends Activity {
   int graphIndexAt(float x){RectF r=graphRect();return Math.max(0,Math.min(evalHistory.points.size()-1,Math.round((x-r.left)/r.width()*graphSpan())));}
   void jumpStudy(int index){
    if(mode!=STUDY||index==evalHistory.cursor||!study.seek(evalHistory.keys(),index))return;
-   cancelCpu();evalHistory.seek(index);lastMove=null;clearSelection();setAnalysisSide(evalHistory.side());save();
+   cancelCpu();evalHistory.seek(index);game.movesPlayed=evalHistory.currentEdit();game.turn=evalHistory.side();lastMove=null;clearSelection();setAnalysisSide(evalHistory.side());save();
+  }
+  void importRecord(KifRecord record){
+   StudySession replacement=new StudySession();if(!replacement.seek(record.positions,record.positions.size()-1))return;
+   pauseMode();save();study=replacement;evalHistory=new EvaluationHistory();evalHistory.load(record);mode=STUDY;game=study.game;analysisSide=evalHistory.side();game.turn=analysisSide;game.movesPlayed=evalHistory.currentEdit();started=true;clock=new MatchClock(game);lastMove=null;studyScroll=0;clearSelection();layoutBoard(getWidth(),getHeight());setContentDescription("検討モード・読み込んだ棋譜");save();if(resumed)resumeMode();
+  }
+  void studyMoves(){
+   String[] labels=new String[evalHistory.points.size()];for(int i=0;i<labels.length;i++){EvaluationHistory.Point p=evalHistory.points.get(i);labels[i]=p.label==null?(evalHistory.firstEdit+i)+"手目":p.label;}
+   AlertDialog d=new AlertDialog.Builder(MainActivity.this).setTitle(evalHistory.title==null?"検討の手順":evalHistory.title).setSingleChoiceItems(labels,evalHistory.cursor,(dialog,index)->{jumpStudy(index);dialog.dismiss();}).setPositiveButton("閉じる",null).create();showChoice(d);
   }
   void leftText(Canvas c,String s,float x,float y,float size,int color){text(c,"",x,y,size,color);paint.setTextAlign(Paint.Align.LEFT);c.drawText(s,x,y,paint);}
   float maxStudyScroll(){return mode==STUDY?Math.max(0,studyContentHeight-H):0;}
@@ -170,7 +181,7 @@ public final class MainActivity extends Activity {
    else{int i=0;for(StudyAnalysis.Candidate candidate:analysisResult.candidates){float row=y+94+i*19;
     leftText(c,(i+1)+". "+analysisMoves.get(i),15,row,11.5f,Color.WHITE);leftText(c,candidate.score(analysisBoard.turn),272,row,11,0xffeee0c7);i++;}
    }
-   evaluationGraph(c,y);
+   evaluationGraph(c,y);String[] nav={"初期","前へ","次へ","最終","手順"};for(int i=0;i<nav.length;i++){paint.reset();paint.setColor(0xff49352a);c.drawRoundRect(6+i*79,y+242,79+i*79,y+282,3,3,paint);text(c,nav[i],42+i*79,y+267,12,Color.WHITE);}
   }
   void evaluationGraph(Canvas c,float y){
    leftText(c,"評価値の推移（先手基準）",13,y+150,10,0xffdfd8cc);text(c,evalHistory.currentEdit()+"手目",353,y+150,9,Color.WHITE);text(c,"タップで局面移動",247,y+150,7,0xffbfbab3);
@@ -225,9 +236,9 @@ public final class MainActivity extends Activity {
   void restart(){cancelCpu();if(mode==STUDY){study.reset();evalHistory.reset(EvaluationHistory.key(game));studyScroll=0;}else{match.restart();matchStarted=false;started=false;clock=new MatchClock(game);}lastMove=null;clearSelection();save();if(mode==STUDY)refreshAnalysis();}
   boolean tapHand(float x,float y,int side,float top){if(y<top||y>=top+44)return false;int count=handCount(side),i=0;for(int n=1;n<=handLimit();n++)if(game.hands[side==1?0:1][n]>0){if(Math.abs(x-handX(i,count))<handStep(count)/2){selectedR=selectedC=-1;selectedHand=n;selectedSide=side;if(mode==MATCH)select();else invalidate();return true;}i++;}return false;}
   @Override public boolean onTouchEvent(MotionEvent e){if(e.getAction()==MotionEvent.ACTION_DOWN){longPressed=false;dragged=false;}gestures.onTouchEvent(e);if(e.getAction()!=MotionEvent.ACTION_UP)return true;performClick();if(dialogOpen||longPressed||dragged)return true;float x=(e.getX()-offsetX)/scale,y=e.getY()/scale+studyScroll;
-   if(mode==HOME){if(x>=12&&x<=388){if(y>=homeMatchY()&&y<=homeMatchY()+52)enterMode(MATCH);else if(y>=homeStudyY()&&y<=homeStudyY()+52)enterMode(STUDY);}return true;}
+   if(mode==HOME){if(x>=12&&x<=388){if(y>=homeMatchY()&&y<=homeMatchY()+52)enterMode(MATCH);else if(y>=homeStudyY()&&y<=homeStudyY()+52)enterMode(STUDY);else if(y>=homeImportY()&&y<=homeImportY()+44)clipboardImport.paste();}return true;}
    if(mode==MATCH)clock.settle(SystemClock.elapsedRealtime());if(mode==MATCH&&y<32){if(x<90){enterMode(HOME);return true;}if(x<200){new AlertDialog.Builder(MainActivity.this).setMessage("対局をやり直しますか？").setNegativeButton("キャンセル",null).setPositiveButton("やり直す",(d,k)->restart()).show();}else if(x<300)aiSettings();else if(started&&game.winner==0)new AlertDialog.Builder(MainActivity.this).setMessage("投了しますか？").setNegativeButton("戻る",null).setPositiveButton("投了",(d,k)->{clock.settle(SystemClock.elapsedRealtime());game.resign(1);clearSelection();save();}).show();return true;}
-   if(mode==STUDY&&y>=analysisY()&&y<=analysisY()+ANALYSIS_HEIGHT){if(graphRect().contains(x,y)){jumpStudy(graphIndexAt(x));return true;}if(y>=analysisY()+57&&y<=analysisY()+78&&x>=265)setAnalysisSide(-analysisSide);else if(analysisResult==null&&!analyzing){if(aiError!=null)showAnalysisError();else refreshAnalysis();}return true;}
+   if(mode==STUDY&&y>=analysisY()&&y<=analysisY()+ANALYSIS_HEIGHT){if(y>=analysisY()+242&&y<=analysisY()+282){int action=(int)((x-6)/79);if(x>=6&&x<395){if(action==0)jumpStudy(0);else if(action==1)jumpStudy(evalHistory.cursor-1);else if(action==2)jumpStudy(evalHistory.cursor+1);else if(action==3)jumpStudy(evalHistory.points.size()-1);else studyMoves();}return true;}if(graphRect().contains(x,y)){jumpStudy(graphIndexAt(x));return true;}if(y>=analysisY()+57&&y<=analysisY()+78&&x>=265)setAnalysisSide(-analysisSide);else if(analysisResult==null&&!analyzing){if(aiError!=null)showAnalysisError();else refreshAnalysis();}return true;}
    if(mode==MATCH){if(!started){if(ai.ready){started=true;clock.resume(SystemClock.elapsedRealtime(),true);save();invalidate();}return true;}if(game.winner!=0||game.turn!=1||thinking)return true;}
    for(int r=0;r<9;r++)for(int col=0;col<9;col++)if(cell(r,col).contains(x,y)){if(mode==STUDY)chooseStudy(r,col);else choose(r,col);return true;}
    if(tapHand(x,y,1,bottomHandY())||mode==STUDY&&tapHand(x,y,-1,topHandY()))return true;clearSelection();return true;
