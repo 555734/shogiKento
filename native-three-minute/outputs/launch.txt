@@ -1,0 +1,7 @@
+Starting: Intent { cmp=com.presentsoft.shogi3minutes/.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: com.presentsoft.shogi3minutes/.MainActivity
+TotalTime: 2430
+WaitTime: 2457
+Complete
