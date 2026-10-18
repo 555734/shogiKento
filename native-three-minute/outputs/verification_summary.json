@@ -1,0 +1,36 @@
+{
+  "repository": "555734/shogiKento",
+  "source_commit": "5c79caf5ef8f5d631811d39575a3eecec8431cc5",
+  "version": "1.9.0",
+  "version_code": 14,
+  "actions_url": "https://github.com/555734/shogiKento/actions/runs/39096085301",
+  "actions_conclusion": "success",
+  "apk_bytes": 24642097,
+  "apk_sha256": "46a68210f2164fba22a281f094eb78b9a4c06bd7754e36067979e9a7df9c43be",
+  "source_bytes": 26351881,
+  "source_sha256": "ee947c9f7262c9e78e0ad030b09f0a0c01810d86491be07c060094b3fb3845e2",
+  "native_ui_assertions": 2307,
+  "graph_history_assertions": 421,
+  "protocol_assertions": 22,
+  "differential_positions": 640,
+  "arm64_searches": 36,
+  "continuous_search_real_engine_verified": true,
+  "os_graph_taps_verified": true,
+  "removed_study_toolbar_verified": true,
+  "download_size_sha_crc_verified": true,
+  "source_matches_all_17_changed_files": true,
+  "screenshots_visually_inspected": true,
+  "physical_motorola_verified": false,
+  "visual_search_progress": {
+    "earlier": {
+      "depth": 13,
+      "nodes": 74238,
+      "score_cp": 86
+    },
+    "later": {
+      "depth": 19,
+      "nodes": 1250819,
+      "score_cp": 74
+    }
+  }
+}

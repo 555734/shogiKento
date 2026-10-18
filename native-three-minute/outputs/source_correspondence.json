@@ -1,0 +1,70 @@
+[
+  {
+    "path": "README.md",
+    "sha256": "5ae3e6119b55b260f681feebd4e62ed6b0aa345b2db501c7246d080713099809"
+  },
+  {
+    "path": "native-cache/README.md",
+    "sha256": "6dc5550cc91ea239f034186df3b731f3a573e065c813bbec799ad15b2d2d49e3"
+  },
+  {
+    "path": "app/build.gradle",
+    "sha256": "0c1e0a3f70974dd6c99c8bd10e786a80772b214056a1df36d0586ed2f4a01c3a"
+  },
+  {
+    "path": "app/src/main/java/com/presentsoft/shogi3minutes/MainActivity.java",
+    "sha256": "1a716c562ce10a2bdfb5eb8256696b568b63416d221b1d4accb7dd6bebf72440"
+  },
+  {
+    "path": "app/src/main/java/com/presentsoft/shogi3minutes/UsiPosition.java",
+    "sha256": "7bc7c4e9f33ac4dcd53e60bd1cba50b2f122e31926921c8f332abfacd7d3cd21"
+  },
+  {
+    "path": "app/src/main/java/com/presentsoft/shogi3minutes/UsiProcess.java",
+    "sha256": "7bee9871e594d7cb1331f05d6c9861176cf2a6b4f117515346931125eabed215"
+  },
+  {
+    "path": "app/src/main/java/com/presentsoft/shogi3minutes/AiEngine.java",
+    "sha256": "f3e6fb7a04de508eca4f2f42c151b1aec6dd4217815c8408680889f250b72b94"
+  },
+  {
+    "path": "app/src/main/java/com/presentsoft/shogi3minutes/StudySession.java",
+    "sha256": "bae0be0c67ab5459f30f29029a60111de509483f46f42b7be71d5746e8554f0f"
+  },
+  {
+    "path": "app/src/main/java/com/presentsoft/shogi3minutes/EvaluationHistory.java",
+    "sha256": "18a8d31dda34e1f412edf3916e9f106a47546cf03cd4ab174843bf53831966bd"
+  },
+  {
+    "path": "app/src/androidTest/java/com/presentsoft/shogi3minutes/NativeSmokeTest.java",
+    "sha256": "2ade253e8d9383b29c78c078171f7dcf0e99e3bf2f95b46828fc0f7ed4487619"
+  },
+  {
+    "path": "tests/StudyHistoryTest.java",
+    "sha256": "5249a5b07a9b1fe90a2a7875bd9d63c02a64923441fd74786e09348560fe2312"
+  },
+  {
+    "path": "tests/ProtocolTest.java",
+    "sha256": "9a31d6bff6aa667c32bc319e2a14658d5badaedc26838f0075fb2204b51bfb5e"
+  },
+  {
+    "path": "tests/fake_usi.py",
+    "sha256": "d6f8eb11ed7fd18710d501e19d0b263a29383dfecd573e30401251e637506435"
+  },
+  {
+    "path": "scripts/emulator_test.sh",
+    "sha256": "02758476ad95487c653e93c620304ebdc6f892701dbcc1f384c2cf68066ea66a"
+  },
+  {
+    "path": "scripts/restore_native_cache.py",
+    "sha256": "433e055500127f957a161e5804d541d4cdd1683a441b5de9506da43bb0894dfc"
+  },
+  {
+    "path": ".github/workflows/native-shogi.yml",
+    "sha256": "4620d3a59a6de5ef661aec54550560e3ffc4a00d2e1f0036f561639cc6b81c36"
+  },
+  {
+    "path": "ci/native-shogi.yml",
+    "sha256": "4620d3a59a6de5ef661aec54550560e3ffc4a00d2e1f0036f561639cc6b81c36"
+  }
+]

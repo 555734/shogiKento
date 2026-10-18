@@ -1,0 +1,25 @@
+{
+  "apk": "Shogi_3min_v1.9.0.apk",
+  "manifest": {
+    "versionCode": 14,
+    "versionName": "1.9.0",
+    "compileSdkVersion": 35,
+    "compileSdkVersionCodename": "15",
+    "package": "com.presentsoft.shogi3minutes",
+    "platformBuildVersionCode": 35,
+    "platformBuildVersionName": 15
+  },
+  "uses-sdk": {
+    "minSdkVersion": 24,
+    "targetSdkVersion": 34
+  },
+  "application": {
+    "theme": 16974401,
+    "label": "\u7d05\u5c06\u68cb 3\u5206",
+    "debuggable": true,
+    "allowBackup": false,
+    "extractNativeLibs": true,
+    "usesCleartextTraffic": false
+  },
+  "apk_sha256": "46a68210f2164fba22a281f094eb78b9a4c06bd7754e36067979e9a7df9c43be"
+}
