@@ -9,4 +9,5 @@ public final class ClipboardSourceActivity extends Activity {
   if(getIntent().getBooleanExtra("sensitive",false)){PersistableBundle extras=new PersistableBundle();extras.putBoolean("android.content.extra.IS_SENSITIVE",true);clip.getDescription().setExtras(extras);}
   ((ClipboardManager)getSystemService(CLIPBOARD_SERVICE)).setPrimaryClip(clip);new Handler(Looper.getMainLooper()).postDelayed(this::finish,400);
  }
+ @Override protected void onDestroy(){super.onDestroy();if(copied)sendBroadcast(new Intent("com.presentsoft.shogi3minutes.TEST_CLIPBOARD_FINISHED").setPackage(getIntent().getStringExtra("return_package")));}
 }

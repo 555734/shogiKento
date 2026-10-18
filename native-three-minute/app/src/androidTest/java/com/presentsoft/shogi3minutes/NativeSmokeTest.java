@@ -240,10 +240,18 @@ public final class NativeSmokeTest extends Instrumentation {
   try(PrintWriter evidence=new PrintWriter(new File(getTargetContext().getExternalFilesDir(null),"legal_selection.txt"))){evidence.println("PASS native colored legal targets and OS-routed taps: pawn, gote direction, rook blockers/capture, pin, check/king escape, nifu/dead ranks/pawn-drop mate, hand switching, forced/optional promotion, illegal deselection, friendly switching, no stray moves/sounds, explicit free-editor fallback, match and study, OS touch cancellation. Native Canvas pixels verified for legal vs illegal squares.");}
  }
  void clipboardSource(String text,boolean sensitive,boolean waitForReturn){
-  Intent source=new Intent().setClassName(getContext().getPackageName(),ClipboardSourceActivity.class.getName()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("text",text).putExtra("sensitive",sensitive);
-  getTargetContext().startActivity(source);boolean paused=false;long deadline=SystemClock.elapsedRealtime()+10000;
+  java.util.concurrent.CountDownLatch finished=new java.util.concurrent.CountDownLatch(1);String action="com.presentsoft.shogi3minutes.TEST_CLIPBOARD_FINISHED";
+  BroadcastReceiver receiver=new BroadcastReceiver(){public void onReceive(Context c,Intent i){finished.countDown();}};
+  if(Build.VERSION.SDK_INT>=33)getTargetContext().registerReceiver(receiver,new IntentFilter(action),Context.RECEIVER_EXPORTED);else getTargetContext().registerReceiver(receiver,new IntentFilter(action));
+  boolean paused=false;long deadline=SystemClock.elapsedRealtime()+10000;
+  try{
+   Intent source=new Intent().setClassName(getContext().getPackageName(),ClipboardSourceActivity.class.getName()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("text",text).putExtra("sensitive",sensitive).putExtra("return_package",getTargetContext().getPackageName());
+   getTargetContext().startActivity(source);
+   while(finished.getCount()>0&&SystemClock.elapsedRealtime()<deadline){if(!activity.resumed)paused=true;SystemClock.sleep(40);}
+   check(finished.getCount()==0,"external clipboard source copied and finished before continuing");
+  }finally{getTargetContext().unregisterReceiver(receiver);}
   while(waitForReturn&&SystemClock.elapsedRealtime()<deadline){if(!activity.resumed)paused=true;if(paused&&activity.resumed&&activity.hasWindowFocus())break;SystemClock.sleep(40);}
-  if(waitForReturn)check(paused&&activity.resumed&&activity.hasWindowFocus(),"external clipboard app backgrounds and resumes target");else SystemClock.sleep(1100);
+  if(waitForReturn)check(paused&&activity.resumed&&activity.hasWindowFocus(),"external clipboard app backgrounds and resumes target");
  }
  void awaitChoice(String positive){long end=SystemClock.elapsedRealtime()+10000;java.util.concurrent.atomic.AtomicBoolean shown=new java.util.concurrent.atomic.AtomicBoolean();while(SystemClock.elapsedRealtime()<end){main(()->{AlertDialog d=activity.choiceDialog;shown.set(d!=null&&d.isShowing()&&d.getButton(AlertDialog.BUTTON_POSITIVE)!=null&&positive.contentEquals(d.getButton(AlertDialog.BUTTON_POSITIVE).getText()));});if(shown.get())return;SystemClock.sleep(40);}check(false,"expected clipboard dialog: "+positive);}
  void noClipboardDialog(){SystemClock.sleep(750);main(()->check(activity.choiceDialog==null,"ordinary, sensitive or already-handled clipboard remains silent"));}
