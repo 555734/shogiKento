@@ -1,0 +1,11 @@
+{
+  "source_sha": "91c5cffa81747f72b797d7ee87f877b885fce0a1",
+  "run_id": "39159618911",
+  "device_build": true,
+  "apple_distribution_signed": false,
+  "simulator_tests_passed": false,
+  "device_architecture": "arm64",
+  "ad_hoc_code_signature": false,
+  "bundled_asset_hashes_verified": 13,
+  "ipa_sha256": "8be8b7eba2ed3bfa4daa7d9f6cf257aa3023f69cbec18ba89eaad08902e77966"
+}
