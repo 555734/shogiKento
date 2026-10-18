@@ -32,6 +32,13 @@ targets:
     info:
       path: build/Info.plist
       properties:
+        CFBundleIdentifier: '$(PRODUCT_BUNDLE_IDENTIFIER)'
+        CFBundleExecutable: '$(EXECUTABLE_NAME)'
+        CFBundleName: '$(PRODUCT_NAME)'
+        CFBundlePackageType: APPL
+        CFBundleInfoDictionaryVersion: '6.0'
+        CFBundleDevelopmentRegion: ja
+        LSRequiresIPhoneOS: true
         CFBundleDisplayName: 紅将棋 3分
         CFBundleShortVersionString: '1.12.0'
         CFBundleVersion: '19'

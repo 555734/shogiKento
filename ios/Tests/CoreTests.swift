@@ -29,6 +29,9 @@ final class CoreTests:XCTestCase {
         var free=try Position();XCTAssertTrue(free.freeMove(source:54,drop:0,side:1,to:36));XCTAssertEqual(free.board[36],1);XCTAssertEqual(free.board[54],0)
         free.hands[0][1]=1;XCTAssertTrue(free.freeMove(source:nil,drop:1,side:1,to:45));XCTAssertEqual(free.analysisProblem,"二歩の局面です")
         XCTAssertThrowsError(try Rules.legal(free))
+        let illegalTurn=try Position("4k4/9/4R4/9/9/9/9/9/4K4 b - 1")
+        XCTAssertEqual(illegalTurn.analysisProblem,"手番ではない側の玉に王手がかかっています")
+        XCTAssertThrowsError(try Rules.legal(illegalTurn))
     }
     func testDurableIndependentArchive()throws {
         let dir=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString),store=try RecordStore(root:dir)

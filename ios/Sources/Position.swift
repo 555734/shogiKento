@@ -41,7 +41,10 @@ struct Position: Codable, Equatable {
         guard board.filter({$0==8}).count==1,board.filter({$0 == -8}).count==1,hands[0][8]==0,hands[1][8]==0 else{return "盤上に先手・後手の玉を1枚ずつ配置してください"}
         let king=board.firstIndex(of:8)!,enemy=board.firstIndex(of:-8)!;if abs(king/9-enemy/9)<=1 && abs(king%9-enemy%9)<=1{return "玉が隣接しています"}
         let counts=(1...8).map{t in board.filter{Self.base($0)==t}.count+hands[0][t]+hands[1][t]};if zip(counts,[18,4,4,4,4,2,2,2]).contains(where:{$0.0>$0.1}){return "駒の枚数が多すぎます"}
-        for s in [1,-1]{for c in 0..<9{if (0..<9).filter({board[$0*9+c]==s}).count>1{return "二歩の局面です"}};for i in 0..<81 where board[i]*s>0 {let t=abs(board[i]),r=i/9;if (t==1 || t==2) && r==(s==1 ? 0:8) || t==3 && (s==1 ? r<2:r>6){return "行き先のない駒があります"}}};return nil
+        for s in [1,-1]{for c in 0..<9{if (0..<9).filter({board[$0*9+c]==s}).count>1{return "二歩の局面です"}};for i in 0..<81 where board[i]*s>0 {let t=abs(board[i]),r=i/9;if (t==1 || t==2) && r==(s==1 ? 0:8) || t==3 && (s==1 ? r<2:r>6){return "行き先のない駒があります"}}}
+        var opposite=self;opposite.side = -side
+        if BKChecked(opposite.sfen)==1{return "手番ではない側の玉に王手がかかっています"}
+        return nil
     }
     mutating func freeMove(source: Int?,drop: Int,side mover: Int,to: Int,promote: Bool=false)->Bool {
         guard (0..<81).contains(to),mover==1 || mover == -1 else{return false};let slot=mover==1 ? 0:1
