@@ -23,6 +23,7 @@ final class EvaluationHistory implements Serializable {
  static String key(ShogiGame g){String[] s=UsiPosition.sfen(g).split(" ");StringBuilder hand=new StringBuilder(s[2].equals("-")?"":s[2]);for(int side=0;side<2;side++)if(g.hands[side][8]>0){if(g.hands[side][8]>1)hand.append(g.hands[side][8]);hand.append(side==0?'K':'k');}return s[0]+" "+(hand.length()==0?"-":hand.toString());}
  void reset(String key){points.clear();points.add(new Point(key));cursor=firstEdit=0;imported=false;title=null;}
  void load(KifRecord record){points.clear();firstEdit=0;imported=true;title=record.title;for(int i=0;i<record.positions.size();i++){Point p=new Point(record.positions.get(i));p.side=i%2==0?1:-1;p.label=record.labels.get(i);points.add(p);}cursor=points.size()-1;}
+ void load(SavedRecord record){points.clear();firstEdit=record.firstPly;imported=true;title=record.title;for(int i=0;i<record.positions.size();i++){Point p=new Point(record.positions.get(i));p.side=record.sides.get(i);p.label=record.labels.get(i);points.add(p);}cursor=points.size()-1;}
  void sync(String key){if(points.isEmpty()||!points.get(cursor).key.equals(key))reset(key);}
  void advance(String key){if(points.isEmpty()){reset(key);return;}if(points.get(cursor).key.equals(key))return;
   while(points.size()>cursor+1)points.remove(points.size()-1);points.add(new Point(key));cursor++;
