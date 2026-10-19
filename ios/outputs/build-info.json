@@ -1,0 +1,13 @@
+{
+  "source_sha": "e52c19687c3c6266c1bc243e0964fb9eb077e43d",
+  "run_id": "39278931269",
+  "device_build": true,
+  "apple_distribution_signed": false,
+  "simulator_tests_passed": false,
+  "ads_test_only": true,
+  "admob_app_id": "ca-app-pub-3940256099942544~1458002511",
+  "device_architecture": "arm64",
+  "ad_hoc_code_signature": false,
+  "bundled_asset_hashes_verified": 13,
+  "ipa_sha256": "60e7602f134f27e83b13e98ad978fdc51bb37acca961f3a473f7a9d6b88e8517"
+}
