@@ -5,6 +5,7 @@ import StoreKitTest
 
 final class CoffeeTests:XCTestCase {
     @MainActor func testStoreKitPurchaseRestoreRefundAndLevelGate()async throws {
+        guard #available(iOS 17.0,*) else{throw XCTSkip("StoreKitTest purchase generation requires iOS 17; the application supports iOS 16.")}
         executionTimeAllowance=180;NSLog("Coffee StoreKit: begin session setup")
         // Synchronous StoreKitTest setup/reset can wait for callbacks from the app.
         // Do not block the main actor that handles those callbacks.
@@ -19,7 +20,7 @@ final class CoffeeTests:XCTestCase {
         // Use Apple's test server to create a receipt without a checkout sheet.
         // The payment sheet itself belongs in app UI and registered Sandbox tests.
         let sku=CoffeeStore.productID
-        _ = try await Task.detached {try session.buyProduct(identifier:sku)}.value
+        _ = try await session.buyProduct(identifier:sku,options:[])
         NSLog("Coffee StoreKit: test-server purchase created")
         coffee.observeTransactions();await coffee.refresh()
         XCTAssertTrue(coffee.owned);XCTAssertEqual(coffee.effective(MatchOptions(minutes:3,humanSide:1,level:10)).level,10);NSLog("Coffee StoreKit: verified purchase loaded")
