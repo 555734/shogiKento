@@ -1,0 +1,6 @@
+PASS exact study geometry and board pixels across fixture success/failure, offscreen initial ad, OS swipe from native ad, return and legal move, four placements, native lifecycle. Test IDs only; no production IDs.
+official_sdk_state=loaded
+official_sdk_message=Google公式テスト広告 · 収益は発生しません
+official_native_ad_received=true
+official_unit=ca-app-pub-3940256099942544/2247696110
+official_last_error=
