@@ -34,7 +34,7 @@ struct TestAdSlot:View {
         if let ad=model.nativeAd{NativeTestAdContainer(ad:ad)}
         else if model.fixture{VStack(alignment:.leading,spacing:18){Image(systemName:"square.grid.3x3.fill").font(.system(size:48));Text("棋力を伸ばす毎日の一手。").font(.title3.bold());Text("広告と盤面の操作は独立しています。\n通信を行わないレイアウト検証用です。").font(.caption)}.foregroundStyle(.brown).frame(maxWidth:.infinity,maxHeight:.infinity,alignment:.center)}
         else{Spacer(minLength:0)}
-    }.padding(12).frame(height:360).frame(maxWidth:.infinity).background(LinearGradient(colors:[Color(red:1,green:0.94,blue:0.81),Color(red:0.91,green:0.78,blue:0.55)],startPoint:.leading,endPoint:.trailing)).clipShape(RoundedRectangle(cornerRadius:10)).overlay(RoundedRectangle(cornerRadius:10).stroke(.brown)).accessibilityIdentifier("ad_"+placement).onAppear{model.load()}.onDisappear{model.close()}}
+    }.padding(12).frame(height:360).frame(maxWidth:.infinity).background(LinearGradient(colors:[Color(red:1,green:0.94,blue:0.81),Color(red:0.91,green:0.78,blue:0.55)],startPoint:.leading,endPoint:.trailing)).clipShape(RoundedRectangle(cornerRadius:10)).overlay(RoundedRectangle(cornerRadius:10).stroke(.brown)).accessibilityElement(children:.contain).accessibilityIdentifier("ad_"+placement).onAppear{model.load()}.onDisappear{model.close()}}
 }
 
 struct NativeTestAdContainer:UIViewRepresentable {
