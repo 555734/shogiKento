@@ -1,0 +1,144 @@
+Command line invocation:
+    /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/xcodebuild -project BeniShogi.xcodeproj -scheme BeniShogi -configuration Release -destination generic/platform=iOS -derivedDataPath /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData -resultBundlePath /Users/runner/work/shogiKento/shogiKento/ios/outputs/DeviceBuild.xcresult CODE_SIGNING_ALLOWED=NO build
+
+Build settings from command line:
+    CODE_SIGNING_ALLOWED = NO
+
+Writing result bundle at path:
+	/Users/runner/work/shogiKento/shogiKento/ios/outputs/DeviceBuild.xcresult
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (1 target)
+    Target 'BeniShogi' in project 'BeniShogi' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/runner/work/shogiKento/shogiKento/ios/Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+Build description signature: f8e96c0d1b5544be8fc275104b8fe7aa
+Build description path: /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/XCBuildData/f8e96c0d1b5544be8fc275104b8fe7aa.xcbuilddata
+CreateBuildDirectory /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Products
+    cd /Users/runner/work/shogiKento/shogiKento/ios/BeniShogi.xcodeproj
+    builtin-create-build-directory /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Products
+
+CreateBuildDirectory /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex
+    cd /Users/runner/work/shogiKento/shogiKento/ios/BeniShogi.xcodeproj
+    builtin-create-build-directory /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex
+
+ClangStatCache /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/SDKStatCaches.noindex/iphoneos18.5-22F76-a529daf784b3616c7c04a36aeb7f5c05.sdkstatcache
+    cd /Users/runner/work/shogiKento/shogiKento/ios/BeniShogi.xcodeproj
+    /Applications/Xcode_16.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode_16.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.5.sdk -o /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/SDKStatCaches.noindex/iphoneos18.5-22F76-a529daf784b3616c7c04a36aeb7f5c05.sdkstatcache
+
+CreateBuildDirectory /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Products/Release-iphoneos
+    cd /Users/runner/work/shogiKento/shogiKento/ios/BeniShogi.xcodeproj
+    builtin-create-build-directory /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Products/Release-iphoneos
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi-e7a68c6337750f1f26481dc9c7914395-VFS-iphoneos/all-product-headers.yaml
+    cd /Users/runner/work/shogiKento/shogiKento/ios/BeniShogi.xcodeproj
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi-e7a68c6337750f1f26481dc9c7914395-VFS-iphoneos/all-product-headers.yaml
+
+CreateBuildDirectory /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphoneos
+    cd /Users/runner/work/shogiKento/shogiKento/ios/BeniShogi.xcodeproj
+    builtin-create-build-directory /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/EagerLinkingTBDs/Release-iphoneos
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/Objects-normal/arm64/BeniShogi_const_extract_protocols.json (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/Objects-normal/arm64/BeniShogi_const_extract_protocols.json
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/Objects-normal/arm64/BeniShogi.SwiftFileList (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/Objects-normal/arm64/BeniShogi.SwiftFileList
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/Objects-normal/arm64/BeniShogi.SwiftConstValuesFileList (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/Objects-normal/arm64/BeniShogi.SwiftConstValuesFileList
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/Objects-normal/arm64/BeniShogi.LinkFileList (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/Objects-normal/arm64/BeniShogi.LinkFileList
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/Objects-normal/arm64/BeniShogi-OutputFileMap.json (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/Objects-normal/arm64/BeniShogi-OutputFileMap.json
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/BeniShogi.hmap (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/BeniShogi.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/BeniShogi.DependencyStaticMetadataFileList (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/BeniShogi.DependencyStaticMetadataFileList
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/BeniShogi.DependencyMetadataFileList (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/BeniShogi.DependencyMetadataFileList
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/BeniShogi-project-headers.hmap (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/BeniShogi-project-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/BeniShogi-own-target-headers.hmap (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/BeniShogi-own-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/BeniShogi-generated-files.hmap (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/BeniShogi-generated-files.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/BeniShogi-all-target-headers.hmap (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/BeniShogi-all-target-headers.hmap
+
+WriteAuxiliaryFile /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/BeniShogi-all-non-framework-target-headers.hmap (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    write-file /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/BeniShogi-all-non-framework-target-headers.hmap
+
+MkDir /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Products/Release-iphoneos/BeniShogi.app (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /bin/mkdir -p /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Products/Release-iphoneos/BeniShogi.app
+
+MkDir /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/assetcatalog_output/unthinned (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /bin/mkdir -p /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/assetcatalog_output/unthinned
+
+MkDir /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/assetcatalog_output/thinned (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /bin/mkdir -p /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/assetcatalog_output/thinned
+
+GenerateAssetSymbols /Users/runner/work/shogiKento/shogiKento/ios/Assets.xcassets (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/actool /Users/runner/work/shogiKento/shogiKento/ios/Assets.xcassets --compile /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Products/Release-iphoneos/BeniShogi.app --output-format human-readable-text --notices --warnings --export-dependency-info /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/assetcatalog_dependencies --output-partial-info-plist /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/assetcatalog_generated_info.plist --app-icon AppIcon --compress-pngs --enable-on-demand-resources YES --development-region en --target-device iphone --target-device ipad --minimum-deployment-target 16.0 --platform iphoneos --bundle-identifier com.presentsoft.shogi3minutes --generate-swift-asset-symbol-extensions NO --generate-swift-asset-symbols /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/DerivedSources/GeneratedAssetSymbols.swift --generate-objc-asset-symbols /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/DerivedSources/GeneratedAssetSymbols.h --generate-asset-symbol-index /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/* com.apple.actool.compilation-results */
+/Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/DerivedSources/GeneratedAssetSymbols-Index.plist
+/Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/DerivedSources/GeneratedAssetSymbols.h
+/Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/DerivedSources/GeneratedAssetSymbols.swift
+
+
+CpResource /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Products/Release-iphoneos/BeniShogi.app/GameAssets /Users/runner/work/shogiKento/shogiKento/ios/GameAssets (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/runner/work/shogiKento/shogiKento/ios/GameAssets /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Products/Release-iphoneos/BeniShogi.app
+
+CompileAssetCatalogVariant thinned /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Products/Release-iphoneos/BeniShogi.app /Users/runner/work/shogiKento/shogiKento/ios/Assets.xcassets (in target 'BeniShogi' from project 'BeniShogi')
+    cd /Users/runner/work/shogiKento/shogiKento/ios
+    /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/actool /Users/runner/work/shogiKento/shogiKento/ios/Assets.xcassets --compile /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/assetcatalog_output/thinned --output-format human-readable-text --notices --warnings --export-dependency-info /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/assetcatalog_dependencies_thinned --output-partial-info-plist /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData/Build/Intermediates.noindex/BeniShogi.build/Release-iphoneos/BeniShogi.build/assetcatalog_generated_info.plist_thinned --app-icon AppIcon --compress-pngs --enable-on-demand-resources YES --development-region en --target-device iphone --target-device ipad --minimum-deployment-target 16.0 --platform iphoneos
