@@ -78,10 +78,10 @@ jobs:
         timeout-minutes: 12
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          emulator-boot-timeout: 180
+          emulator-boot-timeout: 240
           api-level: 35
           arch: x86_64
-          target: google_apis
+          target: google_apis_playstore
           profile: pixel_2
           working-directory: native-three-minute
           emulator-options: -no-window -gpu software -no-snapshot -noaudio -no-boot-anim -camera-back none -memory 4096 -partition-size 2048
