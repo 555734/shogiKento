@@ -9,13 +9,19 @@ final class CoffeeTests:XCTestCase {
         session.disableDialogs=true;session.clearTransactions()
         defer{session.clearTransactions()}
         let defaults=UserDefaults(suiteName:UUID().uuidString)!,coffee=CoffeeStore(defaults:defaults,start:false)
+        coffee.observeTransactions()
         await coffee.refresh();XCTAssertFalse(coffee.owned);XCTAssertEqual(coffee.effective(MatchOptions(minutes:3,humanSide:1,level:10)).level,9)
         await coffee.loadProduct();XCTAssertNotNil(coffee.product);XCTAssertEqual(coffee.product?.price,200)
         await coffee.buy();XCTAssertTrue(coffee.owned);XCTAssertEqual(coffee.effective(MatchOptions(minutes:3,humanSide:1,level:10)).level,10)
         let restored=CoffeeStore(defaults:defaults,start:false);await restored.refresh();XCTAssertTrue(restored.owned)
         await restored.restore();XCTAssertTrue(restored.owned)
         let transaction=try XCTUnwrap(session.allTransactions().first)
-        try session.refundTransaction(identifier:transaction.identifier)
+        // SKTestSession waits for the app to handle the refund. Keep the main actor
+        // free so the production Transaction.updates listener can finish it.
+        try await Task.detached {try session.refundTransaction(identifier:transaction.identifier)}.value
+        let deadline=Date().addingTimeInterval(10)
+        while coffee.owned && Date()<deadline {try await Task.sleep(nanoseconds:100_000_000)}
+        XCTAssertFalse(coffee.owned,"Verified refund update must revoke the purchase")
         await coffee.refresh();XCTAssertFalse(coffee.owned);XCTAssertEqual(coffee.effective(MatchOptions(minutes:3,humanSide:1,level:10)).level,9)
         let proof=XCTAttachment(string:"PASS local Apple StoreKit Test: ¥200 non-consumable, Product.purchase, verified entitlement, finish, currentEntitlements restart, explicit AppStore.sync restore, refund relock. No production charge or App Store product registration.");proof.name="coffee-storekit-result";proof.lifetime = .keepAlways;add(proof)
     }

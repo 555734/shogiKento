@@ -17,7 +17,8 @@ if app.is_dir() and '** BUILD SUCCEEDED **' in (OUT/'device-build.txt').read_tex
 sim=ROOT/'build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app'
 if sim.is_dir():subprocess.run(['ditto','-c','-k','--keepParent',str(sim),str(OUT/'BeniShogi-simulator.app.zip')],check=True)
 test=OUT/'simulator-tests.txt'
-if test.exists():report['simulator_tests_passed']='** TEST SUCCEEDED **' in test.read_text(errors='replace')
+if test.exists():
+ text=test.read_text(errors='replace');report['simulator_tests_passed']=text.count('** TEST EXECUTE SUCCEEDED **')==2 and '** TEST EXECUTE FAILED **' not in text
 with zipfile.ZipFile(OUT/'BeniShogi-complete-source.zip','w',zipfile.ZIP_DEFLATED) as z:
  for directory,prefix in [(ROOT,'BeniShogi/ios'),(ROOT.parent/'native-three-minute/third_party/yaneuraou','BeniShogi/native-three-minute/third_party/yaneuraou')]:
   if directory.exists():

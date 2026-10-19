@@ -25,17 +25,17 @@ final class FlowTests:XCTestCase {
     func testCoffeeOpeningPromptAndPermanentHide()throws {
         let app=XCUIApplication();app.launchArguments=["-ads-fixture","-coffee-fixture","-coffee-reset-offer"];app.launch();XCTAssertFalse(app.buttons["coffee_buy"].waitForExistence(timeout:3))
         app.terminate();app.launchArguments=["-ads-fixture","-coffee-fixture"];app.launch();XCTAssertTrue(app.buttons["coffee_buy"].waitForExistence(timeout:15));shot("19-coffee-second-opening")
-        app.switches["coffee_hide_offer"].tap();tap("閉じる",app);app.terminate();app.launch();XCTAssertFalse(app.buttons["coffee_buy"].waitForExistence(timeout:3))
-        tap("settings",app);if !app.buttons["coffee_settings"].isHittable{app.swipeUp()};tap("coffee_settings",app);XCTAssertTrue(app.buttons["coffee_restore"].exists);tap("閉じる",app);tap("閉じる",app)
+        app.switches["coffee_hide_offer"].tap();XCTAssertEqual(app.switches["coffee_hide_offer"].value as? String,"1");tap("coffee_close",app);app.terminate();app.launch();XCTAssertFalse(app.buttons["coffee_buy"].waitForExistence(timeout:3))
+        tap("settings",app);if !app.buttons["coffee_settings"].isHittable{app.swipeUp()};tap("coffee_settings",app);XCTAssertTrue(app.buttons["coffee_restore"].exists);tap("coffee_close",app);tap("settings_close",app)
     }
     func testCoffeeSettingsBuyRestoreAndHide()throws {
         let app=XCUIApplication();app.launchArguments=["-ads-fixture","-coffee-fixture","-coffee-test-suppress"];app.launch()
         tap("settings",app);if !app.buttons["coffee_settings"].isHittable{app.swipeUp()};tap("coffee_settings",app);XCTAssertTrue(app.buttons["coffee_buy"].isEnabled);XCTAssertTrue(app.buttons["coffee_buy"].label.contains("200"));shot("16-coffee-offer")
-        let hide=app.switches["coffee_hide_offer"];if (hide.value as? String) != "1"{hide.tap()}
-        tap("coffee_buy",app);XCTAssertTrue(app.staticTexts["coffee_status"].label.contains("購入済み"));shot("17-coffee-purchased");tap("閉じる",app);tap("閉じる",app)
+        let hide=app.switches["coffee_hide_offer"];if (hide.value as? String) != "1"{hide.tap()};XCTAssertEqual(hide.value as? String,"1")
+        tap("coffee_buy",app);XCTAssertTrue(app.staticTexts["coffee_status"].label.contains("購入済み"));shot("17-coffee-purchased");tap("coffee_close",app);tap("settings_close",app)
         tap("mode_study",app);for _ in 0..<3{edgeScroll(app)};XCTAssertFalse(app.staticTexts["ad_status_study"].exists)
         tap("home",app);app.terminate();app.launch();tap("settings",app);if !app.buttons["coffee_settings"].isHittable{app.swipeUp()};tap("coffee_settings",app);XCTAssertEqual(app.switches["coffee_hide_offer"].value as? String,"1")
-        tap("coffee_restore",app);XCTAssertTrue(app.staticTexts["coffee_status"].label.contains("購入済み"));shot("18-coffee-restored");tap("閉じる",app);tap("閉じる",app)
+        tap("coffee_restore",app);XCTAssertTrue(app.staticTexts["coffee_status"].label.contains("購入済み"));shot("18-coffee-restored");tap("coffee_close",app);tap("settings_close",app)
         tap("mode_match",app);if !app.buttons["match_settings"].isHittable{edgeScroll(app)};tap("match_settings",app);let increment=app.buttons["match_level-Increment"];for _ in 0..<10{if !increment.isEnabled{break};increment.tap()};XCTAssertEqual(app.buttons["apply_match_settings"].label,"設定を適用")
     }
     func testNativeHomeSettingsMatchAndQuestStudy()throws {

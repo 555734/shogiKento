@@ -48,8 +48,12 @@ jobs:
           echo "$UDID" > outputs/simulator-udid.txt
           xcrun simctl boot "$UDID" || true
           xcrun simctl bootstatus "$UDID" -b
+          args=(-project BeniShogi.xcodeproj -scheme BeniShogi -configuration Debug -destination "platform=iOS Simulator,id=$UDID" -derivedDataPath build/DerivedData -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-)
+          xcodebuild "${args[@]}" build-for-testing 2>&1 | tee outputs/simulator-build.txt
+          xcodebuild "${args[@]}" -resultBundlePath outputs/Tests.xcresult -only-testing:BeniShogiTests test-without-building 2>&1 | tee outputs/simulator-tests.txt
+          # Seed the real OS pasteboard immediately before the UI flow, after StoreKit tests.
           xcrun simctl pbcopy "$UDID" < ../native-three-minute/tests/fixtures/shogi_quest_79.kif
-          xcodebuild -project BeniShogi.xcodeproj -scheme BeniShogi -configuration Debug -destination "platform=iOS Simulator,id=$UDID" -derivedDataPath build/DerivedData -resultBundlePath outputs/Tests.xcresult -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- test 2>&1 | tee outputs/simulator-tests.txt
+          xcodebuild "${args[@]}" -resultBundlePath outputs/UITests.xcresult -only-testing:BeniShogiUITests test-without-building 2>&1 | tee -a outputs/simulator-tests.txt
           xcrun simctl launch "$UDID" com.presentsoft.shogi3minutes || true
           sleep 3
           xcrun simctl io "$UDID" screenshot outputs/home.png
@@ -58,6 +62,7 @@ jobs:
         run: |
           mkdir -p ios/outputs
           if test -d ios/outputs/Tests.xcresult; then xcrun xcresulttool export attachments --path ios/outputs/Tests.xcresult --output-path ios/outputs/screenshots || true; fi
+          if test -d ios/outputs/UITests.xcresult; then xcrun xcresulttool export attachments --path ios/outputs/UITests.xcresult --output-path ios/outputs/screenshots-ui || true; fi
           python ios/scripts/package.py
       - name: Upload build and test evidence
         if: always()
