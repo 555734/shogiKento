@@ -56,6 +56,32 @@ final class CoreTests:XCTestCase {
         model.sceneActive(true);model.session.clocks[0]=0.001;Thread.sleep(forTimeInterval:0.01);model.tick();XCTAssertEqual(model.session.winner,-1);XCTAssertTrue(try store.read(id).result.contains("時間切れ"))
         model.restartMatch();XCTAssertNotEqual(model.session.match.id,id);XCTAssertTrue(try store.read(id).result.contains("時間切れ"));model.sceneActive(false)
     }
+    @MainActor func testMatchOptionsAndReplaySound()throws {
+        let defaults=UserDefaults.standard,keys=["match_minutes","match_human_side","match_level","sound","volume"]
+        let old=keys.map{defaults.object(forKey:$0)}
+        defer{for (key,value) in zip(keys,old){defaults.set(value,forKey:key)}}
+        let dir=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString),store=try RecordStore(root:dir)
+        defer{try? FileManager.default.removeItem(at:dir)}
+        let model=AppModel(store:store);model.enter(.match)
+        var lastNodes=0,lastTime=0
+        for level in 1...10{let options=MatchOptions(minutes:3,humanSide:1,level:level);XCTAssertGreaterThan(options.nodes,lastNodes);XCTAssertGreaterThan(options.milliseconds,lastTime);lastNodes=options.nodes;lastTime=options.milliseconds}
+        for minutes in MatchOptions.times{for side in [1,-1]{
+            let options=MatchOptions(minutes:minutes,humanSide:side,level:10);model.applyMatchOptions(options)
+            XCTAssertEqual(model.matchOptions,options);XCTAssertEqual(model.session.clocks,[Double(minutes*60),Double(minutes*60)]);XCTAssertEqual(model.humanSide,side)
+            XCTAssertEqual(side==1 ? model.session.match.sente:model.session.match.gote,"あなた")
+            XCTAssertEqual(try store.current().match.matchOptions,options)
+        }}
+        let record=try KifParser.parse(String(contentsOf:fixture("kif"),encoding:.utf8));model.open(record)
+        defaults.set(true,forKey:"sound");defaults.set(65.0,forKey:"volume")
+        let count=model.soundPlayCount;model.seek(78);XCTAssertEqual(model.soundPlayCount,count+1)
+        model.seek(78);XCTAssertEqual(model.soundPlayCount,count+1)
+        model.seek(79);XCTAssertEqual(model.soundPlayCount,count+2)
+        defaults.set(false,forKey:"sound");model.seek(78);XCTAssertEqual(model.soundPlayCount,count+2)
+        defaults.set(true,forKey:"sound");defaults.set(0.0,forKey:"volume");model.seek(79);XCTAssertEqual(model.soundPlayCount,count+2)
+        model.sceneActive(false)
+        let data=try JSONEncoder().encode(CurrentSession());let legacy=try JSONDecoder().decode(CurrentSession.self,from:data)
+        XCTAssertNil(legacy.match.matchOptions)
+    }
     func testRealEmbeddedNNUEAndContinuousSearch()async throws {
         let p=try Position(),complete=expectation(description:"native NNUE reply")
         NativeEngine.shared.search(p,continuous:false,nodes:3000){result in switch result{case .failure(let error):XCTFail(error.localizedDescription);case .success(let update):if let best=update.best{XCTAssertTrue((try? Rules.legal(p).contains(Move(usi:best)))==true);XCTAssertGreaterThan(update.nodes,0);complete.fulfill()}}}

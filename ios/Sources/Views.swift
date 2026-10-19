@@ -34,7 +34,7 @@ struct HomeView:View {
                 Image(uiImage:AppAssets.image("home_title")).resizable().scaledToFit().frame(height:max(140,min(240,geo.size.height*0.29))).padding(.top,32).accessibilityLabel("紅将棋3分")
                 Spacer(minLength:15)
                 Button{model.enter(.study)}label:{HStack(spacing:22){Image(systemName:"circle.dashed").font(.system(size:65,weight:.thin));VStack(alignment:.leading,spacing:15){Text("検討モード").font(.system(size:34,weight:.bold,design:.serif));Divider().overlay(gold);Text("合法手で検討・自由配置にも切替可").font(.system(size:12,design:.serif))}}.padding(24).frame(maxWidth:.infinity,minHeight:145).background(LinearGradient(colors:[Color(red:0.7,green:0.03,blue:0.04),burgundy],startPoint:.topLeading,endPoint:.bottomTrailing))}.buttonStyle(HomeCard()).accessibilityIdentifier("mode_study")
-                Button{model.enter(.match)}label:{HStack(spacing:22){Image(uiImage:AppAssets.piece(8)).resizable().scaledToFit().frame(width:56,height:66);VStack(alignment:.leading,spacing:8){Text("対局モード").font(.system(size:26,weight:.bold,design:.serif));Text("CPUと3分切れ負け").font(.system(size:14,design:.serif))};Spacer()}.padding(.horizontal,22).padding(.vertical,12).frame(maxWidth:.infinity).background(Color(red:0.12,green:0.09,blue:0.06))}.buttonStyle(HomeCard()).accessibilityIdentifier("mode_match")
+                Button{model.enter(.match)}label:{HStack(spacing:22){Image(uiImage:AppAssets.piece(8)).resizable().scaledToFit().frame(width:56,height:66);VStack(alignment:.leading,spacing:8){Text("対局モード").font(.system(size:26,weight:.bold,design:.serif));Text("CPUと対局・時間や先後を設定").font(.system(size:14,design:.serif))};Spacer()}.padding(.horizontal,22).padding(.vertical,12).frame(maxWidth:.infinity).background(Color(red:0.12,green:0.09,blue:0.06))}.buttonStyle(HomeCard()).accessibilityIdentifier("mode_match")
                 Button{paste=true}label:{Label("棋譜を貼り付け",systemImage:"doc.text").font(.system(size:23,weight:.bold,design:.serif)).frame(maxWidth:.infinity,minHeight:60).background(Color.black.opacity(0.83))}.buttonStyle(HomeCard()).accessibilityIdentifier("open_paste")
                 Button{model.enter(.archive)}label:{Label("過去の棋譜",systemImage:"clock.arrow.circlepath").font(.system(size:22,weight:.bold,design:.serif)).frame(maxWidth:.infinity,minHeight:56).background(Color.black.opacity(0.83))}.buttonStyle(HomeCard()).accessibilityIdentifier("open_archive")
                 Spacer(minLength:35)
@@ -50,20 +50,22 @@ struct BoardScreen:View {
     @Binding var showMoves:Bool
     @State private var resign=false
     @State private var restart=false
+    @State private var matchSettings=false
     var body:some View {
         ScrollView {VStack(spacing:8){
-            HandView(side:-1)
+            HandView(side:model.screen == .match ? model.cpuSide:-1)
             BoardView().aspectRatio(1226/1283.0,contentMode:.fit)
-            HandView(side:1)
+            HandView(side:model.screen == .match ? model.humanSide:1)
             if model.screen == .match {
                 Text(model.session.winner != 0 ? model.session.match.result:!model.session.matchStarted ? "対局を開始してください":model.thinking ? "CPUの手番":"あなたの手番").accessibilityIdentifier("match_status")
                 Text("\(model.session.match.moves)手目").accessibilityIdentifier("match_ply")
                 if !model.session.matchStarted{Button("対局開始"){model.startMatch()}.buttonStyle(.borderedProminent).accessibilityIdentifier("start_match")}
-                HStack {Button("やり直し"){restart=true};Spacer();Button("AI再試行"){model.scheduleCPU()}.disabled(!model.thinking && model.position.side==1);Spacer();Button("投了"){resign=true}.disabled(!model.session.matchStarted || model.session.winner != 0)}.buttonStyle(.bordered).padding(.horizontal)
-                Picker("AIの負荷",selection:Binding(get:{let v=UserDefaults.standard.integer(forKey:"ai_nodes");return v==0 ? 50000:v},set:{UserDefaults.standard.set($0,forKey:"ai_nodes")})){Text("低負荷").tag(3000);Text("標準").tag(10000);Text("強い").tag(50000)}.pickerStyle(.segmented).padding()
+                HStack {Button("やり直し"){restart=true};Spacer();Button("AI再試行"){model.scheduleCPU()}.disabled(!model.thinking && model.position.side==model.humanSide);Spacer();Button("投了"){resign=true}.disabled(!model.session.matchStarted || model.session.winner != 0)}.buttonStyle(.bordered).padding(.horizontal)
+                Button("対局設定 · \(model.matchOptions.minutes)分 / AI Lv.\(model.matchOptions.level) / あなた\(model.humanSide==1 ? "先手":"後手")"){matchSettings=true}.buttonStyle(.bordered).accessibilityIdentifier("match_settings").padding(.horizontal)
             }else{AnalysisView(showMoves:$showMoves)}
         }.frame(maxWidth:600).frame(maxWidth:.infinity).padding(.bottom,15)}
         .background(Image(uiImage:AppAssets.image("background")).resizable().scaledToFill().ignoresSafeArea())
+        .sheet(isPresented:$matchSettings,onDismiss:{model.setMatchSettingsOpen(false)}){MatchSettingsView(options:model.matchOptions).onAppear{model.setMatchSettingsOpen(true)}}
         .alert("投了しますか？",isPresented:$resign){Button("キャンセル",role:.cancel){};Button("投了",role:.destructive){model.resign()}}
         .alert("対局をやり直しますか？",isPresented:$restart){Button("キャンセル",role:.cancel){};Button("やり直す",role:.destructive){model.restartMatch()}}
     }
@@ -74,9 +76,9 @@ struct BoardView:View {
         GeometryReader {geo in let w=geo.size.width,h=geo.size.height
             ZStack {Image(uiImage:AppAssets.image("board")).resizable()
                 Canvas {context,size in var grid=Path();for i in 0...9{let x=size.width*(0.01+0.98*Double(i)/9),y=size.height*(0.01+0.98*Double(i)/9);grid.move(to:CGPoint(x:x,y:size.height*0.01));grid.addLine(to:CGPoint(x:x,y:size.height*0.99));grid.move(to:CGPoint(x:size.width*0.01,y:y));grid.addLine(to:CGPoint(x:size.width*0.99,y:y))};context.stroke(grid,with:.color(Color(red:0.30,green:0.15,blue:0.03)),lineWidth:0.8)}
-                VStack(spacing:0){ForEach(0..<9,id:\.self){r in HStack(spacing:0){ForEach(0..<9,id:\.self){c in let square=r*9+c,piece=model.position.board[square],target=model.targets.contains{$0.destination==square}
-                    Button{model.tap(square)}label:{ZStack{if model.selected==square{Color.blue.opacity(0.4)}else if target{Color.yellow.opacity(0.5)};if piece != 0{Image(uiImage:AppAssets.piece(piece)).resizable().scaledToFit().rotationEffect(.degrees(piece<0 ? 180:0)).padding(0.7)}}.frame(maxWidth:.infinity,maxHeight:.infinity).contentShape(Rectangle())}.buttonStyle(.plain).frame(width:w*0.98/9,height:h*0.98/9)
-                        .accessibilityIdentifier("cell_\(r)_\(c)").accessibilityLabel("\(9-c)\(Array("一二三四五六七八九")[r]) \(Position.glyphs[abs(piece)])").accessibilityValue(model.selected==square ? "選択":target ? "移動可能":"")
+                VStack(spacing:0){ForEach(0..<9,id:\.self){r in HStack(spacing:0){ForEach(0..<9,id:\.self){c in let square=model.screen == .match && model.humanSide == -1 ? 80-r*9-c:r*9+c,piece=model.position.board[square],target=model.targets.contains{$0.destination==square}
+                    Button{model.tap(square)}label:{ZStack{if model.selected==square{Color.blue.opacity(0.4)}else if target{Color.yellow.opacity(0.5)};if piece != 0{Image(uiImage:AppAssets.piece(piece)).resizable().scaledToFit().rotationEffect(.degrees(piece*(model.screen == .match ? model.humanSide:1)<0 ? 180:0)).padding(0.7)}}.frame(maxWidth:.infinity,maxHeight:.infinity).contentShape(Rectangle())}.buttonStyle(.plain).frame(width:w*0.98/9,height:h*0.98/9)
+                        .accessibilityIdentifier("cell_\(square/9)_\(square%9)").accessibilityLabel("\(9-square%9)\(Array("一二三四五六七八九")[square/9]) \(Position.glyphs[abs(piece)])").accessibilityValue(model.selected==square ? "選択":target ? "移動可能":"")
                         .onLongPressGesture {model.togglePromotion(square)}
                 }}}}.padding(.horizontal,w*0.01).padding(.vertical,h*0.01)
             }
@@ -87,9 +89,9 @@ struct HandView:View {
     @EnvironmentObject var model:AppModel
     let side:Int
     var body:some View {
-        HStack(spacing:5){VStack(alignment:.leading,spacing:3){Text(model.screen == .match ? (side==1 ? "あなた・先手":"CPU・後手"):(side==1 ? "先手":"後手")).font(.caption);if model.screen == .match{let time=max(0,Int(ceil(model.session.clocks[side==1 ? 0:1])));Text(String(format:"%02d:%02d",time/60,time%60)).font(.system(.title3,design:.monospaced))}else{Text("検討・時計なし").font(.caption2)}}.frame(minWidth:90,alignment:.leading)
+        HStack(spacing:5){VStack(alignment:.leading,spacing:3){Text(model.screen == .match ? ((side==model.humanSide ? "あなた":"CPU")+"・"+(side==1 ? "先手":"後手")):(side==1 ? "先手":"後手")).font(.caption);if model.screen == .match{let time=max(0,Int(ceil(model.session.clocks[side==1 ? 0:1])));Text(String(format:"%02d:%02d",time/60,time%60)).font(.system(.title3,design:.monospaced))}else{Text("検討・時計なし").font(.caption2)}}.frame(minWidth:90,alignment:.leading)
             Spacer(minLength:0)
-            ForEach(1..<(model.screen == .study && model.freePlacement ? 9:8),id:\.self){p in let n=model.position.hands[side==1 ? 0:1][p];if n>0{Button{model.selectHand(p,side:side)}label:{ZStack(alignment:.bottomTrailing){Image(uiImage:AppAssets.piece(p*side)).resizable().scaledToFit().rotationEffect(.degrees(side<0 ? 180:0));Text("\(n)").font(.caption.bold()).foregroundStyle(.white).padding(2).background(.black.opacity(0.7))}.frame(maxWidth:36,maxHeight:40).background(model.selectedHand==p && model.selectedSide==side ? .yellow.opacity(0.4):.clear)}.buttonStyle(.plain).accessibilityIdentifier("hand_\(side)_\(p)")}}
+            ForEach(1..<(model.screen == .study && model.freePlacement ? 9:8),id:\.self){p in let n=model.position.hands[side==1 ? 0:1][p];if n>0{Button{model.selectHand(p,side:side)}label:{ZStack(alignment:.bottomTrailing){Image(uiImage:AppAssets.piece(p*side)).resizable().scaledToFit().rotationEffect(.degrees(side*(model.screen == .match ? model.humanSide:1)<0 ? 180:0));Text("\(n)").font(.caption.bold()).foregroundStyle(.white).padding(2).background(.black.opacity(0.7))}.frame(maxWidth:36,maxHeight:40).background(model.selectedHand==p && model.selectedSide==side ? .yellow.opacity(0.4):.clear)}.buttonStyle(.plain).accessibilityIdentifier("hand_\(side)_\(p)")}}
         }.foregroundStyle(cream).padding(.horizontal,8).frame(height:48).background(.black.opacity(0.72))
     }
 }

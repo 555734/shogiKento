@@ -4,9 +4,10 @@ import CryptoKit
 struct GameRecord: Codable, Identifiable, Equatable {
     var id=UUID().uuidString,source="match",title="3分切れ負け",sente="あなた",gote="CPU",result="対局途中",original=""
     var created=Date(),updated=Date(),positions=[Position.initialSFEN],labels=["開始局面"]
+    var matchOptions:MatchOptions?
     var moves: Int { positions.count-1 }
     static func fingerprint(_ text: String)->String {SHA256.hash(data:Data(text.utf8)).map{String(format:"%02x",$0)}.joined()}
-    func validate() throws {guard !positions.isEmpty,positions.count<=20000,positions.count==labels.count,id.range(of:"^[a-zA-Z0-9-]{1,100}$",options:.regularExpression) != nil else{throw ShogiError.message("保存された棋譜の形式が不正です")};for s in positions{_ = try Position(s)}}
+    func validate() throws {if let options=matchOptions,!options.valid(){throw ShogiError.message("対局設定が不正です")};guard !positions.isEmpty,positions.count<=20000,positions.count==labels.count,id.range(of:"^[a-zA-Z0-9-]{1,100}$",options:.regularExpression) != nil else{throw ShogiError.message("保存された棋譜の形式が不正です")};for s in positions{_ = try Position(s)}}
 }
 final class RecordStore {
     let root: URL

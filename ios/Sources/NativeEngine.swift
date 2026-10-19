@@ -27,18 +27,18 @@ final class NativeEngine: @unchecked Sendable {
     }
     func ensureReady()throws {try prepare()}
     func warmUp(){worker.async{try? self.prepare()}}
-    func search(_ position:Position,continuous:Bool,nodes:Int=50000,receive:@escaping (Result<EngineUpdate,Error>)->Void) {
+    func search(_ position:Position,continuous:Bool,nodes:Int=50000,milliseconds:Int=750,receive:@escaping (Result<EngineUpdate,Error>)->Void) {
         cancel();let revision=token()
         worker.async { [self] in
             do {try prepare();while token()==revision {
                 send("isready");try until("readyok",timeout:10);if token() != revision{return}
                 let count=continuous ? max(1,min(3,try Rules.legal(position).count)):1
-                send("setoption name MultiPV value \(count)");send("position sfen "+position.sfen);send(continuous ? "go infinite":"go nodes \(nodes) movetime 750")
+                send("setoption name MultiPV value \(count)");send("position sfen "+position.sfen);send(continuous ? "go infinite":"go nodes \(nodes) movetime \(milliseconds)")
                 var rows=[Int:Candidate](),visited=0,lastPublish=0.0,stopAt:Double?,finished=false
                 let began=ProcessInfo.processInfo.systemUptime
                 while !finished {
                     let now=ProcessInfo.processInfo.systemUptime
-                    if stopAt==nil && (token() != revision || !continuous && now-began>0.9){send("stop");stopAt=now+5}
+                    if stopAt==nil && (token() != revision || !continuous && now-began>Double(milliseconds)/1000+0.15){send("stop");stopAt=now+5}
                     if let stopAt,now>stopAt {throw ShogiError.message("AIの停止がタイムアウトしました")}
                     guard let line=read() else{continue}
                     if line.contains("Error!") || line.hasPrefix("Error:"){throw ShogiError.message(line)}

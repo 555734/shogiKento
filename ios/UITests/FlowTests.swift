@@ -20,5 +20,19 @@ final class FlowTests:XCTestCase {
         if !app.buttons["ply_1"].isHittable{app.swipeUp()};tap("ply_1",app);XCTAssertEqual(app.staticTexts["study_ply"].label,"78手目");XCTAssertTrue(app.descendants(matching:.any)["candidate_0"].waitForExistence(timeout:25));shot("06-quest-native-analysis")
         tap("ply_0",app);XCTAssertEqual(app.staticTexts["study_ply"].label,"0手目");tap("ply_3",app);XCTAssertEqual(app.staticTexts["study_ply"].label,"79手目");tap("home",app)
         app.terminate();app.launch();tap("open_archive",app);let quest=app.buttons.matching(NSPredicate(format:"label CONTAINS %@","Shogi Quest")).firstMatch;XCTAssertTrue(quest.waitForExistence(timeout:10));shot("07-archive-persisted");quest.tap();if app.alerts.buttons["開く"].waitForExistence(timeout:3){app.alerts.buttons["開く"].tap()};XCTAssertEqual(app.staticTexts["study_ply"].label,"79手目");shot("08-reopened-quest")
+        tap("home",app);tap("mode_match",app)
+        if !app.buttons["match_settings"].isHittable{app.swipeUp()};tap("match_settings",app)
+        app.steppers["match_level"].buttons["Increment"].tap();app.steppers["match_level"].buttons["Increment"].tap()
+        tap("match_minutes",app);tap("5分",app)
+        app.segmentedControls["match_side"].buttons.element(boundBy:1).tap();shot("09-match-settings")
+        tap("apply_match_settings",app)
+        XCTAssertTrue(app.buttons["match_settings"].label.contains("5分"));XCTAssertTrue(app.buttons["match_settings"].label.contains("Lv.10"));XCTAssertTrue(app.buttons["match_settings"].label.contains("後手"))
+        if !app.buttons["start_match"].isHittable{app.swipeDown()};tap("start_match",app)
+        let one=NSPredicate(format:"label == %@","1手目");expectation(for:one,evaluatedWith:app.staticTexts["match_ply"]);waitForExpectations(timeout:25)
+        tap("cell_2_0",app);tap("cell_3_0",app)
+        let three=NSPredicate(format:"label == %@","3手目");expectation(for:three,evaluatedWith:app.staticTexts["match_ply"]);waitForExpectations(timeout:25);shot("10-human-gote-real-cpu")
+        tap("home",app);app.terminate();app.launch();tap("mode_match",app)
+        XCTAssertTrue(app.buttons["match_settings"].label.contains("5分"));XCTAssertTrue(app.buttons["match_settings"].label.contains("Lv.10"));XCTAssertTrue(app.buttons["match_settings"].label.contains("後手"))
+
     }
 }
