@@ -37,6 +37,7 @@ struct HomeView:View {
                 Button{model.enter(.match)}label:{HStack(spacing:22){Image(uiImage:AppAssets.piece(8)).resizable().scaledToFit().frame(width:56,height:66);VStack(alignment:.leading,spacing:8){Text("対局モード").font(.system(size:26,weight:.bold,design:.serif));Text("CPUと対局・時間や先後を設定").font(.system(size:14,design:.serif))};Spacer()}.padding(.horizontal,22).padding(.vertical,12).frame(maxWidth:.infinity).background(Color(red:0.12,green:0.09,blue:0.06))}.buttonStyle(HomeCard()).accessibilityIdentifier("mode_match")
                 Button{paste=true}label:{Label("棋譜を貼り付け",systemImage:"doc.text").font(.system(size:23,weight:.bold,design:.serif)).frame(maxWidth:.infinity,minHeight:60).background(Color.black.opacity(0.83))}.buttonStyle(HomeCard()).accessibilityIdentifier("open_paste")
                 Button{model.enter(.archive)}label:{Label("過去の棋譜",systemImage:"clock.arrow.circlepath").font(.system(size:22,weight:.bold,design:.serif)).frame(maxWidth:.infinity,minHeight:56).background(Color.black.opacity(0.83))}.buttonStyle(HomeCard()).accessibilityIdentifier("open_archive")
+                TestAdSlot(placement:"home")
                 Spacer(minLength:35)
             }.padding(.horizontal,20).frame(maxWidth:560,minHeight:geo.size.height).frame(maxWidth:.infinity)}
                 .background(Image(uiImage:AppAssets.image("home_background")).resizable().scaledToFill().ignoresSafeArea())
@@ -52,7 +53,7 @@ struct BoardScreen:View {
     @State private var restart=false
     @State private var matchSettings=false
     var body:some View {
-        ScrollView {VStack(spacing:8){
+        GeometryReader {viewport in ScrollView {VStack(spacing:16){VStack(spacing:8){
             HandView(side:model.screen == .match ? model.cpuSide:-1)
             BoardView().aspectRatio(1226/1283.0,contentMode:.fit)
             HandView(side:model.screen == .match ? model.humanSide:1)
@@ -63,7 +64,9 @@ struct BoardScreen:View {
                 HStack {Button("やり直し"){restart=true};Spacer();Button("AI再試行"){model.scheduleCPU()}.disabled(!model.thinking && model.position.side==model.humanSide);Spacer();Button("投了"){resign=true}.disabled(!model.session.matchStarted || model.session.winner != 0)}.buttonStyle(.bordered).padding(.horizontal)
                 Button("対局設定 · \(model.matchOptions.minutes)分 / AI Lv.\(model.matchOptions.level) / あなた\(model.humanSide==1 ? "先手":"後手")"){matchSettings=true}.buttonStyle(.bordered).accessibilityIdentifier("match_settings").padding(.horizontal)
             }else{AnalysisView(showMoves:$showMoves)}
-        }.frame(maxWidth:600).frame(maxWidth:.infinity).padding(.bottom,15)}
+        }.frame(minHeight:viewport.size.height,alignment:.top)
+            TestAdSlot(placement:model.screen == .study ? "study":"match").id(model.screen.rawValue).padding(.horizontal,12)
+        }.frame(maxWidth:600).frame(maxWidth:.infinity).padding(.bottom,15)}}
         .background(Image(uiImage:AppAssets.image("background")).resizable().scaledToFill().ignoresSafeArea())
         .sheet(isPresented:$matchSettings,onDismiss:{model.setMatchSettingsOpen(false)}){MatchSettingsView(options:model.matchOptions).onAppear{model.setMatchSettingsOpen(true)}}
         .alert("投了しますか？",isPresented:$resign){Button("キャンセル",role:.cancel){};Button("投了",role:.destructive){model.resign()}}
@@ -128,6 +131,7 @@ struct ArchiveView:View {
         if model.records.isEmpty{Text("まだ棋譜がありません。取り込みや対局をすると自動保存されます。").padding()}
         if model.damagedRecords>0{Text("読み込めない棋譜が\(model.damagedRecords)件あります。").foregroundStyle(.orange)}
         ForEach(model.records){r in Button{if model.session.study.moves>0{model.archiveOffer=r}else{model.open(r)}}label:{VStack(alignment:.leading,spacing:7){Text("\(r.source=="match" ? "対局":"コピー") · \(r.title)").font(.title3.bold());Text("\(r.sente) 対 \(r.gote)");Text("\(r.moves)手 · \(r.result)");Text(r.created,style:.date).font(.caption)}.frame(maxWidth:.infinity,alignment:.leading).padding(16).foregroundStyle(Color(red:0.25,green:0.14,blue:0.07)).background(LinearGradient(colors:[cream,gold],startPoint:.leading,endPoint:.trailing)).clipShape(RoundedRectangle(cornerRadius:12))}.accessibilityIdentifier("record_\(r.id)")}
+        TestAdSlot(placement:"archive")
         Text("端末内に保存されています。棋譜を選ぶと検討で開きます。").font(.caption).foregroundStyle(.secondary)
     }.padding(16).frame(maxWidth:650).frame(maxWidth:.infinity)}}
 }
@@ -145,6 +149,6 @@ struct SettingsView:View {
     @AppStorage("sound") private var sound=true
     @AppStorage("vibration") private var vibration=false
     @State private var licenses=false
-    var body:some View{NavigationStack{Form{Section{Toggle("効果音（SE）",isOn:$sound).accessibilityIdentifier("sound");Text("効果音の音量 \(Int(volume))%");Slider(value:$volume,in:0...100,step:1).accessibilityIdentifier("volume");Button("効果音を試す"){model.previewSound()}.disabled(!sound || volume==0);Toggle("着手時のバイブレーション",isOn:$vibration).accessibilityIdentifier("vibration");Button("振動を試す"){UIImpactFeedbackGenerator(style:.light).impactOccurred()}.disabled(!vibration)}header:{Text("音と振動の設定")}footer:{Text("設定は自動保存されます。音量・振動・消音は端末本体の設定にも従います。")};Section{Button("ライセンスとAIについて"){licenses=true}}}.navigationTitle("設定").toolbar{Button("閉じる"){dismiss()}}.sheet(isPresented:$licenses){NavigationStack{ScrollView{Text(licenseText).font(.caption.monospaced()).padding()}.navigationTitle("ライセンス").toolbar{Button("閉じる"){licenses=false}}}}}}
+    var body:some View{NavigationStack{Form{Section{Toggle("効果音（SE）",isOn:$sound).accessibilityIdentifier("sound");Text("効果音の音量 \(Int(volume))%");Slider(value:$volume,in:0...100,step:1).accessibilityIdentifier("volume");Button("効果音を試す"){model.previewSound()}.disabled(!sound || volume==0);Toggle("着手時のバイブレーション",isOn:$vibration).accessibilityIdentifier("vibration");Button("振動を試す"){UIImpactFeedbackGenerator(style:.light).impactOccurred()}.disabled(!vibration)}header:{Text("音と振動の設定")}footer:{Text("設定は自動保存されます。音量・振動・消音は端末本体の設定にも従います。")};Section{Text("この版はGoogleの公式テスト広告のみを表示します。広告の取得で通信が発生します。本番配信・収益化は行いません。").font(.caption)};Section{Button("ライセンスとAIについて"){licenses=true}}}.navigationTitle("設定").toolbar{Button("閉じる"){dismiss()}}.sheet(isPresented:$licenses){NavigationStack{ScrollView{Text(licenseText).font(.caption.monospaced()).padding()}.navigationTitle("ライセンス").toolbar{Button("閉じる"){licenses=false}}}}}}
     var licenseText:String {let header="やねうら王 9.80git / つようら王11micro\nエンジン GPL-3.0 / 評価関数 MIT\n対応ソースとビルド手順：https://github.com/555734/shogiKento\n\n";return header+["YaneuraOu-GPL-3.0","TsuyouraOu11micro-MIT"].compactMap{Bundle.main.url(forResource:$0,withExtension:"txt",subdirectory:"GameAssets/licenses").flatMap{try? String(contentsOf:$0,encoding:.utf8)}}.joined(separator:"\n\n")}
 }

@@ -3,8 +3,26 @@ final class FlowTests:XCTestCase {
     override func setUp(){super.setUp();continueAfterFailure=false}
     func shot(_ name:String){let image=XCTAttachment(screenshot:XCUIApplication().screenshot());image.name=name;image.lifetime = .keepAlways;add(image)}
     func tap(_ id:String,_ app:XCUIApplication,timeout:Double=15){let button=app.buttons[id];XCTAssertTrue(button.waitForExistence(timeout:timeout),id);button.tap()}
+    func testAdsStudyGeometryAndOfficialSDK()throws {
+        let app=XCUIApplication();app.launchArguments=["-ads-fixture"];app.launch();tap("mode_study",app)
+        let square=app.buttons["cell_6_0"],initial=square.frame
+        XCTAssertGreaterThan(initial.width,20);XCTAssertFalse(app.otherElements["ad_study"].isHittable);shot("11-ads-study-initial")
+        for _ in 0..<4{if app.staticTexts["ad_status_study"].isHittable{break};app.swipeUp()}
+        XCTAssertTrue(app.staticTexts["ad_status_study"].isHittable);XCTAssertEqual(app.staticTexts["ad_status_study"].value as? String,"fixture");shot("12-ads-study-scrolled")
+        for _ in 0..<5{app.swipeDown()}
+        XCTAssertEqual(square.frame.width,initial.width,accuracy:0.1);XCTAssertEqual(square.frame.height,initial.height,accuracy:0.1);XCTAssertEqual(square.frame.minY,initial.minY,accuracy:0.1)
+        tap("cell_6_0",app);tap("cell_5_0",app);XCTAssertEqual(app.staticTexts["study_ply"].label,"1手目")
+        tap("home",app);for _ in 0..<4{if app.staticTexts["ad_status_home"].isHittable{break};app.swipeUp()};XCTAssertTrue(app.staticTexts["ad_status_home"].isHittable);shot("13-ads-home")
+        app.terminate();app.launchArguments=["-ads-fixture","-ads-failure"];app.launch();tap("mode_study",app)
+        XCTAssertEqual(app.buttons["cell_6_0"].frame,initial);for _ in 0..<4{if app.staticTexts["ad_status_study"].isHittable{break};app.swipeUp()};XCTAssertEqual(app.staticTexts["ad_status_study"].value as? String,"failed");shot("15-ads-failure")
+        app.terminate();app.launchArguments=[];app.launch()
+        for _ in 0..<4{if app.staticTexts["ad_status_home"].isHittable{break};app.swipeUp()}
+        let status=app.staticTexts["ad_status_home"];XCTAssertTrue(status.waitForExistence(timeout:5))
+        let completed=NSPredicate(format:"value == %@ OR value == %@","loaded","failed");expectation(for:completed,evaluatedWith:status);waitForExpectations(timeout:65);shot("14-ads-official-sdk")
+        let evidence=XCTAttachment(string:"official_sdk_state=\(status.value as? String ?? "unknown")\nmessage=\(status.label)\nGoogle sample ID only; no production ads.");evidence.name="official-test-ad-result";evidence.lifetime = .keepAlways;add(evidence)
+    }
     func testNativeHomeSettingsMatchAndQuestStudy()throws {
-        let app=XCUIApplication();app.launch();tap("settings",app);XCTAssertTrue(app.sliders["volume"].exists);shot("02-settings")
+        let app=XCUIApplication();app.launchArguments=["-ads-fixture"];app.launch();tap("settings",app);XCTAssertTrue(app.sliders["volume"].exists);shot("02-settings")
         app.sliders["volume"].adjust(toNormalizedSliderPosition:0.37);let sound=app.switches["sound"],vibration=app.switches["vibration"]
         sound.tap();vibration.tap();let soundValue=sound.value as? String,vibrationValue=vibration.value as? String,volumeValue=app.sliders["volume"].value as? String;tap("閉じる",app)
         app.terminate();app.launch();tap("settings",app);XCTAssertEqual(app.switches["sound"].value as? String,soundValue);XCTAssertEqual(app.switches["vibration"].value as? String,vibrationValue);XCTAssertEqual(app.sliders["volume"].value as? String,volumeValue);tap("閉じる",app);shot("01-home")

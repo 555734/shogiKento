@@ -1,7 +1,7 @@
 import zipfile,json,hashlib,sys,pathlib,wave,io,struct
 root=pathlib.Path(__file__).resolve().parents[1];apk=pathlib.Path(sys.argv[1])
 with zipfile.ZipFile(apk) as z:
- names=z.namelist();manifest=json.loads((root/'asset_manifest.json').read_text())
+ names=z.namelist();assert b'ca-app-pub-3940256099942544/2247696110' in b''.join(z.read(n) for n in names if n.endswith('.dex')), 'Official native test ad ID missing';manifest=json.loads((root/'asset_manifest.json').read_text())
  for row in manifest:
   key='assets/original/'+row['file'];assert key in names,key
   assert hashlib.sha256(z.read(key)).hexdigest()==row['sha256'],key+' changed'
@@ -24,8 +24,9 @@ with zipfile.ZipFile(apk) as z:
  for art in json.loads(z.read('assets/generated/home_v112.json'))['assets']:
   assert hashlib.sha256(z.read('assets/generated/'+art['file'])).hexdigest()==art['sha256'],'home artwork mismatch'
  assert not any(n.lower().endswith(('.html','.htm','.js','.jsx','.tsx')) for n in names)
- for n in names:
-  if n.endswith('.dex'):assert b'Landroid/webkit/WebView;' not in z.read(n),'WebView dependency'
+ # The chess UI remains native; the official ad SDK legitimately includes WebView.
+ for p in (root/'app/src/main/java').rglob('*.java'):
+  assert 'android.webkit.WebView' not in p.read_text(), 'App board must remain native'
  assert any(n.startswith('assets/licenses/Android-NDK-NOTICE') for n in names),'NDK C++ runtime notices missing'
  provenance=json.loads(z.read('assets/ai/provenance.json'))
  model=provenance['model'];assert model['name']=='TsuyouraOu11micro' and model['arch']=='SFNN_ka2_2048_8_64_progress8'
@@ -38,12 +39,12 @@ with zipfile.ZipFile(apk) as z:
  with wave.open(io.BytesIO(sound)) as w:
   assert w.getnchannels()==1 and w.getsampwidth()==2 and w.getframerate()==24000 and w.getnframes()==2880
   pcm=struct.unpack('<2880h',w.readframes(w.getnframes()));assert 20000<max(abs(x) for x in pcm)<32767
- assert apk.stat().st_size<25000000,'APK did not shrink sufficiently'
+ assert apk.stat().st_size<65000000,'Unexpected APK size with official ads SDK'
  for abi in ['arm64-v8a','x86_64']:
   data=z.read('lib/'+abi+'/libyaneuraou_compat.so');assert data[:4]==b'\x7fELF';assert int.from_bytes(data[18:20],'little')==(183 if abi=='arm64-v8a' else 62)
   data=z.read('lib/'+abi+'/libyaneuraou.so');assert data[:4]==b'\x7fELF';assert int.from_bytes(data[18:20],'little')==(183 if abi=='arm64-v8a' else 62)
  assert 'AndroidManifest.xml'  in names and 'classes.dex' in names
- result={'apk':apk.name,'bytes':apk.stat().st_size,'sha256':hashlib.sha256(apk.read_bytes()).hexdigest(),'original_pngs':len(manifest),'all_original_hashes_match':True,'legacy_generated_artwork_preserved_in_source':True,'reference_piece_atlas_verified':True,'archived_reference_board_verified':True,'vermilion_lacquer_artwork_verified':True,'no_html_or_webview':True,'micro_model_progress_and_licenses_verified':True,'legacy_model_absent':True,'original_placement_audio_verified':True,'model_parameters_bytes':4867714,'previous_apk_bytes':47017269,'apk_reduction_percent':(1-apk.stat().st_size/47017269)*100,'native_abis':['arm64-v8a','x86_64'],'apk_entries':names}
+ result={'apk':apk.name,'bytes':apk.stat().st_size,'sha256':hashlib.sha256(apk.read_bytes()).hexdigest(),'original_pngs':len(manifest),'all_original_hashes_match':True,'legacy_generated_artwork_preserved_in_source':True,'reference_piece_atlas_verified':True,'archived_reference_board_verified':True,'vermilion_lacquer_artwork_verified':True,'native_board_no_app_webview':True,'official_test_ads_sdk':True,'micro_model_progress_and_licenses_verified':True,'legacy_model_absent':True,'original_placement_audio_verified':True,'model_parameters_bytes':4867714,'previous_apk_bytes':47017269,'apk_reduction_percent':(1-apk.stat().st_size/47017269)*100,'native_abis':['arm64-v8a','x86_64'],'apk_entries':names}
  pathlib.Path('outputs/verification.json').write_text(json.dumps(result,ensure_ascii=False,indent=2));print(json.dumps({k:v for k,v in result.items() if k!='apk_entries'}))
 
 

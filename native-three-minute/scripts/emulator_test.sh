@@ -10,7 +10,7 @@ adb shell am start -W -n com.presentsoft.shogi3minutes/.MainActivity | tee outpu
 adb exec-out screencap -p > outputs/screenshots/00_launch.png
 adb shell am force-stop com.presentsoft.shogi3minutes
 set +e
-timeout 420s adb shell am instrument -w com.presentsoft.shogi3minutes.test/com.presentsoft.shogi3minutes.NativeSmokeTest | tee outputs/instrumentation.txt
+timeout 540s adb shell am instrument -w com.presentsoft.shogi3minutes.test/com.presentsoft.shogi3minutes.NativeSmokeTest | tee outputs/instrumentation.txt
 test_status=${PIPESTATUS[0]}
 adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/screenshots outputs/ || true
 adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/ai_benchmark.tsv outputs/ || true
@@ -27,6 +27,7 @@ adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/legal_selectio
 adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/record_archive.txt outputs/ || true
 adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/home_settings.txt outputs/ || true
 adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/match_settings.txt outputs/ || true
+adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/test_ads.txt outputs/ || true
 adb shell dumpsys meminfo com.presentsoft.shogi3minutes > outputs/meminfo.txt
 adb logcat -d > outputs/logcat.txt
 set -e

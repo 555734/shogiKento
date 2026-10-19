@@ -4,7 +4,7 @@ ROOT=pathlib.Path(__file__).resolve().parents[1];OUT=ROOT/'outputs';OUT.mkdir(ex
 app=ROOT/'build/DeviceData/Build/Products/Release-iphoneos/BeniShogi.app'
 report={'source_sha':os.environ.get('GITHUB_SHA'),'run_id':os.environ.get('GITHUB_RUN_ID'),'device_build':False,'apple_distribution_signed':False,'simulator_tests_passed':False}
 if app.is_dir() and '** BUILD SUCCEEDED **' in (OUT/'device-build.txt').read_text(errors='replace'):
- info=plistlib.loads((app/'Info.plist').read_bytes());assert info['CFBundleIdentifier']=='com.presentsoft.shogi3minutes';assert info['CFBundleExecutable']=='BeniShogi'
+ info=plistlib.loads((app/'Info.plist').read_bytes());assert info['CFBundleIdentifier']=='com.presentsoft.shogi3minutes';assert info['CFBundleExecutable']=='BeniShogi';assert info['GADApplicationIdentifier']=='ca-app-pub-3940256099942544~1458002511';report['ads_test_only']=True;report['admob_app_id']=info['GADApplicationIdentifier']
  executable=app/'BeniShogi';architecture=subprocess.check_output(['xcrun','lipo','-archs',str(executable)],text=True).strip();assert architecture=='arm64',architecture
  signed=subprocess.run(['codesign','--display',str(app)],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0
  # A linker ad-hoc signature, if present, is still not Apple distribution signing.
