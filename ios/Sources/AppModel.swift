@@ -30,14 +30,16 @@ import UIKit
     private var active=true,lastTick:Double?,audio:AVAudioPlayer?
     private var matchSettingsOpen=false
     private(set) var soundPlayCount=0
-    var matchOptions:MatchOptions {session.match.matchOptions ?? MatchOptions()}
+    private let premium:@MainActor ()->Bool
+    var matchOptions:MatchOptions {var options=session.match.matchOptions ?? MatchOptions();if options.level==10 && !premium(){options.level=9};return options}
     var humanSide:Int {matchOptions.humanSide}
     var cpuSide:Int {-humanSide}
     var currentRecord:GameRecord {screen == .match ? session.match:session.study}
     var ply:Int {screen == .match ? session.match.moves:session.cursor}
     var score:Evaluation? {session.scores[session.cursor]}
     var humanInput:Bool {active && !matchSettingsOpen && (screen == .study || screen == .match && session.matchStarted && session.winner==0 && position.side==humanSide && !thinking)}
-    init(store testStore:RecordStore?=nil){
+    init(store testStore:RecordStore?=nil,premium:(@MainActor ()->Bool)? = nil){
+        self.premium=premium ?? {CoffeeStore.shared.owned}
         do {let store=try testStore ?? RecordStore();self.store=store;if FileManager.default.fileExists(atPath:store.root.appendingPathComponent("current.json").path){session=try store.current()}}catch{self.error="保存データを読み込めません：\(error.localizedDescription)"}
         if let file=Bundle.main.url(forResource:"piece_place",withExtension:"wav",subdirectory:"GameAssets"){audio=try? AVAudioPlayer(contentsOf:file);audio?.prepareToPlay()}
         try? AVAudioSession.sharedInstance().setCategory(.ambient,mode:.default,options:.mixWithOthers)
@@ -78,7 +80,8 @@ import UIKit
         }catch{analysisStatus=error.localizedDescription}
     }
     func setMatchSettingsOpen(_ value:Bool){if value{tick();NativeEngine.shared.cancel();thinking=false};matchSettingsOpen=value;lastTick=nil;if !value && active && screen == .match{lastTick=ProcessInfo.processInfo.systemUptime;scheduleCPU()}}
-    func applyMatchOptions(_ options:MatchOptions){guard options.valid(),options != matchOptions else{return};options.save();restartMatch()}
+    func applyMatchOptions(_ options:MatchOptions){guard options.valid(),options.level<10 || premium(),options != matchOptions else{return};options.save();restartMatch()}
+    func membershipChanged(){if screen == .match{NativeEngine.shared.cancel();thinking=false;scheduleCPU()}}
     func startMatch(){guard screen == .match,!session.matchStarted else{return};session.matchStarted=true;lastTick=ProcessInfo.processInfo.systemUptime;save();scheduleCPU()}
     func restartMatch(){save();NativeEngine.shared.cancel();let options=MatchOptions.load();session.match = .match(options);session.clocks=[options.seconds,options.seconds];session.matchStarted=false;session.winner=0;session.checkingSides=[];position=try! Position();thinking=false;lastTick=nil;clearSelection();save()}
     func appendMatch(_ next:Position,label:String,human:Bool){let mover=position.side;session.match.positions.append(next.sfen);session.match.labels.append("\(session.match.moves)手目  "+label);session.match.updated=Date();position=next;session.checkingSides.append(Rules.checked(next) ? mover:0);feedback(human:human)

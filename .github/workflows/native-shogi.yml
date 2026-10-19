@@ -48,6 +48,7 @@ jobs:
       - name: Build installable native APKs
         env:
           GH_TOKEN: ${{ github.token }}
+          PLAY_BILLING_PUBLIC_KEY: ${{ vars.PLAY_BILLING_PUBLIC_KEY }}
         run: |
           sdkmanager 'build-tools;35.0.0' 'platforms;android-35'
           if ! python scripts/restore_native_cache.py; then
@@ -58,7 +59,7 @@ jobs:
           base64 -d debug.keystore.b64 > debug.keystore
           gradle wrapper --gradle-version 8.9
           chmod +x gradlew
-          ./gradlew --no-daemon assembleDebug assembleDebugAndroidTest
+          ./gradlew --no-daemon assembleDebug assembleDebugAndroidTest :app:compileReleaseJavaWithJavac
           python scripts/verify_apk.py app/build/outputs/apk/debug/app-debug.apk
           cp app/build/outputs/apk/debug/app-debug.apk outputs/Shogi_3min.apk
           $ANDROID_HOME/build-tools/35.0.0/apksigner verify --verbose outputs/Shogi_3min.apk | tee outputs/signature.txt

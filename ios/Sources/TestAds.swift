@@ -27,14 +27,15 @@ import GoogleMobileAds
 
 struct TestAdSlot:View {
     let placement:String
+    @EnvironmentObject var coffee:CoffeeStore
     @StateObject private var model=TestAdModel()
-    var body:some View {VStack(alignment:.leading,spacing:8){
+    var body:some View {if !coffee.owned {VStack(alignment:.leading,spacing:8){
         Text("広告 · テスト広告").font(.caption.bold()).foregroundStyle(.black)
         Text(model.message).font(.caption).foregroundStyle(.black).accessibilityIdentifier("ad_status_"+placement).accessibilityValue(model.state)
         if let ad=model.nativeAd{NativeTestAdContainer(ad:ad)}
         else if model.fixture{VStack(alignment:.leading,spacing:18){Image(systemName:"square.grid.3x3.fill").font(.system(size:48));Text("棋力を伸ばす毎日の一手。").font(.title3.bold());Text("広告と盤面の操作は独立しています。\n通信を行わないレイアウト検証用です。").font(.caption)}.foregroundStyle(.brown).frame(maxWidth:.infinity,maxHeight:.infinity,alignment:.center)}
         else{Spacer(minLength:0)}
-    }.padding(12).frame(height:360).frame(maxWidth:.infinity).background(LinearGradient(colors:[Color(red:1,green:0.94,blue:0.81),Color(red:0.91,green:0.78,blue:0.55)],startPoint:.leading,endPoint:.trailing)).clipShape(RoundedRectangle(cornerRadius:10)).overlay(RoundedRectangle(cornerRadius:10).stroke(.brown)).accessibilityElement(children:.contain).accessibilityIdentifier("ad_"+placement).onAppear{model.load()}.onDisappear{model.close()}}
+    }.padding(12).frame(height:360).frame(maxWidth:.infinity).background(LinearGradient(colors:[Color(red:1,green:0.94,blue:0.81),Color(red:0.91,green:0.78,blue:0.55)],startPoint:.leading,endPoint:.trailing)).clipShape(RoundedRectangle(cornerRadius:10)).overlay(RoundedRectangle(cornerRadius:10).stroke(.brown)).accessibilityElement(children:.contain).accessibilityIdentifier("ad_"+placement).onAppear{model.load()}.onDisappear{model.close()}}}
 }
 
 struct NativeTestAdContainer:UIViewRepresentable {

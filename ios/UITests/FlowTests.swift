@@ -5,7 +5,7 @@ final class FlowTests:XCTestCase {
     func tap(_ id:String,_ app:XCUIApplication,timeout:Double=15){let button=app.buttons[id];XCTAssertTrue(button.waitForExistence(timeout:timeout),id);button.tap()}
     func edgeScroll(_ app:XCUIApplication,up:Bool=true){let start=app.coordinate(withNormalizedOffset:CGVector(dx:0.01,dy:up ? 0.8:0.2)),end=app.coordinate(withNormalizedOffset:CGVector(dx:0.01,dy:up ? 0.2:0.8));start.press(forDuration:0.05,thenDragTo:end)}
     func testAdsStudyGeometryAndOfficialSDK()throws {
-        let app=XCUIApplication();app.launchArguments=["-ads-fixture"];app.launch();tap("mode_study",app)
+        let app=XCUIApplication();app.launchArguments=["-ads-fixture","-coffee-test-suppress"];app.launch();tap("mode_study",app)
         let square=app.buttons["cell_6_0"],initial=square.frame
         XCTAssertGreaterThan(initial.width,20);XCTAssertFalse(app.otherElements["ad_study"].isHittable);shot("11-ads-study-initial")
         for _ in 0..<4{if app.staticTexts["ad_status_study"].isHittable{break};edgeScroll(app)}
@@ -14,16 +14,26 @@ final class FlowTests:XCTestCase {
         XCTAssertEqual(square.frame.width,initial.width,accuracy:0.1);XCTAssertEqual(square.frame.height,initial.height,accuracy:0.1);XCTAssertEqual(square.frame.minY,initial.minY,accuracy:0.1)
         tap("cell_6_0",app);tap("cell_5_0",app);XCTAssertEqual(app.staticTexts["study_ply"].label,"1手目")
         tap("home",app);for _ in 0..<4{if app.staticTexts["ad_status_home"].isHittable{break};edgeScroll(app)};XCTAssertTrue(app.staticTexts["ad_status_home"].isHittable);shot("13-ads-home")
-        app.terminate();app.launchArguments=["-ads-fixture","-ads-failure"];app.launch();tap("mode_study",app)
+        app.terminate();app.launchArguments=["-ads-fixture","-ads-failure","-coffee-test-suppress"];app.launch();tap("mode_study",app)
         XCTAssertEqual(app.buttons["cell_6_0"].frame,initial);for _ in 0..<4{if app.staticTexts["ad_status_study"].isHittable{break};edgeScroll(app)};XCTAssertEqual(app.staticTexts["ad_status_study"].value as? String,"failed");shot("15-ads-failure")
-        app.terminate();app.launchArguments=[];app.launch()
+        app.terminate();app.launchArguments=["-coffee-test-suppress"];app.launch()
         for _ in 0..<4{if app.staticTexts["ad_status_home"].isHittable{break};edgeScroll(app)}
         let status=app.staticTexts["ad_status_home"];XCTAssertTrue(status.waitForExistence(timeout:5))
         let completed=NSPredicate(format:"value == %@ OR value == %@","loaded","failed");expectation(for:completed,evaluatedWith:status);waitForExpectations(timeout:65);shot("14-ads-official-sdk")
         let evidence=XCTAttachment(string:"official_sdk_state=\(status.value as? String ?? "unknown")\nmessage=\(status.label)\nGoogle sample ID only; no production ads.");evidence.name="official-test-ad-result";evidence.lifetime = .keepAlways;add(evidence)
     }
+    func testCoffeeSettingsBuyRestoreAndHide()throws {
+        let app=XCUIApplication();app.launchArguments=["-ads-fixture","-coffee-fixture","-coffee-test-suppress"];app.launch()
+        tap("settings",app);if !app.buttons["coffee_settings"].isHittable{app.swipeUp()};tap("coffee_settings",app);XCTAssertTrue(app.buttons["coffee_buy"].isEnabled);XCTAssertTrue(app.buttons["coffee_buy"].label.contains("200"));shot("16-coffee-offer")
+        let hide=app.switches["coffee_hide_offer"];if (hide.value as? String) != "1"{hide.tap()}
+        tap("coffee_buy",app);XCTAssertTrue(app.staticTexts["coffee_status"].label.contains("購入済み"));shot("17-coffee-purchased");tap("閉じる",app);tap("閉じる",app)
+        tap("mode_study",app);for _ in 0..<3{edgeScroll(app)};XCTAssertFalse(app.staticTexts["ad_status_study"].exists)
+        tap("home",app);app.terminate();app.launch();tap("settings",app);if !app.buttons["coffee_settings"].isHittable{app.swipeUp()};tap("coffee_settings",app);XCTAssertEqual(app.switches["coffee_hide_offer"].value as? String,"1")
+        tap("coffee_restore",app);XCTAssertTrue(app.staticTexts["coffee_status"].label.contains("購入済み"));shot("18-coffee-restored");tap("閉じる",app);tap("閉じる",app)
+        tap("mode_match",app);if !app.buttons["match_settings"].isHittable{edgeScroll(app)};tap("match_settings",app);let increment=app.buttons["match_level-Increment"];for _ in 0..<10{if !increment.isEnabled{break};increment.tap()};XCTAssertEqual(app.buttons["apply_match_settings"].label,"設定を適用")
+    }
     func testNativeHomeSettingsMatchAndQuestStudy()throws {
-        let app=XCUIApplication();app.launchArguments=["-ads-fixture"];app.launch();tap("settings",app);XCTAssertTrue(app.sliders["volume"].exists);shot("02-settings")
+        let app=XCUIApplication();app.launchArguments=["-ads-fixture","-coffee-test-suppress","-coffee-test-owned"];app.launch();tap("settings",app);XCTAssertTrue(app.sliders["volume"].exists);shot("02-settings")
         app.sliders["volume"].adjust(toNormalizedSliderPosition:0.37);let sound=app.switches["sound"],vibration=app.switches["vibration"]
         sound.tap();vibration.tap();let soundValue=sound.value as? String,vibrationValue=vibration.value as? String,volumeValue=app.sliders["volume"].value as? String;tap("閉じる",app)
         app.terminate();app.launch();tap("settings",app);XCTAssertEqual(app.switches["sound"].value as? String,soundValue);XCTAssertEqual(app.switches["vibration"].value as? String,vibrationValue);XCTAssertEqual(app.sliders["volume"].value as? String,volumeValue);tap("閉じる",app);shot("01-home")

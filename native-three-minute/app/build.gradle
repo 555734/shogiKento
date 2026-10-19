@@ -1,13 +1,15 @@
 plugins { id 'com.android.application' }
 android {
+    buildFeatures { buildConfig true }
     namespace 'com.presentsoft.shogi3minutes'
     compileSdk 35
     defaultConfig {
         applicationId 'com.presentsoft.shogi3minutes'
         minSdk 24
         targetSdk 34
-        versionCode 21
-        versionName '1.14.0'
+        versionCode 22
+        versionName '1.15.0'
+        buildConfigField 'String', 'PLAY_BILLING_PUBLIC_KEY', groovy.json.JsonOutput.toJson(System.getenv('PLAY_BILLING_PUBLIC_KEY') ?: '')
         ndk { abiFilters 'arm64-v8a', 'x86_64' }
         testInstrumentationRunner 'com.presentsoft.shogi3minutes.NativeSmokeTest'
     }
@@ -23,3 +25,5 @@ android {
 
 
 dependencies { implementation 'com.google.android.gms:play-services-ads:25.5.0' }
+
+dependencies { implementation 'com.android.billingclient:billing:9.1.0' }

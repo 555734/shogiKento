@@ -4,6 +4,9 @@ import UIKit
 private let gold=Color(red:1,green:0.86,blue:0.59),cream=Color(red:1,green:0.94,blue:0.81),burgundy=Color(red:0.25,green:0.04,blue:0.06)
 struct RootView:View {
     @EnvironmentObject var model:AppModel
+    @EnvironmentObject var coffee:CoffeeStore
+    @Environment(\.scenePhase) private var phase
+    @State private var showCoffee=false
     @State private var settings=false
     @State private var paste=false
     @State private var moves=false
@@ -16,7 +19,8 @@ struct RootView:View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {if model.screen != .home{ToolbarItem(placement:.navigationBarLeading){Button("ホーム"){model.enter(.home)}.accessibilityIdentifier("home")}}}
         }
-        .tint(gold).onReceive(timer){_ in model.tick()}
+        .tint(gold).onAppear{coffee.foreground()}.onChange(of:phase){value in if value == .background{coffee.background(offerVisible:showCoffee)}else if value == .active{coffee.foreground();Task{await coffee.refresh()}}}.onChange(of:coffee.owned){_ in model.membershipChanged()}.onReceive(timer){_ in model.tick();if coffee.checkedEntitlements && coffee.offerPending && !showCoffee && !settings && !paste && !moves && model.screen == .home && model.importOffer==nil && model.archiveOffer==nil && model.error==nil && !ProcessInfo.processInfo.arguments.contains("-coffee-test-suppress"){coffee.offerPending=false;showCoffee=true}}
+        .sheet(isPresented:$showCoffee){CoffeeView()}
         .sheet(isPresented:$settings){SettingsView()}.sheet(isPresented:$paste,onDismiss:{if let text=pendingPaste{pendingPaste=nil;model.parseClipboard(text)}}){PasteView{pendingPaste=$0;paste=false}}.sheet(isPresented:$moves){MoveListView()}
         .alert("棋譜の取り込み",isPresented:Binding(get:{model.importOffer != nil},set:{if !$0{model.importOffer=nil}})){Button("キャンセル",role:.cancel){model.importOffer=nil};Button("検討する"){if let r=model.importOffer{model.importOffer=nil;paste=false;model.acceptImport(r)}}}message:{Text("コピーされた棋譜を検討しますか？\(model.session.study.moves>0 ? "現在の検討内容を置き換えます。保存済みの棋譜は残ります。":"")")}
         .alert("検討棋譜の置き換え",isPresented:Binding(get:{model.archiveOffer != nil},set:{if !$0{model.archiveOffer=nil}})){Button("キャンセル",role:.cancel){model.archiveOffer=nil};Button("開く"){if let r=model.archiveOffer{model.archiveOffer=nil;model.open(r)}}}message:{Text("保存した棋譜を検討で開きますか？現在の検討内容を置き換えます。")}
@@ -144,11 +148,13 @@ struct PasteView:View {
 }
 struct SettingsView:View {
     @EnvironmentObject var model:AppModel
+    @EnvironmentObject var coffee:CoffeeStore
+    @State private var coffeeSheet=false
     @Environment(\.dismiss) var dismiss
     @AppStorage("volume") private var volume=65.0
     @AppStorage("sound") private var sound=true
     @AppStorage("vibration") private var vibration=false
     @State private var licenses=false
-    var body:some View{NavigationStack{Form{Section{Toggle("効果音（SE）",isOn:$sound).accessibilityIdentifier("sound");Text("効果音の音量 \(Int(volume))%");Slider(value:$volume,in:0...100,step:1).accessibilityIdentifier("volume");Button("効果音を試す"){model.previewSound()}.disabled(!sound || volume==0);Toggle("着手時のバイブレーション",isOn:$vibration).accessibilityIdentifier("vibration");Button("振動を試す"){UIImpactFeedbackGenerator(style:.light).impactOccurred()}.disabled(!vibration)}header:{Text("音と振動の設定")}footer:{Text("設定は自動保存されます。音量・振動・消音は端末本体の設定にも従います。")};Section{Text("この版はGoogleの公式テスト広告のみを表示します。広告の取得で通信が発生します。本番配信・収益化は行いません。").font(.caption)};Section{Button("ライセンスとAIについて"){licenses=true}}}.navigationTitle("設定").toolbar{Button("閉じる"){dismiss()}}.sheet(isPresented:$licenses){NavigationStack{ScrollView{Text(licenseText).font(.caption.monospaced()).padding()}.navigationTitle("ライセンス").toolbar{Button("閉じる"){licenses=false}}}}}}
+    var body:some View{NavigationStack{Form{Section{Toggle("効果音（SE）",isOn:$sound).accessibilityIdentifier("sound");Text("効果音の音量 \(Int(volume))%");Slider(value:$volume,in:0...100,step:1).accessibilityIdentifier("volume");Button("効果音を試す"){model.previewSound()}.disabled(!sound || volume==0);Toggle("着手時のバイブレーション",isOn:$vibration).accessibilityIdentifier("vibration");Button("振動を試す"){UIImpactFeedbackGenerator(style:.light).impactOccurred()}.disabled(!vibration)}header:{Text("音と振動の設定")}footer:{Text("設定は自動保存されます。音量・振動・消音は端末本体の設定にも従います。")};Section{Button(coffee.owned ? "☕ コーヒー応援・購入済み／復元":"☕ コーヒーを奢る・広告除去と最強AI"){coffeeSheet=true}.accessibilityIdentifier("coffee_settings")};Section{Text("この版はGoogleの公式テスト広告のみを表示します。広告の取得で通信が発生します。本番配信・収益化は行いません。").font(.caption)};Section{Button("ライセンスとAIについて"){licenses=true}}}.navigationTitle("設定").toolbar{Button("閉じる"){dismiss()}}.sheet(isPresented:$coffeeSheet){CoffeeView()}.sheet(isPresented:$licenses){NavigationStack{ScrollView{Text(licenseText).font(.caption.monospaced()).padding()}.navigationTitle("ライセンス").toolbar{Button("閉じる"){licenses=false}}}}}}
     var licenseText:String {let header="やねうら王 9.80git / つようら王11micro\nエンジン GPL-3.0 / 評価関数 MIT\n対応ソースとビルド手順：https://github.com/555734/shogiKento\n\n";return header+["YaneuraOu-GPL-3.0","TsuyouraOu11micro-MIT"].compactMap{Bundle.main.url(forResource:$0,withExtension:"txt",subdirectory:"GameAssets/licenses").flatMap{try? String(contentsOf:$0,encoding:.utf8)}}.joined(separator:"\n\n")}
 }

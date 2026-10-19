@@ -62,7 +62,7 @@ final class CoreTests:XCTestCase {
         defer{for (key,value) in zip(keys,old){defaults.set(value,forKey:key)}}
         let dir=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString),store=try RecordStore(root:dir)
         defer{try? FileManager.default.removeItem(at:dir)}
-        let model=AppModel(store:store);model.enter(.match)
+        let model=AppModel(store:store,premium:{true});model.enter(.match)
         var lastNodes=0,lastTime=0
         for level in 1...10{let options=MatchOptions(minutes:3,humanSide:1,level:level);XCTAssertGreaterThan(options.nodes,lastNodes);XCTAssertGreaterThan(options.milliseconds,lastTime);lastNodes=options.nodes;lastTime=options.milliseconds}
         for minutes in MatchOptions.times{for side in [1,-1]{

@@ -10,8 +10,8 @@ settings:
     SWIFT_STRICT_CONCURRENCY: minimal
     IPHONEOS_DEPLOYMENT_TARGET: '16.0'
     CODE_SIGNING_ALLOWED: NO
-    CURRENT_PROJECT_VERSION: '21'
-    MARKETING_VERSION: '1.14.0'
+    CURRENT_PROJECT_VERSION: '22'
+    MARKETING_VERSION: '1.15.0'
 packages:
   GoogleMobileAds:
     url: https://github.com/googleads/swift-package-manager-google-mobile-ads.git
@@ -25,6 +25,8 @@ targets:
         product: GoogleMobileAds
     sources:
       - path: Sources
+      - path: StoreKit/CoffeeSupport.storekit
+        buildPhase: resources
       - path: Assets.xcassets
       - path: GameAssets
         type: folder
@@ -47,8 +49,8 @@ targets:
         CFBundleDevelopmentRegion: ja
         LSRequiresIPhoneOS: true
         CFBundleDisplayName: 紅将棋 3分
-        CFBundleShortVersionString: '1.14.0'
-        CFBundleVersion: '21'
+        CFBundleShortVersionString: '1.15.0'
+        CFBundleVersion: '22'
         GADApplicationIdentifier: ca-app-pub-3940256099942544~1458002511
         UILaunchScreen: {}
         UIRequiresFullScreen: true
@@ -59,6 +61,8 @@ targets:
     platform: iOS
     sources:
       - path: Tests
+      - path: StoreKit/CoffeeSupport.storekit
+        buildPhase: resources
     dependencies:
       - target: BeniShogi
   BeniShogiUITests:
