@@ -1,0 +1,34 @@
+{
+  "device": "Android API35 x86_64 emulator; NOT Motorola g55",
+  "legal_moves_checked": 40,
+  "results": [
+    {
+      "model": "yaneura-tsuyou11micro",
+      "node_limit": 500,
+      "positions": 10,
+      "median_ms": 5.101588,
+      "max_ms": 14.339064
+    },
+    {
+      "model": "yaneura-tsuyou11micro",
+      "node_limit": 3000,
+      "positions": 10,
+      "median_ms": 18.4164975,
+      "max_ms": 29.022529
+    },
+    {
+      "model": "yaneura-tsuyou11micro",
+      "node_limit": 10000,
+      "positions": 10,
+      "median_ms": 56.1727375,
+      "max_ms": 70.95343
+    },
+    {
+      "model": "yaneura-tsuyou11micro",
+      "node_limit": 50000,
+      "positions": 10,
+      "median_ms": 287.90013450000004,
+      "max_ms": 398.95171
+    }
+  ]
+}
