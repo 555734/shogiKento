@@ -1,0 +1,1 @@
+FAIL: java.lang.AssertionError: expected clipboard dialog: 閉じる
