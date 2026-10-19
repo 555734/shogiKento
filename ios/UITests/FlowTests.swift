@@ -22,6 +22,12 @@ final class FlowTests:XCTestCase {
         let completed=NSPredicate(format:"value == %@ OR value == %@","loaded","failed");expectation(for:completed,evaluatedWith:status);waitForExpectations(timeout:65);shot("14-ads-official-sdk")
         let evidence=XCTAttachment(string:"official_sdk_state=\(status.value as? String ?? "unknown")\nmessage=\(status.label)\nGoogle sample ID only; no production ads.");evidence.name="official-test-ad-result";evidence.lifetime = .keepAlways;add(evidence)
     }
+    func testCoffeeOpeningPromptAndPermanentHide()throws {
+        let app=XCUIApplication();app.launchArguments=["-ads-fixture","-coffee-fixture","-coffee-reset-offer"];app.launch();XCTAssertFalse(app.buttons["coffee_buy"].waitForExistence(timeout:3))
+        app.terminate();app.launchArguments=["-ads-fixture","-coffee-fixture"];app.launch();XCTAssertTrue(app.buttons["coffee_buy"].waitForExistence(timeout:15));shot("19-coffee-second-opening")
+        app.switches["coffee_hide_offer"].tap();tap("閉じる",app);app.terminate();app.launch();XCTAssertFalse(app.buttons["coffee_buy"].waitForExistence(timeout:3))
+        tap("settings",app);if !app.buttons["coffee_settings"].isHittable{app.swipeUp()};tap("coffee_settings",app);XCTAssertTrue(app.buttons["coffee_restore"].exists);tap("閉じる",app);tap("閉じる",app)
+    }
     func testCoffeeSettingsBuyRestoreAndHide()throws {
         let app=XCUIApplication();app.launchArguments=["-ads-fixture","-coffee-fixture","-coffee-test-suppress"];app.launch()
         tap("settings",app);if !app.buttons["coffee_settings"].isHittable{app.swipeUp()};tap("coffee_settings",app);XCTAssertTrue(app.buttons["coffee_buy"].isEnabled);XCTAssertTrue(app.buttons["coffee_buy"].label.contains("200"));shot("16-coffee-offer")
