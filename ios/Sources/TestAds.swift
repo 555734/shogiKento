@@ -16,7 +16,7 @@ import GoogleMobileAds
         if fixture{let failed=ProcessInfo.processInfo.arguments.contains("-ads-failure");state=failed ? "failed":"fixture";message=failed ? "広告を取得できません。アプリはそのまま使えます。":"表示テスト用サンプル（配信広告ではありません）";return}
         MobileAds.shared.start { [weak self] _ in Task{@MainActor in self?.request()} }
     }
-    private func request(){guard alive else{return};let video=VideoOptions();video.startMuted=true
+    private func request(){guard alive else{return};let video=VideoOptions();video.shouldStartMuted=true
         loader=AdLoader(adUnitID:Self.unit,rootViewController:nil,adTypes:[.native],options:[video]);loader?.delegate=self
         let request=Request(),extras=Extras();extras.additionalParameters=["npa":"1"];request.register(extras);loader?.load(request)
     }
