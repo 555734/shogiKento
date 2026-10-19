@@ -1,0 +1,1 @@
+FAIL: java.lang.AssertionError: external clipboard source copied and finished before continuing
