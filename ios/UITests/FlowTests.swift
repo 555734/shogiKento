@@ -3,6 +3,7 @@ final class FlowTests:XCTestCase {
     override func setUp(){super.setUp();continueAfterFailure=false}
     func shot(_ name:String){let image=XCTAttachment(screenshot:XCUIApplication().screenshot());image.name=name;image.lifetime = .keepAlways;add(image)}
     func tap(_ id:String,_ app:XCUIApplication,timeout:Double=15){let button=app.buttons[id];XCTAssertTrue(button.waitForExistence(timeout:timeout),id);button.tap()}
+    func setOfferHidden(_ app:XCUIApplication){let control=app.switches["coffee_hide_offer"];if (control.value as? String) != "1"{control.coordinate(withNormalizedOffset:CGVector(dx:0.93,dy:0.5)).tap()};XCTAssertEqual(control.value as? String,"1")}
     func edgeScroll(_ app:XCUIApplication,up:Bool=true){let start=app.coordinate(withNormalizedOffset:CGVector(dx:0.01,dy:up ? 0.8:0.2)),end=app.coordinate(withNormalizedOffset:CGVector(dx:0.01,dy:up ? 0.2:0.8));start.press(forDuration:0.05,thenDragTo:end)}
     func testAdsStudyGeometryAndOfficialSDK()throws {
         let app=XCUIApplication();app.launchArguments=["-ads-fixture","-coffee-test-suppress"];app.launch();tap("mode_study",app)
@@ -25,13 +26,13 @@ final class FlowTests:XCTestCase {
     func testCoffeeOpeningPromptAndPermanentHide()throws {
         let app=XCUIApplication();app.launchArguments=["-ads-fixture","-coffee-fixture","-coffee-reset-offer"];app.launch();XCTAssertFalse(app.buttons["coffee_buy"].waitForExistence(timeout:3))
         app.terminate();app.launchArguments=["-ads-fixture","-coffee-fixture"];app.launch();XCTAssertTrue(app.buttons["coffee_buy"].waitForExistence(timeout:15));shot("19-coffee-second-opening")
-        app.switches["coffee_hide_offer"].tap();XCTAssertEqual(app.switches["coffee_hide_offer"].value as? String,"1");tap("coffee_close",app);app.terminate();app.launch();XCTAssertFalse(app.buttons["coffee_buy"].waitForExistence(timeout:3))
+        setOfferHidden(app);tap("coffee_close",app);app.terminate();app.launch();XCTAssertFalse(app.buttons["coffee_buy"].waitForExistence(timeout:3))
         tap("settings",app);if !app.buttons["coffee_settings"].isHittable{app.swipeUp()};tap("coffee_settings",app);XCTAssertTrue(app.buttons["coffee_restore"].exists);tap("coffee_close",app);tap("settings_close",app)
     }
     func testCoffeeSettingsBuyRestoreAndHide()throws {
         let app=XCUIApplication();app.launchArguments=["-ads-fixture","-coffee-fixture","-coffee-test-suppress"];app.launch()
         tap("settings",app);if !app.buttons["coffee_settings"].isHittable{app.swipeUp()};tap("coffee_settings",app);XCTAssertTrue(app.buttons["coffee_buy"].isEnabled);XCTAssertTrue(app.buttons["coffee_buy"].label.contains("200"));shot("16-coffee-offer")
-        let hide=app.switches["coffee_hide_offer"];if (hide.value as? String) != "1"{hide.tap()};XCTAssertEqual(hide.value as? String,"1")
+        setOfferHidden(app)
         tap("coffee_buy",app);XCTAssertTrue(app.staticTexts["coffee_status"].label.contains("購入済み"));shot("17-coffee-purchased");tap("coffee_close",app);tap("settings_close",app)
         tap("mode_study",app);for _ in 0..<3{edgeScroll(app)};XCTAssertFalse(app.staticTexts["ad_status_study"].exists)
         tap("home",app);app.terminate();app.launch();tap("settings",app);if !app.buttons["coffee_settings"].isHittable{app.swipeUp()};tap("coffee_settings",app);XCTAssertEqual(app.switches["coffee_hide_offer"].value as? String,"1")

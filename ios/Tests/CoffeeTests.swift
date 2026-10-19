@@ -10,7 +10,8 @@ final class CoffeeTests:XCTestCase {
         // Do not block the main actor that handles those callbacks.
         let session=try await Task.detached {let value=try SKTestSession(configurationFileNamed:"CoffeeSupport");value.disableDialogs=true;value.clearTransactions();return value}.value
         NSLog("Coffee StoreKit: session ready");addTeardownBlock {await Task.detached {session.clearTransactions()}.value}
-        let defaults=UserDefaults(suiteName:UUID().uuidString)!,coffee=CoffeeStore.shared
+        let defaults=UserDefaults(suiteName:UUID().uuidString)!,coffee=CoffeeStore(defaults:defaults,start:false)
+        coffee.observeTransactions()
         await coffee.refresh();NSLog("Coffee StoreKit: entitlement refresh completed");XCTAssertFalse(coffee.owned);XCTAssertEqual(coffee.effective(MatchOptions(minutes:3,humanSide:1,level:10)).level,9)
         await coffee.loadProduct();XCTAssertNotNil(coffee.product);XCTAssertEqual(coffee.product?.price,200);NSLog("Coffee StoreKit: local product loaded")
         await coffee.buy();XCTAssertTrue(coffee.owned);XCTAssertEqual(coffee.effective(MatchOptions(minutes:3,humanSide:1,level:10)).level,10);NSLog("Coffee StoreKit: purchase completed")

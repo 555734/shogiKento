@@ -1,6 +1,12 @@
 import SwiftUI
 import StoreKit
 
+#if DEBUG
+let isNativeUnitTestHost=NSClassFromString("XCTestCase") != nil
+#else
+let isNativeUnitTestHost=false
+#endif
+
 @MainActor final class CoffeeStore:ObservableObject {
     static let productID="coffee_support_unlock"
     static let shared=CoffeeStore()
@@ -10,15 +16,16 @@ import StoreKit
     @Published private(set) var checkedEntitlements=false
     @Published var message="ストアを確認しています…"
     @Published var offerPending=false
+    @Published var hideOffer:Bool {didSet{defaults.set(hideOffer,forKey:"coffee_hide_offer");if hideOffer{offerPending=false}}}
     private let defaults:UserDefaults
     private var updates:Task<Void,Never>?
     private var launched=false,backgrounded=false
     private var generation=0
     var fixture=false
-    init(defaults:UserDefaults = .standard,start:Bool=true){self.defaults=defaults
+    init(defaults:UserDefaults = .standard,start:Bool=true){self.defaults=defaults;hideOffer=defaults.bool(forKey:"coffee_hide_offer")
         #if DEBUG
-        if ProcessInfo.processInfo.arguments.contains("-coffee-reset-offer"){defaults.removeObject(forKey:"coffee_launches");defaults.removeObject(forKey:"coffee_hide_offer")}
-        fixture=ProcessInfo.processInfo.arguments.contains("-coffee-fixture")
+        if ProcessInfo.processInfo.arguments.contains("-coffee-reset-offer"){defaults.removeObject(forKey:"coffee_launches");defaults.removeObject(forKey:"coffee_hide_offer");hideOffer=false}
+        fixture=ProcessInfo.processInfo.arguments.contains("-coffee-fixture") || (start && isNativeUnitTestHost)
         if ProcessInfo.processInfo.arguments.contains("-coffee-test-owned"){owned=true;fixture=true}
         #endif
         if fixture{checkedEntitlements=true}
@@ -28,7 +35,6 @@ import StoreKit
         }
     }
     deinit{updates?.cancel()}
-    var hideOffer:Bool {get{defaults.bool(forKey:"coffee_hide_offer")}set{objectWillChange.send();defaults.set(newValue,forKey:"coffee_hide_offer");if newValue{offerPending=false}}}
     func observeTransactions(){guard updates==nil else{return};updates=Task{[weak self] in for await update in Transaction.updates {guard let self else{return};guard case .verified(let transaction)=update,transaction.productID==Self.productID,transaction.productType == .nonConsumable else{continue};self.generation+=1;self.owned=transaction.revocationDate==nil && !transaction.isUpgraded;if self.owned{self.offerPending=false};await transaction.finish()}}}
     var price:String? {fixture ? "¥200（購入テスト）":product?.displayPrice}
     var canBuy:Bool {!owned && !busy && (product != nil || fixture)}
@@ -67,6 +73,6 @@ struct CoffeeView:View {
     var body:some View {NavigationStack{Form{
         Section {Text("コーヒーを1杯奢って、開発を応援").font(.title2.bold());Label("すべての広告を非表示",systemImage:"rectangle.slash");Label("対局AIの最強レベル Lv.10を解放",systemImage:"crown");Text("買い切り・追加料金なし。同じストアのアカウントで復元できます。AndroidとiOSの購入は共通ではありません。").font(.caption)}
         Section {Text(coffee.owned ? "購入済みです。ありがとうございます。":coffee.message).accessibilityIdentifier("coffee_status");Button(coffee.owned ? "購入済み":coffee.price.map{"コーヒーを奢る · \($0)"} ?? "価格を確認中（日本向け予定200円）"){Task{await coffee.buy()}}.disabled(!coffee.canBuy).accessibilityIdentifier("coffee_buy");Button("購入を復元する"){Task{await coffee.restore()}}.disabled(coffee.busy).accessibilityIdentifier("coffee_restore")}
-        Section {Toggle("今後、起動時に表示しない",isOn:Binding(get:{coffee.hideOffer},set:{coffee.hideOffer=$0})).accessibilityIdentifier("coffee_hide_offer")}
+        Section {Toggle("今後、起動時に表示しない",isOn:$coffee.hideOffer).accessibilityIdentifier("coffee_hide_offer")}
     }.navigationTitle("☕ コーヒーを奢る").toolbar{Button("閉じる"){dismiss()}.disabled(coffee.busy).accessibilityIdentifier("coffee_close")}.onAppear{coffee.offerPending=false}.task{if !coffee.fixture{await coffee.loadProduct()}}}}
 }

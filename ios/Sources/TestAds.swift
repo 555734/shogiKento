@@ -11,7 +11,7 @@ import GoogleMobileAds
     private var loader:AdLoader?
     private var alive=true
     private var started=false
-    let fixture=ProcessInfo.processInfo.arguments.contains("-ads-fixture")
+    let fixture=ProcessInfo.processInfo.arguments.contains("-ads-fixture") || isNativeUnitTestHost
     func load(){guard !started else{return};started=true;alive=true
         if fixture{let failed=ProcessInfo.processInfo.arguments.contains("-ads-failure");state=failed ? "failed":"fixture";message=failed ? "広告を取得できません。アプリはそのまま使えます。":"表示テスト用サンプル（配信広告ではありません）";return}
         MobileAds.shared.start { [weak self] _ in Task{@MainActor in self?.request()} }
