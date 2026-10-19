@@ -77,6 +77,8 @@ schemes:
     build:
       targets:
         BeniShogi: all
+    run:
+      storeKitConfiguration: StoreKit/CoffeeSupport.storekit
     test:
       targets: [BeniShogiTests, BeniShogiUITests]
       gatherCoverageData: true
