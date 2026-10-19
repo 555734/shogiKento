@@ -1,0 +1,112 @@
+Command line invocation:
+    /Applications/Xcode_16.4.app/Contents/Developer/usr/bin/xcodebuild -project BeniShogi.xcodeproj -scheme BeniShogi -configuration Debug -destination "platform=iOS Simulator,id=DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9" -derivedDataPath build/DerivedData -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -resultBundlePath outputs/Tests.xcresult "-only-testing:BeniShogiTests" -test-timeouts-enabled YES -maximum-test-execution-time-allowance 180 test-without-building
+
+Build settings from command line:
+    CODE_SIGN_IDENTITY = -
+    CODE_SIGNING_ALLOWED = YES
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  GoogleUserMessagingPlatform: https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git @ 3.1.0
+  GoogleMobileAds: https://github.com/googleads/swift-package-manager-google-mobile-ads.git @ 12.14.0
+
+Writing result bundle at path:
+	/Users/runner/work/shogiKento/shogiKento/ios/outputs/Tests.xcresult
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9, OS:18.5, name:iPhone 16 Pro }
+{ platform:iOS Simulator, arch:x86_64, id:DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9, OS:18.5, name:iPhone 16 Pro }
+2026-10-19 13:23:57.984035+0000 BeniShogi[13249:41069] [library] load_eligibility_plist: Failed to open /Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/19802600-A456-4FEC-AC28-BB3428AB62D8/private/var/db/eligibilityd/eligibility.plist: No such file or directory(2)
+2026-10-19 13:23:58.121545+0000 BeniShogi[13249:41069] [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x60000021dae0> F8BB1C28-BAE8-11D6-9C31-00039315CD46
+2026-10-19 13:23:59.856052+0000 BeniShogi[13249:41404] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+2026-10-19 13:23:59.909260+0000 BeniShogi[13249:41404] [Client] Synchronous remote object proxy returned error: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+2026-10-19 13:23:59.927917+0000 BeniShogi[13249:41398] [Client] Updating selectors failed with: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+2026-10-19 13:24:00.239897+0000 BeniShogi[13249:41398] [Client] Updating selectors failed with: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+2026-10-19 13:24:00.240124+0000 BeniShogi[13249:41404] [Client] Synchronous remote object proxy returned error: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+2026-10-19 13:24:00.333286+0000 BeniShogi[13249:41403] [Client] Updating selectors failed with: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+2026-10-19 13:24:00.385073+0000 BeniShogi[13249:41403] [Client] Updating selectors after delegate addition failed with: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+2026-10-19 13:24:00.603459+0000 BeniShogi[13249:41404] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+2026-10-19 13:24:01.951496+0000 BeniShogi[13249:41069] [Process] WebContent process (0x15b000b80) took 1.635765 seconds to launch
+2026-10-19 13:24:02.116080+0000 BeniShogi[13249:41069] [ResourceLoadStatistics] Failed to request storage access quirks from WebPrivacy.
+2026-10-19 13:24:02.116421+0000 BeniShogi[13249:41069] [ResourceLoadStatistics] Failed to request storage access user agent string quirks from WebPrivacy.
+2026-10-19 13:24:02.271378+0000 BeniShogi[13249:41400] [default] Failed to resolve host network app id to config: bundleID: com.apple.WebKit.Networking instance ID: Optional([_EXExtensionInstanceIdentifier: 578198DA-A007-4B2D-8117-A506470E67BC])
+2026-10-19 13:24:02.487785+0000 BeniShogi[13249:41069] [Process] GPU process (0x15b002410) took 2.109878 seconds to launch
+2026-10-19 13:24:03.142425+0000 BeniShogi[13249:41069] [Process] Networking process (0x15b006c50) took 2.660690 seconds to launch
+2026-10-19 13:24:04.470904+0000 BeniShogi[13249:41069] [ResourceLoadStatistics] Failed to request query parameters from WebPrivacy.
+Test Suite 'All tests' started at 2026-10-19 13:24:09.601.
+Test Suite 'BeniShogiTests.xctest' started at 2026-10-19 13:24:09.603.
+Test Suite 'CoffeeTests' started at 2026-10-19 13:24:09.603.
+Test Case '-[BeniShogiTests.CoffeeTests testOfferFrequencyAndPermanentHide]' started.
+Test Case '-[BeniShogiTests.CoffeeTests testOfferFrequencyAndPermanentHide]' passed (0.013 seconds).
+Test Case '-[BeniShogiTests.CoffeeTests testStoreKitPurchaseRestoreRefundAndLevelGate]' started.
+2026-10-19 13:24:10.455488+0000 BeniShogi[13249:41069] [ResourceLoadStatistics] Failed to request allowed query parameters from WebPrivacy.
+2026-10-19 13:24:10.747360+0000 BeniShogi[13249:41069] [ResourceLoadStatistics] Failed to request restricted opener domains from WebPrivacy
+2026-10-19 13:24:19.535008+0000 BeniShogi[13249:41531] [Default] <Google> <Google:HTML> 50 required SKAdNetwork identifier(s) missing from Info.plist. See [Enable SKAdNetwork to track conversions] (https://goo.gle/enable-skadnetwork).
+2026-10-19 13:24:22.146594+0000 BeniShogi[13249:41069] [Process] WebContent process (0x15b00e500) took 2.564464 seconds to launch
+2026-10-19 13:24:23.173236+0000 BeniShogi[13249:41069] [Process] WebContent process (0x15b014b80) took 2.614072 seconds to launch
+2026-10-19 13:24:23.916319+0000 BeniShogi[13249:41403] [connection] nw_connection_copy_connected_local_endpoint_block_invoke [C3] Connection has no local endpoint
+2026-10-19 13:24:23.916710+0000 BeniShogi[13249:41403] [connection] nw_connection_copy_connected_local_endpoint_block_invoke [C3] Connection has no local endpoint
+2026-10-19 13:24:24.749977+0000 BeniShogi[13249:41069] [Process] WebContent process (0x15b015fa0) took 2.250816 seconds to launch
+2026-10-19 13:24:26.944759+0000 BeniShogi[13249:41069] [Process] WebContent process (0x15b0180b0) took 3.169832 seconds to launch
+2026-10-19 13:24:28.298041+0000 BeniShogi[13249:41069] [Process] WebContent process (0x15b019700) took 4.273653 seconds to launch
+2026-10-19 13:24:55.131136+0000 BeniShogi[13249:41069] [general] Failed to terminate process: Error Domain=com.apple.extensionKit.errorDomain Code=18 "(null)" UserInfo={NSUnderlyingError=0x600000d2d560 {Error Domain=RBSRequestErrorDomain Code=3 "No such process found" UserInfo={NSLocalizedFailureReason=No such process found}}}
+Test Case '-[BeniShogiTests.CoffeeTests testStoreKitPurchaseRestoreRefundAndLevelGate]' exceeded execution time allowance of 3 minutes. The test may have hung; check Xcode's test report for additional diagnostics. If the test requires additional time, use -[XCTestCase executionTimeAllowance] or one of xcodebuild's command-line overrides.
+
+
+*** If you believe this error represents a bug, please attach the result bundle at /Users/runner/work/shogiKento/shogiKento/ios/outputs/Tests.xcresult
+
+2026-10-19 13:27:20.244058+0000 BeniShogi[21644:62837] [library] load_eligibility_plist: Failed to open /Users/runner/Library/Developer/CoreSimulator/Devices/DC4CD8B3-4457-4153-9087-A0D7A2F9BFD9/data/Containers/Data/Application/19802600-A456-4FEC-AC28-BB3428AB62D8/private/var/db/eligibilityd/eligibility.plist: No such file or directory(2)
+2026-10-19 13:27:20.455900+0000 BeniShogi[21644:62837] [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x60000022b420> F8BB1C28-BAE8-11D6-9C31-00039315CD46
+2026-10-19 13:27:22.523447+0000 BeniShogi[21644:63291] [Client] Updating selectors failed with: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+2026-10-19 13:27:22.523536+0000 BeniShogi[21644:63297] [Client] Synchronous remote object proxy returned error: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+2026-10-19 13:27:22.530896+0000 BeniShogi[21644:63292] [Client] Updating selectors failed with: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+2026-10-19 13:27:22.530993+0000 BeniShogi[21644:63297] [Client] Synchronous remote object proxy returned error: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+2026-10-19 13:27:22.856873+0000 BeniShogi[21644:63635] [Client] Updating selectors failed with: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+2026-10-19 13:27:22.857544+0000 BeniShogi[21644:63635] [Client] Updating selectors after delegate addition failed with: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+2026-10-19 13:27:23.494742+0000 BeniShogi[21644:63627] [default] Failed to resolve host network app id to config: bundleID: com.apple.WebKit.Networking instance ID: Optional([_EXExtensionInstanceIdentifier: E8E9CEBB-EA72-45B9-AC53-7243119B6E91])
+2026-10-19 13:27:26.231551+0000 BeniShogi[21644:63353] [AMCP]  50695          HALC_ProxyIOContext.cpp:1622  HALC_ProxyIOContext::IOWorkLoop: skipping cycle due to overload
+
+Restarting after unexpected exit, crash, or test timeout; summary will include totals from previous launches.
+
+2026-10-19 13:27:27.416768+0000 BeniShogi[21644:62837] [Process] GPU process (0x134002410) took 4.449135 seconds to launch
+2026-10-19 13:27:27.424050+0000 BeniShogi[21644:62837] [Process] WebContent process (0x134000c10) took 4.511857 seconds to launch
+2026-10-19 13:27:27.429414+0000 BeniShogi[21644:62837] [Process] Networking process (0x134006c50) took 4.390976 seconds to launch
+Test Suite 'Selected tests' started at 2026-10-19 13:27:27.434.
+Test Suite 'BeniShogiTests.xctest' started at 2026-10-19 13:27:27.439.
+Test Suite 'CoffeeTests' started at 2026-10-19 13:27:27.439.
+Test Suite 'CoffeeTests' passed at 2026-10-19 13:27:27.439.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'CoreTests' started at 2026-10-19 13:27:27.439.
+Test Case '-[BeniShogiTests.CoreTests testClockPauseTimeoutAndMatchRetention]' started.
+Test Case '-[BeniShogiTests.CoreTests testClockPauseTimeoutAndMatchRetention]' passed (0.164 seconds).
+Test Case '-[BeniShogiTests.CoreTests testDurableIndependentArchive]' started.
+Test Case '-[BeniShogiTests.CoreTests testDurableIndependentArchive]' passed (0.171 seconds).
+Test Case '-[BeniShogiTests.CoreTests testLegalTargetsPinsDropsAndPromotion]' started.
+Test Case '-[BeniShogiTests.CoreTests testLegalTargetsPinsDropsAndPromotion]' passed (0.005 seconds).
+Test Case '-[BeniShogiTests.CoreTests testMatchOptionsAndReplaySound]' started.
+Test Case '-[BeniShogiTests.CoreTests testMatchOptionsAndReplaySound]' passed (0.221 seconds).
+Test Case '-[BeniShogiTests.CoreTests testQuestEveryPositionAndNotation]' started.
+Test Case '-[BeniShogiTests.CoreTests testQuestEveryPositionAndNotation]' passed (0.308 seconds).
+Test Case '-[BeniShogiTests.CoreTests testRealEmbeddedNNUEAndContinuousSearch]' started.
+Test Case '-[BeniShogiTests.CoreTests testRealEmbeddedNNUEAndContinuousSearch]' passed (1.548 seconds).
+Test Suite 'CoreTests' passed at 2026-10-19 13:27:29.860.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 2.416 (2.421) seconds
+Test Suite 'BeniShogiTests.xctest' passed at 2026-10-19 13:27:29.861.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 2.416 (2.422) seconds
+Test Suite 'Selected tests' passed at 2026-10-19 13:27:29.861.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 2.416 (2.427) seconds
+2026-10-19 13:28:18.405 xcodebuild[8731:29274] [MT] IDETestOperationsObserverDebug: 360.480 elapsed -- Testing started completed.
+2026-10-19 13:28:18.406 xcodebuild[8731:29274] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-19 13:28:18.406 xcodebuild[8731:29274] [MT] IDETestOperationsObserverDebug: 360.480 sec, +360.480 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/shogiKento/shogiKento/ios/outputs/Tests.xcresult
+
+Failing tests:
+	CoffeeTests.testStoreKitPurchaseRestoreRefundAndLevelGate()
+
+** TEST EXECUTE FAILED **
+
+Testing started
