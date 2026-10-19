@@ -5,21 +5,21 @@ import StoreKitTest
 
 final class CoffeeTests:XCTestCase {
     @MainActor func testStoreKitPurchaseRestoreRefundAndLevelGate()async throws {
-        executionTimeAllowance=180
+        executionTimeAllowance=180;NSLog("Coffee StoreKit: begin session setup")
         // Synchronous StoreKitTest setup/reset can wait for callbacks from the app.
         // Do not block the main actor that handles those callbacks.
         let session=try await Task.detached {let value=try SKTestSession(configurationFileNamed:"CoffeeSupport");value.disableDialogs=true;value.clearTransactions();return value}.value
-        addTeardownBlock {await Task.detached {session.clearTransactions()}.value}
+        NSLog("Coffee StoreKit: session ready");addTeardownBlock {await Task.detached {session.clearTransactions()}.value}
         let defaults=UserDefaults(suiteName:UUID().uuidString)!,coffee=CoffeeStore.shared
-        await coffee.refresh();XCTAssertFalse(coffee.owned);XCTAssertEqual(coffee.effective(MatchOptions(minutes:3,humanSide:1,level:10)).level,9)
-        await coffee.loadProduct();XCTAssertNotNil(coffee.product);XCTAssertEqual(coffee.product?.price,200);print("Coffee StoreKit: local product loaded")
-        await coffee.buy();XCTAssertTrue(coffee.owned);XCTAssertEqual(coffee.effective(MatchOptions(minutes:3,humanSide:1,level:10)).level,10);print("Coffee StoreKit: purchase completed")
+        await coffee.refresh();NSLog("Coffee StoreKit: entitlement refresh completed");XCTAssertFalse(coffee.owned);XCTAssertEqual(coffee.effective(MatchOptions(minutes:3,humanSide:1,level:10)).level,9)
+        await coffee.loadProduct();XCTAssertNotNil(coffee.product);XCTAssertEqual(coffee.product?.price,200);NSLog("Coffee StoreKit: local product loaded")
+        await coffee.buy();XCTAssertTrue(coffee.owned);XCTAssertEqual(coffee.effective(MatchOptions(minutes:3,humanSide:1,level:10)).level,10);NSLog("Coffee StoreKit: purchase completed")
         let restored=CoffeeStore(defaults:defaults,start:false);await restored.refresh();XCTAssertTrue(restored.owned)
-        await restored.restore();XCTAssertTrue(restored.owned);XCTAssertEqual(restored.message,"購入情報を復元しました。");print("Coffee StoreKit: explicit restore completed")
+        await restored.restore();XCTAssertTrue(restored.owned);XCTAssertEqual(restored.message,"購入情報を復元しました。");NSLog("Coffee StoreKit: explicit restore completed")
         // SKTestSession waits for the app to handle the refund. Keep the main actor
         // free so the production Transaction.updates listener can finish it.
         try await Task.detached {let transaction=try XCTUnwrap(session.allTransactions().first);try session.refundTransaction(identifier:transaction.identifier)}.value
-        print("Coffee StoreKit: refund simulation completed")
+        NSLog("Coffee StoreKit: refund simulation completed")
         let deadline=Date().addingTimeInterval(10)
         while coffee.owned && Date()<deadline {try await Task.sleep(nanoseconds:100_000_000)}
         XCTAssertFalse(coffee.owned,"Verified refund update must revoke the purchase")
