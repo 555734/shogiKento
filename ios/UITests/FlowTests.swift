@@ -22,7 +22,7 @@ final class FlowTests:XCTestCase {
         app.terminate();app.launch();tap("open_archive",app);let quest=app.buttons.matching(NSPredicate(format:"label CONTAINS %@","Shogi Quest")).firstMatch;XCTAssertTrue(quest.waitForExistence(timeout:10));shot("07-archive-persisted");quest.tap();if app.alerts.buttons["開く"].waitForExistence(timeout:3){app.alerts.buttons["開く"].tap()};XCTAssertEqual(app.staticTexts["study_ply"].label,"79手目");shot("08-reopened-quest")
         tap("home",app);tap("mode_match",app)
         if !app.buttons["match_settings"].isHittable{app.swipeUp()};tap("match_settings",app)
-        app.steppers["match_level"].buttons["Increment"].tap();app.steppers["match_level"].buttons["Increment"].tap()
+        app.buttons["match_level-Increment"].tap();app.buttons["match_level-Increment"].tap()
         tap("match_minutes",app);tap("5分",app)
         app.segmentedControls["match_side"].buttons.element(boundBy:1).tap();shot("09-match-settings")
         tap("apply_match_settings",app)
