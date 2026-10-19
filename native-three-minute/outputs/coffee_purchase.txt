@@ -1,0 +1,1 @@
+PASS RSA receipt signature/product/state checks; cancel/pending fail closed; first/second foreground and hide persistence; settings offer/restore controls; simulated purchase/restore removes ads including archive/footer and unlocks level 10. Google Play product is unregistered: no real Play purchase, acknowledgement, charge or console restoration was tested.

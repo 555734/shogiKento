@@ -1,0 +1,1 @@
+PASS process protocol: 22 assertions

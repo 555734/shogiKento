@@ -1,0 +1,1 @@
+Emulator preflight complete; instrumentation screenshots require the app to own the active window.
