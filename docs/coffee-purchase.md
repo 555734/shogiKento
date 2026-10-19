@@ -35,7 +35,7 @@ Google Play Billing 9.1.0を使用する。INAPPの商品情報を取得し、�
 
 ## iOS
 
-StoreKit 2のProduct購入、検証済みTransaction、Transaction.updates、currentEntitlementsを使用する。復元ボタンではユーザー操作に応じてAppStore.syncを実行する。検証に失敗した購入や支払い待ちは解放せず、返金・取り消し後は有効な権利を再取得して停止する。購入済みの独自UserDefaultsフラグを根拠に解放しない。
+StoreKit 2のProduct購入、検証済みTransaction、Transaction.updates、商品IDを指定したTransaction.latest(for:)を使用する。復元ボタンではユーザー操作に応じてAppStore.syncを実行する。検証に失敗した購入や支払い待ちは解放せず、返金・取り消し後は有効な権利を再取得して停止する。購入済みの独自UserDefaultsフラグを根拠に解放しない。
 
 ### 本番利用前に必要なユーザー作業
 
@@ -48,9 +48,9 @@ AndroidとiOSは各ストアの別購入であり、OSをまたぐ自動復元�
 ## テストと完了範囲
 
 - Android：Billing SDKのコンパイル、RSAで生成した正しい／改ざんした購入情報の検証、キャンセル・保留での未解放、初回／2回目の案内・非表示保存、デバッグ専用の購入／復元シミュレーションによる全広告除去とAIゲートを検証する。
-- iOS：`CoffeeSupport.storekit`（日本向け200円の非消費型商品）とAppleのSKTestSessionを使い、ローカルStoreKitの購入・権利再取得・明示復元・返金を検証する。UIテストではデバッグ専用シミュレーションで購入画面・非表示設定・広告除去・最強AIの解放を確認する。
+- iOS：`CoffeeSupport.storekit`（日本向け200円の非消費型商品）とAppleのSKTestSessionを使い、StoreKitTestの購入生成APIでローカル取引を作成し、検証済み取引の再取得・明示復元・返金を検証する。アプリの決済画面と実際の請求はストア登録後のSandbox検証が必要。UIテストではデバッグ専用シミュレーションで購入画面・非表示設定・広告除去・最強AIの解放を確認する。
 - デバッグ用の購入シミュレーションは通常起動では無効。Releaseビルドでは起動引数で有効にできない。シミュレーションは実際の購入情報として永続保存しない。
 - 商品は未登録のため、Google Play実購入・承認APIの成功・Google／Apple Sandboxの実アカウントでの購入復元・本番の200円請求は未検証。ローカルテストの合格を本番課金の合格と扱わない。
 - 広告配信は引き続き公式テスト広告IDを使用する。本番広告への切り替えは別途 `ads-implementation-plan.md` の準備が必要。
 
-公式資料：[Play Billing導入](https://developer.android.com/google/play/billing/integrate)、[購入の検証](https://developer.android.com/google/play/billing/security)、[Apple購入権利](https://developer.apple.com/documentation/storekit/transaction/currententitlements)、[Apple購入復元](https://developer.apple.com/documentation/storekit/appstore/sync())。
+公式資料：[Play Billing導入](https://developer.android.com/google/play/billing/integrate)、[購入の検証](https://developer.android.com/google/play/billing/security)、[Apple購入権利](https://developer.apple.com/documentation/storekit/transaction/latest(for:))、[Apple購入復元](https://developer.apple.com/documentation/storekit/appstore/sync())。
