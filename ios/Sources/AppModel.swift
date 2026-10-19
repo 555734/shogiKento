@@ -79,6 +79,7 @@ import UIKit
             NativeEngine.shared.search(position,continuous:true){[weak self] result in guard let self,self.active,self.screen == .study,self.position.sfen==key,self.session.cursor==cursor else{return};switch result{case .failure(let e):self.analyzing=false;self.analysisStatus="AIエラー："+e.localizedDescription;case .success(let update):guard update.candidates.allSatisfy({legal.contains($0.move)}) else{self.analyzing=false;self.analysisStatus="AI候補手を検証できません";NativeEngine.shared.cancel();return};self.candidates=update.candidates;self.depth=update.depth;self.nodes=update.nodes;self.analyzing=true;self.analysisStatus="探索中";if let first=update.candidates.first{self.session.scores[cursor]=first.score}}}
         }catch{analysisStatus=error.localizedDescription}
     }
+    var canShowCoffeeOffer:Bool {!matchSettingsOpen && promotion.isEmpty}
     func setMatchSettingsOpen(_ value:Bool){if value{tick();NativeEngine.shared.cancel();thinking=false};matchSettingsOpen=value;lastTick=nil;if !value && active && screen == .match{lastTick=ProcessInfo.processInfo.systemUptime;scheduleCPU()}}
     func applyMatchOptions(_ options:MatchOptions){guard options.valid(),options.level<10 || premium(),options != matchOptions else{return};options.save();restartMatch()}
     func membershipChanged(){if screen == .match{NativeEngine.shared.cancel();thinking=false;scheduleCPU()}}

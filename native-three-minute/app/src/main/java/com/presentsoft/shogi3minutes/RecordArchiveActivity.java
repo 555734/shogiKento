@@ -3,7 +3,7 @@ import android.app.*;import android.os.*;import android.content.*;import android
 
 /** A separate page pauses the live match while browsing its saved games. */
 public final class RecordArchiveActivity extends Activity {
- ListView list;List<SavedRecord> records=Collections.emptyList();TextView status;TestAdCard adCard;View footer;final Runnable coffeeObserver=()->refreshAd();
+ ListView list;List<SavedRecord> records=Collections.emptyList();TextView status;TestAdCard adCard;View footer;boolean coffeeOfferOpen;final Runnable coffeeObserver=()->refreshAd();
  int dp(int n){return Math.round(n*getResources().getDisplayMetrics().density);}
  TextView text(String value,int size,int color){TextView t=new TextView(this);t.setText(value);t.setTextSize(size);t.setTextColor(color);return t;}
  @Override public void onCreate(Bundle state){super.onCreate(state);getWindow().setStatusBarColor(0xff400b0c);getWindow().setNavigationBarColor(0xff400b0c);
@@ -17,8 +17,8 @@ public final class RecordArchiveActivity extends Activity {
   load();list.setOnItemClickListener((parent,view,index,id)->{if(index>=records.size())return;setResult(RESULT_OK,new Intent().putExtra("record_id",records.get(index).id));finish();});
  }
  void refreshAd(){if(CoffeeBilling.get(this).unlocked()){if(footer!=null){list.removeFooterView(footer);footer=null;}if(adCard!=null){adCard.close();adCard=null;}return;}if(footer!=null)return;adCard=new TestAdCard(this,"archive",getIntent().getBooleanExtra("ads_fixture",false));android.widget.FrameLayout host=new android.widget.FrameLayout(this);host.setPadding(0,dp(16),0,dp(16));host.setLayoutParams(new android.widget.AbsListView.LayoutParams(-1,dp(392)));host.addView(adCard,new android.widget.FrameLayout.LayoutParams(-1,dp(360)));footer=host;list.addFooterView(footer,null,false);adCard.load();}
- @Override protected void onResume(){super.onResume();CoffeeBilling.get(this).registerLaunch();}
- @Override protected void onStop(){super.onStop();if(!isFinishing()&&!isChangingConfigurations())CoffeeBilling.get(this).backgrounded=true;}
+ @Override protected void onResume(){super.onResume();CoffeeBilling coffee=CoffeeBilling.get(this);coffee.registerLaunch();new Handler(Looper.getMainLooper()).postDelayed(()->{if(isFinishing()||isDestroyed()||!hasWindowFocus()||coffeeOfferOpen||!coffee.wantsPrompt()||BuildConfig.DEBUG&&getIntent().getBooleanExtra("coffee_test_suppress",false))return;coffee.promptPending=false;coffeeOfferOpen=true;AlertDialog dialog=CoffeeDialog.create(this);dialog.setOnDismissListener(d->coffeeOfferOpen=false);dialog.show();},1200);}
+ @Override protected void onStop(){super.onStop();if(!isFinishing()&&!isChangingConfigurations()&&!coffeeOfferOpen)CoffeeBilling.get(this).backgrounded=true;}
  @Override protected void onDestroy(){CoffeeBilling.get(this).remove(coffeeObserver);if(adCard!=null)adCard.close();super.onDestroy();}
  void load(){RecordStore store=new RecordStore(new File(getFilesDir(),"records"));try{records=store.list();status.setText(records.isEmpty()?"まだ棋譜がありません。棋譜の取り込みや対局をすると自動保存されます。":records.size()+"件 · コピーした棋譜とアプリ内の対局");if(store.unreadable>0)status.append("\n読み込めない棋譜が"+store.unreadable+"件あります。ほかの棋譜は開けます。");}catch(IOException e){status.setText("棋譜の一覧を読み込めません："+e.getMessage());}
   list.setAdapter(new BaseAdapter(){public int getCount(){return records.size();}public Object getItem(int position){return records.get(position);}public long getItemId(int position){return position;}

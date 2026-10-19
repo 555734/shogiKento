@@ -2,7 +2,7 @@ package com.presentsoft.shogi3minutes;
 import android.app.*;import android.widget.*;
 
 final class CoffeeDialog {
- static AlertDialog create(MainActivity activity){CoffeeBilling coffee=activity.coffee;int pad=(int)(20*activity.getResources().getDisplayMetrics().density);LinearLayout box=new LinearLayout(activity);box.setOrientation(1);box.setPadding(pad,pad,pad,pad);
+ static AlertDialog create(Activity activity){CoffeeBilling coffee=CoffeeBilling.get(activity);int pad=(int)(20*activity.getResources().getDisplayMetrics().density);LinearLayout box=new LinearLayout(activity);box.setOrientation(1);box.setPadding(pad,pad,pad,pad);
   TextView title=new TextView(activity);title.setText("コーヒーを1杯奢って、開発を応援\n\n・すべての広告を非表示\n・対局AIの最強レベル Lv.10を解放\n\n買い切りです。同じストアのアカウントで購入を復元できます。AndroidとiOSの購入は共通ではありません。");title.setTextSize(16);box.addView(title);
   TextView status=new TextView(activity);status.setTag("coffee_status");box.addView(status);
   Button buy=new Button(activity);buy.setTag("coffee_buy");box.addView(buy);Button restore=new Button(activity);restore.setTag("coffee_restore");restore.setText("購入を復元する");box.addView(restore);
