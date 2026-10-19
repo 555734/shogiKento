@@ -50,7 +50,7 @@ jobs:
           xcrun simctl bootstatus "$UDID" -b
           args=(-project BeniShogi.xcodeproj -scheme BeniShogi -configuration Debug -destination "platform=iOS Simulator,id=$UDID" -derivedDataPath build/DerivedData -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=-)
           xcodebuild "${args[@]}" build-for-testing 2>&1 | tee outputs/simulator-build.txt
-          xcodebuild "${args[@]}" -resultBundlePath outputs/Tests.xcresult -only-testing:BeniShogiTests test-without-building 2>&1 | tee outputs/simulator-tests.txt
+          xcodebuild "${args[@]}" -resultBundlePath outputs/Tests.xcresult -only-testing:BeniShogiTests -test-timeouts-enabled YES -maximum-test-execution-time-allowance 180 test-without-building 2>&1 | tee outputs/simulator-tests.txt
           # Seed the real OS pasteboard immediately before the UI flow, after StoreKit tests.
           xcrun simctl pbcopy "$UDID" < ../native-three-minute/tests/fixtures/shogi_quest_79.kif
           xcodebuild "${args[@]}" -resultBundlePath outputs/UITests.xcresult -only-testing:BeniShogiUITests test-without-building 2>&1 | tee -a outputs/simulator-tests.txt

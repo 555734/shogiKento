@@ -5,20 +5,22 @@ import StoreKitTest
 
 final class CoffeeTests:XCTestCase {
     @MainActor func testStoreKitPurchaseRestoreRefundAndLevelGate()async throws {
+        executionTimeAllowance=180
         let session=try SKTestSession(configurationFileNamed:"CoffeeSupport")
         session.disableDialogs=true;session.clearTransactions()
         defer{session.clearTransactions()}
         let defaults=UserDefaults(suiteName:UUID().uuidString)!,coffee=CoffeeStore(defaults:defaults,start:false)
         coffee.observeTransactions()
         await coffee.refresh();XCTAssertFalse(coffee.owned);XCTAssertEqual(coffee.effective(MatchOptions(minutes:3,humanSide:1,level:10)).level,9)
-        await coffee.loadProduct();XCTAssertNotNil(coffee.product);XCTAssertEqual(coffee.product?.price,200)
-        await coffee.buy();XCTAssertTrue(coffee.owned);XCTAssertEqual(coffee.effective(MatchOptions(minutes:3,humanSide:1,level:10)).level,10)
+        await coffee.loadProduct();XCTAssertNotNil(coffee.product);XCTAssertEqual(coffee.product?.price,200);print("Coffee StoreKit: local product loaded")
+        await coffee.buy();XCTAssertTrue(coffee.owned);XCTAssertEqual(coffee.effective(MatchOptions(minutes:3,humanSide:1,level:10)).level,10);print("Coffee StoreKit: purchase completed")
         let restored=CoffeeStore(defaults:defaults,start:false);await restored.refresh();XCTAssertTrue(restored.owned)
-        await restored.restore();XCTAssertTrue(restored.owned)
+        await restored.restore();XCTAssertTrue(restored.owned);XCTAssertEqual(restored.message,"購入情報を復元しました。");print("Coffee StoreKit: explicit restore completed")
         let transaction=try XCTUnwrap(session.allTransactions().first)
         // SKTestSession waits for the app to handle the refund. Keep the main actor
         // free so the production Transaction.updates listener can finish it.
         try await Task.detached {try session.refundTransaction(identifier:transaction.identifier)}.value
+        print("Coffee StoreKit: refund simulation completed")
         let deadline=Date().addingTimeInterval(10)
         while coffee.owned && Date()<deadline {try await Task.sleep(nanoseconds:100_000_000)}
         XCTAssertFalse(coffee.owned,"Verified refund update must revoke the purchase")
