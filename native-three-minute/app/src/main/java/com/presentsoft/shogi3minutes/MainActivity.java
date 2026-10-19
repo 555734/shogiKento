@@ -115,10 +115,11 @@ public final class MainActivity extends Activity {
       leftText(c,st,12,y+37,22,Color.WHITE);if(active)text(c,"●",90,y+34,8,0xffffd471);
     }
   float gridInset(){return boardSize*.01f;}
-  RectF cell(int r,int col){if(mode==MATCH&&humanSide()==-1){r=8-r;col=8-col;}float w=(boardSize-2*gridInset())/9,h=(boardHeight-2*gridInset())/9;return new RectF(boardX+gridInset()+col*w,boardY+gridInset()+r*h,boardX+gridInset()+(col+1)*w,boardY+gridInset()+(r+1)*h);}
+  RectF cell(int r,int col){if(mode==MATCH&&humanSide()==-1){r=8-r;col=8-col;}return gridCell(r,col);}
+  RectF gridCell(int r,int col){float w=(boardSize-2*gridInset())/9,h=(boardHeight-2*gridInset())/9;return new RectF(boardX+gridInset()+col*w,boardY+gridInset()+r*h,boardX+gridInset()+(col+1)*w,boardY+gridInset()+(r+1)*h);}
   void board(Canvas c){
    image(c,BOARD_ART,null,new RectF(boardX,boardY,boardX+boardSize,boardY+boardHeight));
-   RectF first=cell(0,0),last=cell(8,8);paint.reset();paint.setAntiAlias(true);paint.setColor(0xff4d2b0a);paint.setStrokeWidth(.75f);
+   RectF first=gridCell(0,0),last=gridCell(8,8);paint.reset();paint.setAntiAlias(true);paint.setColor(0xff4d2b0a);paint.setStrokeWidth(.75f);
    for(int i=0;i<=9;i++){float x=first.left+i*first.width(),y=first.top+i*first.height();c.drawLine(x,first.top,x,last.bottom,paint);c.drawLine(first.left,y,last.right,y,paint);}
    for(int row:new int[]{3,6})for(int col:new int[]{3,6})c.drawCircle(first.left+col*first.width(),first.top+row*first.height(),1.2f,paint);
   }
