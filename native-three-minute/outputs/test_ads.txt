@@ -1,0 +1,40 @@
+PASS exact study geometry and board pixels across fixture success/failure, offscreen initial ad, OS swipe from native ad, return and legal move, four placements, native lifecycle. Test IDs only; no production IDs.
+official_sdk_state=failed
+official_sdk_message=広告を取得できません（0）。アプリはそのまま使えます。
+official_native_ad_received=false
+official_unit=ca-app-pub-3940256099942544/1044960115
+official_last_error={
+  "Code": 0,
+  "Message": "Internal error.",
+  "Domain": "com.google.android.gms.ads",
+  "Cause": "null",
+  "Response Info": {
+    "Response ID": "Y5jVasLIDPaO2_AP89Sa0Qk",
+    "Mediation Adapter Class Name": "",
+    "Adapter Responses": [
+      {
+        "Adapter": "com.google.ads.mediation.admob.AdMobAdapter",
+        "Latency": 20,
+        "Ad Source Name": "Reservation campaign",
+        "Ad Source ID": "7068401028668408324",
+        "Ad Source Instance Name": "[DO NOT EDIT] Publisher Test Video App Install Ad",
+        "Ad Source Instance ID": "5662540674297680",
+        "Credentials": {
+          "pubid": "ca-app-pub-3940256099942544\/1044960115\/cak=no_cache&cadc=b0&caqid=Y5jVatrwC5_K5LcPtfCZ6Qs",
+          "campaign_type": "1",
+          "campaign_id": "739275108"
+        },
+        "Ad Error": {
+          "Code": 0,
+          "Message": "Internal error.",
+          "Domain": "com.google.android.gms.ads",
+          "Cause": "null"
+        }
+      }
+    ],
+    "Response Extras": {
+      "mediation_group_name": "Campaign",
+      "app_promotion_type": "INSTALL"
+    }
+  }
+}
