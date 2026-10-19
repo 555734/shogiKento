@@ -13,8 +13,9 @@ import com.google.android.gms.ads.nativead.*;
 /** Test-only integration: no production ID or production switch exists in this build. */
 final class TestAdCard extends FrameLayout {
  static final String UNIT="ca-app-pub-3940256099942544/2247696110";
+ static final String VIDEO_UNIT="ca-app-pub-3940256099942544/1044960115";
  final Activity activity;final String placement;final boolean fixture;
- String state="loading";int requests;boolean disposed;NativeAd ad;
+ String state="loading",lastError="",requestedUnit=UNIT;int requests;boolean disposed;NativeAd ad;
  final TextView status;final NativeAdView nativeView;
  final TextView headline,body,advertiser;final Button action;final MediaView media;
  TestAdCard(Activity activity,String placement,boolean fixture){super(activity);this.activity=activity;this.placement=placement;this.fixture=fixture;
@@ -34,15 +35,16 @@ final class TestAdCard extends FrameLayout {
  int dp(int n){return Math.round(n*getResources().getDisplayMetrics().density);}
  TextView label(String s,int size){TextView t=new TextView(activity);t.setText(s);t.setTextSize(size);t.setTextColor(0xff422615);return t;}
  void state(String next,String message){if(disposed)return;state=next;status.setText(message);status.setContentDescription("ad_status_"+placement+":"+next);}
- void load(){if(disposed||requests>0)return;requests++;if(fixture){fixtureState(true);return;}
-  MobileAds.initialize(activity,result->{if(disposed)return;activity.runOnUiThread(()->{if(disposed)return;
+ void load(){if(disposed||requests>0)return;if(fixture){requests++;fixtureState(true);return;}
+  MobileAds.initialize(activity,result->activity.runOnUiThread(()->request(UNIT)));
+ }
+ void request(String unit){if(disposed)return;requests++;requestedUnit=unit;
    Bundle extras=new Bundle();extras.putString("npa","1");
-   new AdLoader.Builder(activity,UNIT).forNativeAd(loaded->{if(disposed){loaded.destroy();return;}if(ad!=null)ad.destroy();ad=loaded;
+   new AdLoader.Builder(activity,unit).forNativeAd(loaded->{if(disposed){loaded.destroy();return;}if(ad!=null)ad.destroy();ad=loaded;
     headline.setText(loaded.getHeadline());body.setText(loaded.getBody());body.setVisibility(loaded.getBody()==null?GONE:VISIBLE);advertiser.setText(loaded.getAdvertiser());advertiser.setVisibility(loaded.getAdvertiser()==null?GONE:VISIBLE);action.setText(loaded.getCallToAction());action.setVisibility(loaded.getCallToAction()==null?GONE:VISIBLE);media.setMediaContent(loaded.getMediaContent());nativeView.setNativeAd(loaded);nativeView.setVisibility(VISIBLE);state("loaded","Google公式テスト広告 · 収益は発生しません");
-   }).withAdListener(new AdListener(){@Override public void onAdFailedToLoad(LoadAdError error){state("failed","広告を取得できません（"+error.getCode()+"）。アプリはそのまま使えます。");}})
+   }).withAdListener(new AdListener(){@Override public void onAdFailedToLoad(LoadAdError error){if(disposed)return;lastError=error.toString();android.util.Log.w("TestAds",lastError);if(error.getCode()==0&&unit.equals(UNIT)){state("loading","別の公式テスト素材を読み込み中…");request(VIDEO_UNIT);return;}state("failed","広告を取得できません（"+error.getCode()+"）。アプリはそのまま使えます。");}})
     .withNativeAdOptions(new NativeAdOptions.Builder().setVideoOptions(new VideoOptions.Builder().setStartMuted(true).build()).build()).build()
     .loadAd(new AdRequest.Builder().addNetworkExtrasBundle(com.google.ads.mediation.admob.AdMobAdapter.class,extras).build());
-  });});
  }
  void fixtureState(boolean success){if(!fixture||disposed)return;nativeView.setVisibility(GONE);state(success?"fixture":"failed",success?"表示テスト用サンプル（配信広告ではありません）\n棋力を伸ばす毎日の一手。\n広告と盤面の操作は独立しています。":"広告を取得できません。アプリはそのまま使えます。");}
  void close(){disposed=true;if(ad!=null){ad.destroy();ad=null;}nativeView.destroy();}
