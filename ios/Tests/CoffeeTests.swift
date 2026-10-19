@@ -6,6 +6,7 @@ import StoreKitTest
 final class CoffeeTests:XCTestCase {
     @MainActor func testStoreKitPurchaseRestoreRefundAndLevelGate()async throws {
         guard #available(iOS 17.0,*) else{throw XCTSkip("StoreKitTest purchase generation requires iOS 17; the application supports iOS 16.")}
+        guard isNativeUnitTestHost && CoffeeStore.shared.fixture else{XCTFail("Unit host must not start the live store or advertising SDK before StoreKitTest setup");return}
         executionTimeAllowance=180;NSLog("Coffee StoreKit: begin session setup")
         // Synchronous StoreKitTest setup/reset can wait for callbacks from the app.
         // Do not block the main actor that handles those callbacks.

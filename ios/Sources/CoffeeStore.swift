@@ -2,7 +2,7 @@ import SwiftUI
 import StoreKit
 
 #if DEBUG
-let isNativeUnitTestHost=NSClassFromString("XCTestCase") != nil
+let isNativeUnitTestHost=ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil || NSClassFromString("XCTestCase") != nil
 #else
 let isNativeUnitTestHost=false
 #endif
