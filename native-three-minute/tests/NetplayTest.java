@@ -41,7 +41,7 @@ public final class NetplayTest {
   UdpEndpoint.allowLoopback=true;link();
   try(LocalRelay relay=new LocalRelay()){List<String> relays=Collections.singletonList(relay.url());
    quickGame(relays);fastDiscovery(relays);relayOnly(relays);failover(relays);manySeekers(relays);rooms(relays);relayRestart(relay,relays);
-   relay.dropPercent=30;lossyRelay(relays);relay.dropPercent=0;relay.delayMillis=150;slowRelay(relays);relay.delayMillis=0;
+   relay.dropPercent=30;lossyRelay(relays);relay.dropPercent=0;relay.delayMillis=150;slowRelay(relays);relay.delayMillis=400;udpBeforeConfirm(relays);relay.delayMillis=0;
    ok(relay.rejected==0,"strict relay accepted every event id/signature: rejected="+relay.rejected);
   }
   refusals();
@@ -226,6 +226,10 @@ public final class NetplayTest {
    end=now()+4000;while(latency.size()<3&&now()<end)Thread.sleep(20);NostrRelayPool.Relay x=a.relays.get(0);ArrayList<Long> sorted=new ArrayList<>(latency);Collections.sort(sorted);
    return String.format(Locale.US,"%-36s ok=%d rejected=%d delivered=%d/3 median=%s %s",url,x.accepted,x.rejected,latency.size(),sorted.isEmpty()?"-":sorted.get(sorted.size()/2)+"ms",x.lastProblem);
   }catch(InterruptedException e){return url+" interrupted";}finally{a.close();b.close();}
+ }
+ /** Direct UDP data can overtake the relayed confirm; the accepter must treat authenticated session traffic as the confirm. */
+ static void udpBeforeConfirm(List<String> relays)throws Exception{
+  for(int mode:new int[]{Netplay.QUICK,Netplay.HOST}){Netplay.lobbyTag="test-lobby-overtake-"+mode;Client[] p=matchTwo(relays,mode,"777777");play(p[0],p[1],4);close(p);}
  }
  /** CI check against real public relays and STUN servers in an isolated lobby. Prints diagnostics either way. */
  static void live(String report)throws Exception{

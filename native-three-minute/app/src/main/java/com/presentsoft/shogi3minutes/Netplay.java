@@ -111,11 +111,17 @@ final class Netplay implements Closeable {
   status("接続しました");Listener l=listener;int side=s.localSide();if(l!=null)l.matched(side);}
  void startLink(Session s){
   s.link=new P2PLink(endpoint,s.key,s.id,s.role,packet->{Map<String,Object> m=message("pkt");m.put("s",Schnorr.hex(Arrays.copyOf(s.id,8)));m.put("d",NetJson.base64(packet));publish(s.peer,m);},new P2PLink.Listener(){
-   public void message(String text){run(()->{if(session==s){s.live=true;Listener l=listener;if(l!=null)l.message(text);}});}
-   public void path(boolean direct,int rtt,String route){run(()->{if(session==s){s.live=s.live||direct;Listener l=listener;if(l!=null)l.path(direct,rtt,route);}});}
+   public void message(String text){run(()->{implicitConfirm(s);if(session==s){s.live=true;Listener l=listener;if(l!=null)l.message(text);}});}
+   public void path(boolean direct,int rtt,String route){run(()->{if(direct)implicitConfirm(s);if(session==s){s.live=s.live||direct;Listener l=listener;if(l!=null)l.path(direct,rtt,route);}});}
    public void peerClosed(){run(()->{if(session==s){Listener l=listener;if(l!=null)l.peerLeft();}});}});
   s.link.addCandidates(s.peerCandidates);
  }
+ /**
+  * The offerer only creates its link after our accept, so any authenticated message or answered probe from that
+  * link proves the match even if the relayed confirm is slower than direct UDP (or lost). Without this, a HELLO
+  * arriving first would be acknowledged by the link and then dropped here.
+  */
+ void implicitConfirm(Session s){if(pending==s&&state==ACCEPTED){pending=null;matched(s,System.currentTimeMillis());}}
  /** Session secret = HKDF(ECDH, salt=id). The id binds both nonces and both public keys in offer order. */
  Session derive(String peer,String peerNonce,String peerEcdh,int role){
   if(peerEcdh==null||peerEcdh.length()>256)return null;
