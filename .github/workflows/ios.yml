@@ -2,6 +2,10 @@ name: iOS native build and simulator verification
 on:
   workflow_dispatch:
     inputs:
+      screenshots_only:
+        description: 'Capture required store screenshots without repeating the full test suite'
+        type: boolean
+        default: false
       upload_to_app_store_connect:
         description: 'Sign and upload to App Store Connect after all tests pass'
         type: boolean
@@ -11,7 +15,11 @@ on:
 permissions:
   contents: write
 jobs:
+  store-screenshots:
+    if: github.event_name == 'workflow_dispatch' && inputs.screenshots_only
+    uses: ./.github/workflows/ios-store-screenshots.yml
   ios:
+    if: github.event_name != 'workflow_dispatch' || !inputs.screenshots_only
     runs-on: macos-15
     timeout-minutes: 60
     env:
