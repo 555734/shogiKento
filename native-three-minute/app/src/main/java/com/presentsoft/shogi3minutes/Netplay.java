@@ -29,7 +29,7 @@ final class Netplay implements Closeable {
  final ScheduledExecutorService loop=Executors.newSingleThreadScheduledExecutor(r->{Thread t=new Thread(r,"netplay");t.setDaemon(true);return t;});
  final SecureRandom random=new SecureRandom();final Schnorr.Key key;final NostrRelayPool pool;final UdpEndpoint endpoint;final KeyPair ecdh;final String ecdhText;
  final List<String> stun;volatile Listener listener;
- int mode=QUICK,state=IDLE;String roomTag,nonce,target,targetNonce;long deadline,seekStarted,lastSeek;volatile Session session;Session pending;
+ int mode=QUICK,state=IDLE,seeks;String roomTag,nonce,target,targetNonce;long deadline,seekStarted,lastSeek,lastReply;volatile Session session;Session pending;
  final Map<String,Seek> seen=new HashMap<>();final Map<String,Long> blocked=new HashMap<>();
  volatile int relaysOpen,relaysTotal;volatile String lastStatus="";boolean closed;
  Netplay(List<String> relays,List<String> stun,HostnameVerifier verifier,Listener listener)throws IOException{
@@ -48,7 +48,7 @@ final class Netplay implements Closeable {
  static String roomTag(String code){return "shogikento-v1-room-"+Schnorr.hex(Schnorr.sha256(("shogikento-room:"+code).getBytes(StandardCharsets.UTF_8))).substring(0,24);}
  static String newRoomCode(SecureRandom r){return String.format(Locale.US,"%06d",r.nextInt(1000000));}
  // ---- public controls (any thread) ----
- void seek(int mode,String code){run(()->{closeSession();this.mode=mode;roomTag=mode==QUICK?lobbyTag:roomTag(code);nonce=randomHex(16);state=SEEKING;seekStarted=System.currentTimeMillis();lastSeek=0;seen.clear();blocked.clear();
+ void seek(int mode,String code){run(()->{closeSession();this.mode=mode;roomTag=mode==QUICK?lobbyTag:roomTag(code);nonce=randomHex(16);state=SEEKING;seekStarted=System.currentTimeMillis();lastSeek=0;seeks=0;seen.clear();blocked.clear();
   pool.subscribe("lobby",filter("#t",roomTag));tick();});}
  void stopSeeking(){run(()->{state=IDLE;pool.unsubscribe("lobby");closeSession();status("");});}
  /** Ordered with all other session work and never on the caller's (UI) thread. */
@@ -61,13 +61,15 @@ final class Netplay implements Closeable {
  Map<String,Object> message(String op){LinkedHashMap<String,Object> m=new LinkedHashMap<>();m.put("op",op);m.put("n",nonce);return m;}
  void tick(){
   long now=System.currentTimeMillis();seen.values().removeIf(s->now-s.lastSeen>9000);blocked.values().removeIf(until->until<now);
-  if(state==SEEKING){if(now-lastSeek>=3000){lastSeek=now;Map<String,Object> m=message("seek");m.put("e",ecdhText);m.put("w",(seekStarted/1000));m.put("r",mode==HOST?"host":mode==GUEST?"guest":"");m.put("tc","3m");publish(null,m);}
+  // The second announcement covers peers whose lobby subscription reached the relays just after our first one.
+  if(state==SEEKING){if(now-lastSeek>=(seeks==1?700:3000))announce(now);
    offerIfPossible(now);status((mode==QUICK?"対戦相手を探しています":mode==HOST?"相手の参加を待っています":"ルームに接続しています")+"（"+(now-seekStarted)/1000+"秒）");}
   else if((state==OFFERED||state==ACCEPTED)&&now>deadline){if(target!=null)blocked.put(target,now+10000);closePending();state=SEEKING;}
   else if(state==MATCHED&&session!=null&&!session.live){Session s=session;if(s.link!=null&&s.link.heard())s.live=true;
    else if(now>s.deadline){closeSession();state=SEEKING;fail("相手の応答がありません。もう一度探します");}
    else if(s.role==0&&s.confirms<4&&now-s.lastConfirm>=800){s.confirms++;s.lastConfirm=now;publish(s.peer,confirm(s));}}
  }
+ void announce(long now){lastSeek=now;seeks++;Map<String,Object> m=message("seek");m.put("e",ecdhText);m.put("w",(seekStarted/1000));m.put("r",mode==HOST?"host":mode==GUEST?"guest":"");m.put("tc","3m");publish(null,m);}
  Map<String,Object> confirm(Session s){Map<String,Object> m=message("confirm");m.put("to",s.peerNonce);return m;}
  boolean mayOffer(Seek s,String pubkey){return mode==QUICK?pubkey.compareTo(key.publicHex)>0&&s.role.isEmpty():mode==HOST&&s.role.equals("guest");}
  void offerIfPossible(long now){
@@ -83,8 +85,11 @@ final class Netplay implements Closeable {
   if(!op.equals("seek")&&!key.publicHex.equals(e.tag("p")))return;
   long now=System.currentTimeMillis();
   switch(op){
-   case "seek":{if(state==IDLE||roomTag==null||!roomTag.equals(e.tag("t"))||!"3m".equals(NetJson.string(m,"tc")))return;Seek s=seen.get(e.pubkey);if(s==null||!s.nonce.equals(n)){s=new Seek();s.nonce=n;s.ecdh=NetJson.string(m,"e");s.since=NetJson.number(m,"w",now/1000);String r=NetJson.string(m,"r");s.role=r==null?"":r;}
-    s.lastSeen=now;if(s.ecdh!=null)seen.put(e.pubkey,s);if(state==SEEKING)offerIfPossible(now);return;}
+   case "seek":{if(state==IDLE||roomTag==null||!roomTag.equals(e.tag("t"))||!"3m".equals(NetJson.string(m,"tc")))return;Seek s=seen.get(e.pubkey);boolean fresh=s==null||!s.nonce.equals(n);
+    if(fresh){s=new Seek();s.nonce=n;s.ecdh=NetJson.string(m,"e");s.since=NetJson.number(m,"w",now/1000);String r=NetJson.string(m,"r");s.role=r==null?"":r;}
+    s.lastSeen=now;if(s.ecdh!=null)seen.put(e.pubkey,s);if(state!=SEEKING)return;offerIfPossible(now);
+    // A newcomer that must offer to us learns about us now instead of at our next periodic announcement.
+    if(fresh&&state==SEEKING&&!mayOffer(s,e.pubkey)&&now-lastReply>=1000){lastReply=now;announce(now);}return;}
    case "offer":{if(!nonce.equals(to))return;boolean allowed=mode==QUICK?e.pubkey.compareTo(key.publicHex)<0:mode==GUEST;
     if(!allowed||(state!=SEEKING&&state!=OFFERED)){Map<String,Object> d=message("decline");d.put("to",n);publish(e.pubkey,d);return;}
     Session s=derive(e.pubkey,n,NetJson.string(m,"e"),1);if(s==null)return;List<String> cand=open(s.key,NetJson.string(m,"c"));if(cand==null)return;

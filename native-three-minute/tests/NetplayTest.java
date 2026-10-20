@@ -40,7 +40,7 @@ public final class NetplayTest {
   json();schnorr(args.length>0?args[0]:"tests/bip340.csv");stun();candidates();clocks();
   UdpEndpoint.allowLoopback=true;link();
   try(LocalRelay relay=new LocalRelay()){List<String> relays=Collections.singletonList(relay.url());
-   quickGame(relays);relayOnly(relays);failover(relays);manySeekers(relays);rooms(relays);relayRestart(relay,relays);
+   quickGame(relays);fastDiscovery(relays);relayOnly(relays);failover(relays);manySeekers(relays);rooms(relays);relayRestart(relay,relays);
    relay.dropPercent=30;lossyRelay(relays);relay.dropPercent=0;relay.delayMillis=150;slowRelay(relays);relay.delayMillis=0;
    ok(relay.rejected==0,"strict relay accepted every event id/signature: rejected="+relay.rejected);
   }
@@ -147,6 +147,13 @@ public final class NetplayTest {
   synchronized(a){a.game.requestRematch(now());}synchronized(b){b.game.requestRematch(now());}waitFor(()->a.game.round==2&&b.game.round==2&&!a.game.over()&&!b.game.over(),5000,"rematch");
   ok(a.game.mySide==-a.side&&b.game.mySide==-b.side,"rematch swapped");play(a,b,6);
   a.net.close();waitFor(()->b.left&&b.game.over()&&b.game.game.winner==b.game.mySide,8000,"leaving player loses; peer notified");b.net.close();
+ }
+ /** A waiting seeker with the larger key answers a newcomer's first announcement at once, so matching is not held to the 3 s cycle. */
+ static void fastDiscovery(List<String> relays)throws Exception{
+  Netplay.lobbyTag="test-lobby-discovery";Client x=new Client("X",relays,Collections.emptyList()),y=new Client("Y",relays,Collections.emptyList());
+  Client early=x.net.key.publicHex.compareTo(y.net.key.publicHex)>0?x:y,late=early==x?y:x;waitFor(()->x.relaysOpen==1&&y.relaysOpen==1,10000,"relays");
+  early.net.seek(Netplay.QUICK,null);Thread.sleep(1500);long t0=now();late.net.seek(Netplay.QUICK,null);waitFor(()->x.started()&&y.started(),10000,"discovery match");
+  long took=now()-t0;System.out.println("newcomer matched with waiting larger-key seeker in "+took+"ms");ok(took<1500,"newcomer does not wait for the periodic announcement: "+took+"ms");close(x,y);
  }
  static void relayOnly(List<String> relays)throws Exception{
   Netplay.lobbyTag="test-lobby-relay";Client a=new Client("A",relays,Collections.emptyList()),b=new Client("B",relays,Collections.emptyList());a.net.endpoint.dropPercent=100;b.net.endpoint.dropPercent=100;

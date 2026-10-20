@@ -8,8 +8,8 @@ import java.io.*;import java.nio.charset.StandardCharsets;import java.security.S
 final class NostrRelayPool implements Closeable {
  static final int KIND=25150;
  static final List<String> DEFAULT_RELAYS=Collections.unmodifiableList(Arrays.asList(
-  "wss://yabu.me","wss://relay.nostr.wirednet.jp","wss://relay.damus.io","wss://nos.lol",
-  "wss://relay.primal.net","wss://nostr.mom","wss://offchain.pub","wss://relay.snort.social"));
+  "wss://yabu.me","wss://relay.snort.social","wss://nostr-pub.wellorder.net","wss://relay.primal.net","wss://nos.lol",
+  "wss://nostr.mom","wss://nostr.oxtr.dev","wss://nostr.bitcoiner.social","wss://relay.damus.io"));
  interface Listener {void event(Event e);default void relays(int open,int total){}}
  static final class Event {
   final String id,pubkey,content;final long createdAt;final int kind;final List<List<String>> tags;final String relay;
@@ -18,7 +18,7 @@ final class NostrRelayPool implements Closeable {
  }
  final class Relay {
   final String url;volatile WebSocketClient socket;final ExecutorService sender=Executors.newSingleThreadExecutor(r->{Thread t=new Thread(r,"relay-send");t.setDaemon(true);return t;});
-  int failures,strikes;volatile int accepted,rejected,received;volatile String lastProblem="";volatile long offsetSeconds,pausedUntil;volatile boolean refusesWrites;
+  int failures,strikes;volatile boolean gaveUp;volatile int accepted,rejected,received;volatile String lastProblem="";volatile long offsetSeconds,pausedUntil;volatile boolean refusesWrites;
   boolean writable(){return open()&&!refusesWrites&&System.currentTimeMillis()>=pausedUntil;}
   Relay(String url){this.url=url;}
   boolean open(){WebSocketClient s=socket;return s!=null&&s.isOpen();}
@@ -29,8 +29,8 @@ final class NostrRelayPool implements Closeable {
     offsetSeconds=s.serverClockOffsetSeconds;socket=s;failures=0;
     for(Map.Entry<String,Map<String,Object>> e:subscriptions.entrySet())s.send(NetJson.write(Arrays.asList("REQ",e.getKey(),e.getValue())));
     notifyRelays();
-   }catch(IOException|RuntimeException e){lastProblem=String.valueOf(e.getMessage());socket=null;scheduleReconnect();}});}catch(RejectedExecutionException ignored){}}
-  void scheduleReconnect(){if(closed)return;long delay=Math.min(30000,1000L<<Math.min(5,failures++));try{timer.schedule(this::connect,delay,TimeUnit.MILLISECONDS);}catch(RejectedExecutionException ignored){}}
+   }catch(IOException|RuntimeException e){lastProblem=String.valueOf(e.getMessage());socket=null;gaveUp=lastProblem.startsWith("WebSocket upgrade refused: HTTP/1.1 4");scheduleReconnect();}});}catch(RejectedExecutionException ignored){}}
+  void scheduleReconnect(){if(closed||gaveUp)return;long delay=Math.min(30000,1000L<<Math.min(5,failures++));try{timer.schedule(this::connect,delay,TimeUnit.MILLISECONDS);}catch(RejectedExecutionException ignored){}}
   void send(String text){WebSocketClient s=socket;if(s==null||!s.isOpen())return;try{sender.execute(()->{try{s.send(text);}catch(IOException e){lastProblem=String.valueOf(e.getMessage());}});}catch(RejectedExecutionException ignored){}}
   void close(){WebSocketClient s=socket;socket=null;sender.shutdownNow();if(s!=null)new Thread(s::close,"relay-close").start();}
  }
