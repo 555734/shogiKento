@@ -1,6 +1,16 @@
 import XCTest
 final class FlowTests:XCTestCase {
     override func setUp(){super.setUp();continueAfterFailure=false}
+    func testStoreScreenshots()throws {
+        let app=XCUIApplication();app.launchArguments=["-coffee-test-suppress","-ads-fixture"];app.launch()
+        XCTAssertTrue(app.buttons["mode_study"].waitForExistence(timeout:15));shot("store-01-home")
+        tap("mode_study",app);tap("cell_6_4",app);shot("store-02-legal-moves")
+        tap("cell_5_4",app);XCTAssertTrue(app.staticTexts["analysis_status"].waitForExistence(timeout:10))
+        let candidate=app.descendants(matching:.any)["candidate_0"];XCTAssertTrue(candidate.waitForExistence(timeout:25));shot("store-03-analysis")
+        tap("home",app);tap("mode_match",app);shot("store-04-match")
+        if !app.buttons["match_settings"].isHittable{edgeScroll(app)}
+        tap("match_settings",app);shot("store-05-match-settings")
+    }
     func shot(_ name:String){let image=XCTAttachment(screenshot:XCUIApplication().screenshot());image.name=name;image.lifetime = .keepAlways;add(image)}
     func tap(_ id:String,_ app:XCUIApplication,timeout:Double=15){let button=app.buttons[id];XCTAssertTrue(button.waitForExistence(timeout:timeout),id);button.tap()}
     func setOfferHidden(_ app:XCUIApplication){let control=app.switches["coffee_hide_offer"];if (control.value as? String) != "1"{control.coordinate(withNormalizedOffset:CGVector(dx:0.93,dy:0.5)).tap()};XCTAssertEqual(control.value as? String,"1")}

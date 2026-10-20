@@ -12,7 +12,8 @@ shutil.copy(ASSETS/'ai/provenance.json',OUT/'ai/provenance.json')
 (OUT/'licenses').mkdir(exist_ok=True)
 for name in ['YaneuraOu-GPL-3.0.txt','TsuyouraOu11micro-MIT.txt']:shutil.copy(ASSETS/'licenses'/name,OUT/'licenses'/name)
 icons=ROOT/'Assets.xcassets/AppIcon.appiconset';icons.mkdir(parents=True,exist_ok=True)
-images=[];icon=Image.open(ASSETS/'generated/home_background_v112.webp').convert('RGB')
+from brand_icon import icon as make_icon
+images=[];icon=make_icon()
 for idiom,sizes in [('iphone',[(20,2),(20,3),(29,2),(29,3),(40,2),(40,3),(60,2),(60,3)]),('ipad',[(20,1),(20,2),(29,1),(29,2),(40,1),(40,2),(76,1),(76,2),(83.5,2)]),('ios-marketing',[(1024,1)])]:
  for points,scale in sizes:
   pixels=int(points*scale);name=f'icon-{pixels}.png';icon.resize((pixels,pixels),Image.Resampling.LANCZOS).save(icons/name);images.append(dict(idiom=idiom,size=f'{points}x{points}',scale=f'{scale}x',filename=name))

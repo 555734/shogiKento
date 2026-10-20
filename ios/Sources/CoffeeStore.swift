@@ -43,7 +43,9 @@ let isNativeUnitTestHost=false
     func background(offerVisible:Bool){if !busy && !offerVisible{backgrounded=true}}
     func loadProduct()async{guard !fixture else{return};do{product=try await Product.products(for:[Self.productID]).first;message=product==nil ? "ストアで購入商品の準備が完了していません。日本向けの設定予定価格は200円です。":"買い切り・追加料金なし。ストアに表示される価格で購入します。"}catch{message="ストアへ接続できません。接続後に再試行してください。"}}
     func refresh()async {guard !fixture else{return};generation+=1;let version=generation;var entitled=false
-        if let result=await Transaction.latest(for:Self.productID),case .verified(let transaction)=result,transaction.productID==Self.productID,transaction.productType == .nonConsumable,transaction.revocationDate==nil,!transaction.isUpgraded{entitled=true}
+        for await result in Transaction.currentEntitlements {
+            if case .verified(let transaction)=result,transaction.productID==Self.productID,transaction.productType == .nonConsumable,transaction.revocationDate==nil,!transaction.isUpgraded{entitled=true}
+        }
         guard version==generation else{return};owned=entitled;checkedEntitlements=true;if owned{offerPending=false}
     }
     func buy()async {

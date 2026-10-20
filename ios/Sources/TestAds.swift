@@ -11,18 +11,23 @@ import GoogleMobileAds
     private var loader:AdLoader?
     private var alive=true
     private var started=false
+    private var deadline:Task<Void,Never>?
     let fixture=ProcessInfo.processInfo.arguments.contains("-ads-fixture") || isNativeUnitTestHost
     func load(){guard !started else{return};started=true;alive=true
         if fixture{let failed=ProcessInfo.processInfo.arguments.contains("-ads-failure");state=failed ? "failed":"fixture";message=failed ? "広告を取得できません。アプリはそのまま使えます。":"表示テスト用サンプル（配信広告ではありません）";return}
+        state="loading"
+        deadline=Task{[weak self] in do{try await Task.sleep(nanoseconds:30_000_000_000)}catch{return};guard let self,self.alive,self.state=="loading" else{return};self.state="failed";self.message="広告の読み込みがタイムアウトしました。アプリはそのまま使えます。";self.loader?.delegate=nil;self.loader=nil}
+        MobileAds.shared.requestConfiguration.tagForChildDirectedTreatment=true
+        MobileAds.shared.requestConfiguration.maxAdContentRating = .general
         MobileAds.shared.start { [weak self] _ in Task{@MainActor in self?.request()} }
     }
-    private func request(){guard alive else{return};let video=VideoOptions();video.shouldStartMuted=true
+    private func request(){guard alive,state=="loading" else{return};let video=VideoOptions();video.shouldStartMuted=true
         loader=AdLoader(adUnitID:Self.unit,rootViewController:nil,adTypes:[.native],options:[video]);loader?.delegate=self
         let request=Request(),extras=Extras();extras.additionalParameters=["npa":"1"];request.register(extras);loader?.load(request)
     }
-    func adLoader(_ adLoader:AdLoader,didReceive nativeAd:NativeAd){guard alive else{return};self.nativeAd=nativeAd;state="loaded";message="Google公式テスト広告 · 収益は発生しません"}
-    func adLoader(_ adLoader:AdLoader,didFailToReceiveAdWithError error:Error){guard alive else{return};state="failed";message="広告を取得できません。アプリはそのまま使えます。"}
-    func close(){alive=false;loader?.delegate=nil;loader=nil;nativeAd=nil;started=false}
+    func adLoader(_ adLoader:AdLoader,didReceive nativeAd:NativeAd){guard alive,state=="loading" else{return};deadline?.cancel();self.nativeAd=nativeAd;state="loaded";message="Google公式テスト広告 · 収益は発生しません"}
+    func adLoader(_ adLoader:AdLoader,didFailToReceiveAdWithError error:Error){guard alive else{return};deadline?.cancel();state="failed";message="広告を取得できません。アプリはそのまま使えます。"}
+    func close(){alive=false;deadline?.cancel();loader?.delegate=nil;loader=nil;nativeAd=nil;started=false}
 }
 
 struct TestAdSlot:View {

@@ -10,7 +10,7 @@ settings:
     SWIFT_STRICT_CONCURRENCY: minimal
     IPHONEOS_DEPLOYMENT_TARGET: '16.0'
     CODE_SIGNING_ALLOWED: NO
-    CURRENT_PROJECT_VERSION: '22'
+    CURRENT_PROJECT_VERSION: '23'
     MARKETING_VERSION: '1.15.0'
 packages:
   GoogleMobileAds:
@@ -48,9 +48,9 @@ targets:
         CFBundleInfoDictionaryVersion: '6.0'
         CFBundleDevelopmentRegion: ja
         LSRequiresIPhoneOS: true
-        CFBundleDisplayName: 紅将棋 3分
+        CFBundleDisplayName: AI将棋検討
         CFBundleShortVersionString: '1.15.0'
-        CFBundleVersion: '22'
+        CFBundleVersion: '23'
         GADApplicationIdentifier: ca-app-pub-3940256099942544~1458002511
         UILaunchScreen: {}
         UIRequiresFullScreen: true

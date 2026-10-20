@@ -12,7 +12,7 @@ public final class RecordArchiveActivity extends Activity {
   TextView title=text("過去の棋譜",26,0xffffe3ae);title.setTypeface(null,Typeface.BOLD);title.setPadding(0,dp(18),0,dp(8));root.addView(title);
   status=text("",13,0xffefddd0);status.setPadding(0,0,0,dp(14));root.addView(status);
   list=new ListView(this);list.setDividerHeight(dp(10));list.setDivider(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));root.addView(list,new LinearLayout.LayoutParams(-1,0,1));
-  TextView note=text("端末内に保存されています。棋譜を選ぶと検討で開きます。",12,0xffe0b8a4);note.setPadding(0,dp(12),0,dp(10));root.addView(note);setContentView(root);
+  TextView note=text("端末内に保存されています。棋譜を選ぶと検討で開きます。",12,0xffe0b8a4);note.setPadding(0,dp(12),0,dp(10));root.addView(note);SafeWindow.setContent(this,root);
   CoffeeBilling.get(this).observe(coffeeObserver);refreshAd();
   load();list.setOnItemClickListener((parent,view,index,id)->{if(index>=records.size())return;setResult(RESULT_OK,new Intent().putExtra("record_id",records.get(index).id));finish();});
  }

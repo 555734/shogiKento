@@ -44,7 +44,7 @@ jobs:
         run: |
           set -euo pipefail
           xcrun simctl list devices available -j > outputs/simulators.json
-          UDID=$(python -c 'import json; d=json.load(open("outputs/simulators.json")); print(next(v["udid"] for a in d["devices"].values() for v in a if v["name"].startswith("iPhone")))')
+          UDID=$(python -c 'import json; d=json.load(open("outputs/simulators.json")); phones=[v for a in d["devices"].values() for v in a if v["name"].startswith("iPhone")]; print(next((v["udid"] for v in phones if "Pro Max" in v["name"]),phones[0]["udid"]))')
           echo "$UDID" > outputs/simulator-udid.txt
           xcrun simctl boot "$UDID" || true
           xcrun simctl bootstatus "$UDID" -b
@@ -58,12 +58,21 @@ jobs:
           xcrun simctl launch "$UDID" com.presentsoft.shogi3minutes || true
           sleep 3
           xcrun simctl io "$UDID" screenshot outputs/home.png
+      - name: Capture iPad store screenshots
+        working-directory: ios
+        run: |
+          set -euo pipefail
+          IPAD=$(python -c 'import json; d=json.load(open("outputs/simulators.json")); print(next(v["udid"] for a in d["devices"].values() for v in a if "iPad Pro 13-inch" in v["name"]))')
+          xcrun simctl boot "$IPAD" || true
+          xcrun simctl bootstatus "$IPAD" -b
+          xcodebuild -project BeniShogi.xcodeproj -scheme BeniShogi -configuration Debug -destination "platform=iOS Simulator,id=$IPAD" -derivedDataPath build/DerivedData -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -resultBundlePath outputs/iPadStore.xcresult -only-testing:BeniShogiUITests/FlowTests/testStoreScreenshots test-without-building 2>&1 | tee outputs/ipad-store.txt
       - name: Collect test attachments and reproducible build artifacts
         if: always()
         run: |
           mkdir -p ios/outputs
           if test -d ios/outputs/Tests.xcresult; then xcrun xcresulttool export attachments --path ios/outputs/Tests.xcresult --output-path ios/outputs/screenshots || true; fi
           if test -d ios/outputs/UITests.xcresult; then xcrun xcresulttool export attachments --path ios/outputs/UITests.xcresult --output-path ios/outputs/screenshots-ui || true; fi
+          if test -d ios/outputs/iPadStore.xcresult; then xcrun xcresulttool export attachments --path ios/outputs/iPadStore.xcresult --output-path ios/outputs/screenshots-ipad || true; fi
           python ios/scripts/package.py
       - name: Upload build and test evidence
         if: always()

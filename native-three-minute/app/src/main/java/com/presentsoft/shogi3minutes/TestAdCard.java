@@ -18,6 +18,8 @@ final class TestAdCard extends FrameLayout {
  String state="loading",lastError="",requestedUnit=UNIT;int requests;boolean disposed;NativeAd ad;
  final TextView status;final NativeAdView nativeView;
  final TextView headline,body,advertiser;final Button action;final MediaView media;
+ final android.os.Handler deadlineHandler=new android.os.Handler(android.os.Looper.getMainLooper());
+ final Runnable timeout=()->{if(!disposed&&state.equals("loading")){lastError="Ad request timed out after 30 seconds";state("failed","広告の読み込みがタイムアウトしました。アプリはそのまま使えます。");}};
  TestAdCard(Activity activity,String placement,boolean fixture){super(activity);this.activity=activity;this.placement=placement;this.fixture=fixture;
   setTag("ad_"+placement);setPadding(dp(12),dp(8),dp(12),dp(8));GradientDrawable bg=new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT,new int[]{0xffffefcf,0xffe9c88d});bg.setCornerRadius(dp(10));bg.setStroke(dp(1),0xffdbb56b);setBackground(bg);
   LinearLayout column=new LinearLayout(activity);column.setOrientation(1);addView(column,new FrameLayout.LayoutParams(-1,-1));
@@ -36,16 +38,18 @@ final class TestAdCard extends FrameLayout {
  TextView label(String s,int size){TextView t=new TextView(activity);t.setText(s);t.setTextSize(size);t.setTextColor(0xff422615);return t;}
  void state(String next,String message){if(disposed)return;state=next;status.setText(message);status.setContentDescription("ad_status_"+placement+":"+next);}
  void load(){if(disposed||requests>0)return;if(fixture){requests++;fixtureState(true);return;}
+  deadlineHandler.postDelayed(timeout,30000);
+  MobileAds.setRequestConfiguration(new RequestConfiguration.Builder().setTagForChildDirectedTreatment(RequestConfiguration.TAG_FOR_CHILD_DIRECTED_TREATMENT_TRUE).setMaxAdContentRating(RequestConfiguration.MAX_AD_CONTENT_RATING_G).build());
   MobileAds.initialize(activity,result->activity.runOnUiThread(()->request(UNIT)));
  }
- void request(String unit){if(disposed)return;requests++;requestedUnit=unit;
+ void request(String unit){if(disposed||!state.equals("loading"))return;requests++;requestedUnit=unit;
    Bundle extras=new Bundle();extras.putString("npa","1");
-   new AdLoader.Builder(activity,unit).forNativeAd(loaded->{if(disposed){loaded.destroy();return;}if(ad!=null)ad.destroy();ad=loaded;
+   new AdLoader.Builder(activity,unit).forNativeAd(loaded->{if(disposed||!state.equals("loading")){loaded.destroy();return;}deadlineHandler.removeCallbacks(timeout);if(ad!=null)ad.destroy();ad=loaded;
     headline.setText(loaded.getHeadline());body.setText(loaded.getBody());body.setVisibility(loaded.getBody()==null?GONE:VISIBLE);advertiser.setText(loaded.getAdvertiser());advertiser.setVisibility(loaded.getAdvertiser()==null?GONE:VISIBLE);action.setText(loaded.getCallToAction());action.setVisibility(loaded.getCallToAction()==null?GONE:VISIBLE);media.setMediaContent(loaded.getMediaContent());nativeView.setNativeAd(loaded);nativeView.setVisibility(VISIBLE);state("loaded","Google公式テスト広告 · 収益は発生しません");
    }).withAdListener(new AdListener(){@Override public void onAdFailedToLoad(LoadAdError error){if(disposed)return;lastError=error.toString();android.util.Log.w("TestAds",lastError);if(error.getCode()==0&&unit.equals(UNIT)){state("loading","別の公式テスト素材を読み込み中…");request(VIDEO_UNIT);return;}state("failed","広告を取得できません（"+error.getCode()+"）。アプリはそのまま使えます。");}})
     .withNativeAdOptions(new NativeAdOptions.Builder().setVideoOptions(new VideoOptions.Builder().setStartMuted(true).build()).build()).build()
     .loadAd(new AdRequest.Builder().addNetworkExtrasBundle(com.google.ads.mediation.admob.AdMobAdapter.class,extras).build());
  }
  void fixtureState(boolean success){if(!fixture||disposed)return;nativeView.setVisibility(GONE);state(success?"fixture":"failed",success?"表示テスト用サンプル（配信広告ではありません）\n棋力を伸ばす毎日の一手。\n広告と盤面の操作は独立しています。":"広告を取得できません。アプリはそのまま使えます。");}
- void close(){disposed=true;if(ad!=null){ad.destroy();ad=null;}nativeView.destroy();}
+ void close(){disposed=true;deadlineHandler.removeCallbacks(timeout);if(ad!=null){ad.destroy();ad=null;}nativeView.destroy();}
 }
