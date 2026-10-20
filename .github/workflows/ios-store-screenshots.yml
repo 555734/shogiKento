@@ -25,7 +25,7 @@ jobs:
           if ! command -v xcodegen >/dev/null; then brew install xcodegen; fi
           cd ios
           xcodegen generate
-      - name: Capture required medium iPhone and iPad screenshots
+      - name: Verify board arrows and capture medium iPhone and iPad screenshots
         working-directory: ios
         run: |
           set -euo pipefail
@@ -40,7 +40,8 @@ jobs:
           while read -r udid; do
             xcrun simctl boot "$udid" || true
             xcrun simctl bootstatus "$udid" -b
-            xcodebuild -project BeniShogi.xcodeproj -scheme BeniShogi -configuration Debug -destination "platform=iOS Simulator,id=$udid" -derivedDataPath build/StoreData -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -resultBundlePath "outputs/Store-$udid.xcresult" -only-testing:BeniShogiUITests/FlowTests/testStoreScreenshots test 2>&1 | tee "outputs/store-$udid.txt"
+            # Focused board/UI verification. This does not certify StoreKit checkout.
+            xcodebuild -project BeniShogi.xcodeproj -scheme BeniShogi -configuration Debug -destination "platform=iOS Simulator,id=$udid" -derivedDataPath build/StoreData -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -resultBundlePath "outputs/Store-$udid.xcresult" -only-testing:BeniShogiTests/CoreTests/testCandidateArrowGeometry -only-testing:BeniShogiUITests/FlowTests/testCandidateArrowsAndBoardInput -only-testing:BeniShogiUITests/FlowTests/testStoreScreenshots test 2>&1 | tee "outputs/store-$udid.txt"
             xcrun simctl shutdown "$udid"
           done < outputs/store-devices.txt
       - name: Export actual UI attachments

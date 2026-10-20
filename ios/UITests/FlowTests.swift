@@ -3,6 +3,10 @@ final class FlowTests:XCTestCase {
     override func setUp(){super.setUp();continueAfterFailure=false}
     func testCandidateArrowsAndBoardInput()throws {
         let app=XCUIApplication();app.launchArguments=["-coffee-test-suppress","-ads-fixture"];app.launch();tap("mode_study",app)
+        // Other UI flows deliberately persist their study record. Seek using the
+        // real replay controls so this test always starts at its initial position.
+        for _ in 0..<3{if app.buttons["ply_0"].isHittable{break};edgeScroll(app)};tap("ply_0",app)
+        for _ in 0..<4{if app.buttons["cell_6_0"].isHittable{break};edgeScroll(app,up:false)}
         let arrows=app.descendants(matching:.any)["candidate_arrows"]
         XCTAssertTrue(arrows.waitForExistence(timeout:25));XCTAssertEqual(arrows.value as? String,"3件");shot("candidate-arrows-initial")
         let before=app.buttons["cell_6_0"].frame;tap("cell_6_0",app);XCTAssertEqual(app.buttons["cell_6_0"].value as? String,"選択");tap("cell_5_0",app)
