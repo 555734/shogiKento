@@ -6,7 +6,7 @@ final class FlowTests:XCTestCase {
         XCTAssertTrue(app.buttons["mode_study"].waitForExistence(timeout:15));shot("store-01-home")
         tap("mode_study",app);tap("cell_6_4",app);shot("store-02-legal-moves")
         tap("cell_5_4",app);XCTAssertTrue(app.staticTexts["analysis_status"].waitForExistence(timeout:10))
-        let candidate=app.descendants(matching:.any)["candidate_0"];XCTAssertTrue(candidate.waitForExistence(timeout:25));shot("store-03-analysis")
+        let candidate=app.descendants(matching:.any)["candidate_0"];for _ in 0..<3{if candidate.isHittable{break};edgeScroll(app)};XCTAssertTrue(candidate.waitForExistence(timeout:25));shot("store-03-analysis")
         tap("home",app);tap("mode_match",app);shot("store-04-match")
         if !app.buttons["match_settings"].isHittable{edgeScroll(app)}
         tap("match_settings",app);shot("store-05-match-settings")

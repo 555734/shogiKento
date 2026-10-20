@@ -60,12 +60,23 @@ jobs:
           if env TEST_RUNNER_BENI_UNIT_TEST_HOST=1 xcodebuild "${args[@]}" -resultBundlePath outputs/Tests.xcresult -only-testing:BeniShogiTests -test-timeouts-enabled YES -maximum-test-execution-time-allowance 180 test-without-building 2>&1 | tee outputs/simulator-tests.txt; then UNIT_STATUS=0; else UNIT_STATUS=$?; fi
           # Seed the real OS pasteboard immediately before the UI flow, after StoreKit tests.
           xcrun simctl pbcopy "$UDID" < ../native-three-minute/tests/fixtures/shogi_quest_79.kif
-          xcodebuild "${args[@]}" -resultBundlePath outputs/UITests.xcresult -only-testing:BeniShogiUITests test-without-building 2>&1 | tee -a outputs/simulator-tests.txt
+          xcodebuild "${args[@]}" -resultBundlePath outputs/UITests.xcresult -only-testing:BeniShogiUITests -skip-testing:BeniShogiUITests/FlowTests/testStoreScreenshots test-without-building 2>&1 | tee -a outputs/simulator-tests.txt
           test "$UNIT_STATUS" -eq 0
           xcrun simctl launch "$UDID" com.presentsoft.shogi3minutes || true
           sleep 3
           xcrun simctl io "$UDID" screenshot outputs/home.png
+      - name: Capture iPhone store screenshots from a fresh app install
+        if: always()
+        working-directory: ios
+        run: |
+          set -euo pipefail
+          test -d build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app
+          UDID=$(cat outputs/simulator-udid.txt)
+          xcrun simctl terminate "$UDID" com.presentsoft.shogi3minutes || true
+          xcrun simctl uninstall "$UDID" com.presentsoft.shogi3minutes || true
+          xcodebuild -project BeniShogi.xcodeproj -scheme BeniShogi -configuration Debug -destination "platform=iOS Simulator,id=$UDID" -derivedDataPath build/DerivedData -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -resultBundlePath outputs/iPhoneStore.xcresult -only-testing:BeniShogiUITests/FlowTests/testStoreScreenshots test-without-building 2>&1 | tee outputs/iphone-store.txt
       - name: Capture iPad store screenshots
+        if: always()
         working-directory: ios
         run: |
           set -euo pipefail
@@ -79,6 +90,7 @@ jobs:
           mkdir -p ios/outputs
           if test -d ios/outputs/Tests.xcresult; then xcrun xcresulttool export attachments --path ios/outputs/Tests.xcresult --output-path ios/outputs/screenshots || true; fi
           if test -d ios/outputs/UITests.xcresult; then xcrun xcresulttool export attachments --path ios/outputs/UITests.xcresult --output-path ios/outputs/screenshots-ui || true; fi
+          if test -d ios/outputs/iPhoneStore.xcresult; then xcrun xcresulttool export attachments --path ios/outputs/iPhoneStore.xcresult --output-path ios/outputs/screenshots-iphone || true; fi
           if test -d ios/outputs/iPadStore.xcresult; then xcrun xcresulttool export attachments --path ios/outputs/iPadStore.xcresult --output-path ios/outputs/screenshots-ipad || true; fi
           python ios/scripts/package.py
       - name: Sign and upload approved App Store build

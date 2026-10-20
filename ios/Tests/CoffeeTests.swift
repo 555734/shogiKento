@@ -18,12 +18,13 @@ final class CoffeeTests:XCTestCase {
         // StoreKitTest has created a transaction receipt below.
         XCTAssertFalse(coffee.owned);XCTAssertEqual(coffee.effective(MatchOptions(minutes:3,humanSide:1,level:10)).level,9)
         await coffee.loadProduct();XCTAssertNotNil(coffee.product);XCTAssertEqual(coffee.product?.price,200);NSLog("Coffee StoreKit: local product loaded")
-        // Use Apple's test server to create a receipt without a checkout sheet.
-        // The payment sheet itself belongs in app UI and registered Sandbox tests.
-        let sku=CoffeeStore.productID
-        _ = try await session.buyProduct(identifier:sku,options:[])
-        NSLog("Coffee StoreKit: test-server purchase created")
-        coffee.observeTransactions();await coffee.refresh()
+        // Exercise the app's StoreKit 2 purchase path. Creating an SK1 transaction
+        // with SKTestSession.buyProduct can leave SK2 entitlement queries waiting
+        // for a receipt that the unsigned test host never receives.
+        coffee.observeTransactions();await coffee.buy()
+        XCTAssertTrue(coffee.owned,"The production purchase path must verify Apple's local transaction")
+        NSLog("Coffee StoreKit: StoreKit 2 purchase completed")
+        await coffee.refresh()
         XCTAssertTrue(coffee.owned);XCTAssertEqual(coffee.effective(MatchOptions(minutes:3,humanSide:1,level:10)).level,10);NSLog("Coffee StoreKit: verified purchase loaded")
         let restored=CoffeeStore(defaults:defaults,start:false);await restored.refresh();XCTAssertTrue(restored.owned)
         await restored.restore();XCTAssertTrue(restored.owned);XCTAssertEqual(restored.message,"購入情報を復元しました。");NSLog("Coffee StoreKit: explicit restore completed")
