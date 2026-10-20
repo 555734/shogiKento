@@ -1,0 +1,38 @@
+relay survey (default relays first):
+SURVEY wss://yabu.me                        ok=3 rejected=0 delivered=3/3 median=242ms 
+SURVEY wss://relay.nostr.wirednet.jp        ok=0 rejected=1 delivered=0/3 median=- closed by relay
+SURVEY wss://relay.damus.io                 ok=3 rejected=0 delivered=3/3 median=207ms 
+SURVEY wss://nos.lol                        ok=3 rejected=0 delivered=3/3 median=216ms 
+SURVEY wss://relay.primal.net               ok=3 rejected=0 delivered=3/3 median=161ms 
+SURVEY wss://nostr.mom                      ok=3 rejected=0 delivered=3/3 median=190ms 
+SURVEY wss://offchain.pub                   ok=3 rejected=0 delivered=3/3 median=132ms 
+SURVEY wss://relay.snort.social             ok=3 rejected=0 delivered=3/3 median=77ms 
+SURVEY wss://nostr.oxtr.dev                 ok=3 rejected=0 delivered=3/3 median=142ms 
+SURVEY wss://nostr-pub.wellorder.net        ok=3 rejected=0 delivered=3/3 median=76ms 
+SURVEY wss://nostr.bitcoiner.social         ok=3 rejected=0 delivered=3/3 median=185ms 
+SURVEY wss://relay-jp.nostr.wirednet.jp     CONNECT FAILED WebSocket upgrade refused: HTTP/1.1 403 Forbidden
+SURVEY wss://r.kojira.io                    CONNECT FAILED WebSocket upgrade refused: HTTP/1.1 403 Forbidden
+SURVEY wss://nostr.holybea.com              CONNECT FAILED Connect timed out
+SURVEY wss://relay.nostr.band               CONNECT FAILED Connect timed out
+SURVEY wss://nostr.fmt.wiz.biz              CONNECT FAILED Connect timed out
+SURVEY wss://relay.nostrich.de              CONNECT FAILED Connect timed out
+SURVEY wss://nostr.einundzwanzig.space      ok=0 rejected=1 delivered=0/3 median=- blocked: NIP-05 verification needed to publish events
+SURVEY wss://nostr.wine                     ok=0 rejected=1 delivered=0/3 median=- restricted: sign up at https://nostr.wine to write events to this relay
+relays open A=8 B=7 of 8
+STUN replies A=12 candidates=[10.1.1.126:49528, 57.151.86.246:1024] symmetric=false
+match time 323ms
+direct path 10.1.1.126:57349 rtt=0
+direct move latency median=2ms max=8ms n=10
+relay-only match time 5101ms
+relay-only move latency median=77ms max=79ms n=8
+PASS live public relays/STUN: 78 assertions
+diagnostics A:
+state=4 relays=7/8 candidates=[10.1.1.126:50669, 57.151.86.246:1026] symmetric=false link: direct=false route=relay rtt=-1 relayRtt=151 udp=14/0 relay=11/10 candidates=1 rejected=0
+wss://yabu.me open ok=11 rejected=0 received=0 clock=no Date header
+wss://relay.nostr.wirednet.jp closed ok=0 rejected=1 received=0 clock=0s writes=refused last=closed by relay
+wss://relay.damus.io open ok=0 rejected=2 received=0 clock=0s writes=paused last=banned: too many rate-limit violations, try again later
+wss://nos.lol open ok=11 rejected=0 received=0 clock=0s
+wss://relay.primal.net open ok=11 rejected=0 received=0 clock=0s
+wss://nostr.mom open ok=11 rejected=0 received=0 clock=0s
+wss://offchain.pub open ok=1 rejected=1 received=3 clock=0s writes=refused last=Policy violated and pubkey is not in our web of trust.
+wss://relay.snort.social open ok=15 rejected=0 received=13 clock=0s
