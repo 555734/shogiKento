@@ -1,0 +1,6 @@
+direct loopback move latency median=2ms max=3ms n=40
+newcomer matched with waiting larger-key seeker in 85ms
+relay-only move latency (local relay) median=39ms max=42ms n=12
+moves during UDP outage median=143ms max=144ms n=4
+relay-only with 150ms relay hop median=156ms max=157ms n=6
+PASS netplay: 793 assertions
