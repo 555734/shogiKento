@@ -1,6 +1,11 @@
 name: iOS native build and simulator verification
 on:
   workflow_dispatch:
+    inputs:
+      upload_to_app_store_connect:
+        description: 'Sign and upload to App Store Connect after all tests pass'
+        type: boolean
+        default: false
   pull_request:
     paths: ['ios/**', '.github/workflows/ios.yml']
 permissions:
@@ -9,6 +14,8 @@ jobs:
   ios:
     runs-on: macos-15
     timeout-minutes: 60
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
     defaults:
       run:
         shell: bash
@@ -74,6 +81,20 @@ jobs:
           if test -d ios/outputs/UITests.xcresult; then xcrun xcresulttool export attachments --path ios/outputs/UITests.xcresult --output-path ios/outputs/screenshots-ui || true; fi
           if test -d ios/outputs/iPadStore.xcresult; then xcrun xcresulttool export attachments --path ios/outputs/iPadStore.xcresult --output-path ios/outputs/screenshots-ipad || true; fi
           python ios/scripts/package.py
+      - name: Sign and upload approved App Store build
+        if: success() && github.event_name == 'workflow_dispatch' && inputs.upload_to_app_store_connect
+        env:
+          APP_STORE_CONNECT_KEY_IDENTIFIER: ${{ secrets.SHOGI_ASC_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.SHOGI_ASC_ISSUER_ID }}
+          APP_STORE_CONNECT_PRIVATE_KEY: ${{ secrets.SHOGI_ASC_PRIVATE_KEY }}
+          CERTIFICATE_PRIVATE_KEY: ${{ secrets.SHOGI_CERTIFICATE_PRIVATE_KEY }}
+        run: |
+          set -euo pipefail
+          for name in APP_STORE_CONNECT_KEY_IDENTIFIER APP_STORE_CONNECT_ISSUER_ID APP_STORE_CONNECT_PRIVATE_KEY CERTIFICATE_PRIVATE_KEY; do
+            test -n "${!name}" || { echo "Missing signing secret: $name" >&2; exit 1; }
+          done
+          python -m pip install codemagic-cli-tools
+          bash ios/scripts/upload_app_store.sh
       - name: Upload build and test evidence
         if: always()
         uses: actions/upload-artifact@v4

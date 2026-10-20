@@ -28,6 +28,8 @@ targets:
       - path: StoreKit/CoffeeSupport.storekit
         buildPhase: resources
       - path: Assets.xcassets
+      - path: PrivacyInfo.xcprivacy
+        buildPhase: resources
       - path: GameAssets
         type: folder
     settings:
