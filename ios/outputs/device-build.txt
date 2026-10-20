@@ -1,0 +1,28 @@
+Command line invocation:
+    /Applications/Xcode_26.3.app/Contents/Developer/usr/bin/xcodebuild -project BeniShogi.xcodeproj -scheme BeniShogi -configuration Release -destination generic/platform=iOS -derivedDataPath /Users/runner/work/shogiKento/shogiKento/ios/build/DeviceData -resultBundlePath /Users/runner/work/shogiKento/shogiKento/ios/outputs/DeviceBuild.xcresult CODE_SIGNING_ALLOWED=NO build
+
+Build settings from command line:
+    CODE_SIGNING_ALLOWED = NO
+
+Resolve Package Graph
+
+Fetching from https://github.com/googleads/swift-package-manager-google-mobile-ads.git
+
+Fetching from https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git
+
+Creating working copy of package ‘swift-package-manager-google-mobile-ads’
+
+Checking out 12.14.0 of package ‘swift-package-manager-google-mobile-ads’
+
+Creating working copy of package ‘swift-package-manager-google-user-messaging-platform’
+
+Checking out 3.1.0 of package ‘swift-package-manager-google-user-messaging-platform’
+
+
+Resolved source packages:
+  GoogleUserMessagingPlatform: https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git @ 3.1.0
+  GoogleMobileAds: https://github.com/googleads/swift-package-manager-google-mobile-ads.git @ 12.14.0
+
+Writing result bundle at path:
+	/Users/runner/work/shogiKento/shogiKento/ios/outputs/DeviceBuild.xcresult
+
