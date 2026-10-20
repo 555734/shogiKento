@@ -1,0 +1,447 @@
+{
+  "status": "PASS",
+  "android_runtime_commit": "224a13857d4487d49ebd0456f990bd18735f3dae",
+  "android_runtime_sha256": "83bf0dce249728dae48149b80d28b48115c54adad95a352120d58a6ac669d1fc",
+  "apk_sha256": "db37ebe6388c1c9d2ca7f598b00a71402bf4e6b941b67629f36beb58065d57f8",
+  "native_sha256": {
+    "libyaneuraou.so": "86954adf1bd103a3a9f92746d6c0339d60ff72882405c3423c1401eb25b69864",
+    "libyaneuraou_compat.so": "34d301733ddd704f9d2f048a96a14373eee777a29e3c44f781d40e39b6600e67"
+  },
+  "legal_searches": 36,
+  "physical_phone_verified": false,
+  "original_phone_crash_reproduced": false,
+  "records": [
+    {
+      "cpu": "cortex-a53",
+      "engine": "libyaneuraou.so",
+      "repeat": 0,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1",
+      "bestmove": "2g2f",
+      "candidates": {
+        "1": "2g2f",
+        "2": "9g9f",
+        "3": "7g7f"
+      }
+    },
+    {
+      "cpu": "cortex-a53",
+      "engine": "libyaneuraou.so",
+      "repeat": 0,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "3c3d",
+        "3": "4a3b"
+      }
+    },
+    {
+      "cpu": "cortex-a53",
+      "engine": "libyaneuraou.so",
+      "repeat": 0,
+      "sfen": "lnsgkgsnl/1r5b1/pppppp1pp/6p2/7P1/9/PPPPPPP1P/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "4a3b",
+        "3": "2b3c"
+      }
+    },
+    {
+      "cpu": "cortex-a53",
+      "engine": "libyaneuraou.so",
+      "repeat": 1,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1",
+      "bestmove": "2g2f",
+      "candidates": {
+        "1": "2g2f",
+        "2": "9g9f",
+        "3": "7g7f"
+      }
+    },
+    {
+      "cpu": "cortex-a53",
+      "engine": "libyaneuraou.so",
+      "repeat": 1,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "3c3d",
+        "3": "4a3b"
+      }
+    },
+    {
+      "cpu": "cortex-a53",
+      "engine": "libyaneuraou.so",
+      "repeat": 1,
+      "sfen": "lnsgkgsnl/1r5b1/pppppp1pp/6p2/7P1/9/PPPPPPP1P/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "4a3b",
+        "3": "2b3c"
+      }
+    },
+    {
+      "cpu": "cortex-a53",
+      "engine": "libyaneuraou.so",
+      "repeat": 2,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1",
+      "bestmove": "2g2f",
+      "candidates": {
+        "1": "2g2f",
+        "2": "9g9f",
+        "3": "7g7f"
+      }
+    },
+    {
+      "cpu": "cortex-a53",
+      "engine": "libyaneuraou.so",
+      "repeat": 2,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "3c3d",
+        "3": "4a3b"
+      }
+    },
+    {
+      "cpu": "cortex-a53",
+      "engine": "libyaneuraou.so",
+      "repeat": 2,
+      "sfen": "lnsgkgsnl/1r5b1/pppppp1pp/6p2/7P1/9/PPPPPPP1P/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "4a3b",
+        "3": "2b3c"
+      }
+    },
+    {
+      "cpu": "cortex-a53",
+      "engine": "libyaneuraou_compat.so",
+      "repeat": 0,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1",
+      "bestmove": "2g2f",
+      "candidates": {
+        "1": "2g2f",
+        "2": "9g9f",
+        "3": "7g7f"
+      }
+    },
+    {
+      "cpu": "cortex-a53",
+      "engine": "libyaneuraou_compat.so",
+      "repeat": 0,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "3c3d",
+        "3": "4a3b"
+      }
+    },
+    {
+      "cpu": "cortex-a53",
+      "engine": "libyaneuraou_compat.so",
+      "repeat": 0,
+      "sfen": "lnsgkgsnl/1r5b1/pppppp1pp/6p2/7P1/9/PPPPPPP1P/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "4a3b",
+        "3": "2b3c"
+      }
+    },
+    {
+      "cpu": "cortex-a53",
+      "engine": "libyaneuraou_compat.so",
+      "repeat": 1,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1",
+      "bestmove": "2g2f",
+      "candidates": {
+        "1": "2g2f",
+        "2": "9g9f",
+        "3": "7g7f"
+      }
+    },
+    {
+      "cpu": "cortex-a53",
+      "engine": "libyaneuraou_compat.so",
+      "repeat": 1,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "3c3d",
+        "3": "4a3b"
+      }
+    },
+    {
+      "cpu": "cortex-a53",
+      "engine": "libyaneuraou_compat.so",
+      "repeat": 1,
+      "sfen": "lnsgkgsnl/1r5b1/pppppp1pp/6p2/7P1/9/PPPPPPP1P/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "4a3b",
+        "3": "2b3c"
+      }
+    },
+    {
+      "cpu": "cortex-a53",
+      "engine": "libyaneuraou_compat.so",
+      "repeat": 2,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1",
+      "bestmove": "2g2f",
+      "candidates": {
+        "1": "2g2f",
+        "2": "9g9f",
+        "3": "7g7f"
+      }
+    },
+    {
+      "cpu": "cortex-a53",
+      "engine": "libyaneuraou_compat.so",
+      "repeat": 2,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "3c3d",
+        "3": "4a3b"
+      }
+    },
+    {
+      "cpu": "cortex-a53",
+      "engine": "libyaneuraou_compat.so",
+      "repeat": 2,
+      "sfen": "lnsgkgsnl/1r5b1/pppppp1pp/6p2/7P1/9/PPPPPPP1P/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "4a3b",
+        "3": "2b3c"
+      }
+    },
+    {
+      "cpu": "max",
+      "engine": "libyaneuraou.so",
+      "repeat": 0,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1",
+      "bestmove": "2g2f",
+      "candidates": {
+        "1": "2g2f",
+        "2": "9g9f",
+        "3": "7g7f"
+      }
+    },
+    {
+      "cpu": "max",
+      "engine": "libyaneuraou.so",
+      "repeat": 0,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "3c3d",
+        "3": "4a3b"
+      }
+    },
+    {
+      "cpu": "max",
+      "engine": "libyaneuraou.so",
+      "repeat": 0,
+      "sfen": "lnsgkgsnl/1r5b1/pppppp1pp/6p2/7P1/9/PPPPPPP1P/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "4a3b",
+        "3": "2b3c"
+      }
+    },
+    {
+      "cpu": "max",
+      "engine": "libyaneuraou.so",
+      "repeat": 1,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1",
+      "bestmove": "2g2f",
+      "candidates": {
+        "1": "2g2f",
+        "2": "9g9f",
+        "3": "7g7f"
+      }
+    },
+    {
+      "cpu": "max",
+      "engine": "libyaneuraou.so",
+      "repeat": 1,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "3c3d",
+        "3": "4a3b"
+      }
+    },
+    {
+      "cpu": "max",
+      "engine": "libyaneuraou.so",
+      "repeat": 1,
+      "sfen": "lnsgkgsnl/1r5b1/pppppp1pp/6p2/7P1/9/PPPPPPP1P/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "4a3b",
+        "3": "2b3c"
+      }
+    },
+    {
+      "cpu": "max",
+      "engine": "libyaneuraou.so",
+      "repeat": 2,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1",
+      "bestmove": "2g2f",
+      "candidates": {
+        "1": "2g2f",
+        "2": "9g9f",
+        "3": "7g7f"
+      }
+    },
+    {
+      "cpu": "max",
+      "engine": "libyaneuraou.so",
+      "repeat": 2,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "3c3d",
+        "3": "4a3b"
+      }
+    },
+    {
+      "cpu": "max",
+      "engine": "libyaneuraou.so",
+      "repeat": 2,
+      "sfen": "lnsgkgsnl/1r5b1/pppppp1pp/6p2/7P1/9/PPPPPPP1P/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "4a3b",
+        "3": "2b3c"
+      }
+    },
+    {
+      "cpu": "max",
+      "engine": "libyaneuraou_compat.so",
+      "repeat": 0,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1",
+      "bestmove": "2g2f",
+      "candidates": {
+        "1": "2g2f",
+        "2": "9g9f",
+        "3": "7g7f"
+      }
+    },
+    {
+      "cpu": "max",
+      "engine": "libyaneuraou_compat.so",
+      "repeat": 0,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "3c3d",
+        "3": "4a3b"
+      }
+    },
+    {
+      "cpu": "max",
+      "engine": "libyaneuraou_compat.so",
+      "repeat": 0,
+      "sfen": "lnsgkgsnl/1r5b1/pppppp1pp/6p2/7P1/9/PPPPPPP1P/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "4a3b",
+        "3": "2b3c"
+      }
+    },
+    {
+      "cpu": "max",
+      "engine": "libyaneuraou_compat.so",
+      "repeat": 1,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1",
+      "bestmove": "2g2f",
+      "candidates": {
+        "1": "2g2f",
+        "2": "9g9f",
+        "3": "7g7f"
+      }
+    },
+    {
+      "cpu": "max",
+      "engine": "libyaneuraou_compat.so",
+      "repeat": 1,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "3c3d",
+        "3": "4a3b"
+      }
+    },
+    {
+      "cpu": "max",
+      "engine": "libyaneuraou_compat.so",
+      "repeat": 1,
+      "sfen": "lnsgkgsnl/1r5b1/pppppp1pp/6p2/7P1/9/PPPPPPP1P/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "4a3b",
+        "3": "2b3c"
+      }
+    },
+    {
+      "cpu": "max",
+      "engine": "libyaneuraou_compat.so",
+      "repeat": 2,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1",
+      "bestmove": "2g2f",
+      "candidates": {
+        "1": "2g2f",
+        "2": "9g9f",
+        "3": "7g7f"
+      }
+    },
+    {
+      "cpu": "max",
+      "engine": "libyaneuraou_compat.so",
+      "repeat": 2,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "3c3d",
+        "3": "4a3b"
+      }
+    },
+    {
+      "cpu": "max",
+      "engine": "libyaneuraou_compat.so",
+      "repeat": 2,
+      "sfen": "lnsgkgsnl/1r5b1/pppppp1pp/6p2/7P1/9/PPPPPPP1P/1B5R1/LNSGKGSNL w - 1",
+      "bestmove": "8c8d",
+      "candidates": {
+        "1": "8c8d",
+        "2": "4a3b",
+        "3": "2b3c"
+      }
+    }
+  ]
+}
