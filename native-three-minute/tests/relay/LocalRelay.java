@@ -6,6 +6,8 @@ public final class LocalRelay implements Closeable {
  volatile int dropPercent,delayMillis;volatile int accepted,rejected,forwarded,refused;volatile boolean closed;
  /** When set, every valid event is answered OK=false with this message and not forwarded, like a public relay's policy. */
  volatile String refuse;
+ /** Events whose content contains one of these strings are accepted but not forwarded, once per entry. */
+ final List<String> dropOnce=new CopyOnWriteArrayList<>();
  final ScheduledExecutorService delays=Executors.newSingleThreadScheduledExecutor(r->{Thread t=new Thread(r,"relay-delay");t.setDaemon(true);return t;});
  public LocalRelay()throws IOException{server=new ServerSocket(0,50,InetAddress.getByName("127.0.0.1"));Thread t=new Thread(this::acceptLoop,"local-relay");t.setDaemon(true);t.start();}
  public String url(){return "ws://127.0.0.1:"+server.getLocalPort()+"/";}
@@ -41,6 +43,7 @@ public final class LocalRelay implements Closeable {
    boolean ok=e!=null&&NostrRelayPool.verified(e,NetJson.string(raw,"sig"))&&Math.abs(e.createdAt-System.currentTimeMillis()/1000)<60;
    String refusal=refuse;if(ok&&refusal!=null){refused++;c.send(NetJson.write(Arrays.asList("OK",NetJson.string(raw,"id"),false,refusal)));return;}
    c.send(NetJson.write(Arrays.asList("OK",NetJson.string(raw,"id"),ok,ok?"":"invalid: id, signature or created_at")));if(!ok){rejected++;return;}accepted++;
+   for(String d:dropOnce)if(e.content.contains(d)&&dropOnce.remove(d))return;
    String out=null;for(Conn other:conns)for(Map.Entry<String,List<Map<String,Object>>> sub:other.subs.entrySet())if(matches(sub.getValue(),e)){
     if(dropPercent>0&&random.nextInt(100)<dropPercent)continue;String frame=NetJson.write(Arrays.asList("EVENT",sub.getKey(),raw));forwarded++;
     if(delayMillis>0)delays.schedule(()->other.send(frame),delayMillis,TimeUnit.MILLISECONDS);else other.send(frame);}

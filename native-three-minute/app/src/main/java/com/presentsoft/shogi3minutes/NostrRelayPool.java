@@ -9,7 +9,7 @@ final class NostrRelayPool implements Closeable {
  static final int KIND=25150;
  static final List<String> DEFAULT_RELAYS=Collections.unmodifiableList(Arrays.asList(
   "wss://yabu.me","wss://relay.snort.social","wss://nostr-pub.wellorder.net","wss://relay.primal.net","wss://nos.lol",
-  "wss://nostr.mom","wss://nostr.oxtr.dev","wss://nostr.bitcoiner.social","wss://relay.damus.io"));
+  "wss://nostr.mom","wss://nostr.oxtr.dev","wss://relay.damus.io"));
  interface Listener {void event(Event e);default void relays(int open,int total){}}
  static final class Event {
   final String id,pubkey,content;final long createdAt;final int kind;final List<List<String>> tags;final String relay;

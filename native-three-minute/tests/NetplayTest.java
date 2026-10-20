@@ -41,7 +41,7 @@ public final class NetplayTest {
   UdpEndpoint.allowLoopback=true;link();
   try(LocalRelay relay=new LocalRelay()){List<String> relays=Collections.singletonList(relay.url());
    quickGame(relays);fastDiscovery(relays);relayOnly(relays);failover(relays);manySeekers(relays);rooms(relays);relayRestart(relay,relays);
-   relay.dropPercent=30;lossyRelay(relays);relay.dropPercent=0;relay.delayMillis=150;slowRelay(relays);relay.delayMillis=400;udpBeforeConfirm(relays);relay.delayMillis=0;
+   relay.dropPercent=30;lossyRelay(relays);relay.dropPercent=0;relay.delayMillis=150;slowRelay(relays);relay.delayMillis=400;udpBeforeConfirm(relays);relay.delayMillis=0;lostHandshake(relay,relays);
    ok(relay.rejected==0,"strict relay accepted every event id/signature: rejected="+relay.rejected);
   }
   refusals();
@@ -226,6 +226,14 @@ public final class NetplayTest {
    end=now()+4000;while(latency.size()<3&&now()<end)Thread.sleep(20);NostrRelayPool.Relay x=a.relays.get(0);ArrayList<Long> sorted=new ArrayList<>(latency);Collections.sort(sorted);
    return String.format(Locale.US,"%-36s ok=%d rejected=%d delivered=%d/3 median=%s %s",url,x.accepted,x.rejected,latency.size(),sorted.isEmpty()?"-":sorted.get(sorted.size()/2)+"ms",x.lastProblem);
   }catch(InterruptedException e){return url+" interrupted";}finally{a.close();b.close();}
+ }
+ /** One lost offer or accept costs a resend interval (1.2 s), not a timeout plus a block. */
+ static void lostHandshake(LocalRelay relay,List<String> relays)throws Exception{
+  for(String lost:new String[]{"\"op\":\"offer\"","\"op\":\"accept\"","\"op\":\"confirm\""}){
+   Netplay.lobbyTag="test-lobby-lost-"+lost.length()+lost.charAt(7);Client a=new Client("A",relays,Collections.emptyList()),b=new Client("B",relays,Collections.emptyList());a.net.endpoint.dropPercent=100;b.net.endpoint.dropPercent=100;
+   waitFor(()->a.relaysOpen==1&&b.relaysOpen==1,10000,"relays");relay.dropOnce.add(lost);long t0=now();a.net.seek(Netplay.QUICK,null);b.net.seek(Netplay.QUICK,null);
+   waitFor(()->a.started()&&b.started(),15000,"match after losing "+lost);long took=now()-t0;System.out.println("match with first "+lost+" lost: "+took+"ms");
+   ok(!relay.dropOnce.contains(lost),"the handshake message was really dropped");ok(took<3500,"lost "+lost+" recovered by resend: "+took+"ms");ok(paired(a,b),"pairing after loss");play(a,b,2);close(a,b);}
  }
  /** Direct UDP data can overtake the relayed confirm; the accepter must treat authenticated session traffic as the confirm. */
  static void udpBeforeConfirm(List<String> relays)throws Exception{

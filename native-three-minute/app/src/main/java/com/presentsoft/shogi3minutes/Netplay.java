@@ -29,7 +29,11 @@ final class Netplay implements Closeable {
  final ScheduledExecutorService loop=Executors.newSingleThreadScheduledExecutor(r->{Thread t=new Thread(r,"netplay");t.setDaemon(true);return t;});
  final SecureRandom random=new SecureRandom();final Schnorr.Key key;final NostrRelayPool pool;final UdpEndpoint endpoint;final KeyPair ecdh;final String ecdhText;
  final List<String> stun;volatile Listener listener;
- int mode=QUICK,state=IDLE,seeks;String roomTag,nonce,target,targetNonce;long deadline,seekStarted,lastSeek,lastReply;volatile Session session;Session pending;
+ int mode=QUICK,state=IDLE,seeks;String roomTag,nonce,target,targetNonce;long deadline,seekStarted,lastSeek,lastReply,lastHandshake;int handshakeSends;Map<String,Object> handshake;volatile Session session;Session pending;
+ final long born=System.currentTimeMillis();final ArrayDeque<String> trace=new ArrayDeque<>();
+ /** Recent handshake steps for diagnostics (relative ms, short peer ids); never contains candidates or keys. */
+ void trace(String what){synchronized(trace){trace.addLast((System.currentTimeMillis()-born)+"ms "+what);if(trace.size()>80)trace.removeFirst();}}
+ static String shortKey(String k){return k==null?"-":k.substring(0,Math.min(6,k.length()));}
  final Map<String,Seek> seen=new HashMap<>();final Map<String,Long> blocked=new HashMap<>();
  volatile int relaysOpen,relaysTotal;volatile String lastStatus="";boolean closed;
  Netplay(List<String> relays,List<String> stun,HostnameVerifier verifier,Listener listener)throws IOException{
@@ -64,7 +68,9 @@ final class Netplay implements Closeable {
   // The second announcement covers peers whose lobby subscription reached the relays just after our first one.
   if(state==SEEKING){if(now-lastSeek>=(seeks==1?700:3000))announce(now);
    offerIfPossible(now);status((mode==QUICK?"対戦相手を探しています":mode==HOST?"相手の参加を待っています":"ルームに接続しています")+"（"+(now-seekStarted)/1000+"秒）");}
-  else if((state==OFFERED||state==ACCEPTED)&&now>deadline){if(target!=null)blocked.put(target,now+10000);closePending();state=SEEKING;}
+  else if((state==OFFERED||state==ACCEPTED)&&now>deadline){trace((state==OFFERED?"offer":"accept")+" timed out "+shortKey(target));if(target!=null)blocked.put(target,now+3000);closePending();state=SEEKING;}
+  // A lost offer or accept costs one resend interval rather than a full timeout.
+  else if(state==OFFERED&&handshake!=null&&handshakeSends<4&&now-lastHandshake>=1200){handshakeSends++;lastHandshake=now;trace("resend offer "+shortKey(target));publish(target,new LinkedHashMap<>(handshake));}
   else if(state==MATCHED&&session!=null&&!session.live){Session s=session;if(s.link!=null&&s.link.heard())s.live=true;
    else if(now>s.deadline){closeSession();state=SEEKING;fail("相手の応答がありません。もう一度探します");}
    else if(s.role==0&&s.confirms<4&&now-s.lastConfirm>=800){s.confirms++;s.lastConfirm=now;publish(s.peer,confirm(s));}}
@@ -77,7 +83,7 @@ final class Netplay implements Closeable {
    if(pick==null||s.since<pick.since||s.since==pick.since&&e.getKey().compareTo(best)<0){pick=s;best=e.getKey();}}
   if(pick==null)return;Session s=derive(best,pick.nonce,pick.ecdh,0);if(s==null){blocked.put(best,now+60000);return;}
   target=best;targetNonce=pick.nonce;deadline=now+4000;state=OFFERED;closePending();pending=s;
-  Map<String,Object> m=message("offer");m.put("to",pick.nonce);m.put("e",ecdhText);m.put("c",seal(s.key,P2PLink.encodeCandidates(endpoint.candidates())));publish(best,m);
+  Map<String,Object> m=message("offer");m.put("to",pick.nonce);m.put("e",ecdhText);m.put("c",seal(s.key,P2PLink.encodeCandidates(endpoint.candidates())));handshake=m;handshakeSends=1;lastHandshake=now;trace("offer "+shortKey(best));publish(best,new LinkedHashMap<>(m));
  }
  void incoming(NostrRelayPool.Event e){
   Map<String,Object> m;try{m=NetJson.object(NetJson.parse(e.content));}catch(RuntimeException x){return;}
@@ -90,15 +96,20 @@ final class Netplay implements Closeable {
     s.lastSeen=now;if(s.ecdh!=null)seen.put(e.pubkey,s);if(state!=SEEKING)return;offerIfPossible(now);
     // A newcomer that must offer to us learns about us now instead of at our next periodic announcement.
     if(fresh&&state==SEEKING&&!mayOffer(s,e.pubkey)&&now-lastReply>=1000){lastReply=now;announce(now);}return;}
-   case "offer":{if(!nonce.equals(to))return;boolean allowed=mode==QUICK?e.pubkey.compareTo(key.publicHex)<0:mode==GUEST;
+   case "offer":{if(!nonce.equals(to))return;trace("recv offer "+shortKey(e.pubkey)+" via "+e.relay);
+    if(state==ACCEPTED&&e.pubkey.equals(target)&&n.equals(targetNonce)&&handshake!=null){publish(e.pubkey,new LinkedHashMap<>(handshake));return;}
+    if(state==MATCHED&&session!=null&&e.pubkey.equals(session.peer)&&n.equals(session.peerNonce))return;
+    boolean allowed=mode==QUICK?e.pubkey.compareTo(key.publicHex)<0:mode==GUEST;
     if(!allowed||(state!=SEEKING&&state!=OFFERED)){Map<String,Object> d=message("decline");d.put("to",n);publish(e.pubkey,d);return;}
     Session s=derive(e.pubkey,n,NetJson.string(m,"e"),1);if(s==null)return;List<String> cand=open(s.key,NetJson.string(m,"c"));if(cand==null)return;
     closePending();s.peerCandidates=cand;pending=s;target=e.pubkey;targetNonce=n;deadline=now+5000;state=ACCEPTED;startLink(s);
-    Map<String,Object> a=message("accept");a.put("to",n);a.put("c",seal(s.key,P2PLink.encodeCandidates(endpoint.candidates())));a.put("e",ecdhText);publish(e.pubkey,a);status("対戦相手が見つかりました・接続中…");return;}
-   case "accept":{if(!nonce.equals(to))return;if(state!=OFFERED||!e.pubkey.equals(target)||!n.equals(targetNonce)||pending==null){Map<String,Object> d=message("decline");d.put("to",n);publish(e.pubkey,d);return;}
+    Map<String,Object> a=message("accept");a.put("to",n);a.put("c",seal(s.key,P2PLink.encodeCandidates(endpoint.candidates())));a.put("e",ecdhText);handshake=a;trace("accept "+shortKey(e.pubkey));publish(e.pubkey,new LinkedHashMap<>(a));status("対戦相手が見つかりました・接続中…");return;}
+   case "accept":{if(!nonce.equals(to))return;trace("recv accept "+shortKey(e.pubkey)+" via "+e.relay);
+    if(state==MATCHED&&session!=null&&e.pubkey.equals(session.peer)&&n.equals(session.peerNonce)){publish(e.pubkey,confirm(session));return;}
+    if(state!=OFFERED||!e.pubkey.equals(target)||!n.equals(targetNonce)||pending==null){Map<String,Object> d=message("decline");d.put("to",n);publish(e.pubkey,d);return;}
     List<String> cand=open(pending.key,NetJson.string(m,"c"));if(cand==null)return;Session s=pending;pending=null;s.peerCandidates=cand;matched(s,now);s.confirms=1;s.lastConfirm=now;publish(s.peer,confirm(s));return;}
-   case "confirm":{if(!nonce.equals(to))return;if(state==ACCEPTED&&e.pubkey.equals(target)&&n.equals(targetNonce)&&pending!=null){Session s=pending;pending=null;matched(s,now);}return;}
-   case "decline":{if(!nonce.equals(to))return;if((state==OFFERED||state==ACCEPTED)&&e.pubkey.equals(target)){blocked.put(target,now+10000);closePending();state=SEEKING;}
+   case "confirm":{if(!nonce.equals(to))return;trace("recv confirm "+shortKey(e.pubkey)+" via "+e.relay);if(state==ACCEPTED&&e.pubkey.equals(target)&&n.equals(targetNonce)&&pending!=null){Session s=pending;pending=null;matched(s,now);}return;}
+   case "decline":{if(!nonce.equals(to))return;trace("recv decline "+shortKey(e.pubkey));if((state==OFFERED||state==ACCEPTED)&&e.pubkey.equals(target)){blocked.put(target,now+10000);closePending();state=SEEKING;}
     else if(state==MATCHED&&session!=null&&!session.live&&e.pubkey.equals(session.peer)){closeSession();state=SEEKING;}return;}
    case "pkt":{Session s=session!=null&&e.pubkey.equals(session.peer)?session:pending!=null&&e.pubkey.equals(pending.peer)?pending:null;if(s==null||s.link==null)return;
     String sid=NetJson.string(m,"s"),data=NetJson.string(m,"d");if(sid==null||data==null||!sid.equals(Schnorr.hex(Arrays.copyOf(s.id,8))))return;
@@ -107,7 +118,7 @@ final class Netplay implements Closeable {
    default:
   }
  }
- void matched(Session s,long now){state=MATCHED;session=s;s.deadline=now+10000;pool.unsubscribe("lobby");if(s.link==null)startLink(s);
+ void matched(Session s,long now){trace("matched "+shortKey(s.peer)+" role "+s.role);handshake=null;state=MATCHED;session=s;s.deadline=now+10000;pool.unsubscribe("lobby");if(s.link==null)startLink(s);
   status("接続しました");Listener l=listener;int side=s.localSide();if(l!=null)l.matched(side);}
  void startLink(Session s){
   s.link=new P2PLink(endpoint,s.key,s.id,s.role,packet->{Map<String,Object> m=message("pkt");m.put("s",Schnorr.hex(Arrays.copyOf(s.id,8)));m.put("d",NetJson.base64(packet));publish(s.peer,m);},new P2PLink.Listener(){
@@ -145,7 +156,7 @@ final class Netplay implements Closeable {
  void fail(String reason){Listener l=listener;if(l!=null)l.failed(reason);}
  void networkSummary(){List<String> c=endpoint.candidates();int v6=0,v4=0;for(String x:c)if(x.startsWith("["))v6++;else v4++;
   String text="UDP候補 IPv4×"+v4+" / IPv6×"+v6+(endpoint.stunReplies>0?(endpoint.symmetricNat()?"・NAT: 対称型（リレー経由の可能性）":"・NAT: 直結可能型"):"・STUN応答待ち");Listener l=listener;if(l!=null)l.network(text);}
- String diagnostics(){Session s=session;return "state="+state+" relays="+relaysOpen+"/"+relaysTotal+" candidates="+endpoint.candidates()+" symmetric="+endpoint.symmetricNat()+(s!=null&&s.link!=null?" link: "+s.link.stats():"")+"\n"+pool.diagnostics();}
+ String diagnostics(){Session s=session;StringBuilder steps=new StringBuilder();synchronized(trace){for(String t:trace)steps.append(steps.length()>0?" | ":"").append(t);}return "handshake: "+steps+"\nstate="+state+" relays="+relaysOpen+"/"+relaysTotal+" candidates="+endpoint.candidates()+" symmetric="+endpoint.symmetricNat()+(s!=null&&s.link!=null?" link: "+s.link.stats():"")+"\n"+pool.diagnostics();}
  @Override public void close(){synchronized(this){closed=true;}Future<?> f=null;try{f=loop.submit(this::closeSession);}catch(RejectedExecutionException ignored){}
   if(f!=null)try{f.get(1500,TimeUnit.MILLISECONDS);}catch(InterruptedException|ExecutionException|TimeoutException ignored){}
   loop.shutdownNow();try{Thread.sleep(150);}catch(InterruptedException ignored){}pool.close();endpoint.close();}
