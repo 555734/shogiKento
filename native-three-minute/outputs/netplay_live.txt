@@ -1,0 +1,18 @@
+relays open A=8 B=8 of 8
+STUN replies A=12 candidates=[10.1.0.14:51016, 20.171.37.192:50176] symmetric=false
+match time 529ms
+direct path 10.1.0.14:56028 rtt=0
+direct move latency median=2ms max=10ms n=10
+relay-only match time 671ms
+relay-only move latency median=123ms max=124ms n=8
+PASS live public relays/STUN: 78 assertions
+diagnostics A:
+state=4 relays=7/8 candidates=[10.1.0.14:58498, 20.171.37.192:50178] symmetric=false link: direct=false route=relay rtt=-1 relayRtt=245 udp=23/0 relay=13/12 candidates=1 rejected=0
+wss://yabu.me open ok=14 rejected=0 received=1 clock=no Date header
+wss://relay.nostr.wirednet.jp closed ok=0 rejected=1 received=0 clock=0s last=closed by relay
+wss://relay.damus.io open ok=0 rejected=14 received=2 clock=0s last=banned: too many rate-limit violations, try again later
+wss://nos.lol open ok=13 rejected=0 received=0 clock=0s
+wss://relay.primal.net open ok=3 rejected=0 received=0 clock=0s
+wss://nostr.mom open ok=13 rejected=0 received=0 clock=0s
+wss://offchain.pub open ok=1 rejected=13 received=0 clock=0s last=Policy violated and pubkey is not in our web of trust.
+wss://relay.snort.social open ok=13 rejected=0 received=15 clock=0s
