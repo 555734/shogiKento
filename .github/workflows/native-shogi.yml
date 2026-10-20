@@ -8,7 +8,7 @@ permissions:
 jobs:
   native-apk:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     defaults:
       run:
         working-directory: native-three-minute
@@ -38,6 +38,15 @@ jobs:
           java -cp test-classes com.presentsoft.shogi3minutes.EvaluationTest | tee outputs/evaluation.txt
           pip install python-shogi==1.1.1 py7zr==1.1.4
           python tests/differential.py test-classes | tee outputs/differential.txt
+      - name: Serverless online play (local strict relay, loopback UDP)
+        run: |
+          M=app/src/main/java/com/presentsoft/shogi3minutes
+          javac -cp test-classes -d test-classes $M/NetJson.java $M/Schnorr.java $M/WebSocketClient.java $M/NostrRelayPool.java $M/UdpEndpoint.java $M/P2PLink.java $M/Netplay.java $M/OnlineGame.java tests/relay/LocalRelay.java tests/NetplayTest.java
+          java -cp test-classes com.presentsoft.shogi3minutes.NetplayTest tests/bip340.csv | tee outputs/netplay.txt
+      - name: Live public Nostr relays and STUN (informational)
+        continue-on-error: true
+        timeout-minutes: 5
+        run: java -cp test-classes com.presentsoft.shogi3minutes.NetplayTest --live outputs/netplay_live.txt
       - name: Prepare pinned micro model and complete GPL source
         run: python scripts/prepare_yaneura.py
       - name: Build installable native APKs
@@ -70,7 +79,7 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
       - name: Install, launch, play and capture real UI
-        timeout-minutes: 10
+        timeout-minutes: 14
         uses: reactivecircus/android-emulator-runner@v2
         with:
           emulator-boot-timeout: 180
