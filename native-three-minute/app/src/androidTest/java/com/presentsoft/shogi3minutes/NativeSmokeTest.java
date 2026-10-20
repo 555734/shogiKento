@@ -51,13 +51,24 @@ public final class NativeSmokeTest extends Instrumentation {
  void analysisReady() {
   long until=SystemClock.elapsedRealtime()+10000;java.util.concurrent.atomic.AtomicBoolean done=new java.util.concurrent.atomic.AtomicBoolean();
   while(SystemClock.elapsedRealtime()<until){main(()->done.set(v.analyzing&&v.analysisResult!=null&&v.analysisResult.candidates.size()==3));if(done.get())break;SystemClock.sleep(40);}
-  main(()->{check(v.analysisResult!=null&&v.analyzing,"study analysis streaming: "+v.analysisStatus+" / "+v.aiError);check(v.analysisResult.candidates.size()==3,"three native MultiPV candidates and scores");check(v.analyzedPosition.equals(UsiPosition.sfen(StudyAnalysis.snapshot(v.game,v.analysisSide))),"displayed result belongs to current board and side");int depth=v.analysisResult.candidates.get(0).depth;HashSet<String> roots=new HashSet<>();for(StudyAnalysis.Candidate c:v.analysisResult.candidates){check(c.depth==depth&&roots.add(c.move),"same-depth distinct candidate roots");check(UsiPosition.legalMove(v.analysisBoard,c.move)!=null,"native study candidate is legal in Java rules");}});
+  main(()->{check(v.analysisResult!=null&&v.analyzing,"study analysis streaming: "+v.analysisStatus+" / "+v.aiError);check(v.analysisResult.candidates.size()==3,"three native MultiPV candidates and scores");check(v.candidateArrowCount()==3,"three board arrows for current native analysis");check(v.analyzedPosition.equals(UsiPosition.sfen(StudyAnalysis.snapshot(v.game,v.analysisSide))),"displayed result belongs to current board and side");int depth=v.analysisResult.candidates.get(0).depth;HashSet<String> roots=new HashSet<>();for(int i=0;i<3;i++){StudyAnalysis.Candidate c=v.analysisResult.candidates.get(i);check(c.depth==depth&&roots.add(c.move),"same-depth distinct candidate roots");ShogiGame.Move m=UsiPosition.legalMove(v.analysisBoard,c.move);check(m!=null&&ShogiGame.same(m,v.analysisRoots.get(i)),"board arrow uses exactly the ranked legal candidate");}});
+ }
+ void candidateArrowPixels(){
+  int previousWidth=100,previousAlpha=256;
+  for(int rank=1;rank<=3;rank++){
+   Bitmap image=Bitmap.createBitmap(240,280,Bitmap.Config.ARGB_8888);CandidateArrow.draw(new Canvas(image),new RectF(100,200,140,240),new RectF(100,40,140,80),rank,1);
+   int width=0;for(int x=0;x<240;x++)if(Color.alpha(image.getPixel(x,140))>0)width++;
+   int alpha=Color.alpha(image.getPixel(120,140));check(width<previousWidth&&alpha<previousAlpha,"ranked arrows get thinner and more transparent");previousWidth=width;previousAlpha=alpha;
+   check(Color.alpha(image.getPixel(120,59))==0&&Color.alpha(image.getPixel(120,70))>0,"arrowhead points toward the destination, with inset");image.recycle();
+  }
+  for(int side:new int[]{1,-1}){Bitmap image=Bitmap.createBitmap(240,280,Bitmap.Config.ARGB_8888);CandidateArrow.draw(new Canvas(image),null,new RectF(100,100,140,140),1,side);check(Color.alpha(image.getPixel(120,120+side*10))>0,"drop arrow points inward for either side");check(Color.alpha(image.getPixel(120,120-side*10))==0,"drop does not invent a board origin");image.recycle();}
  }
  void studyAnalysisTests()throws Exception{
+  candidateArrowPixels();
   home();chooseMode(MainActivity.STUDY);main(()->{v.restart();v.setAnalysisSide(1);});analysisReady();
   int replies=v.nativeReplies;long[] clocks=v.game.remaining.clone();String initial=v.analyzedPosition;int sounds=v.sounds.playCount;
   screenshot("07_study_analysis_initial.png");
-  square(6,2);square(5,2);main(()->{check(v.analysisResult==null&&v.analyzing,"editing immediately clears old evaluation");check(v.analysisSide==-1,"after sente edit analyse gote response");});analysisReady();main(()->check(!v.analyzedPosition.equals(initial),"move triggers new SFEN analysis"));
+  square(6,2);square(5,2);main(()->{check(v.analysisResult==null&&v.analyzing&&v.candidateArrowCount()==0,"editing immediately clears old evaluation and arrows");check(v.analysisSide==-1,"after sente edit analyse gote response");});analysisReady();main(()->check(!v.analyzedPosition.equals(initial),"move triggers new SFEN analysis"));
   screenshot("08_study_analysis_gote.png");tap(324,v.analysisY()+65);analysisReady();main(()->check(v.analysisSide==1,"analysis side changes by tapping panel header"));
   square(6,6);square(4,6);square(4,6);square(3,6);graphTap(v.evalHistory.cursor-1);analysisReady();main(()->check(v.game.board[4][6]==1&&v.game.board[3][6]==0,"rapid edits and undo keep latest board only"));
   longPress(6,3);clickDialog("成る");analysisReady();main(()->check(v.game.board[6][3]==9,"promotion change is reanalysed"));

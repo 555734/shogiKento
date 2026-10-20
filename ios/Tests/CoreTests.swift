@@ -1,7 +1,22 @@
 import XCTest
+import SwiftUI
 @testable import BeniShogi
 
 final class CoreTests:XCTestCase {
+    func testCandidateArrowGeometry() {
+        let size=CGSize(width:400,height:418.6),unit:CGFloat=40
+        let source=CandidateArrowGeometry.center(54,size:size),target=CandidateArrowGeometry.center(45,size:size)
+        XCTAssertEqual(source.x,target.x,accuracy:0.001);XCTAssertGreaterThan(source.y,target.y)
+        var lastWidth=CGFloat.greatestFiniteMagnitude
+        for rank in 1...3{let path=CandidateArrowGeometry.path(source:CGPoint(x:120,y:220),target:CGPoint(x:120,y:60),unit:unit,rank:rank,side:1)
+            XCTAssertTrue(path.contains(CGPoint(x:120,y:140)));XCTAssertFalse(path.contains(CGPoint(x:120,y:59)))
+            XCTAssertLessThan(path.boundingRect.width,lastWidth);lastWidth=path.boundingRect.width
+        }
+        XCTAssertGreaterThan(CandidateArrowGeometry.opacities[0],CandidateArrowGeometry.opacities[1]);XCTAssertGreaterThan(CandidateArrowGeometry.opacities[1],CandidateArrowGeometry.opacities[2])
+        for side in [1,-1]{let drop=CandidateArrowGeometry.path(source:nil,target:CGPoint(x:120,y:120),unit:unit,rank:1,side:side);XCTAssertTrue(drop.contains(CGPoint(x:120,y:120+CGFloat(side)*10)));XCTAssertFalse(drop.contains(CGPoint(x:120,y:120-CGFloat(side)*10)))}
+        let knight=CandidateArrowGeometry.path(source:CGPoint(x:120,y:220),target:CGPoint(x:160,y:140),unit:unit,rank:1,side:1)
+        XCTAssertTrue(knight.contains(CGPoint(x:140,y:180)))
+    }
     func fixture(_ ext:String)throws->URL {try XCTUnwrap(Bundle(for:Self.self).url(forResource:"quest79",withExtension:ext))}
     func testQuestEveryPositionAndNotation()throws {
         let source=try String(contentsOf:fixture("kif"),encoding:.utf8),record=try KifParser.parse(source)

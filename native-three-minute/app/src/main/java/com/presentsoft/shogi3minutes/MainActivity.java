@@ -42,7 +42,7 @@ public final class MainActivity extends Activity {
   int analysisSide=getPreferences(MODE_PRIVATE).getInt("study_analysis_side",1),analysisRevision;boolean analyzing;
   int analysisUpdates;long lastAnalysisSaved;String analysisStatus="局面を解析します",analyzedPosition="";StudyAnalysis.Result analysisResult;ShogiGame analysisBoard;List<String> analysisMoves=Collections.emptyList();
   final Runnable analysisTask=()->startAnalysis();
-  int selectedR=-1,selectedC=-1,selectedHand,selectedSide=1;ShogiGame.Move lastMove;List<ShogiGame.Move> highlights=Collections.emptyList();
+  int selectedR=-1,selectedC=-1,selectedHand,selectedSide=1;ShogiGame.Move lastMove;List<ShogiGame.Move> highlights=Collections.emptyList(),analysisRoots=Collections.emptyList();
   final Runnable ticker=new Runnable(){long displayed=Long.MIN_VALUE;public void run(){if(!resumed||mode!=MATCH||matchSettingsOpen||coffeeDialogOpen)return;clock.settle(SystemClock.elapsedRealtime());long signature=((game.remaining[0]+999)/1000)*10000+((game.remaining[1]+999)/1000)*10+game.winner+2;if(signature!=displayed){displayed=signature;if(game.winner!=0)save();invalidate();}handler.postDelayed(this,50);}};
   final Runnable cpu=()->startSearch();final GestureDetector gestures;
   BoardView(){super(MainActivity.this);setWillNotDraw(false);setClipChildren(true);setBackgroundColor(0xff400b0c);setContentDescription("紅将棋3分・検討モード・対局モード・棋譜を貼り付け・過去の棋譜・設定");restore();setVerticalScrollBarEnabled(true);game=match;nodeBudget=matchOptions().nodes();clock=new MatchClock(game);
@@ -74,9 +74,9 @@ public final class MainActivity extends Activity {
     if(mode!=STUDY||!resumed||revision!=analysisRevision||!UsiPosition.sfen(StudyAnalysis.snapshot(game,analysisSide)).equals(sfen))return;
     analysisResult=null;analysisBoard=null;aiError=error;
     if(error!=null||answer==null){analyzing=false;displayScore=null;analysisStatus="AIエラー・タップで再試行";invalidate();return;}
-    ArrayList<String> labels=new ArrayList<>();for(StudyAnalysis.Candidate candidate:answer.candidates){ShogiGame.Move move=UsiPosition.legalMove(position,candidate.move);if(move==null){cancelCpu();displayScore=null;analysisStatus="候補手を検証できません・タップで再試行";invalidate();return;}labels.add(StudyAnalysis.notation(position,move));}
+    ArrayList<String> labels=new ArrayList<>();ArrayList<ShogiGame.Move> roots=new ArrayList<>();for(StudyAnalysis.Candidate candidate:answer.candidates){ShogiGame.Move move=UsiPosition.legalMove(position,candidate.move);if(move==null){cancelCpu();displayScore=null;analysisStatus="候補手を検証できません・タップで再試行";invalidate();return;}labels.add(StudyAnalysis.notation(position,move));roots.add(move);}
     if(answer.candidates.isEmpty()){cancelCpu();displayScore=null;analysisStatus="評価値を取得できません・タップで再試行";invalidate();return;}
-    analyzing=true;analysisUpdates++;analysisResult=answer;analysisBoard=position;analysisMoves=labels;analyzedPosition=sfen;analysisStatus="";displayScore=EvaluationHistory.Score.from(answer.candidates.get(0),position.turn);evalHistory.complete(EvaluationHistory.key(position),displayScore);
+    analyzing=true;analysisUpdates++;analysisResult=answer;analysisBoard=position;analysisMoves=labels;analysisRoots=roots;analyzedPosition=sfen;analysisStatus="";displayScore=EvaluationHistory.Score.from(answer.candidates.get(0),position.turn);evalHistory.complete(EvaluationHistory.key(position),displayScore);
     long now=SystemClock.uptimeMillis();if(now-lastAnalysisSaved>=2000){lastAnalysisSaved=now;save();}invalidate();
    });
   }
@@ -172,8 +172,15 @@ public final class MainActivity extends Activity {
   float homeImportY(){return homeLayout().paste.top;}float homeArchiveY(){return homeLayout().archive.top;}
   @Override protected void onDraw(Canvas c){super.onDraw(c);c.save();c.clipRect(0,0,getWidth(),getHeight());if(mode==HOME){c.translate(offsetX,-studyScroll*scale);c.scale(scale,scale);homeScreen.draw(c,H,load(HomeScreen.BACKGROUND),load(HomeScreen.TITLE),load("pieces/normal/ou.png"));c.restore();return;}fitted(c,BACKGROUND_ART,new RectF(0,0,getWidth(),getHeight()),true);c.translate(offsetX,-studyScroll*scale);c.scale(scale,scale);
    if(mode==MATCH){darkPanel(c,new RectF(4,0,396,32));text(c,"モード",45,22,11,0xfff5e4c8);text(c,"やり直し",145,22,10.5f,Color.WHITE);text(c,"対局設定",253,22,10.5f,Color.WHITE);paint.setColor(0xff285681);c.drawRoundRect(320,4,391,29,3,3,paint);text(c,"投了",355,22,11,Color.WHITE);}
-   hand(c,mode==MATCH?cpuSide():-1,topHandY());board(c);if(lastMove!=null&&selectedR<0&&selectedHand==0)fitted(c,"ui/highlight_move_target_pink.png",cell(lastMove.row,lastMove.col),false);selectionColors(c);for(int r=0;r<9;r++)for(int col=0;col<9;col++)if(game.board[r][col]!=0)boardPiece(c,game.board[r][col],cell(r,col));hand(c,mode==MATCH?humanSide():1,bottomHandY());
+   hand(c,mode==MATCH?cpuSide():-1,topHandY());board(c);if(lastMove!=null&&selectedR<0&&selectedHand==0)fitted(c,"ui/highlight_move_target_pink.png",cell(lastMove.row,lastMove.col),false);selectionColors(c);for(int r=0;r<9;r++)for(int col=0;col<9;col++)if(game.board[r][col]!=0)boardPiece(c,game.board[r][col],cell(r,col));drawCandidateArrows(c);hand(c,mode==MATCH?humanSide():1,bottomHandY());
    if(mode==MATCH){String status=game.winner==2?game.result:game.winner!=0?(game.winner==humanSide()?"勝利":"敗北")+"・"+game.result:!ai.ready?(aiError==null?"AI読み込み中…":"AIエラー・対局設定から再試行"):!started?"タップして対局開始":game.turn==humanSide()?(game.checked(humanSide())?"王手です・あなたの手番":"あなたの手番"):"CPUの手番";text(c,status,200,bottomHandY()+64,12,Color.WHITE);if(!started){paint.setColor(0xe0300909);c.drawRoundRect(75,H/2-35,325,H/2+35,12,12,paint);text(c,ai.ready?"対局開始":"AI読み込み中…",200,H/2+7,25,0xffffdd8b);}}else analysisPanel(c);c.restore();
+  }
+  int candidateArrowCount(){return mode==STUDY&&analysisResult!=null&&analysisBoard!=null?Math.min(3,analysisRoots.size()):0;}
+  void drawCandidateArrows(Canvas c){
+   int count=candidateArrowCount();if(count==0)return;
+   c.save();RectF first=gridCell(0,0),last=gridCell(8,8);c.clipRect(first.left,first.top,last.right,last.bottom);
+   for(int i=count-1;i>=0;i--){ShogiGame.Move m=analysisRoots.get(i);CandidateArrow.draw(c,m.drop>0?null:cell(m.fromRow,m.fromCol),cell(m.row,m.col),i+1,analysisBoard.turn);}
+   c.restore();
   }
   float analysisY(){return boardY+boardHeight+50;}
   RectF graphRect(){float y=analysisY();return new RectF(43,y+159,386,y+220);}

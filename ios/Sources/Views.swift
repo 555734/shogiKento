@@ -88,6 +88,7 @@ struct BoardView:View {
                         .accessibilityIdentifier("cell_\(square/9)_\(square%9)").accessibilityLabel("\(9-square%9)\(Array("一二三四五六七八九")[square/9]) \(Position.glyphs[abs(piece)])").accessibilityValue(model.selected==square ? "選択":target ? "移動可能":"")
                         .onLongPressGesture {model.togglePromotion(square)}
                 }}}}.padding(.horizontal,w*0.01).padding(.vertical,h*0.01)
+                if !model.boardCandidates.isEmpty{CandidateArrows(candidates:model.boardCandidates,side:model.position.side)}
             }
         }
     }

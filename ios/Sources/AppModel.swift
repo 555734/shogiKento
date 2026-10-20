@@ -14,6 +14,8 @@ import UIKit
     @Published var targets=[Move]()
     @Published var promotion=[Move]()
     @Published var candidates=[Candidate]()
+    @Published private(set) var candidatePosition=""
+    var boardCandidates:[Candidate] {screen == .study && candidatePosition==position.sfen ? Array(candidates.prefix(3)):[]}
     @Published var analysisStatus="局面を解析します"
     @Published var depth=0
     @Published var nodes=0
@@ -73,10 +75,10 @@ import UIKit
     func appendStudy(_ next:Position,label:String){NativeEngine.shared.cancel();session.study.positions=Array(session.study.positions.prefix(session.cursor+1));session.study.labels=Array(session.study.labels.prefix(session.cursor+1));session.scores=session.scores.filter{$0.key<=session.cursor};session.study.positions.append(next.sfen);session.study.labels.append("\(session.cursor+1)手目  "+label);session.cursor+=1;position=next;save();refreshAnalysis()}
     func seek(_ index:Int){guard screen == .study,index != session.cursor,index>=0,index<session.study.positions.count else{return};do{let next=try Position(session.study.positions[index]);NativeEngine.shared.cancel();session.cursor=index;position=next;clearSelection();feedback(human:false);save();refreshAnalysis()}catch{self.error=error.localizedDescription}}
     func refreshAnalysis(){
-        guard screen == .study else{return};NativeEngine.shared.cancel();candidates=[];depth=0;nodes=0;analyzing=false
+        guard screen == .study else{return};NativeEngine.shared.cancel();candidates=[];candidatePosition="";depth=0;nodes=0;analyzing=false
         do {let legal=try Rules.legal(position);if legal.isEmpty{analysisStatus=Rules.checked(position) ? "\(position.side==1 ? "先手":"後手")の玉が詰みです・候補手なし":"合法手がありません";if Rules.checked(position){session.scores[session.cursor]=Evaluation(value:-position.side,mate:true);save()};return}
             guard active else{return};analyzing=true;analysisStatus="解析中…";let key=position.sfen,cursor=session.cursor
-            NativeEngine.shared.search(position,continuous:true){[weak self] result in guard let self,self.active,self.screen == .study,self.position.sfen==key,self.session.cursor==cursor else{return};switch result{case .failure(let e):self.analyzing=false;self.analysisStatus="AIエラー："+e.localizedDescription;case .success(let update):guard update.candidates.allSatisfy({legal.contains($0.move)}) else{self.analyzing=false;self.analysisStatus="AI候補手を検証できません";NativeEngine.shared.cancel();return};self.candidates=update.candidates;self.depth=update.depth;self.nodes=update.nodes;self.analyzing=true;self.analysisStatus="探索中";if let first=update.candidates.first{self.session.scores[cursor]=first.score}}}
+            NativeEngine.shared.search(position,continuous:true){[weak self] result in guard let self,self.active,self.screen == .study,self.position.sfen==key,self.session.cursor==cursor else{return};switch result{case .failure(let e):self.candidatePosition="";self.analyzing=false;self.analysisStatus="AIエラー："+e.localizedDescription;case .success(let update):guard update.candidates.allSatisfy({legal.contains($0.move)}) else{self.candidatePosition="";self.analyzing=false;self.analysisStatus="AI候補手を検証できません";NativeEngine.shared.cancel();return};self.candidates=update.candidates;self.candidatePosition=key;self.depth=update.depth;self.nodes=update.nodes;self.analyzing=true;self.analysisStatus="探索中";if let first=update.candidates.first{self.session.scores[cursor]=first.score}}}
         }catch{analysisStatus=error.localizedDescription}
     }
     var canShowCoffeeOffer:Bool {!matchSettingsOpen && promotion.isEmpty}

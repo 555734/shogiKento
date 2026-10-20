@@ -1,6 +1,14 @@
 import XCTest
 final class FlowTests:XCTestCase {
     override func setUp(){super.setUp();continueAfterFailure=false}
+    func testCandidateArrowsAndBoardInput()throws {
+        let app=XCUIApplication();app.launchArguments=["-coffee-test-suppress","-ads-fixture"];app.launch();tap("mode_study",app)
+        let arrows=app.descendants(matching:.any)["candidate_arrows"]
+        XCTAssertTrue(arrows.waitForExistence(timeout:25));XCTAssertEqual(arrows.value as? String,"3件");shot("candidate-arrows-initial")
+        let before=app.buttons["cell_6_0"].frame;tap("cell_6_0",app);XCTAssertEqual(app.buttons["cell_6_0"].value as? String,"選択");tap("cell_5_0",app)
+        XCTAssertTrue(arrows.waitForExistence(timeout:25));XCTAssertEqual(arrows.value as? String,"3件");XCTAssertEqual(app.buttons["cell_5_0"].frame.size,before.size);shot("candidate-arrows-gote")
+        tap("home",app);tap("mode_match",app);XCTAssertFalse(arrows.exists)
+    }
     func testStoreScreenshots()throws {
         let app=XCUIApplication();app.launchArguments=["-coffee-test-suppress","-ads-fixture"];app.launch()
         XCTAssertTrue(app.buttons["mode_study"].waitForExistence(timeout:15));shot("store-01-home")
