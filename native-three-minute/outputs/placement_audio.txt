@@ -1,0 +1,1 @@
+PASS native SoundPool decoded placement WAV; study/match/human/CPU/capture/drop accepted playback once each; selection/illegal/background silent. Last active player streams accepted: 0
