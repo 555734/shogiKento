@@ -18,7 +18,8 @@ final class NostrRelayPool implements Closeable {
  }
  final class Relay {
   final String url;volatile WebSocketClient socket;final ExecutorService sender=Executors.newSingleThreadExecutor(r->{Thread t=new Thread(r,"relay-send");t.setDaemon(true);return t;});
-  int failures;volatile int accepted,rejected,received;volatile String lastProblem="";volatile long offsetSeconds;
+  int failures,strikes;volatile int accepted,rejected,received;volatile String lastProblem="";volatile long offsetSeconds,pausedUntil;volatile boolean refusesWrites;
+  boolean writable(){return open()&&!refusesWrites&&System.currentTimeMillis()>=pausedUntil;}
   Relay(String url){this.url=url;}
   boolean open(){WebSocketClient s=socket;return s!=null&&s.isOpen();}
   void connect(){if(closed)return;try{sender.execute(()->{if(closed||open())return;
@@ -57,7 +58,7 @@ final class NostrRelayPool implements Closeable {
  }
  /** Publishes to every open relay and returns the number of relays it was handed to. */
  int publish(List<List<String>> tags,String content){Map<String,Object> e=sign(KIND,tags,content);synchronized(seen){seen.put((String)e.get("id"),true);}
-  String text=NetJson.write(Arrays.asList("EVENT",e));int n=0;for(Relay r:relays)if(r.open()){r.send(text);n++;}return n;}
+  String text=NetJson.write(Arrays.asList("EVENT",e));int n=0;for(Relay r:relays)if(r.writable()){r.send(text);n++;}return n;}
  static Event parseEvent(Object raw,String relay){
   Map<String,Object> m=NetJson.object(raw);String id=NetJson.string(m,"id"),pubkey=NetJson.string(m,"pubkey"),sig=NetJson.string(m,"sig"),content=NetJson.string(m,"content");
   if(id==null||pubkey==null||sig==null||content==null||id.length()!=64||pubkey.length()!=64||sig.length()!=128||content.length()>16384)return null;
@@ -67,6 +68,18 @@ final class NostrRelayPool implements Closeable {
   if(!eventId(pubkey,created,(int)kind,tags,content).equals(id.toLowerCase(Locale.US)))return null;
   return new Event(id.toLowerCase(Locale.US),pubkey.toLowerCase(Locale.US),created,(int)kind,tags,content,relay);
  }
+ /**
+  * Public relays protect themselves. Rate limits pause our writes there with exponential backoff (a relay that
+  * bans repeat offenders must never see us again quickly); policy refusals (web of trust, auth, PoW, payment)
+  * stop writes to that relay for this session. Reading from it continues, and the other relays carry on.
+  */
+ static int refusalKind(String message){String m=message.toLowerCase(Locale.US);
+  if(m.startsWith("duplicate"))return 0;
+  if(m.contains("rate")&&m.contains("limit")||m.contains("slow down")||m.contains("too many")||m.contains("banned"))return 1;
+  if(m.startsWith("blocked")||m.startsWith("restricted")||m.startsWith("auth-required")||m.startsWith("pow")||m.contains("trust")||m.contains("policy")||m.contains("payment")||m.contains("paid")||m.contains("whitelist")||m.contains("not allowed")||m.contains("kind"))return 2;
+  return 0;}
+ void refusal(Relay r,String message){int kind=refusalKind(message);if(kind==1){r.pausedUntil=System.currentTimeMillis()+Math.min(600000L,30000L<<Math.min(5,r.strikes++));}else if(kind==2)r.refusesWrites=true;}
+ int writableCount(){int n=0;for(Relay r:relays)if(r.writable())n++;return n;}
  static boolean verified(Event e,String sig){try{return Schnorr.verify(Schnorr.unhex(e.id),Schnorr.unhex(e.pubkey),Schnorr.unhex(sig));}catch(RuntimeException x){return false;}}
  void incoming(Relay relay,String text){
   try{List<Object> msg=NetJson.array(NetJson.parse(text));if(msg.isEmpty()||!(msg.get(0) instanceof String))return;String type=(String)msg.get(0);
@@ -75,10 +88,10 @@ final class NostrRelayPool implements Closeable {
     if(!verified(e,NetJson.string(NetJson.object(msg.get(2)),"sig")))return;
     synchronized(seen){if(seen.put(e.id,true)!=null)return;}relay.received++;
     try{dispatch.execute(()->listener.event(e));}catch(RejectedExecutionException ignored){}
-   }else if(type.equals("OK")&&msg.size()>=3){if(Boolean.TRUE.equals(msg.get(2)))relay.accepted++;else{relay.rejected++;relay.lastProblem=msg.size()>3?String.valueOf(msg.get(3)):"rejected";}}
+   }else if(type.equals("OK")&&msg.size()>=3){if(Boolean.TRUE.equals(msg.get(2)))relay.accepted++;else{relay.rejected++;relay.lastProblem=msg.size()>3?String.valueOf(msg.get(3)):"rejected";refusal(relay,relay.lastProblem);}}
    else if((type.equals("NOTICE")||type.equals("CLOSED"))&&msg.size()>=2)relay.lastProblem=String.valueOf(msg.get(msg.size()-1));
   }catch(RuntimeException ignored){}
  }
- String diagnostics(){StringBuilder b=new StringBuilder();for(Relay r:relays)b.append(r.url).append(r.open()?" open":" closed").append(" ok=").append(r.accepted).append(" rejected=").append(r.rejected).append(" received=").append(r.received).append(" clock=").append(r.offsetSeconds==Long.MIN_VALUE?"no Date header":r.offsetSeconds+"s").append(r.lastProblem.isEmpty()?"":" last="+r.lastProblem).append('\n');return b.toString();}
+ String diagnostics(){StringBuilder b=new StringBuilder();for(Relay r:relays)b.append(r.url).append(r.open()?" open":" closed").append(" ok=").append(r.accepted).append(" rejected=").append(r.rejected).append(" received=").append(r.received).append(" clock=").append(r.offsetSeconds==Long.MIN_VALUE?"no Date header":r.offsetSeconds+"s").append(r.refusesWrites?" writes=refused":System.currentTimeMillis()<r.pausedUntil?" writes=paused":"").append(r.lastProblem.isEmpty()?"":" last="+r.lastProblem).append('\n');return b.toString();}
  @Override public void close(){closed=true;timer.shutdownNow();for(Relay r:relays)r.close();dispatch.shutdown();}
 }

@@ -20,7 +20,7 @@ final class P2PLink implements Closeable {
  final TreeMap<Integer,Outgoing> unacked=new TreeMap<>();final TreeMap<Integer,String> early=new TreeMap<>();
  final LinkedHashSet<Long> seenCounters=new LinkedHashSet<>();long highestCounter=-1;
  long counter,startedAt,probeBurst,lastProbe,lastPing,lastRelayPing,lastDirectReceive,lastPeerReceive,lastCandidates;
- int nextSeq=1,expected=1,srtt=-1,relayRtt=-1,probeId;InetSocketAddress active;boolean direct,closed,announcedDirect;
+ int nextSeq=1,expected=1,srtt=-1,relayRtt=-1,probeId,candidateShares;InetSocketAddress active;boolean direct,closed,announcedDirect;
  volatile int udpSent,udpReceived,relaySent,relayReceived,rejected;
  P2PLink(UdpEndpoint endpoint,byte[] secret,byte[] sessionId,int role,Relay relay,Listener listener){
   this.endpoint=endpoint;this.relay=relay;this.listener=listener;this.role=role;tag=Arrays.copyOf(sessionId,8);key=new SecretKeySpec(secret,"AES");
@@ -55,7 +55,7 @@ final class P2PLink implements Closeable {
  }
  static String encodeCandidates(List<String> list){StringBuilder b=new StringBuilder();for(String c:list){if(b.length()>0)b.append(',');b.append(c);}return b.toString();}
  static List<String> decodeCandidates(String s){ArrayList<String> out=new ArrayList<>();if(s==null||s.isEmpty())return out;for(String c:s.split(",",17))if(!c.isEmpty())out.add(c);return out.size()>16?out.subList(0,16):out;}
- void shareCandidates(){byte[] body=encodeCandidates(endpoint.candidates()).getBytes(StandardCharsets.UTF_8);sendRelay(seal(CANDIDATES,body));synchronized(this){lastCandidates=now();if(direct&&active!=null)udp(seal(CANDIDATES,body),active);}}
+ void shareCandidates(){byte[] body=encodeCandidates(endpoint.candidates()).getBytes(StandardCharsets.UTF_8);sendRelay(seal(CANDIDATES,body));synchronized(this){lastCandidates=now();candidateShares++;if(direct&&active!=null)udp(seal(CANDIDATES,body),active);}}
  void udp(byte[] packet,InetSocketAddress to){udpSent++;endpoint.send(packet,packet.length,to);}
  void sendRelay(byte[] packet){if(closed)return;relaySent++;try{relay.send(packet);}catch(RuntimeException ignored){}}
  static byte[] stamp(int id,long time){return ByteBuffer.allocate(12).putInt(id).putLong(time).array();}
@@ -66,8 +66,9 @@ final class P2PLink implements Closeable {
     long sinceBurst=t-probeBurst,interval=sinceBurst<2500?50:sinceBurst<12000?250:1000;
     if(t-lastProbe>=interval&&(!direct||t-startedAt<4000)){lastProbe=t;byte[] probe=seal(PROBE,stamp(++probeId,t));for(InetSocketAddress a:remote)udp(probe,a);}
     if(direct&&t-lastPing>=1000){lastPing=t;udp(seal(PING,stamp(0,t)),active);}
-    if(!direct&&t-lastRelayPing>=5000){lastRelayPing=t;byte[] ping=seal(PING,stamp(1,t));after.add(()->sendRelay(ping));}
-    if(t-lastCandidates>(t-startedAt<6000?2000:15000))after.add(this::shareCandidates);
+    // Relay traffic is rationed: keepalive pings only fill silences, candidates are re-sent on a decaying schedule while not direct.
+    if(!direct&&t-lastRelayPing>=6000&&t-lastPeerReceive>=4000){lastRelayPing=t;byte[] ping=seal(PING,stamp(1,t));after.add(()->sendRelay(ping));}
+    if(candidateShares==0||!direct&&t-lastCandidates>=(candidateShares<3?2500L*candidateShares:30000L))after.add(this::shareCandidates);
     int rto=direct?Math.max(120,Math.min(800,(srtt<0?100:srtt)*2+40)):Math.max(1200,Math.min(4000,relayRtt<0?1500:relayRtt*2));
     for(Outgoing o:unacked.values())if(t-o.lastSent>=rto){o.lastSent=t;o.attempts++;byte[] packet=seal(DATA,o.body);if(direct)udp(packet,active);
      if(t-o.lastRelay>=1200){o.lastRelay=t;after.add(()->sendRelay(packet));}}

@@ -3,7 +3,9 @@ import java.io.*;import java.net.*;import java.nio.charset.StandardCharsets;impo
 /** Strict in-process Nostr relay for tests: WebSocket upgrade, NIP-01 REQ/EVENT/CLOSE, id and BIP-340 checks, ephemeral fan-out. */
 public final class LocalRelay implements Closeable {
  final ServerSocket server;final List<Conn> conns=new CopyOnWriteArrayList<>();final Random random=new Random(7);
- volatile int dropPercent,delayMillis;volatile int accepted,rejected,forwarded;volatile boolean closed;
+ volatile int dropPercent,delayMillis;volatile int accepted,rejected,forwarded,refused;volatile boolean closed;
+ /** When set, every valid event is answered OK=false with this message and not forwarded, like a public relay's policy. */
+ volatile String refuse;
  final ScheduledExecutorService delays=Executors.newSingleThreadScheduledExecutor(r->{Thread t=new Thread(r,"relay-delay");t.setDaemon(true);return t;});
  public LocalRelay()throws IOException{server=new ServerSocket(0,50,InetAddress.getByName("127.0.0.1"));Thread t=new Thread(this::acceptLoop,"local-relay");t.setDaemon(true);t.start();}
  public String url(){return "ws://127.0.0.1:"+server.getLocalPort()+"/";}
@@ -37,6 +39,7 @@ public final class LocalRelay implements Closeable {
   else if(type.equals("CLOSE"))c.subs.remove((String)m.get(1));
   else if(type.equals("EVENT")){Map<String,Object> raw=NetJson.object(m.get(1));NostrRelayPool.Event e=NostrRelayPool.parseEvent(raw,"local");
    boolean ok=e!=null&&NostrRelayPool.verified(e,NetJson.string(raw,"sig"))&&Math.abs(e.createdAt-System.currentTimeMillis()/1000)<60;
+   String refusal=refuse;if(ok&&refusal!=null){refused++;c.send(NetJson.write(Arrays.asList("OK",NetJson.string(raw,"id"),false,refusal)));return;}
    c.send(NetJson.write(Arrays.asList("OK",NetJson.string(raw,"id"),ok,ok?"":"invalid: id, signature or created_at")));if(!ok){rejected++;return;}accepted++;
    String out=null;for(Conn other:conns)for(Map.Entry<String,List<Map<String,Object>>> sub:other.subs.entrySet())if(matches(sub.getValue(),e)){
     if(dropPercent>0&&random.nextInt(100)<dropPercent)continue;String frame=NetJson.write(Arrays.asList("EVENT",sub.getKey(),raw));forwarded++;

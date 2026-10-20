@@ -41,9 +41,10 @@ public final class NetplayTest {
   UdpEndpoint.allowLoopback=true;link();
   try(LocalRelay relay=new LocalRelay()){List<String> relays=Collections.singletonList(relay.url());
    quickGame(relays);relayOnly(relays);failover(relays);manySeekers(relays);rooms(relays);relayRestart(relay,relays);
-   relay.dropPercent=30;lossyRelay(relays);relay.dropPercent=0;relay.delayMillis=150;slowRelay(relays);
+   relay.dropPercent=30;lossyRelay(relays);relay.dropPercent=0;relay.delayMillis=150;slowRelay(relays);relay.delayMillis=0;
    ok(relay.rejected==0,"strict relay accepted every event id/signature: rejected="+relay.rejected);
   }
+  refusals();
   System.out.println("PASS netplay: "+checks+" assertions");
  }
  static void json(){
@@ -190,9 +191,41 @@ public final class NetplayTest {
   waitFor(()->a.relaysOpen==1&&b.relaysOpen==1,10000,"relays");a.net.seek(Netplay.QUICK,null);b.net.seek(Netplay.QUICK,null);waitFor(()->a.started()&&b.started(),30000,"match with 150ms relay");
   List<Long> lat=play(a,b,6);System.out.println("relay-only with 150ms relay hop "+summary(lat));ok(Collections.max(lat)<3000,"slow relay still delivers each move promptly");close(a,b);
  }
+ /** Relays that rate-limit or refuse by policy must stop receiving our writes while the others keep the game going. */
+ static void refusals()throws Exception{
+  ok(NostrRelayPool.refusalKind("banned: too many rate-limit violations, try again later")==1&&NostrRelayPool.refusalKind("rate-limited: slow down")==1,"rate limits pause writes");
+  ok(NostrRelayPool.refusalKind("Policy violated and pubkey is not in our web of trust.")==2&&NostrRelayPool.refusalKind("auth-required: login first")==2&&NostrRelayPool.refusalKind("pow: difficulty 28 required")==2&&NostrRelayPool.refusalKind("blocked: kind not allowed")==2,"policy refusals stop writes");
+  ok(NostrRelayPool.refusalKind("duplicate: already have this event")==0&&NostrRelayPool.refusalKind("invalid: created_at too early")==0,"other rejections keep writing");
+  try(LocalRelay limited=new LocalRelay();LocalRelay trusted=new LocalRelay();LocalRelay good=new LocalRelay()){
+   limited.refuse="rate-limited: slow down";trusted.refuse="blocked: pubkey is not in our web of trust";List<String> relays=Arrays.asList(limited.url(),trusted.url(),good.url());
+   Netplay.lobbyTag="test-lobby-refusals";Client a=new Client("A",relays,Collections.emptyList()),b=new Client("B",relays,Collections.emptyList());a.net.endpoint.dropPercent=100;b.net.endpoint.dropPercent=100;
+   waitFor(()->a.relaysOpen==3&&b.relaysOpen==3,10000,"three relays");a.net.seek(Netplay.QUICK,null);b.net.seek(Netplay.QUICK,null);
+   waitFor(()->a.started()&&b.started(),20000,"match through the one accepting relay");play(a,b,6);
+   ok(a.net.pool.writableCount()==1&&b.net.pool.writableCount()==1,"rate-limited relay paused and policy relay refused: "+a.net.pool.diagnostics());
+   int before=limited.refused+trusted.refused;play(a,b,6);ok(limited.refused+trusted.refused==before,"no further writes to refusing relays: "+(limited.refused+trusted.refused-before));
+   close(a,b);
+  }
+ }
+ static final List<String> SURVEY_EXTRA=Arrays.asList("wss://nostr.oxtr.dev","wss://nostr-pub.wellorder.net","wss://nostr.bitcoiner.social","wss://relay-jp.nostr.wirednet.jp","wss://r.kojira.io",
+  "wss://nostr.holybea.com","wss://relay.nostr.band","wss://nostr.fmt.wiz.biz","wss://relay.nostrich.de","wss://nostr.einundzwanzig.space","wss://relay.nostr.wirednet.jp","wss://offchain.pub","wss://nostr.wine");
+ /** One relay at a time: does it accept our ephemeral events and forward them to a #p subscriber, and how fast? */
+ static String survey(String url){
+  java.security.SecureRandom r=new java.security.SecureRandom();Schnorr.Key ka=new Schnorr.Key(Schnorr.newSecret(r)),kb=new Schnorr.Key(Schnorr.newSecret(r));List<Long> latency=new CopyOnWriteArrayList<>();
+  NostrRelayPool b=new NostrRelayPool(Collections.singletonList(url),kb,null,e->{try{latency.add(System.currentTimeMillis()-NetJson.number(NetJson.object(NetJson.parse(e.content)),"t",0));}catch(RuntimeException ignored){}});
+  NostrRelayPool a=new NostrRelayPool(Collections.singletonList(url),ka,null,e->{});
+  try{b.subscribe("s",Netplay.filter("#p",kb.publicHex));b.start();a.start();long end=now()+10000;while((a.openCount()<1||b.openCount()<1)&&now()<end)Thread.sleep(20);
+   if(a.openCount()<1||b.openCount()<1)return String.format(Locale.US,"%-36s CONNECT FAILED %s",url,a.relays.get(0).lastProblem);Thread.sleep(700);
+   for(int i=0;i<3;i++){a.publish(Collections.singletonList(Arrays.asList("p",kb.publicHex)),"{\"v\":0,\"op\":\"survey\",\"t\":"+System.currentTimeMillis()+"}");Thread.sleep(400);}
+   end=now()+4000;while(latency.size()<3&&now()<end)Thread.sleep(20);NostrRelayPool.Relay x=a.relays.get(0);ArrayList<Long> sorted=new ArrayList<>(latency);Collections.sort(sorted);
+   return String.format(Locale.US,"%-36s ok=%d rejected=%d delivered=%d/3 median=%s %s",url,x.accepted,x.rejected,latency.size(),sorted.isEmpty()?"-":sorted.get(sorted.size()/2)+"ms",x.lastProblem);
+  }catch(InterruptedException e){return url+" interrupted";}finally{a.close();b.close();}
+ }
  /** CI check against real public relays and STUN servers in an isolated lobby. Prints diagnostics either way. */
  static void live(String report)throws Exception{
   Netplay.lobbyTag="shogikento-ci-"+Long.toHexString(new java.security.SecureRandom().nextLong());StringBuilder out=new StringBuilder();Client a=null,b=null;
+  ArrayList<String> surveyed=new ArrayList<>(NostrRelayPool.DEFAULT_RELAYS);for(String u:SURVEY_EXTRA)if(!surveyed.contains(u))surveyed.add(u);
+  ExecutorService pool=Executors.newFixedThreadPool(8);List<Future<String>> rows=new ArrayList<>();for(String u:surveyed)rows.add(pool.submit(()->survey(u)));
+  out.append("relay survey (default relays first):\n");for(Future<String> f:rows)out.append("SURVEY ").append(f.get()).append('\n');pool.shutdown();System.out.print(out);
   try{a=new Client("A",NostrRelayPool.DEFAULT_RELAYS,UdpEndpoint.DEFAULT_STUN);b=new Client("B",NostrRelayPool.DEFAULT_RELAYS,UdpEndpoint.DEFAULT_STUN);Client x=a,y=b;
    waitFor(()->x.relaysOpen>=2&&y.relaysOpen>=2,30000,"at least two public relays");Thread.sleep(3000);
    out.append("relays open A=").append(a.relaysOpen).append(" B=").append(b.relaysOpen).append(" of ").append(NostrRelayPool.DEFAULT_RELAYS.size()).append('\n');

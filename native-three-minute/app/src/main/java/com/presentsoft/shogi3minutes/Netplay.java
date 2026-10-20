@@ -61,7 +61,7 @@ final class Netplay implements Closeable {
  Map<String,Object> message(String op){LinkedHashMap<String,Object> m=new LinkedHashMap<>();m.put("op",op);m.put("n",nonce);return m;}
  void tick(){
   long now=System.currentTimeMillis();seen.values().removeIf(s->now-s.lastSeen>9000);blocked.values().removeIf(until->until<now);
-  if(state==SEEKING){if(now-lastSeek>=2500){lastSeek=now;Map<String,Object> m=message("seek");m.put("e",ecdhText);m.put("w",(seekStarted/1000));m.put("r",mode==HOST?"host":mode==GUEST?"guest":"");m.put("tc","3m");publish(null,m);}
+  if(state==SEEKING){if(now-lastSeek>=3000){lastSeek=now;Map<String,Object> m=message("seek");m.put("e",ecdhText);m.put("w",(seekStarted/1000));m.put("r",mode==HOST?"host":mode==GUEST?"guest":"");m.put("tc","3m");publish(null,m);}
    offerIfPossible(now);status((mode==QUICK?"対戦相手を探しています":mode==HOST?"相手の参加を待っています":"ルームに接続しています")+"（"+(now-seekStarted)/1000+"秒）");}
   else if((state==OFFERED||state==ACCEPTED)&&now>deadline){if(target!=null)blocked.put(target,now+10000);closePending();state=SEEKING;}
   else if(state==MATCHED&&session!=null&&!session.live){Session s=session;if(s.link!=null&&s.link.heard())s.live=true;
