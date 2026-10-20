@@ -11,7 +11,7 @@ xcode-project use-profiles --project BeniShogi.xcodeproj
 xcode-project build-ipa --project BeniShogi.xcodeproj --scheme BeniShogi \
   --config Release --archive-directory build/AppStoreArchive \
   --ipa-directory build/AppStoreIPA --disable-xcpretty \
-  --custom-xcodebuild-args 'CODE_SIGNING_ALLOWED=YES'
+  --archive-xcargs 'CODE_SIGNING_ALLOWED=YES'
 ipa=$(find build/AppStoreIPA -name '*.ipa' -print -quit)
 test -n "$ipa"
 app-store-connect publish --path "$ipa" --enable-package-validation
