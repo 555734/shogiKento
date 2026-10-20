@@ -9,7 +9,7 @@ final class FlowTests:XCTestCase {
         for _ in 0..<4{if app.buttons["cell_6_0"].isHittable{break};edgeScroll(app,up:false)}
         let arrows=app.descendants(matching:.any)["candidate_arrows"]
         XCTAssertTrue(arrows.waitForExistence(timeout:25));XCTAssertEqual(arrows.value as? String,"3件");shot("candidate-arrows-initial")
-        let before=app.buttons["cell_6_0"].frame;tap("cell_6_0",app);XCTAssertEqual(app.buttons["cell_6_0"].value as? String,"選択");tap("cell_5_0",app)
+        let before=app.buttons["cell_5_0"].frame;tap("cell_6_0",app);XCTAssertEqual(app.buttons["cell_6_0"].value as? String,"選択");tap("cell_5_0",app)
         XCTAssertTrue(arrows.waitForExistence(timeout:25));XCTAssertEqual(arrows.value as? String,"3件");XCTAssertEqual(app.buttons["cell_5_0"].frame.size,before.size);shot("candidate-arrows-gote")
         tap("home",app);tap("mode_match",app);XCTAssertFalse(arrows.exists)
     }
