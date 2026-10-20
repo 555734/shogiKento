@@ -257,6 +257,6 @@ public final class NetplayTest {
    waitFor(()->p.relaysOpen>=2&&q.relaysOpen>=2,30000,"relays again");t0=now();a.net.seek(Netplay.QUICK,null);b.net.seek(Netplay.QUICK,null);waitFor(()->p.started()&&q.started(),60000,"live relay-only match");
    out.append("relay-only match time ").append(now()-t0).append("ms\n").append("relay-only move latency ").append(summary(play(a,b,8))).append('\n');
    out.append("PASS live public relays/STUN: ").append(checks).append(" assertions\n");
-  }finally{if(a!=null){out.append("diagnostics A:\n").append(a.net.diagnostics());a.net.close();}if(b!=null)b.net.close();System.out.print(out);if(report!=null)Files.write(Paths.get(report),out.toString().getBytes(StandardCharsets.UTF_8));}
+  }finally{if(a!=null){out.append("diagnostics A:\n").append(a.net.diagnostics());a.net.close();}if(b!=null){out.append("diagnostics B:\n").append(b.net.diagnostics());b.net.close();}System.out.print(out);if(report!=null)Files.write(Paths.get(report),out.toString().getBytes(StandardCharsets.UTF_8));}
  }
 }
