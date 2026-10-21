@@ -1,6 +1,24 @@
 # AI将棋検討: store preparation evidence
 
-Status checked on 2026-10-20 (Japan time). Package/bundle: `com.presentsoft.shogi3minutes`.
+Status checked on 2026-10-21 (Japan time). Package/bundle: `com.presentsoft.shogi3minutes`.
+
+## Current delivery: 1.16.0 (25)
+
+- Application source: `d1e44711d1e3333c94e79f5d3e73febe80a6c692`. Includes the three ranked candidate arrows, production AdMob IDs, UMP gating and the iOS purchase-presentation fix. Later `7f88be0` changes only the UI-test floating-point assertion and screenshot verification workflow; the uploaded app is unchanged.
+- Android signed APK/AAB and all 3,051 assertions passed in [run 39541441125](https://github.com/555734/shogiKento/actions/runs/39541441125). [Download build 25](https://github.com/555734/shogiKento/releases/tag/v1.16.0-store-25); source archive is linked beside the APK. Target SDK 36, existing upload signature preserved, `AD_ID` absent from the signed APK.
+- Google Play accepted AAB 25. **The owner-only closed Alpha release was sent for review on October 21; Publishing overview shows Changes in review.** The sole selected mailing list is `AI将棋検討 - 所有者内部テスト` (one user). The production track has no release. Its earlier release proposal was discarded while retaining AAB 25 in the artifact library.
+- Initial Play publication cannot use managed publishing. The Console refused to enable it, so the initial review uses a closed test, following [Google's recommendation](https://support.google.com/googleplay/android-developer/answer/9859654). After closed-test approval, check managed-publishing eligibility and prepare the production release with publication held. Review approval and that final production preparation are still outstanding; this is not a public launch.
+- iOS [signed upload 39541708210](https://github.com/555734/Kiki-public/actions/runs/39541708210) succeeded. Apple build `e05bddfe-2641-4f5c-ad1b-93ccd0f034fb` is `VALID`, selected for 1.16.0, with release type `MANUAL`.
+- The real StoreKit Test purchase, current entitlements, restart restoration, explicit `AppStore.sync()`, refund and Lv.10 relocking passed in [run 39541421277](https://github.com/555734/shogiKento/actions/runs/39541421277). That full run failed only on an exact floating-point board-size assertion (`49.999999999999986` versus `50.0`). The assertion now uses tolerance; geometry, board input/arrows and store screenshots passed on medium iPhone, large iPhone and 13-inch iPad in [run 39543082679](https://github.com/555734/shogiKento/actions/runs/39543082679).
+- Two actual candidate-arrow screenshots were added to Apple's existing screenshot assets; both placements are `ACTIVE`. Review notes describe build 25, purchase/restore paths and restricted ad behavior.
+- Apple review draft `60154e6f-bc55-41ec-8c25-eabb29f3a478` exists, but adding the app version returned a concrete missing-field error for `contentRightsDeclaration`. Owner confirmation is pending. The first `coffee_support_unlock` product remains `READY_TO_SUBMIT` and must be submitted with the app through the website; browser reauthentication is also pending. **The app and purchase have not yet been sent to Apple review.**
+
+## Production advertising preparation
+
+- The existing AdMob account and both platform app IDs plus four native placements per platform were verified in Console and embedded in release build 25. Debug builds retain official sample IDs. The publisher ID in `app-ads.txt` is a different identifier from the app and ad-unit IDs.
+- All users receive child-directed, under-age, G-rated and non-personalized request restrictions. Release builds update UMP consent information before initializing the ad SDK or requesting an ad; an unknown/disallowed result suppresses ads. Settings expose privacy options when UMP requires them.
+- The live [privacy policy](https://555734.github.io/privacy.html) was updated to match this behavior, and it and [app-ads.txt](https://555734.github.io/app-ads.txt) returned HTTP 200. The latter contains exactly the approved publisher line.
+- AdMob app readiness still says review required. Linking the unpublished apps is unavailable; [AdMob requires a supported public store listing](https://support.google.com/admob/answer/10564477). This creates a post-publication dependency. Regional consent-message creation was not completed because AdMob's embedded editor did not load. Neither ad delivery nor real-device consent behavior has been certified.
 
 ## Uploaded binaries
 
@@ -20,17 +38,17 @@ Status checked on 2026-10-20 (Japan time). Package/bundle: `com.presentsoft.shog
 - The explicitly approved temporary service-account app grant was removed after verification. Its original access to the existing Taiman Akinator app remains at 13 permissions; no account-wide permissions were added.
 - With explicit approval of Google's promotion terms, 20 single-use reviewer codes were generated for the paid product, scheduled October 21 through December 31. Five private reviewer instruction sets explain free redemption and restoration; optional partner experience-testing sharing is disabled. Keep codes out of Git and public reports. The redemption flow still needs device validation before public review.
 - Google Data Safety answers are saved for review: six SDK data types (approximate location, app interactions, device/other IDs, crash logs, diagnostics, other performance data), collection/sharing disclosed, transport encryption, no app account creation, and no developer-operated remote deletion request. No optional marketing badge is claimed. The Console confirms the changes are saved; this is not approval or publication.
-- The app-content overview now has no outstanding declarations. Store review and production release remain unsent.
+- The app-content overview has no outstanding declarations. The current closed-test review status is recorded above; production release remains unsent.
 
 ## Verification boundaries and remaining work
 
 - Actual iOS application build, normal UI flows and fresh iPhone/iPad screenshot flows passed in [run 39365244309](https://github.com/555734/shogiKento/actions/runs/39365244309).
-- **The full iOS test run failed:** `CoffeeTests.testStoreKitPurchaseRestoreRefundAndLevelGate` timed out after 180 seconds at the StoreKit 2 purchase path. The cause remains unresolved. Fixture-based UI purchase/restore tests are not evidence that StoreKit checkout or restoration works.
-- Validate purchase, restart, restore and refund in Google Play testing and Apple Sandbox/TestFlight on actual devices before review submission. No real-device checkout has been certified.
+- The older build-23 StoreKit timeout was resolved for build 25 by presenting the iOS 18.2+ purchase from a visible view controller. The current StoreKit Test results are recorded above. Fixture-based UI checks alone are not purchase evidence.
+- Validate purchase, restart, restore and refund in Google Play testing and Apple Sandbox/TestFlight on actual devices before general release. No real-device checkout has been certified.
 - Google Play API write attempts returned HTTP 403 with the minimal approved app permissions. Product registration instead completed through the owner Console session; no broader service-account grant was added.
 - Reviewer access is declared as restricted, with the official free-code instructions rather than an unrestricted-access declaration. Confirm the codes' active period before submission and replenish consumed codes if needed.
-- Ads still use Google's official sample IDs. Revenue-producing AdMob units and regional consent configuration remain separate release work. Child-directed treatment and G-rated ad limits are enabled.
-- Neither store version has been submitted for public review or released to production. A successful upload does not establish purchase acceptance, review approval or availability in every jurisdiction.
+- Real AdMob IDs are now configured; readiness, regional consent-message setup and actual ad delivery remain separate acceptance checks.
+- No general public release has occurred. A successful upload or local StoreKit Test does not establish production checkout acceptance, store approval or availability in every jurisdiction.
 
 Website: [developer site](https://555734.github.io/), [privacy](https://555734.github.io/privacy.html), [support](https://555734.github.io/support.html), [app-ads.txt](https://555734.github.io/app-ads.txt).
 
