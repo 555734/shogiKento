@@ -2,30 +2,31 @@ import SwiftUI
 import UIKit
 import GoogleMobileAds
 
-/// A test-only build: both IDs are Google's public sample IDs. There is no production switch.
+/// Native placements use sample IDs only in debug builds.
 @MainActor final class TestAdModel:NSObject,ObservableObject,NativeAdLoaderDelegate {
-    static let unit="ca-app-pub-3940256099942544/3986624511"
     @Published var nativeAd:NativeAd?
     @Published var state="loading"
-    @Published var message="公式テスト広告を読み込み中…"
+    @Published var message=AdPrivacy.testing ? "公式テスト広告を読み込み中…":"広告を読み込み中…"
     private var loader:AdLoader?
     private var alive=true
     private var started=false
     private var deadline:Task<Void,Never>?
-    let fixture=ProcessInfo.processInfo.arguments.contains("-ads-fixture") || isNativeUnitTestHost
-    func load(){guard !started else{return};started=true;alive=true
+    var placement="home"
+    var fixture:Bool {AdPrivacy.testing && (ProcessInfo.processInfo.arguments.contains("-ads-fixture") || isNativeUnitTestHost)}
+    func load(placement:String){guard !started else{return};self.placement=placement;started=true;alive=true
         if fixture{let failed=ProcessInfo.processInfo.arguments.contains("-ads-failure");state=failed ? "failed":"fixture";message=failed ? "広告を取得できません。アプリはそのまま使えます。":"表示テスト用サンプル（配信広告ではありません）";return}
         state="loading"
         deadline=Task{[weak self] in do{try await Task.sleep(nanoseconds:30_000_000_000)}catch{return};guard let self,self.alive,self.state=="loading" else{return};self.state="failed";self.message="広告の読み込みがタイムアウトしました。アプリはそのまま使えます。";self.loader?.delegate=nil;self.loader=nil}
         MobileAds.shared.requestConfiguration.tagForChildDirectedTreatment=true
+        MobileAds.shared.requestConfiguration.tagForUnderAgeOfConsent=true
         MobileAds.shared.requestConfiguration.maxAdContentRating = .general
-        MobileAds.shared.start { [weak self] _ in Task{@MainActor in self?.request()} }
+        AdPrivacy.shared.gather{[weak self] allowed in guard let self,self.alive,self.state=="loading" else{return};guard allowed else{self.state="failed";self.message="広告のプライバシー設定を確認できません。アプリはそのまま使えます。";return};MobileAds.shared.start { [weak self] _ in Task{@MainActor in self?.request()} }}
     }
     private func request(){guard alive,state=="loading" else{return};let video=VideoOptions();video.shouldStartMuted=true
-        loader=AdLoader(adUnitID:Self.unit,rootViewController:nil,adTypes:[.native],options:[video]);loader?.delegate=self
+        loader=AdLoader(adUnitID:AdPrivacy.unit(placement),rootViewController:nil,adTypes:[.native],options:[video]);loader?.delegate=self
         let request=Request(),extras=Extras();extras.additionalParameters=["npa":"1"];request.register(extras);loader?.load(request)
     }
-    func adLoader(_ adLoader:AdLoader,didReceive nativeAd:NativeAd){guard alive,state=="loading" else{return};deadline?.cancel();self.nativeAd=nativeAd;state="loaded";message="Google公式テスト広告 · 収益は発生しません"}
+    func adLoader(_ adLoader:AdLoader,didReceive nativeAd:NativeAd){guard alive,state=="loading" else{return};deadline?.cancel();self.nativeAd=nativeAd;state="loaded";message=AdPrivacy.testing ? "Google公式テスト広告 · 収益は発生しません":"広告"}
     func adLoader(_ adLoader:AdLoader,didFailToReceiveAdWithError error:Error){guard alive else{return};deadline?.cancel();state="failed";message="広告を取得できません。アプリはそのまま使えます。"}
     func close(){alive=false;deadline?.cancel();loader?.delegate=nil;loader=nil;nativeAd=nil;started=false}
 }
@@ -35,12 +36,12 @@ struct TestAdSlot:View {
     @EnvironmentObject var coffee:CoffeeStore
     @StateObject private var model=TestAdModel()
     var body:some View {if !coffee.owned {VStack(alignment:.leading,spacing:8){
-        Text("広告 · テスト広告").font(.caption.bold()).foregroundStyle(.black)
+        Text(AdPrivacy.testing ? "広告 · テスト広告":"広告").font(.caption.bold()).foregroundStyle(.black)
         Text(model.message).font(.caption).foregroundStyle(.black).accessibilityIdentifier("ad_status_"+placement).accessibilityValue(model.state)
         if let ad=model.nativeAd{NativeTestAdContainer(ad:ad)}
         else if model.fixture{VStack(alignment:.leading,spacing:18){Image(systemName:"square.grid.3x3.fill").font(.system(size:48));Text("棋力を伸ばす毎日の一手。").font(.title3.bold());Text("広告と盤面の操作は独立しています。\n通信を行わないレイアウト検証用です。").font(.caption)}.foregroundStyle(.brown).frame(maxWidth:.infinity,maxHeight:.infinity,alignment:.center)}
         else{Spacer(minLength:0)}
-    }.padding(12).frame(height:360).frame(maxWidth:.infinity).background(LinearGradient(colors:[Color(red:1,green:0.94,blue:0.81),Color(red:0.91,green:0.78,blue:0.55)],startPoint:.leading,endPoint:.trailing)).clipShape(RoundedRectangle(cornerRadius:10)).overlay(RoundedRectangle(cornerRadius:10).stroke(.brown)).accessibilityElement(children:.contain).accessibilityIdentifier("ad_"+placement).onAppear{model.load()}.onDisappear{model.close()}}}
+    }.padding(12).frame(height:360).frame(maxWidth:.infinity).background(LinearGradient(colors:[Color(red:1,green:0.94,blue:0.81),Color(red:0.91,green:0.78,blue:0.55)],startPoint:.leading,endPoint:.trailing)).clipShape(RoundedRectangle(cornerRadius:10)).overlay(RoundedRectangle(cornerRadius:10).stroke(.brown)).accessibilityElement(children:.contain).accessibilityIdentifier("ad_"+placement).onAppear{model.load(placement:placement)}.onDisappear{model.close()}}}
 }
 
 struct NativeTestAdContainer:UIViewRepresentable {

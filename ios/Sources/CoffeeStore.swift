@@ -1,5 +1,6 @@
 import SwiftUI
 import StoreKit
+import UIKit
 
 #if DEBUG
 let isNativeUnitTestHost=ProcessInfo.processInfo.environment["BENI_UNIT_TEST_HOST"] == "1" || ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil || NSClassFromString("XCTestCase") != nil
@@ -54,7 +55,14 @@ let isNativeUnitTestHost=false
         if fixture{owned=true;offerPending=false;message="購入テストが完了しました（実際の請求なし）。";return}
         #endif
         guard let product else{return};busy=true;defer{busy=false}
-        do {switch try await product.purchase(){
+        do {
+        let result:Product.PurchaseResult
+        if #available(iOS 18.2,*){
+            guard var presenter=UIApplication.shared.connectedScenes.compactMap({$0 as? UIWindowScene}).first(where:{$0.activationState == .foregroundActive})?.windows.first(where:{$0.isKeyWindow})?.rootViewController else{message="購入画面を開けません。アプリを前面にして再試行してください。";return}
+            while let next=presenter.presentedViewController{presenter=next}
+            result=try await product.purchase(confirmIn:presenter)
+        }else{result=try await product.purchase()}
+        switch result{
         case .success(let result):guard case .verified(let transaction)=result,transaction.productID==Self.productID,transaction.productType == .nonConsumable,transaction.revocationDate==nil else{message="購入情報を検証できませんでした。購入の復元をお試しください。";return};generation+=1;owned=true;offerPending=false;await transaction.finish();message="ありがとうございます。広告除去と最強AI Lv.10を解放しました。"
         case .pending:message="お支払いの完了を待っています。完了後に特典を有効にします。"
         case .userCancelled:message="購入をキャンセルしました。"

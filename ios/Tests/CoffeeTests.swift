@@ -18,6 +18,7 @@ final class CoffeeTests:XCTestCase {
         await coffee.loadProduct();XCTAssertNotNil(coffee.product);XCTAssertEqual(coffee.product?.price,200);NSLog("Coffee StoreKit: local product loaded")
         // Exercise the app's StoreKit 2 purchase path, rather than substituting
         // the fixture purchase implementation used by separate UI tests.
+        NSLog("Coffee StoreKit: beginning production purchase with visible presentation context")
         coffee.observeTransactions();await coffee.buy()
         XCTAssertTrue(coffee.owned,"The production purchase path must verify Apple's local transaction")
         NSLog("Coffee StoreKit: StoreKit 2 purchase completed")

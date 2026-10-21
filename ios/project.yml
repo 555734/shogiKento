@@ -10,9 +10,12 @@ settings:
     SWIFT_STRICT_CONCURRENCY: minimal
     IPHONEOS_DEPLOYMENT_TARGET: '16.0'
     CODE_SIGNING_ALLOWED: NO
-    CURRENT_PROJECT_VERSION: '24'
+    CURRENT_PROJECT_VERSION: '25'
     MARKETING_VERSION: '1.16.0'
 packages:
+  GoogleUserMessagingPlatform:
+    url: https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git
+    exactVersion: 3.1.0
   GoogleMobileAds:
     url: https://github.com/googleads/swift-package-manager-google-mobile-ads.git
     exactVersion: 12.14.0
@@ -23,6 +26,8 @@ targets:
     dependencies:
       - package: GoogleMobileAds
         product: GoogleMobileAds
+      - package: GoogleUserMessagingPlatform
+        product: GoogleUserMessagingPlatform
     sources:
       - path: Sources
       - path: StoreKit/CoffeeSupport.storekit
@@ -34,12 +39,16 @@ targets:
         type: folder
     settings:
       base:
+        ADMOB_APP_ID: ca-app-pub-6772282664898856~6282999949
         PRODUCT_BUNDLE_IDENTIFIER: com.presentsoft.shogi3minutes
         SWIFT_OBJC_BRIDGING_HEADER: Engine/Bridging.h
         HEADER_SEARCH_PATHS: '$(SRCROOT)/Engine'
         OTHER_LDFLAGS: '$(inherited) -Wl,-force_load,$(SRCROOT)/build/engine/$(PLATFORM_NAME)/libBKEngine.a -lc++'
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         TARGETED_DEVICE_FAMILY: '1,2'
+      configs:
+        Debug:
+          ADMOB_APP_ID: ca-app-pub-3940256099942544~1458002511
     info:
       path: build/Info.plist
       properties:
@@ -52,8 +61,8 @@ targets:
         LSRequiresIPhoneOS: true
         CFBundleDisplayName: AI将棋検討
         CFBundleShortVersionString: '1.16.0'
-        CFBundleVersion: '24'
-        GADApplicationIdentifier: ca-app-pub-3940256099942544~1458002511
+        CFBundleVersion: '25'
+        GADApplicationIdentifier: '$(ADMOB_APP_ID)'
         UILaunchScreen: {}
         UIRequiresFullScreen: true
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]

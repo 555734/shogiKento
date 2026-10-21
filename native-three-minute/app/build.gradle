@@ -7,7 +7,7 @@ android {
         applicationId 'com.presentsoft.shogi3minutes'
         minSdk 24
         targetSdk 36
-        versionCode 24
+        versionCode 25
         versionName '1.16.0'
         buildConfigField 'String', 'PLAY_BILLING_PUBLIC_KEY', groovy.json.JsonOutput.toJson(System.getenv('PLAY_BILLING_PUBLIC_KEY') ?: '')
         ndk { abiFilters 'arm64-v8a', 'x86_64' }
@@ -24,7 +24,11 @@ android {
             }
         }
     }
-    buildTypes { release { signingConfig signingConfigs.release } }
+    defaultConfig { manifestPlaceholders = [admobAppId:'ca-app-pub-6772282664898856~6223290198'] }
+    buildTypes {
+        debug { manifestPlaceholders = [admobAppId:'ca-app-pub-3940256099942544~3347511713'] }
+        release { signingConfig signingConfigs.release }
+    }
     packaging { jniLibs { useLegacyPackaging = true } }
     ndkVersion '27.2.12479018'
     compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
@@ -38,3 +42,4 @@ android {
 dependencies { implementation 'com.google.android.gms:play-services-ads:25.5.0' }
 
 dependencies { implementation 'com.android.billingclient:billing:9.1.0' }
+dependencies { implementation 'com.google.android.ump:user-messaging-platform:4.0.0' }
