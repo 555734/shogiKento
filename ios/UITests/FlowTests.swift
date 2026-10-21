@@ -10,7 +10,7 @@ final class FlowTests:XCTestCase {
         let arrows=app.descendants(matching:.any)["candidate_arrows"]
         XCTAssertTrue(arrows.waitForExistence(timeout:25));XCTAssertEqual(arrows.value as? String,"3件");shot("candidate-arrows-initial")
         let before=app.buttons["cell_5_0"].frame;tap("cell_6_0",app);XCTAssertEqual(app.buttons["cell_6_0"].value as? String,"選択");tap("cell_5_0",app)
-        XCTAssertTrue(arrows.waitForExistence(timeout:25));XCTAssertEqual(arrows.value as? String,"3件");XCTAssertEqual(app.buttons["cell_5_0"].frame.size,before.size);shot("candidate-arrows-gote")
+        XCTAssertTrue(arrows.waitForExistence(timeout:25));XCTAssertEqual(arrows.value as? String,"3件");let after=app.buttons["cell_5_0"].frame;XCTAssertEqual(after.width,before.width,accuracy:0.001);XCTAssertEqual(after.height,before.height,accuracy:0.001);shot("candidate-arrows-gote")
         tap("home",app);tap("mode_match",app);XCTAssertFalse(arrows.exists)
     }
     func testStoreScreenshots()throws {

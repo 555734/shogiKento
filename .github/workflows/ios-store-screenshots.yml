@@ -35,6 +35,7 @@ jobs:
           import json
           devices=[v for a in json.load(open('outputs/simulators.json'))['devices'].values() for v in a]
           print(next(v['udid'] for v in devices if v['name']=='iPhone 16 Pro'))
+          print(next(v['udid'] for v in devices if 'Pro Max' in v['name']))
           print(next(v['udid'] for v in devices if 'iPad Pro 13-inch' in v['name']))
           PY
           while read -r udid; do
