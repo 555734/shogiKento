@@ -1,6 +1,6 @@
 # AI将棋検討: store preparation evidence
 
-Status checked on 2026-10-21 (Japan time). Package/bundle: `com.presentsoft.shogi3minutes`.
+Status checked on 2026-10-22 (Japan time). Package/bundle: `com.presentsoft.shogi3minutes`.
 
 ## Current delivery: 1.16.0 (25)
 
@@ -8,11 +8,11 @@ Status checked on 2026-10-21 (Japan time). Package/bundle: `com.presentsoft.shog
 - Android signed APK/AAB and all 3,051 assertions passed in [run 39541441125](https://github.com/555734/shogiKento/actions/runs/39541441125). [Download build 25](https://github.com/555734/shogiKento/releases/tag/v1.16.0-store-25); source archive is linked beside the APK. Target SDK 36, existing upload signature preserved, `AD_ID` absent from the signed APK.
 - Google Play accepted AAB 25. **The owner-only closed Alpha submission completed its initial review on October 21.** Submission activity lists submission 1 as published; that submission's production changes contained only country targeting, while its binary was in Alpha. The sole selected mailing list is `AI将棋検討 - 所有者内部テスト` (one user). This does not establish general production availability.
 - Initial Play publication could not use managed publishing, so the first review used a closed test, following [Google's recommendation](https://support.google.com/googleplay/android-developer/answer/9859654). After that review, **managed publishing was enabled successfully and verified as On.** Production release 25 (1.16.0) has now been created from the existing signed AAB, validated and saved. Quick checks completed; only the known missing mapping/native-symbol warnings remain.
-- **Production review is not yet confirmed:** submitting its confirmation dialog returned to Changes not yet sent for review, without a visible error, and a fresh page still showed the same state. Submission activity had no second submission. The owner was asked to perform only the Send for review step manually; no general Publish action is authorized. Keep managed publishing On and verify a real submission record or review state before claiming production review has started.
+- **Production review is now confirmed:** on October 22, the live Publishing overview lists production `25 (1.16.0)` under Changes in review and states that the changes are currently being reviewed. Managed publishing remains **On**. The earlier unsubmitted state has been superseded; no further manual Send for review action is needed. General publication has not been performed and remains unauthorized.
 - iOS [signed upload 39541708210](https://github.com/555734/Kiki-public/actions/runs/39541708210) succeeded. Apple build `e05bddfe-2641-4f5c-ad1b-93ccd0f034fb` is `VALID`, selected for 1.16.0, with release type `MANUAL`.
 - The real StoreKit Test purchase, current entitlements, restart restoration, explicit `AppStore.sync()`, refund and Lv.10 relocking passed in [run 39541421277](https://github.com/555734/shogiKento/actions/runs/39541421277). That full run failed only on an exact floating-point board-size assertion (`49.999999999999986` versus `50.0`). The assertion now uses tolerance; geometry, board input/arrows and store screenshots passed on medium iPhone, large iPhone and 13-inch iPad in [run 39543082679](https://github.com/555734/shogiKento/actions/runs/39543082679).
 - Two actual candidate-arrow screenshots were added to Apple's existing screenshot assets; both placements are `ACTIVE`. Review notes describe build 25, purchase/restore paths and restricted ad behavior.
-- After explicit owner approval, `contentRightsDeclaration` was saved as `USES_THIRD_PARTY_CONTENT` and verified in the website and API. **Apple accepted both 1.16.0 (25) and the first `coffee_support_unlock` purchase in the same submission at 2026-10-21 21:41 JST.** Submission `60154e6f-bc55-41ec-8c25-eabb29f3a478`, app version and purchase all report `WAITING_FOR_REVIEW`; release type remains `MANUAL`. The website confirms two submitted items. Neither review approval nor public release has occurred.
+- After explicit owner approval, `contentRightsDeclaration` was saved as `USES_THIRD_PARTY_CONTENT` and verified in the website and API. **Apple accepted both 1.16.0 (25) and the first `coffee_support_unlock` purchase in the same submission at 2026-10-21 21:41 JST.** On October 22, the API still reports submission `60154e6f-bc55-41ec-8c25-eabb29f3a478`, app version and purchase as `WAITING_FOR_REVIEW`; release type remains `MANUAL`. The website previously confirmed two submitted items. Neither review approval nor public release has occurred.
 
 ## Production advertising preparation
 
@@ -45,7 +45,7 @@ Status checked on 2026-10-21 (Japan time). Package/bundle: `com.presentsoft.shog
 - The explicitly approved temporary service-account app grant was removed after verification. Its original access to the existing Taiman Akinator app remains at 13 permissions; no account-wide permissions were added.
 - With explicit approval of Google's promotion terms, 20 single-use reviewer codes were generated for the paid product, scheduled October 21 through December 31. Five private reviewer instruction sets explain free redemption and restoration; optional partner experience-testing sharing is disabled. Keep codes out of Git and public reports. The redemption flow still needs device validation before public review.
 - Google Data Safety answers are saved for review: six SDK data types (approximate location, app interactions, device/other IDs, crash logs, diagnostics, other performance data), collection/sharing disclosed, transport encryption, no app account creation, and no developer-operated remote deletion request. No optional marketing badge is claimed. The Console confirms the changes are saved; this is not approval or publication.
-- The app-content overview has no outstanding declarations. The current closed-test review status is recorded above; production release remains unsent.
+- The app-content overview has no outstanding declarations. The current production release is in review, as recorded above.
 
 ## Verification boundaries and remaining work
 
