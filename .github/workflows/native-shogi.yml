@@ -25,12 +25,16 @@ jobs:
           log-accepted-android-sdk-licenses: false
       - uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '8.9'
+          gradle-version: '8.11.1'
       - name: Rule and clock assertions
         run: |
           mkdir -p test-classes outputs
-          javac -d test-classes app/src/main/java/com/presentsoft/shogi3minutes/ShogiGame.java app/src/main/java/com/presentsoft/shogi3minutes/MatchClock.java app/src/main/java/com/presentsoft/shogi3minutes/UsiPosition.java app/src/main/java/com/presentsoft/shogi3minutes/StudySession.java app/src/main/java/com/presentsoft/shogi3minutes/StudyAnalysis.java app/src/main/java/com/presentsoft/shogi3minutes/EvaluationHistory.java tests/EvaluationTest.java tests/AnalysisTest.java tests/StudyTest.java tests/RulesTest.java tests/RuleProbe.java app/src/main/java/com/presentsoft/shogi3minutes/UsiProcess.java tests/ProtocolTest.java
+          javac -d test-classes app/src/main/java/com/presentsoft/shogi3minutes/ShogiGame.java app/src/main/java/com/presentsoft/shogi3minutes/MatchClock.java app/src/main/java/com/presentsoft/shogi3minutes/UsiPosition.java app/src/main/java/com/presentsoft/shogi3minutes/StudySession.java app/src/main/java/com/presentsoft/shogi3minutes/StudyAnalysis.java app/src/main/java/com/presentsoft/shogi3minutes/EvaluationHistory.java tests/EvaluationTest.java tests/AnalysisTest.java tests/StudyTest.java tests/RulesTest.java tests/RuleProbe.java app/src/main/java/com/presentsoft/shogi3minutes/UsiProcess.java tests/ProtocolTest.java tests/StudyHistoryTest.java app/src/main/java/com/presentsoft/shogi3minutes/KifRecord.java tests/KifRecordTest.java app/src/main/java/com/presentsoft/shogi3minutes/SavedRecord.java app/src/main/java/com/presentsoft/shogi3minutes/RecordStore.java app/src/main/java/com/presentsoft/shogi3minutes/MatchJournal.java tests/RecordStoreTest.java app/src/main/java/com/presentsoft/shogi3minutes/MatchOptions.java tests/MatchOptionsTest.java
+          java -cp test-classes com.presentsoft.shogi3minutes.MatchOptionsTest | tee outputs/match_options_host.txt
+          java -cp test-classes com.presentsoft.shogi3minutes.RecordStoreTest tests/fixtures/shogi_quest_79.kif | tee outputs/record_archive_host.txt
           chmod +x tests/fake_usi.py
+          java -cp test-classes com.presentsoft.shogi3minutes.KifRecordTest tests/fixtures/shogi_quest_79.kif outputs/kif_positions.txt | tee outputs/kif_import_host.txt
+          java -cp test-classes com.presentsoft.shogi3minutes.StudyHistoryTest | tee outputs/graph_history.txt
           java -cp test-classes com.presentsoft.shogi3minutes.ProtocolTest tests/fake_usi.py | tee outputs/protocol.txt
           java -cp test-classes com.presentsoft.shogi3minutes.RulesTest | tee outputs/rules.txt
           java -cp test-classes com.presentsoft.shogi3minutes.StudyTest | tee outputs/study.txt
@@ -38,22 +42,24 @@ jobs:
           java -cp test-classes com.presentsoft.shogi3minutes.EvaluationTest | tee outputs/evaluation.txt
           pip install python-shogi==1.1.1 py7zr==1.1.4
           python tests/differential.py test-classes | tee outputs/differential.txt
+          python tests/verify_quest_record.py tests/fixtures/shogi_quest_79.kif outputs/kif_positions.txt | tee outputs/kif_independent.txt
       - name: Prepare pinned micro model and complete GPL source
         run: python scripts/prepare_yaneura.py
       - name: Build installable native APKs
         env:
           GH_TOKEN: ${{ github.token }}
+          PLAY_BILLING_PUBLIC_KEY: ${{ vars.PLAY_BILLING_PUBLIC_KEY }}
         run: |
-          sdkmanager 'build-tools;35.0.0' 'platforms;android-35'
+          sdkmanager 'build-tools;35.0.0' 'platforms;android-36'
           if ! python scripts/restore_native_cache.py; then
             sdkmanager 'ndk;27.2.12479018' 'cmake;3.22.1'
             python scripts/build_yaneura.py --ndk "$ANDROID_HOME/ndk/27.2.12479018"
             python scripts/prepare_ndk_notices.py "$ANDROID_HOME/ndk/27.2.12479018"
           fi
           base64 -d debug.keystore.b64 > debug.keystore
-          gradle wrapper --gradle-version 8.9
+          gradle wrapper --gradle-version 8.11.1
           chmod +x gradlew
-          ./gradlew --no-daemon assembleDebug assembleDebugAndroidTest
+          ./gradlew --no-daemon assembleDebug assembleDebugAndroidTest :app:compileReleaseJavaWithJavac
           python scripts/verify_apk.py app/build/outputs/apk/debug/app-debug.apk
           cp app/build/outputs/apk/debug/app-debug.apk outputs/Shogi_3min.apk
           $ANDROID_HOME/build-tools/35.0.0/apksigner verify --verbose outputs/Shogi_3min.apk | tee outputs/signature.txt
@@ -70,13 +76,13 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
       - name: Install, launch, play and capture real UI
-        timeout-minutes: 10
+        timeout-minutes: 12
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          emulator-boot-timeout: 180
-          api-level: 35
+          emulator-boot-timeout: 240
+          api-level: 36
           arch: x86_64
-          target: google_apis
+          target: google_apis_playstore
           profile: pixel_2
           working-directory: native-three-minute
           emulator-options: -no-window -gpu software -no-snapshot -noaudio -no-boot-anim -camera-back none -memory 4096 -partition-size 2048
@@ -93,6 +99,7 @@ jobs:
             for p in Path('.').rglob('*'):
               if p.is_file() and not any(x in p.parts for x in ['.gradle','build','outputs','test-classes','.git','.ai-cache','host-bench','.cxx','__pycache__','jniLibs']) and p.name!='local.properties':
                 z.write(p,Path('shogi_3min_complete_native')/p)
+            z.write('../.github/workflows/native-shogi.yml',Path('shogi_3min_complete_native')/'ci/native-shogi.yml')
           PY
       - name: Save APK, source and verification to build branch
         if: always()
@@ -105,4 +112,62 @@ jobs:
           git add -f outputs/
           git commit -m "Native shogi build $GITHUB_RUN_ID outputs"
           git push origin HEAD
+  play-release:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: native-three-minute
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+      - name: Prepare pinned model and native engines
+        run: |
+          set -euo pipefail
+          pip install py7zr==1.1.4
+          python scripts/prepare_yaneura.py
+          python scripts/restore_native_cache.py
+          sdkmanager 'build-tools;35.0.0' 'platforms;android-36'
+      - name: Build signed Play bundle and APK
+        env:
+          UPLOAD_KEY_BASE64: ${{ secrets.SHOGI_UPLOAD_KEYSTORE_BASE64 }}
+          SHOGI_UPLOAD_PASSWORD: ${{ secrets.SHOGI_UPLOAD_PASSWORD }}
+          SHOGI_UPLOAD_ALIAS: shogi-upload
+          PLAY_BILLING_PUBLIC_KEY: ${{ vars.PLAY_BILLING_PUBLIC_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$UPLOAD_KEY_BASE64"
+          test -n "$SHOGI_UPLOAD_PASSWORD"
+          test -n "$PLAY_BILLING_PUBLIC_KEY"
+          export SHOGI_UPLOAD_KEYSTORE="$RUNNER_TEMP/shogi-upload.p12"
+          trap 'rm -f "$SHOGI_UPLOAD_KEYSTORE"' EXIT
+          printf '%s' "$UPLOAD_KEY_BASE64" | base64 -d > "$SHOGI_UPLOAD_KEYSTORE"
+          gradle --no-daemon :app:bundleRelease :app:assembleRelease
+          mkdir -p outputs/play-release
+          cp app/build/outputs/bundle/release/app-release.aab outputs/play-release/AI-Shogi-Kento-1.16.0-25.aab
+          cp app/build/outputs/apk/release/app-release.apk outputs/play-release/AI-Shogi-Kento-1.16.0-25.apk
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs outputs/play-release/*.apk > outputs/play-release/signature.txt
+          "$ANDROID_HOME/build-tools/35.0.0/aapt2" dump badging outputs/play-release/*.apk > outputs/play-release/package.txt
+          grep -q "targetSdkVersion:'36'" outputs/play-release/package.txt
+          if grep -q 'application-debuggable' outputs/play-release/package.txt; then exit 1; fi
+          jarsigner -verify outputs/play-release/*.aab
+          sha256sum outputs/play-release/*.aab outputs/play-release/*.apk > outputs/play-release/SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AI-Shogi-Kento-Play-Release-${{ github.run_id }}
+          path: native-three-minute/outputs/play-release/
+          retention-days: 30
+
 

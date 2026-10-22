@@ -1,0 +1,60 @@
+name: iOS required store screenshots
+on:
+  workflow_dispatch:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  screenshots:
+    runs-on: macos-15
+    timeout-minutes: 30
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_26.3.app/Contents/Developer
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare simulator app
+        run: |
+          set -euo pipefail
+          python -m pip install py7zr==1.1.4 python-shogi==1.1.1 Pillow==11.3.0
+          python native-three-minute/scripts/prepare_yaneura.py
+          python ios/scripts/prepare.py
+          python ios/scripts/build_engine.py --sdk iphonesimulator
+          if ! command -v xcodegen >/dev/null; then brew install xcodegen; fi
+          cd ios
+          xcodegen generate
+      - name: Verify board arrows and capture medium iPhone and iPad screenshots
+        working-directory: ios
+        run: |
+          set -euo pipefail
+          mkdir -p outputs
+          xcrun simctl list devices available -j > outputs/simulators.json
+          python - <<'PY' > outputs/store-devices.txt
+          import json
+          devices=[v for a in json.load(open('outputs/simulators.json'))['devices'].values() for v in a]
+          print(next(v['udid'] for v in devices if v['name']=='iPhone 16 Pro'))
+          print(next(v['udid'] for v in devices if 'Pro Max' in v['name']))
+          print(next(v['udid'] for v in devices if 'iPad Pro 13-inch' in v['name']))
+          PY
+          while read -r udid; do
+            xcrun simctl boot "$udid" || true
+            xcrun simctl bootstatus "$udid" -b
+            # Focused board/UI verification. This does not certify StoreKit checkout.
+            xcodebuild -project BeniShogi.xcodeproj -scheme BeniShogi -configuration Debug -destination "platform=iOS Simulator,id=$udid" -derivedDataPath build/StoreData -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -resultBundlePath "outputs/Store-$udid.xcresult" -only-testing:BeniShogiTests/CoreTests/testCandidateArrowGeometry -only-testing:BeniShogiUITests/FlowTests/testCandidateArrowsAndBoardInput -only-testing:BeniShogiUITests/FlowTests/testStoreScreenshots test 2>&1 | tee "outputs/store-$udid.txt"
+            xcrun simctl shutdown "$udid"
+          done < outputs/store-devices.txt
+      - name: Export actual UI attachments
+        if: always()
+        run: |
+          for result in ios/outputs/Store-*.xcresult; do
+            test -d "$result" || continue
+            xcrun xcresulttool export attachments --path "$result" --output-path "${result%.xcresult}-screenshots" || true
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: AI-Shogi-Kento-store-screenshots-${{ github.run_id }}
+          path: ios/outputs/
+          retention-days: 14

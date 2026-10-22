@@ -16,19 +16,25 @@ final class EvaluationHistory implements Serializable {
  }
  static final class Point implements Serializable {
   private static final long serialVersionUID=1L;
-  final String key;Score score;
+  final String key;Score score;int side;String label;
   Point(String key){this.key=key;}
  }
- final ArrayList<Point> points=new ArrayList<>();int cursor,firstEdit;
- static String key(ShogiGame g){String[] s=UsiPosition.sfen(g).split(" ");return s[0]+" "+s[2];}
- void reset(String key){points.clear();points.add(new Point(key));cursor=firstEdit=0;}
+ final ArrayList<Point> points=new ArrayList<>();int cursor,firstEdit;boolean imported;String title;
+ static String key(ShogiGame g){String[] s=UsiPosition.sfen(g).split(" ");StringBuilder hand=new StringBuilder(s[2].equals("-")?"":s[2]);for(int side=0;side<2;side++)if(g.hands[side][8]>0){if(g.hands[side][8]>1)hand.append(g.hands[side][8]);hand.append(side==0?'K':'k');}return s[0]+" "+(hand.length()==0?"-":hand.toString());}
+ void reset(String key){points.clear();points.add(new Point(key));cursor=firstEdit=0;imported=false;title=null;}
+ void load(KifRecord record){points.clear();firstEdit=0;imported=true;title=record.title;for(int i=0;i<record.positions.size();i++){Point p=new Point(record.positions.get(i));p.side=i%2==0?1:-1;p.label=record.labels.get(i);points.add(p);}cursor=points.size()-1;}
+ void load(SavedRecord record){points.clear();firstEdit=record.firstPly;imported=true;title=record.title;for(int i=0;i<record.positions.size();i++){Point p=new Point(record.positions.get(i));p.side=record.sides.get(i);p.label=record.labels.get(i);points.add(p);}cursor=points.size()-1;}
  void sync(String key){if(points.isEmpty()||!points.get(cursor).key.equals(key))reset(key);}
  void advance(String key){if(points.isEmpty()){reset(key);return;}if(points.get(cursor).key.equals(key))return;
   while(points.size()>cursor+1)points.remove(points.size()-1);points.add(new Point(key));cursor++;
-  if(points.size()>LIMIT){points.remove(0);cursor--;firstEdit++;}
+  if(!imported&&points.size()>LIMIT){points.remove(0);cursor--;firstEdit++;}
  }
  void undo(String key){if(cursor>0&&points.get(cursor-1).key.equals(key))cursor--;else reset(key);}
  boolean complete(String key,Score score){if(points.isEmpty()||!points.get(cursor).key.equals(key))return false;points.get(cursor).score=score;return true;}
  int currentEdit(){return firstEdit+cursor;}
+ List<String> keys(){ArrayList<String> result=new ArrayList<>();for(Point p:points)result.add(p.key);return result;}
+ boolean seek(int index){if(index<0||index>=points.size())return false;cursor=index;return true;}
+ void side(int side){if(!points.isEmpty())points.get(cursor).side=side;}
+ int side(){int value=points.isEmpty()?0:points.get(cursor).side;return value==1||value==-1?value:1;}
  Score current(){return points.isEmpty()?null:points.get(cursor).score;}
 }

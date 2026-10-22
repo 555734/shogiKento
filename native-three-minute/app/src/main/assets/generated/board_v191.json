@@ -1,0 +1,9 @@
+{
+  "file": "board_v191.webp",
+  "sha256": "0d83714b6ff671aaba0580e965b88c095d94ded0e5e781ef16a09c314f3f2f99",
+  "width": 1226,
+  "height": 1283,
+  "lossless": true,
+  "generated_png_sha256": "5c382ac5e6102b7a3b380bc9bd8ab531447b0fb7584b7c53a7fedfafb088112e",
+  "usage": "Plain amber wood, no baked grid; native Canvas draws the exact grid."
+}

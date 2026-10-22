@@ -1,23 +1,18 @@
-"""Reuse only our exact pinned, previously CI-built native engine objects."""
-import hashlib,json,os,pathlib,subprocess,sys,zipfile
+"""Restore this repository's exact, provenance-pinned native engine binaries."""
+import gzip,hashlib,json,pathlib,sys
 root=pathlib.Path(__file__).resolve().parents[1]
 recipe=(root/'scripts/build_yaneura.py').read_bytes()+(root/'scripts/prepare_yaneura.py').read_bytes()
-if hashlib.sha256(recipe).hexdigest()!='1ad312d1a6271f7878f02e30943fb393f5858d7a38d617e3ce92072f2570192f':
+manifest=json.loads((root/'native-cache/manifest.json').read_text())
+if hashlib.sha256(recipe).hexdigest()!=manifest['recipe_sha256']:
  print('Native recipe changed; compile from source instead.');sys.exit(3)
-cache=root/'.ai-cache/ci-native.apk';cache.parent.mkdir(exist_ok=True)
-subprocess.run(['git','fetch','origin','build/native-shogi-39040500303'],cwd=root,check=True)
-with cache.open('wb') as out:
- subprocess.run(['git','show','FETCH_HEAD:native-three-minute/outputs/Shogi_3min.apk'],cwd=root,stdout=out,check=True)
-assert hashlib.sha256(cache.read_bytes()).hexdigest()=='d33141217ffbe29c95b34b0ab5a279a1cc33df10e5510070ea2a7d142f9a242a'
 records=[]
-with zipfile.ZipFile(cache) as z:
- for abi in ['arm64-v8a','x86_64']:
-  for name in ['libyaneuraou.so','libyaneuraou_compat.so']:
-   data=z.read('lib/'+abi+'/'+name);dest=root/'app/src/main/jniLibs'/abi/name;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(data);dest.chmod(0o755)
-   records.append(dict(abi=abi,engine=name,sha256=hashlib.sha256(data).hexdigest()))
- for name in z.namelist():
-  if name.startswith('assets/licenses/Android-NDK-NOTICE'):
-   (root/'app/src/main/assets/licenses'/pathlib.PurePosixPath(name).name).write_bytes(z.read(name))
-(root/'outputs/native_cache.json').write_text(json.dumps(dict(source_run=39040500303,recipe_sha256=hashlib.sha256(recipe).hexdigest(),native_objects=records),indent=2))
-print('PASS exact previously built native objects and NDK notices restored; application Java will be rebuilt.')
-
+for spec in manifest['files']:
+ raw=(root/spec['path']).read_bytes();assert hashlib.sha256(raw).hexdigest()==spec['gzip_sha256']
+ data=gzip.decompress(raw);assert len(data)==spec['bytes'] and hashlib.sha256(data).hexdigest()==spec['sha256']
+ rel=pathlib.PurePosixPath(spec['path']);abi=rel.parts[-2];name=rel.name[:-3];dest=root/'app/src/main/jniLibs'/abi/name;dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(data);dest.chmod(0o755)
+ records.append(dict(abi=abi,engine=name,sha256=spec['sha256']))
+assert len(records)==4
+for n in ['Android-NDK-NOTICE.txt','Android-NDK-NOTICE.toolchain.txt']:assert (root/'app/src/main/assets/licenses'/n).is_file()
+(root/'outputs').mkdir(exist_ok=True)
+(root/'outputs/native_cache.json').write_text(json.dumps(dict(source_run=manifest['source_run'],source_apk_sha256=manifest['source_apk_sha256'],recipe_sha256=manifest['recipe_sha256'],native_objects=records,repository_local_cache=True),indent=2))
+print('PASS repository-local pinned native cache restored; no access to the previous private repository is needed.')
