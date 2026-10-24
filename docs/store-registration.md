@@ -1,6 +1,6 @@
 # AI将棋検討: store preparation evidence
 
-Status checked on 2026-10-22 (Japan time). Package/bundle: `com.presentsoft.shogi3minutes`.
+Status checked on 2026-10-25 (Japan time). Package/bundle: `com.presentsoft.shogi3minutes`.
 
 ## Current delivery: 1.16.0 (25)
 
@@ -13,6 +13,7 @@ Status checked on 2026-10-22 (Japan time). Package/bundle: `com.presentsoft.shog
 - The real StoreKit Test purchase, current entitlements, restart restoration, explicit `AppStore.sync()`, refund and Lv.10 relocking passed in [run 39541421277](https://github.com/555734/shogiKento/actions/runs/39541421277). That full run failed only on an exact floating-point board-size assertion (`49.999999999999986` versus `50.0`). The assertion now uses tolerance; geometry, board input/arrows and store screenshots passed on medium iPhone, large iPhone and 13-inch iPad in [run 39543082679](https://github.com/555734/shogiKento/actions/runs/39543082679).
 - Two actual candidate-arrow screenshots were added to Apple's existing screenshot assets; both placements are `ACTIVE`. Review notes describe build 25, purchase/restore paths and restricted ad behavior.
 - After explicit owner approval, `contentRightsDeclaration` was saved as `USES_THIRD_PARTY_CONTENT` and verified in the website and API. **Apple accepted both 1.16.0 (25) and the first `coffee_support_unlock` purchase in the same submission at 2026-10-21 21:41 JST.** On October 22, the API still reports submission `60154e6f-bc55-41ec-8c25-eabb29f3a478`, app version and purchase as `WAITING_FOR_REVIEW`; release type remains `MANUAL`. The website previously confirmed two submitted items. Neither review approval nor public release has occurred.
+- On October 25, the monitor detected Apple's release type as `AFTER_APPROVAL` while the app and purchase were still `WAITING_FOR_REVIEW`. Following the owner's explicit instruction to keep public release held, only `releaseType` was patched back to `MANUAL`; a separate API read confirmed the saved value and unchanged review submission. The cause of the setting change is unknown. Google production 25 remains in review with managed publishing On. No public-release action was performed.
 
 ## Production advertising preparation
 
