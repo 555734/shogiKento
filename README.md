@@ -2,6 +2,8 @@
 
 Native Android and iOS shogi with offline TsuyouraOu11micro analysis.
 
+1.17.0（26）では、検討の手順を分岐ごとに保存します。「手順・分岐」から元の手順や別の枝へ戻り、その先も再生できます。現在のツリーはアプリ再起動後も復元します。[操作と検証](docs/study-variations.md)。
+
 - Android: [native-three-minute](native-three-minute/README.md)
 - iOS: [SwiftUI app, embedded engine and Actions](ios/README.md)
 

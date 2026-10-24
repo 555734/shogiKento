@@ -31,7 +31,7 @@ struct StudyTree: Codable {
     }
     mutating func append(_ position:String,label:String,from parent:Int)->Int {
         if let existing=nodes.indices.first(where:{nodes[$0].parent==parent && nodes[$0].position==position}){select(existing);return existing}
-        let id=nodes.count;nodes.append(Node(position:position,label:label,parent:parent));nodes[parent].preferred=id;select(id);return id
+        let id=nodes.count;nodes.append(Node(position:position,label:label,parent:parent,preferred:nil,score:nil));nodes[parent].preferred=id;select(id);return id
     }
     func rows(current:Int)->[Row] {
         guard !nodes.isEmpty else{return []}
