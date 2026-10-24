@@ -1,0 +1,31 @@
+{
+  "identifier": "90A2EB32-47AA-47A6-BEA3-F45580806AFE",
+  "nonRenewingSubscriptions": [],
+  "products": [
+    {
+      "displayPrice": "200",
+      "familyShareable": false,
+      "internalID": "C1970840",
+      "localizations": [
+        {
+          "description": "広告除去と対局AI Lv.10の永続解放。買い切り。",
+          "displayName": "コーヒーを奢る",
+          "locale": "ja_JP"
+        }
+      ],
+      "productID": "coffee_support_unlock",
+      "referenceName": "Coffee Support Unlock",
+      "type": "NonConsumable"
+    }
+  ],
+  "settings": {
+    "_failTransactionsEnabled": false,
+    "_locale": "ja_JP",
+    "_storefront": "JPN"
+  },
+  "subscriptionGroups": [],
+  "version": {
+    "major": 3,
+    "minor": 0
+  }
+}

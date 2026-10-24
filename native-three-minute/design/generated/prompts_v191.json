@@ -1,0 +1,14 @@
+{
+  "mode": "built-in image_gen",
+  "approvedConcept": "../background-concepts-20261018/redwood-revision/03-vermilion-lacquer.png",
+  "assets": [
+    {
+      "key": "lacquer",
+      "prompt": "Use case: precise-object-edit. Asset type: PRODUCTION BACKGROUND TEXTURE ONLY for an Android shogi app, portrait 9:20 aspect ratio. Reference image is the user's approved 'vermilion lacquer' screen design. Extract and recreate ONLY its rich red urushi lacquer background as a complete uninterrupted full-bleed surface covering the entire image. Warm deep vermilion/crimson red satin-to-gloss lacquer, subtly visible fine handcrafted lacquer brushing, restrained soft broad diagonal curved reflection across the lower fifth, another barely visible soft reflection near upper right. RED across the whole canvas. Central upper 80 percent quiet low-contrast red so board/UI can be overlaid. Very similar red material, hue, saturation and light reflection to the reference's exposed bottom area. NO board, NO grid, NO shogi pieces, NO panels, NO UI, NO text, NO letters, NO numbers, NO borders, NO gold ornaments, NO Japanese repeating patterns, NO landscape, NO table edge, NO perspective. Flat front-on surface. Absolutely no screenshot or layout remnants. This must be a usable empty red background bitmap, not another app mockup."
+    },
+    {
+      "key": "wood",
+      "prompt": "Use case: precise-object-edit. Asset type: PRODUCTION EMPTY WOODEN BOARD TEXTURE for a native shogi app. Reference image is user's approved warm wooden board and red lacquer screen. Recreate ONLY the empty honey-amber wood playing surface as a standalone nearly square image, target width:height 1226:1283, full bleed. Warm yellow-gold/honey natural wood, fine subtle vertical grain and restrained gentle tonal variation closely matching the wooden board in the reference. Thin simple darker reddish amber wooden perimeter frame occupying exactly around 1 percent of width on each edge. Bright readable center. Board fills image; orthographic front-on, no perspective. CRITICAL: NO GRID LINES, NO STAR DOTS, NO horizontal rules, NO cells, NO pieces, NO calligraphy, NO letters, NO numbers, NO UI, NO panels, NO red background outside, NO mountain/pagoda/landscape illustration. Grid and pieces are drawn programmatically later. Need clean empty wooden texture with narrow edge only. Opaque, no transparent margin, no shadows outside the image."
+    }
+  ]
+}

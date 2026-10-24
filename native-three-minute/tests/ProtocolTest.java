@@ -17,6 +17,14 @@ public final class ProtocolTest {
    Future<StudyAnalysis.Result> old=thread.submit(()->e.analyze(INITIAL,999999,5000,cancelled::get,3));
    Thread.sleep(80);cancelled.set(true);e.stop();ok(old.get(2,TimeUnit.SECONDS)==null,"cancel drains old bestmove without publishing");thread.shutdownNow();
    r=e.analyze(INITIAL,3000,750,()->false,3);ok(r.candidates.size()==3&&r.bestMove.equals("7g7f"),"new search after cancellation has fresh scores");
+   AtomicBoolean stop=new AtomicBoolean();java.util.List<StudyAnalysis.Result> stream=new CopyOnWriteArrayList<>();CountDownLatch samples=new CountDownLatch(3);ExecutorService ongoing=Executors.newSingleThreadExecutor();
+   Future<?> live=ongoing.submit(()->{try{e.analyzeContinuous(INITIAL,stop::get,3,x->{stream.add(x);samples.countDown();});}catch(Exception ex){throw new RuntimeException(ex);}});
+   ok(samples.await(3,TimeUnit.SECONDS)&&!live.isDone(),"infinite search streams repeated results before stop");
+   ok(stream.size()>=3&&stream.get(2).depth>stream.get(0).depth&&stream.get(2).nodes>stream.get(0).nodes,"same search deepens and visits more nodes");
+   for(StudyAnalysis.Result x:stream)ok(x.candidates.size()==3&&x.candidates.stream().allMatch(c->c.depth==x.depth),"stream publishes complete same-depth MultiPV sets");
+   stop.set(true);e.stop();live.get(2,TimeUnit.SECONDS);int reports=stream.size();Thread.sleep(100);ok(stream.size()==reports,"no callbacks after cancelled continuous search drained");ongoing.shutdownNow();
+   r=e.analyze(INITIAL,3000,750,()->false,3);ok(r.depth==1&&r.candidates.size()==3,"bounded match search remains fresh after continuous analysis");
+   AtomicInteger none=new AtomicInteger();e.analyzeContinuous(INITIAL,()->true,3,x->none.incrementAndGet());ok(none.get()==0,"pre-cancelled continuous search never publishes");
    e.close();ok(!e.alive(),"closed process immediately unavailable before OS reap");
   }
   try(UsiProcess e=new UsiProcess(peer,"unused")){

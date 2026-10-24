@@ -33,6 +33,16 @@ final class AiEngine {
    final String answer=result,problem=error;main.post(()->{if(token==generation){ready=problem==null;callback.done(answer,problem);}});});
  }
  void destroy(){cancel();}
+ void analyzeContinuously(String sfen,int count,AnalysisReply callback){cancel();final int token=generation;
+  worker.execute(()->{int failures=0;
+   while(token==generation){try{
+    ensureEngine().analyzeContinuous(sfen,()->token!=generation,count,result->main.post(()->{if(token==generation){ready=true;callback.done(result,null);}}));
+    if(token!=generation)return;Thread.sleep(250); // A finite terminal/max-depth engine response must not spin.
+   }catch(Exception e){if(token!=generation){discard();return;}String problem=failure(e);discard();if(failures++==0){restarts++;continue;}
+    main.post(()->{if(token==generation){ready=false;callback.done(null,problem);}});return;
+   }}
+  });
+ }
  void analyze(String sfen,int nodes,int millis,int count,AnalysisReply callback){cancel();final int token=generation;
   worker.execute(()->{if(token!=generation)return;StudyAnalysis.Result result=null;String error=null;
    for(int attempt=0;attempt<2&&token==generation;attempt++)try{result=ensureEngine().analyze(sfen,nodes,millis,()->token!=generation,count);error=null;break;}catch(Exception e){error=failure(e);discard();if(attempt==0)restarts++;}
