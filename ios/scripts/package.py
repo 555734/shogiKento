@@ -4,7 +4,7 @@ ROOT=pathlib.Path(__file__).resolve().parents[1];OUT=ROOT/'outputs';OUT.mkdir(ex
 app=ROOT/'build/DeviceData/Build/Products/Release-iphoneos/BeniShogi.app'
 report={'source_sha':os.environ.get('GITHUB_SHA'),'run_id':os.environ.get('GITHUB_RUN_ID'),'device_build':False,'apple_distribution_signed':False,'simulator_tests_passed':False}
 if app.is_dir() and '** BUILD SUCCEEDED **' in (OUT/'device-build.txt').read_text(errors='replace'):
- info=plistlib.loads((app/'Info.plist').read_bytes());assert info['CFBundleIdentifier']=='com.presentsoft.shogi3minutes';assert info['CFBundleExecutable']=='BeniShogi';assert info['GADApplicationIdentifier']=='ca-app-pub-3940256099942544~1458002511';report['ads_test_only']=True;report['admob_app_id']=info['GADApplicationIdentifier']
+ info=plistlib.loads((app/'Info.plist').read_bytes());assert info['CFBundleIdentifier']=='com.presentsoft.shogi3minutes';assert info['CFBundleExecutable']=='BeniShogi';assert info['GADApplicationIdentifier']=='ca-app-pub-6772282664898856~6282999949';report['ads_test_only']=False;report['admob_app_id']=info['GADApplicationIdentifier']
  executable=app/'BeniShogi';architecture=subprocess.check_output(['xcrun','lipo','-archs',str(executable)],text=True).strip();assert architecture=='arm64',architecture
  signed=subprocess.run(['codesign','--display',str(app)],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0
  # A linker ad-hoc signature, if present, is still not Apple distribution signing.
@@ -15,7 +15,9 @@ if app.is_dir() and '** BUILD SUCCEEDED **' in (OUT/'device-build.txt').read_tex
  for name,expected in manifest.items():assert hashlib.sha256((app/'GameAssets'/name).read_bytes()).hexdigest()==expected,name
  report.update(device_build=True,device_architecture=architecture,ad_hoc_code_signature=signed,bundled_asset_hashes_verified=len(manifest),ipa_sha256=hashlib.sha256((OUT/'BeniShogi-unsigned.ipa').read_bytes()).hexdigest())
 sim=ROOT/'build/DerivedData/Build/Products/Debug-iphonesimulator/BeniShogi.app'
-if sim.is_dir():subprocess.run(['ditto','-c','-k','--keepParent',str(sim),str(OUT/'BeniShogi-simulator.app.zip')],check=True)
+if sim.is_dir():
+ sim_info=plistlib.loads((sim/'Info.plist').read_bytes());assert sim_info['GADApplicationIdentifier']=='ca-app-pub-3940256099942544~1458002511';report['simulator_ads_test_only']=True
+ subprocess.run(['ditto','-c','-k','--keepParent',str(sim),str(OUT/'BeniShogi-simulator.app.zip')],check=True)
 test=OUT/'simulator-tests.txt'
 if test.exists():
  text=test.read_text(errors='replace');report['simulator_tests_passed']=text.count('** TEST EXECUTE SUCCEEDED **')==2 and '** TEST EXECUTE FAILED **' not in text
