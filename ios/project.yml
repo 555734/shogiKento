@@ -10,8 +10,8 @@ settings:
     SWIFT_STRICT_CONCURRENCY: minimal
     IPHONEOS_DEPLOYMENT_TARGET: '16.0'
     CODE_SIGNING_ALLOWED: NO
-    CURRENT_PROJECT_VERSION: '25'
-    MARKETING_VERSION: '1.16.0'
+    CURRENT_PROJECT_VERSION: '26'
+    MARKETING_VERSION: '1.17.0'
 packages:
   GoogleUserMessagingPlatform:
     url: https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git

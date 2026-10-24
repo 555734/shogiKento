@@ -3,6 +3,41 @@ import SwiftUI
 @testable import BeniShogi
 
 final class CoreTests:XCTestCase {
+    func testPersistentThreeWayVariationAt65()throws {
+        let record=try KifParser.parse(String(contentsOf:fixture("kif"),encoding:.utf8))
+        var session=CurrentSession();session.study=record;session.cursor=64
+        var roots=[65],tips=[79],endings=[record.positions[79]]
+        let at64=try Position(record.positions[64])
+        let alternatives=try Rules.legal(at64).filter{(try? Rules.apply(at64,$0).sfen) != record.positions[65]}
+        for move in alternatives.prefix(2) {
+            XCTAssertTrue(session.selectStudyNode(64));let next=try Rules.apply(at64,move)
+            session.appendStudyPosition(next.sfen,label:"65手目 "+at64.notation(move));roots.append(session.studyNode)
+            session.scores[65]=Evaluation(value:roots.count*111)
+            for _ in 0..<3 {let p=try Position(session.study.positions[session.cursor]);let m=try XCTUnwrap(try Rules.legal(p).first);session.appendStudyPosition(try Rules.apply(p,m).sfen,label:"続き")}
+            tips.append(session.studyNode);endings.append(session.study.positions.last!)
+        }
+        XCTAssertEqual(roots.count,3);XCTAssertEqual(session.studyRows.filter{$0.ply==65 && $0.total==3}.count,3)
+        for branch in [0,2,1,0,1,2] {
+            XCTAssertTrue(session.selectStudyNode(roots[branch]));XCTAssertEqual(session.cursor,65)
+            XCTAssertEqual(session.study.positions.last,endings[branch]);if branch>0{XCTAssertEqual(session.scores[65]?.value,(branch+1)*111)}
+            XCTAssertTrue(session.selectStudyNode(tips[branch]));XCTAssertEqual(session.study.positions[session.cursor],endings[branch])
+        }
+        // A nested branch cannot overwrite the first branch's later record.
+        XCTAssertTrue(session.selectStudyNode(roots[1]));let p=try Position(session.study.positions[session.cursor]);let m=try Rules.legal(p)[1]
+        session.appendStudyPosition(try Rules.apply(p,m).sfen,label:"入れ子の分岐");let nested=session.studyNode
+        XCTAssertTrue(session.selectStudyNode(tips[1]));XCTAssertEqual(session.study.positions.last,endings[1]);XCTAssertTrue(session.selectStudyNode(nested))
+        let dir=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString),store=try RecordStore(root:dir)
+        defer{try? FileManager.default.removeItem(at:dir)}
+        session.captureStudyTree();try store.saveCurrent(session);session=try store.current();XCTAssertEqual(session.studyNode,nested)
+        XCTAssertTrue(session.selectStudyNode(tips[1]));for branch in 0..<3{XCTAssertTrue(session.selectStudyNode(roots[branch]));XCTAssertEqual(session.study.positions.last,endings[branch])}
+        XCTAssertTrue(session.selectStudyNode(64));let count=session.studyRows.count
+        session.appendStudyPosition(record.positions[65],label:record.labels[65]);XCTAssertEqual(session.studyNode,65);XCTAssertEqual(session.studyRows.count,count);XCTAssertEqual(session.study.moves,79)
+        // Old current.json files have no tree; they migrate from their intact linear record.
+        var legacy=CurrentSession();legacy.study=record;legacy.cursor=64
+        let encoded=try JSONEncoder().encode(legacy);var object=try JSONSerialization.jsonObject(with:encoded) as! [String:Any];object.removeValue(forKey:"studyTree")
+        legacy=try JSONDecoder().decode(CurrentSession.self,from:JSONSerialization.data(withJSONObject:object));XCTAssertNil(legacy.studyTree);XCTAssertTrue(legacy.selectStudyNode(65));XCTAssertEqual(legacy.study.moves,79)
+        var invalid=session.studyTree!;invalid.nodes[65].parent=65;XCTAssertThrowsError(try invalid.validate())
+    }
     func testCandidateArrowGeometry() {
         let size=CGSize(width:400,height:418.6),unit:CGFloat=40
         let source=CandidateArrowGeometry.center(54,size:size),target=CandidateArrowGeometry.center(45,size:size)

@@ -24,7 +24,7 @@ public final class KifRecordTest {
   h.seek(79);s.seek(h.keys(),79);String end=EvaluationHistory.key(s.game);ok(h.firstEdit==0&&h.currentEdit()==79,"absolute ply");
   ByteArrayOutputStream bytes=new ByteArrayOutputStream();try(ObjectOutputStream o=new ObjectOutputStream(bytes)){o.writeObject(s);o.writeObject(h);}try(ObjectInputStream in=new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))){s=(StudySession)in.readObject();h=(EvaluationHistory)in.readObject();}
   ok(h.imported&&h.title.equals("Shogi Quest")&&h.points.get(79).label.contains("8三金打"),"import metadata survives restart");ok(s.seek(h.keys(),0)&&s.seek(h.keys(),79)&&EvaluationHistory.key(s.game).equals(end),"whole game survives restart");
-  h.seek(20);s.seek(h.keys(),20);ok(s.move(6,0,5,0),"free edit imported branch");h.advance(EvaluationHistory.key(s.game));ok(h.points.size()==22&&h.points.get(21).label==null,"branch removes stale future labels");
+  h.seek(20);s.seek(h.keys(),20);ok(s.move(6,0,5,0),"free edit imported branch");h.advance(EvaluationHistory.key(s.game));ok(h.points.size()==22&&h.points.get(21).label==null&&h.rows().size()==81,"branch keeps original record separately");
   h.load(record);for(int i=0;i<350;i++)h.advance("position-"+i);ok(h.firstEdit==0&&h.points.size()==430,"imported beginning never evicted after 300");
   System.out.println("PASS KIF import: "+checks+" assertions");
  }

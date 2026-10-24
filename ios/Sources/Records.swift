@@ -22,7 +22,7 @@ final class RecordStore {
     func read(_ id:String)throws->GameRecord {let url=try recordURL(id);let size=(try url.resourceValues(forKeys:[.fileSizeKey])).fileSize ?? 0;guard size<8*1024*1024 else{throw ShogiError.message("棋譜ファイルが大きすぎます")};let record=try JSONDecoder().decode(GameRecord.self,from:Data(contentsOf:url));try record.validate();guard record.id==id else{throw ShogiError.message("棋譜IDが一致しません")};return record}
     func list()throws->[GameRecord] {damaged=0;return try FileManager.default.contentsOfDirectory(at:root,includingPropertiesForKeys:nil).filter{$0.lastPathComponent.hasSuffix(".record.json")}.compactMap{url in do{return try read(String(url.lastPathComponent.dropLast(12)))}catch{damaged+=1;return nil}}.sorted{$0.updated>$1.updated}}
     func saveCurrent(_ current: CurrentSession)throws {try JSONEncoder().encode(current).write(to:root.appendingPathComponent("current.json"),options:[.atomic,.completeFileProtectionUntilFirstUserAuthentication])}
-    func current()throws->CurrentSession {let current=try JSONDecoder().decode(CurrentSession.self,from:Data(contentsOf:root.appendingPathComponent("current.json")));try current.match.validate();try current.study.validate();guard current.cursor>=0,current.cursor<current.study.positions.count,current.clocks.count==2 else{throw ShogiError.message("保存された局面が不正です")};return current}
+    func current()throws->CurrentSession {let current=try JSONDecoder().decode(CurrentSession.self,from:Data(contentsOf:root.appendingPathComponent("current.json")));try current.match.validate();try current.study.validate();guard current.cursor>=0,current.cursor<current.study.positions.count,current.clocks.count==2 else{throw ShogiError.message("保存された局面が不正です")};if let tree=current.studyTree{try tree.validate();guard tree.activePath.map({tree.nodes[$0].position})==current.study.positions else{throw ShogiError.message("分岐と表示中の手順が一致しません")}};return current}
 }
 struct CurrentSession: Codable {
     var match=GameRecord(),study: GameRecord={var r=GameRecord();r.source="study";r.title="検討の手順";return r}()
@@ -30,6 +30,7 @@ struct CurrentSession: Codable {
     var clocks=[180.0,180.0]
     var checkingSides=[Int]()
     var scores=[Int:Evaluation]()
+    var studyTree:StudyTree?
 }
 enum KifParser {
     static let ranks=Array("一二三四五六七八九"),names=["歩":1,"香":2,"桂":3,"銀":4,"金":5,"角":6,"飛":7,"玉":8,"王":8,"と":9,"成香":10,"杏":10,"成桂":11,"圭":11,"成銀":12,"全":12,"馬":14,"龍":15,"竜":15]

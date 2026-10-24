@@ -199,8 +199,12 @@ public final class MainActivity extends Activity {
    pauseMode();save();setFreePlacement(false);study=replacement;evalHistory=new EvaluationHistory();evalHistory.load(record);mode=STUDY;game=study.game;analysisSide=evalHistory.side();getPreferences(MODE_PRIVATE).edit().putInt("study_analysis_side",analysisSide).apply();game.turn=analysisSide;game.movesPlayed=evalHistory.currentEdit();started=true;clock=new MatchClock(game);lastMove=null;studyScroll=0;clearSelection();layoutBoard(getWidth(),getHeight());updateAd();requestLayout();setContentDescription("検討モード・保存した棋譜");save();if(resumed)resumeMode();
   }
   void studyMoves(){
-   String[] labels=new String[evalHistory.points.size()];for(int i=0;i<labels.length;i++){EvaluationHistory.Point p=evalHistory.points.get(i);labels[i]=p.label==null?(evalHistory.firstEdit+i)+"手目":p.label;}
-   AlertDialog d=new AlertDialog.Builder(MainActivity.this).setTitle(evalHistory.title==null?"検討の手順":evalHistory.title).setSingleChoiceItems(labels,evalHistory.cursor,(dialog,index)->{jumpStudy(index);dialog.dismiss();}).setPositiveButton("閉じる",null).create();showChoice(d);
+   List<EvaluationHistory.Row> rows=evalHistory.rows();String[] labels=new String[rows.size()];int checked=-1;for(int i=0;i<rows.size();i++){labels[i]=rows.get(i).label;if(rows.get(i).current)checked=i;}
+   AlertDialog d=new AlertDialog.Builder(MainActivity.this).setTitle("手順・分岐").setSingleChoiceItems(labels,checked,(dialog,index)->{jumpStudyNode(rows.get(index).node);dialog.dismiss();}).setPositiveButton("閉じる",null).create();showChoice(d);
+  }
+  void jumpStudyNode(int node){
+   if(mode!=STUDY||node==evalHistory.currentNode())return;List<String> path=evalHistory.keysTo(node);if(path.isEmpty()||!study.seek(path,path.size()-1))return;
+   cancelCpu();evalHistory.selectNode(node);game.movesPlayed=evalHistory.currentEdit();game.turn=evalHistory.side();lastMove=null;clearSelection();setAnalysisSide(evalHistory.side());if(resumed)sounds.play();save();
   }
   void leftText(Canvas c,String s,float x,float y,float size,int color){text(c,"",x,y,size,color);paint.setTextAlign(Paint.Align.LEFT);c.drawText(s,x,y,paint);}
   float maxStudyScroll(){return Math.max(0,studyContentHeight-H);}
@@ -274,8 +278,8 @@ public final class MainActivity extends Activity {
   boolean commitStudyMove(int sr,int sc,int r,int c,int drop,int side,boolean promote){
    if(mode!=STUDY)return false;
    if(!freePlacement){ShogiGame.Move requested=new ShogiGame.Move(sr,sc,r,c,promote,drop);boolean legal=false;if(side==analysisSide)for(ShogiGame.Move candidate:game.legal(side))if(ShogiGame.same(candidate,requested)){legal=true;break;}if(!legal)return false;}
-   boolean changed=drop>0?study.drop(side,drop,r,c):study.move(sr,sc,r,c,promote);
-   if(changed){placementSound();lastMove=new ShogiGame.Move(sr,sc,r,c,promote,drop);int mover=ShogiGame.side(game.board[r][c]);evalHistory.advance(EvaluationHistory.key(game));game.movesPlayed=evalHistory.currentEdit();game.turn=-mover;setAnalysisSide(-mover);save();}return changed;
+   String label=(evalHistory.currentEdit()+1)+"手目  "+StudyAnalysis.notation(game,new ShogiGame.Move(sr,sc,r,c,promote,drop));boolean changed=drop>0?study.drop(side,drop,r,c):study.move(sr,sc,r,c,promote);
+   if(changed){placementSound();lastMove=new ShogiGame.Move(sr,sc,r,c,promote,drop);int mover=ShogiGame.side(game.board[r][c]);evalHistory.advance(EvaluationHistory.key(game),label);game.movesPlayed=evalHistory.currentEdit();game.turn=-mover;setAnalysisSide(-mover);save();}return changed;
   }
   void chooseStudy(int r,int c){
    int sr=selectedR,sc=selectedC;

@@ -128,7 +128,18 @@ struct EvaluationGraph:View {
 struct MoveListView:View {
     @EnvironmentObject var model:AppModel
     @Environment(\.dismiss) var dismiss
-    var body:some View{NavigationStack{List(Array(model.session.study.labels.enumerated()),id:\.offset){i,label in Button{model.seek(i);dismiss()}label:{HStack{Text(label);Spacer();if i==model.session.cursor{Image(systemName:"checkmark")}}}.accessibilityIdentifier("move_\(i)")}.navigationTitle(model.session.study.title).toolbar{Button("閉じる"){dismiss()}}}}
+    var body:some View{NavigationStack{ScrollViewReader{proxy in
+        List {
+            Section {Text("分岐を選ぶとその局面へ移動します。「次へ」「最終」で選んだ分岐の続きも確認できます。").font(.caption).foregroundStyle(.secondary)}
+            ForEach(model.session.studyRows){row in
+                Button{model.selectStudyNode(row.id);dismiss()}label:{HStack(alignment:.top,spacing:6){
+                    Text(String(repeating:"│ ",count:min(6,row.indent))+(row.total>1 ? "├─":"●")).font(.system(.caption,design:.monospaced)).foregroundStyle(gold)
+                    VStack(alignment:.leading,spacing:3){Text(row.label);if row.total>1{Text("\(row.ply)手目の分岐 \(row.branch)/\(row.total)").font(.caption).foregroundStyle(.secondary)}}
+                    Spacer();if row.current{Image(systemName:"checkmark.circle.fill").foregroundStyle(gold)}
+                }}.id(row.id).accessibilityIdentifier("move_\(row.id)")
+            }
+        }.onAppear{proxy.scrollTo(model.session.studyNode,anchor:.center)}
+    }.navigationTitle("手順・分岐").toolbar{Button("閉じる"){dismiss()}}}}
 }
 struct ArchiveView:View {
     @EnvironmentObject var model:AppModel
