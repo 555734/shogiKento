@@ -51,7 +51,7 @@ final class SwiftClient:NetplayListener {
     let name:String;let net:Netplay;let rules:OnlineRules;private let lock=NSRecursiveLock()
     private var gameStore:OnlineGame?;private(set) var side=0,matches=0,relaysOpen=0,rtt = -1;private(set) var direct=false,left=false;var failure=""
     private var ticker:Thread?
-    init(_ name:String,relays:[String],rules:OnlineRules){self.name=name;self.rules=rules;net=try! Netplay(relays:relays,stun:[],factory:transport);net.listener=self;net.start()
+    init(_ name:String,relays:[String],stun:[String]=[],rules:OnlineRules){self.name=name;self.rules=rules;net=try! Netplay(relays:relays,stun:stun,factory:transport);net.listener=self;net.start()
         let t=Thread{[weak self] in while let self{self.with{$0?.rttMillis=self.rtt;$0?.tick(monotonic())};usleep(50000)}};ticker=t;t.start()}
     /// Runs a mutation on the game and sends whatever it queued, in order.
     @discardableResult func with<T>(_ f:(inout OnlineGame?)->T)->T {lock.lock();defer{lock.unlock()};let r=f(&gameStore);if var g=gameStore,!g.outbox.isEmpty{let out=g.outbox;g.outbox=[];gameStore=g;for m in out{net.send(m)}};return r}
@@ -67,6 +67,17 @@ final class SwiftClient:NetplayListener {
 }
 
 enum Interop {
+    /// Informational: the Swift client (URLSession on macOS) against the Android client over the real public relays and STUN.
+    static func live(classpath cp:String){
+        let rules=JavaRules(cp),lobby="shogikento-ci-ios-\(Netplay.randomHex(6))";Netplay.lobbyTag=lobby
+        let s=SwiftClient("swift",relays:NostrPool.defaultRelays,stun:UDPEndpoint.defaultSTUN,rules:rules),bot=Bot(cp,relay:"public",lobby:lobby)
+        defer{print("diagnostics swift:\n\(s.net.diagnostics)");s.close();bot.send("quit")}
+        waitFor(30000,"public relays"){s.relaysOpen>=2 && bot.int("relays")>=2};usleep(3_000_000)
+        print("relays open swift=\(s.relaysOpen) android=\(bot.int("relays")) of \(NostrPool.defaultRelays.count); swift STUN replies=\(s.net.endpoint.stunReplies) candidates=\(s.net.endpoint.candidates) symmetric=\(s.net.endpoint.symmetricNat)")
+        let t0=monotonic();s.net.seek(Netplay.quick,code:nil);bot.send("seek quick");waitFor(60000,"live cross-platform match"){s.started && bot["started"]=="1"};print("match time \(monotonic()-t0)ms")
+        let end=monotonic()+10000;while !s.direct && monotonic()<end{usleep(50000)};print(s.direct ? "direct path rtt=\(s.rtt)ms":"no direct path within 10 s (relay only)")
+        print("swift<->java live move latency \(summary(play(s,bot,10)))");print("PASS live public relays: \(checks) checks")
+    }
     static func clocks(_ rules:OnlineRules){
         final class Wire {var t:Int64=0,cut=false;let latency:Int64;var due=[(Int64,Int,String)]();var a:OnlineGame,b:OnlineGame
             init(_ latency:Int64,_ rules:OnlineRules){self.latency=latency;a=OnlineGame(mySide:1,rules:rules);b=OnlineGame(mySide:-1,rules:rules);a.hello(0);b.hello(0);flush();run(latency)}

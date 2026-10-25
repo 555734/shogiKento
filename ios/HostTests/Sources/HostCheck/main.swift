@@ -2,6 +2,7 @@ import Foundation
 @testable import OnlineCore
 var checks=0
 func ok(_ c:Bool,_ s:String){checks+=1;if !c{print("FAIL:",s);exit(1)}}
+if CommandLine.arguments[1]=="live"{Interop.live(classpath:CommandLine.arguments[2]);exit(0)}
 if CommandLine.arguments[1]=="interop"{Interop.run(classpath:CommandLine.arguments[2]);print("PASS swift interop: \(checks) checks");exit(0)}
 let csv=try! String(contentsOfFile:CommandLine.arguments[1],encoding:.utf8).components(separatedBy:CharacterSet.newlines).filter{!$0.isEmpty}.dropFirst()
 var n=0

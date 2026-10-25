@@ -2,13 +2,14 @@ package com.presentsoft.shogi3minutes;
 import java.io.*;import java.nio.charset.StandardCharsets;import java.util.*;
 /**
  * An Android online client driven over stdin, for cross-platform tests against the iOS implementation.
- * Usage: NetplayBot RELAY_URL LOBBY_TAG [auto]. With "auto" it seeks a quick match by itself, answers every move
+ * Usage: NetplayBot RELAY_URL|public LOBBY_TAG [auto]; "public" uses the app's public relays and STUN servers. With "auto" it seeks a quick match by itself, answers every move
  * after 300 ms, accepts rematches and seeks again once its opponent leaves (an opponent for the iOS simulator tests). Commands: seek quick|host CODE|guest CODE, stop, move, play USI, resign,
  * rematch, drop PERCENT, quit. Every change of the client's state is printed as one "STATE key=value ... sfen=SFEN" line.
  */
 public final class NetplayBot implements Netplay.Listener {
  final Netplay net;OnlineGame game;int rtt=-1,relaysOpen,matches;boolean direct,left,auto,seeking;long turnSeen;int turnPly=-1;String failure="",last="";final PrintStream out;
- NetplayBot(String relay,PrintStream out)throws IOException{this.out=out;net=new Netplay(Collections.singletonList(relay),Collections.emptyList(),null,this);net.start();}
+ NetplayBot(String relay,PrintStream out)throws IOException{this.out=out;boolean pub=relay.equals("public");
+  net=new Netplay(pub?NostrRelayPool.DEFAULT_RELAYS:Collections.singletonList(relay),pub?UdpEndpoint.DEFAULT_STUN:Collections.<String>emptyList(),null,this);net.start();}
  static long now(){return System.nanoTime()/1000000;}
  synchronized void report(){
   String s=game==null?"STATE matched=0 relays="+relaysOpen+" failure="+(failure.isEmpty()?"-":failure.replace(' ','_')):
@@ -44,7 +45,7 @@ public final class NetplayBot implements Netplay.Listener {
   report();
  }
  public static void main(String[] args)throws Exception{
-  UdpEndpoint.allowLoopback=true;Netplay.lobbyTag=args[1];PrintStream out=new PrintStream(new FileOutputStream(FileDescriptor.out),true,"UTF-8");
+  UdpEndpoint.allowLoopback=!args[0].equals("public");Netplay.lobbyTag=args[1];PrintStream out=new PrintStream(new FileOutputStream(FileDescriptor.out),true,"UTF-8");
   NetplayBot bot=new NetplayBot(args[0],out);bot.auto=args.length>2&&args[2].equals("auto");
   Thread ticker=new Thread(()->{while(true){synchronized(bot){if(bot.game!=null){bot.game.rttMillis=bot.rtt;bot.game.tick(now());}if(bot.auto)bot.autoplay();bot.report();}try{Thread.sleep(50);}catch(InterruptedException e){return;}}},"bot-tick");ticker.setDaemon(true);ticker.start();
   BufferedReader in=new BufferedReader(new InputStreamReader(System.in,StandardCharsets.UTF_8));

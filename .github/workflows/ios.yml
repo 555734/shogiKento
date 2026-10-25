@@ -90,6 +90,11 @@ jobs:
         run: |
           set -euo pipefail
           bash ios/scripts/online_interop.sh 2>&1 | tee ios/outputs/online-interop.txt
+      - name: Live public relays and STUN, iOS core against the Android client (informational)
+        if: always()
+        continue-on-error: true
+        timeout-minutes: 5
+        run: ios/HostTests/.build/release/HostCheck live ios/HostTests/.build/java 2>&1 | tee ios/outputs/online-live.txt
       - name: Capture iPhone store screenshots from a fresh app install
         if: always()
         working-directory: ios
