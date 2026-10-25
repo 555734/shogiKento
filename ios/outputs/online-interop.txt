@@ -1,0 +1,15 @@
+Building for production...
+[0/5] Write sources
+[2/5] Write swift-version-1977FEB4D2752686.txt
+[4/6] Compiling OnlineCore NetJSON.swift
+[5/7] Compiling HostCheck Interop.swift
+[5/7] Write Objects.LinkFileList
+[6/7] Linking HostCheck
+Build complete! (47.89s)
+PASS swift core: 77 checks; sign+verify avg 20ms
+clocks ok
+link ok
+swift<->java direct loopback move latency median=16ms max=63ms n=40
+swift<->java relay-only move latency (local relay) median=32ms max=132ms n=10
+interop ok
+PASS swift interop: 510 checks

@@ -1,0 +1,125 @@
+Command line invocation:
+    /Applications/Xcode_26.3.app/Contents/Developer/usr/bin/xcodebuild -project BeniShogi.xcodeproj -scheme BeniShogi -configuration Debug -destination "platform=iOS Simulator,id=F1218AE5-3D29-4CE5-9D0F-6F21CEAA502C" -derivedDataPath build/DerivedData -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -resultBundlePath outputs/iPhoneStore.xcresult "-only-testing:BeniShogiUITests/FlowTests/testStoreScreenshots" test-without-building
+
+Build settings from command line:
+    CODE_SIGN_IDENTITY = -
+    CODE_SIGNING_ALLOWED = YES
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  GoogleUserMessagingPlatform: https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git @ 3.1.0
+  GoogleMobileAds: https://github.com/googleads/swift-package-manager-google-mobile-ads.git @ 12.14.0
+
+Writing result bundle at path:
+	/Users/runner/work/shogiKento/shogiKento/ios/outputs/iPhoneStore.xcresult
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:F1218AE5-3D29-4CE5-9D0F-6F21CEAA502C, OS:18.5, name:iPhone 16 Pro Max }
+{ platform:iOS Simulator, arch:x86_64, id:F1218AE5-3D29-4CE5-9D0F-6F21CEAA502C, OS:18.5, name:iPhone 16 Pro Max }
+2026-10-25 18:04:06.611618+0000 BeniShogiUITests-Runner[55074:149041] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-25 18:04:10.392.
+Test Suite 'BeniShogiUITests.xctest' started at 2026-10-25 18:04:10.393.
+Test Suite 'FlowTests' started at 2026-10-25 18:04:10.393.
+Test Case '-[BeniShogiUITests.FlowTests testStoreScreenshots]' started.
+    t =     0.00s Start Test at 2026-10-25 18:04:10.394
+    t =     0.16s Set Up
+    t =     0.18s Open com.presentsoft.shogi3minutes
+    t =     0.18s     Launch com.presentsoft.shogi3minutes
+    t =     3.28s         Setting up automation session
+    t =     5.88s         Wait for com.presentsoft.shogi3minutes to idle
+    t =    10.16s Waiting 15.0s for "mode_study" Button to exist
+    t =    11.22s     Checking `Expect predicate `existsNoRetry == 1` for object "mode_study" Button`
+    t =    11.22s         Checking existence of `"mode_study" Button`
+    t =    11.35s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    11.65s Added attachment named 'store-01-home'
+    t =    11.65s Waiting 15.0s for "mode_study" Button to exist
+    t =    12.68s     Checking `Expect predicate `existsNoRetry == 1` for object "mode_study" Button`
+    t =    12.68s         Checking existence of `"mode_study" Button`
+    t =    12.72s Tap "mode_study" Button
+    t =    12.72s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    12.73s     Find the "mode_study" Button
+    t =    12.78s     Check for interrupting elements affecting "mode_study" Button
+    t =    12.83s     Synthesize event
+    t =    13.21s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    15.10s Waiting 15.0s for "cell_6_4" Button to exist
+    t =    16.14s     Checking `Expect predicate `existsNoRetry == 1` for object "cell_6_4" Button`
+    t =    16.14s         Checking existence of `"cell_6_4" Button`
+    t =    16.39s Tap "cell_6_4" Button
+    t =    16.39s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    16.40s     Find the "cell_6_4" Button
+    t =    16.59s     Check for interrupting elements affecting "cell_6_4" Button
+    t =    16.69s     Synthesize event
+    t =    17.06s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    17.11s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    17.54s Added attachment named 'store-02-legal-moves'
+    t =    17.54s Waiting 15.0s for "cell_5_4" Button to exist
+    t =    18.58s     Checking `Expect predicate `existsNoRetry == 1` for object "cell_5_4" Button`
+    t =    18.58s         Checking existence of `"cell_5_4" Button`
+    t =    18.78s Tap "cell_5_4" Button
+    t =    18.78s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    18.78s     Find the "cell_5_4" Button
+    t =    18.89s     Check for interrupting elements affecting "cell_5_4" Button
+    t =    19.03s     Synthesize event
+    t =    19.41s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    19.41s Waiting 10.0s for "analysis_status" StaticText to exist
+    t =    20.49s     Checking `Expect predicate `existsNoRetry == 1` for object "analysis_status" StaticText`
+    t =    20.49s         Checking existence of `"analysis_status" StaticText`
+    t =    20.66s Find the "candidate_0" Any
+    t =    20.84s Waiting 25.0s for "candidate_0" StaticText to exist
+    t =    21.89s     Checking `Expect predicate `existsNoRetry == 1` for object "candidate_0" StaticText`
+    t =    21.89s         Checking existence of `"candidate_0" StaticText`
+    t =    22.06s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    22.41s Added attachment named 'store-03-analysis'
+    t =    22.41s Waiting 15.0s for "home" Button to exist
+    t =    23.47s     Checking `Expect predicate `existsNoRetry == 1` for object "home" Button`
+    t =    23.47s         Checking existence of `"home" Button`
+    t =    23.67s Tap "home" Button
+    t =    23.67s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    23.67s     Find the "home" Button
+    t =    23.77s     Check for interrupting elements affecting "home" Button
+    t =    23.86s     Synthesize event
+    t =    24.15s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    24.15s Waiting 15.0s for "mode_match" Button to exist
+    t =    25.19s     Checking `Expect predicate `existsNoRetry == 1` for object "mode_match" Button`
+    t =    25.19s         Checking existence of `"mode_match" Button`
+    t =    25.24s Tap "mode_match" Button
+    t =    25.24s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    25.24s     Find the "mode_match" Button
+    t =    25.30s     Check for interrupting elements affecting "mode_match" Button
+    t =    25.34s     Synthesize event
+    t =    25.70s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    25.72s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    26.08s Added attachment named 'store-04-match'
+    t =    26.08s Find the "match_settings" Button
+    t =    26.22s Waiting 15.0s for "match_settings" Button to exist
+    t =    27.27s     Checking `Expect predicate `existsNoRetry == 1` for object "match_settings" Button`
+    t =    27.27s         Checking existence of `"match_settings" Button`
+    t =    27.36s Tap "match_settings" Button
+    t =    27.36s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    27.36s     Find the "match_settings" Button
+    t =    27.42s     Check for interrupting elements affecting "match_settings" Button
+    t =    27.50s     Synthesize event
+    t =    27.87s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    28.39s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    29.08s Added attachment named 'store-05-match-settings'
+    t =    29.08s Tear Down
+Test Case '-[BeniShogiUITests.FlowTests testStoreScreenshots]' passed (29.329 seconds).
+Test Suite 'FlowTests' passed at 2026-10-25 18:04:39.723.
+	 Executed 1 test, with 0 failures (0 unexpected) in 29.329 (29.330) seconds
+Test Suite 'BeniShogiUITests.xctest' passed at 2026-10-25 18:04:39.723.
+	 Executed 1 test, with 0 failures (0 unexpected) in 29.329 (29.331) seconds
+Test Suite 'Selected tests' passed at 2026-10-25 18:04:39.724.
+	 Executed 1 test, with 0 failures (0 unexpected) in 29.329 (29.332) seconds
+2026-10-25 18:04:40.856 xcodebuild[53265:144609] [MT] IDETestOperationsObserverDebug: 44.628 elapsed -- Testing started completed.
+2026-10-25 18:04:40.857 xcodebuild[53265:144609] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-25 18:04:40.857 xcodebuild[53265:144609] [MT] IDETestOperationsObserverDebug: 44.628 sec, +44.628 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/shogiKento/shogiKento/ios/outputs/iPhoneStore.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started
