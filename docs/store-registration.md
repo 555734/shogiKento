@@ -1,0 +1,63 @@
+# AI将棋検討: store preparation evidence
+
+Status checked on 2026-10-25 (Japan time). Package/bundle: `com.presentsoft.shogi3minutes`.
+
+## Current delivery: 1.16.0 (25)
+
+- Application source: `d1e44711d1e3333c94e79f5d3e73febe80a6c692`. Includes the three ranked candidate arrows, production AdMob IDs, UMP gating and the iOS purchase-presentation fix. Later `7f88be0` changes only the UI-test floating-point assertion and screenshot verification workflow; the uploaded app is unchanged.
+- Android signed APK/AAB and all 3,051 assertions passed in [run 39541441125](https://github.com/555734/shogiKento/actions/runs/39541441125). [Download build 25](https://github.com/555734/shogiKento/releases/tag/v1.16.0-store-25); source archive is linked beside the APK. Target SDK 36, existing upload signature preserved, `AD_ID` absent from the signed APK.
+- Google Play accepted AAB 25. **The owner-only closed Alpha submission completed its initial review on October 21.** Submission activity lists submission 1 as published; that submission's production changes contained only country targeting, while its binary was in Alpha. The sole selected mailing list is `AI将棋検討 - 所有者内部テスト` (one user). This does not establish general production availability.
+- Initial Play publication could not use managed publishing, so the first review used a closed test, following [Google's recommendation](https://support.google.com/googleplay/android-developer/answer/9859654). After that review, **managed publishing was enabled successfully and verified as On.** Production release 25 (1.16.0) has now been created from the existing signed AAB, validated and saved. Quick checks completed; only the known missing mapping/native-symbol warnings remain.
+- **Production review is now confirmed:** on October 22, the live Publishing overview lists production `25 (1.16.0)` under Changes in review and states that the changes are currently being reviewed. Managed publishing remains **On**. The earlier unsubmitted state has been superseded; no further manual Send for review action is needed. General publication has not been performed and remains unauthorized.
+- iOS [signed upload 39541708210](https://github.com/555734/Kiki-public/actions/runs/39541708210) succeeded. Apple build `e05bddfe-2641-4f5c-ad1b-93ccd0f034fb` is `VALID`, selected for 1.16.0, with release type `MANUAL`.
+- The real StoreKit Test purchase, current entitlements, restart restoration, explicit `AppStore.sync()`, refund and Lv.10 relocking passed in [run 39541421277](https://github.com/555734/shogiKento/actions/runs/39541421277). That full run failed only on an exact floating-point board-size assertion (`49.999999999999986` versus `50.0`). The assertion now uses tolerance; geometry, board input/arrows and store screenshots passed on medium iPhone, large iPhone and 13-inch iPad in [run 39543082679](https://github.com/555734/shogiKento/actions/runs/39543082679).
+- Two actual candidate-arrow screenshots were added to Apple's existing screenshot assets; both placements are `ACTIVE`. Review notes describe build 25, purchase/restore paths and restricted ad behavior.
+- After explicit owner approval, `contentRightsDeclaration` was saved as `USES_THIRD_PARTY_CONTENT` and verified in the website and API. **Apple accepted both 1.16.0 (25) and the first `coffee_support_unlock` purchase in the same submission at 2026-10-21 21:41 JST.** On October 22, the API still reports submission `60154e6f-bc55-41ec-8c25-eabb29f3a478`, app version and purchase as `WAITING_FOR_REVIEW`; release type remains `MANUAL`. The website previously confirmed two submitted items. Neither review approval nor public release has occurred.
+- On October 25, the monitor detected Apple's release type as `AFTER_APPROVAL` while the app and purchase were still `WAITING_FOR_REVIEW`. Following the owner's explicit instruction to keep public release held, only `releaseType` was patched back to `MANUAL`; a separate API read confirmed the saved value and unchanged review submission. The cause of the setting change is unknown. Google production 25 remains in review with managed publishing On. No public-release action was performed.
+
+## Production advertising preparation
+
+- The existing AdMob account and both platform app IDs plus four native placements per platform were verified in Console and embedded in release build 25. Debug builds retain official sample IDs. The publisher ID in `app-ads.txt` is a different identifier from the app and ad-unit IDs.
+- All users receive child-directed, under-age, G-rated and non-personalized request restrictions. Release builds update UMP consent information before initializing the ad SDK or requesting an ad; an unknown/disallowed result suppresses ads. Settings expose privacy options when UMP requires them.
+- The live [privacy policy](https://555734.github.io/privacy.html) was updated to match this behavior, and it and [app-ads.txt](https://555734.github.io/app-ads.txt) returned HTTP 200. The latter contains exactly the approved publisher line.
+- AdMob app readiness still says review required. Linking the unpublished apps is unavailable; [AdMob requires a supported public store listing](https://support.google.com/admob/answer/10564477). This creates a post-publication dependency.
+- AdMob's European regulations message is now `Published`, assigned only to the Android and iOS `shogiKento` apps. Both use the approved privacy URL. It targets EEA/UK/Switzerland, offers consent, do-not-consent and manage-options buttons, and includes English plus 31 translations, including Japanese. Ad-unit automatic message deployment remains off because the app uses UMP. Account-wide advertising-partner settings and other apps were not changed. Production ad delivery, physical-device UMP behavior and requirements outside that message's region have not been certified.
+- On October 21, searches in AdMob for Android package `com.presentsoft.shogi3minutes` and iOS store ID `6824747660` both returned no matching store app. Both AdMob app records still require review. Do not link a similarly named or unrelated app; retry the exact identifiers after the store listings become available.
+
+## Approved follow-up
+
+- The owner approved a 30-minute recurring check in this chat. Heartbeat `ai` is Active and reads this document plus the latest conversation before continuing. Keep routine unchanged checks quiet; report meaningful review changes, failures or required owner actions. Never publish the app automatically. Stop checking once both stores are approved with release held and all feasible pre-publication preparation is complete; AdMob store linking may still require initial public availability.
+
+## Uploaded binaries
+
+- Android 1.15.0 (23), target SDK 36, signed APK/AAB: [download](https://github.com/555734/shogiKento/releases/tag/v1.15.0-android-test-23).
+- Android source: `9f9aa35d811cdd62e8bd5dba6e65bad07b6d2a62`. [CI and signing verification passed](https://github.com/555734/shogiKento/actions/runs/39363655253). Google Play published internal-test release 23 (1.15.0) on October 20 at 17:36 JST. A dedicated list containing only the owner's account is selected; the track reports active. [Internal test opt-in](https://play.google.com/apps/internaltest/4700885711211443340) requires that eligible account. This is not a production release, and device installation/purchases have not been verified.
+- iOS 1.15.0 (23), Xcode 26.3: [signed upload succeeded](https://github.com/555734/Kiki-public/actions/runs/39367783753). Source: `e4d7616` (the full revision is recorded in that run's `shogi_commit` input). Apple build `7f022670-5d16-4941-bf36-27cdb3319385` reached `VALID` and was selected for version 1.15.0.
+- The dedicated workflow in `555734/Kiki-public` uses the existing signing configuration inside its runner, following explicit user approval. It builds only this Shogi app. It does not export credentials or change the Kiki app.
+
+## Store assets and declarations
+
+- Google Play: Japanese listing, 512 px icon, 1024×500 feature graphic and five actual Android screenshots saved. IARC questionnaire saved, with in-app purchases declared.
+- Google Play audience includes all six age groups, following the owner's explicit child-compliance declaration approval. Optional Teacher Approved enrollment is off. The advertising-ID declaration is "not used": source removes `com.google.android.gms.permission.AD_ID`, the signed APK's permission dump confirms its absence, and all ad requests are child-directed. AdServices SDK permissions are still present in the merged APK; this is not a claim that the SDK collects no device data.
+- App Store: four screenshots each for medium iPhone, large iPhone, and 13-inch iPad. Required-size capture [passed](https://github.com/555734/shogiKento/actions/runs/39366311136). Required-size assets reached `PREPARE_FOR_SUBMISSION`, with placements `ACTIVE`.
+- Apple privacy labels published after explicit approval: approximate location, device ID, product interaction, advertising data, crash and performance data. No cross-app tracking is requested by this build.
+- Apple non-consumable `coffee_support_unlock`, Japan ¥200: review image processed `COMPLETE`; product reached `READY_TO_SUBMIT`. The private review notes explicitly identify the screenshot as a local UI-test capture, not a completed purchase.
+- Google Play `coffee_support_unlock`, purchase option `permanent`: created through Console after the internal release was saved. API readback verified `ACTIVE`, Japan JPY 200, and 174 available regions (`regionsVersion` 2026/01). This verifies product configuration, not checkout or entitlement restoration.
+- The explicitly approved temporary service-account app grant was removed after verification. Its original access to the existing Taiman Akinator app remains at 13 permissions; no account-wide permissions were added.
+- With explicit approval of Google's promotion terms, 20 single-use reviewer codes were generated for the paid product, scheduled October 21 through December 31. Five private reviewer instruction sets explain free redemption and restoration; optional partner experience-testing sharing is disabled. Keep codes out of Git and public reports. The redemption flow still needs device validation before public review.
+- Google Data Safety answers are saved for review: six SDK data types (approximate location, app interactions, device/other IDs, crash logs, diagnostics, other performance data), collection/sharing disclosed, transport encryption, no app account creation, and no developer-operated remote deletion request. No optional marketing badge is claimed. The Console confirms the changes are saved; this is not approval or publication.
+- The app-content overview has no outstanding declarations. The current production release is in review, as recorded above.
+
+## Verification boundaries and remaining work
+
+- Actual iOS application build, normal UI flows and fresh iPhone/iPad screenshot flows passed in [run 39365244309](https://github.com/555734/shogiKento/actions/runs/39365244309).
+- The older build-23 StoreKit timeout was resolved for build 25 by presenting the iOS 18.2+ purchase from a visible view controller. The current StoreKit Test results are recorded above. Fixture-based UI checks alone are not purchase evidence.
+- Validate purchase, restart, restore and refund in Google Play testing and Apple Sandbox/TestFlight on actual devices before general release. No real-device checkout has been certified.
+- Google Play API write attempts returned HTTP 403 with the minimal approved app permissions. Product registration instead completed through the owner Console session; no broader service-account grant was added.
+- Reviewer access is declared as restricted, with the official free-code instructions rather than an unrestricted-access declaration. Confirm the codes' active period before submission and replenish consumed codes if needed.
+- Real AdMob IDs and the European consent message are configured. AdMob readiness and actual ad delivery/consent behavior remain acceptance checks.
+- No general public release has occurred. A successful upload or local StoreKit Test does not establish production checkout acceptance, store approval or availability in every jurisdiction.
+
+Website: [developer site](https://555734.github.io/), [privacy](https://555734.github.io/privacy.html), [support](https://555734.github.io/support.html), [app-ads.txt](https://555734.github.io/app-ads.txt).
+
+Keep signing keys, API credentials, local store reports and private reviewer contacts out of Git. Local operational evidence is under the ignored `ios/build/store-registration/` directory.

@@ -1,4 +1,14 @@
-# v1.8.4 reference design (2026-10-18)
+# v1.9.1 approved vermilion lacquer (2026-10-18)
+
+The user selected red/wood revision 03, **vermilion lacquer**. `design/generated/red_lacquer_approved.png` records the approved mockup. Two production-only textures were created with built-in image_gen; exact prompts are in `design/generated/prompts_v191.json`.
+
+- `generated/background_red_lacquer_v191.webp`: uninterrupted vermilion lacquer with restrained reflected light, replacing the displayed red/gold patterned background in home, match and study.
+- `generated/board_v191.webp`: honey-amber wood without the former mountain/temple illustration or baked grid. Board geometry is unchanged; native Canvas still draws the exact 9×9 grid and stars.
+- Lossless WebP conversion preserves decoded source pixels; dimensions and PNG/WebP SHA-256 hashes are in adjacent JSON files. Source PNGs are in `design/generated/`.
+- Existing golden piece atlas, player panels, controls and all 37 original PNG bytes are retained. Runtime uses the new textures. The unused v1.5 generated atlas and v1.8.4 generated board (with metadata) are preserved byte-for-byte under `design/generated/legacy/`, included in the source ZIP instead of the APK to keep the existing 25 MB package budget. The original red/gold background remains packaged with the original artwork.
+- This release retains v1.9.0 continuous native analysis and graph position navigation. Build identity: 1.9.1 (15).
+
+# v1.8.4 reference design (2026-10-18; historical)
 
 The built-in image_gen tool created the golden piece atlas and amber board in response to the user-provided 6386.jpg reference. Exact prompts are in `design/generated/prompts_v184.json`.
 

@@ -48,7 +48,7 @@ final class OnlineSmoke {
    t.main(()->t.check(MainActivity.online.game.mySide==-peer.game.mySide,"opposite online sides"));orientation(t);
    waitFor(t,()->MainActivity.online.direct&&peer.direct,8000,"direct UDP path on device");
    int[] sounds=new int[1];t.main(()->sounds[0]=t.v.sounds.playCount);ArrayList<Long> latency=new ArrayList<>();play(t,peer,8,latency);
-   t.main(()->t.check(t.v.sounds.playCount>=sounds[0]+8,"local and remote online moves play the placement sound"));t.screenshot("32_online_game.png");
+   t.main(()->{AppSettings s=t.activity.settings;t.check(!s.sound()||s.volume()==0||t.v.sounds.playCount>=sounds[0]+8,"local and remote online moves play the placement sound when enabled");});t.screenshot("32_online_game.png");
    t.main(()->y[0]=MainActivity.online.game.mySide);int firstSide=(int)y[0];
    t.tap(355,16);t.clickDialog("投了");waitFor(t,()->peer.game.over()&&MainActivity.online.game.over(),8000,"online resignation agreed");
    t.main(()->t.check(MainActivity.online.game.game.winner==-firstSide&&peer.game.game.winner==-firstSide,"resigning player loses on both devices"));t.screenshot("33_online_result.png");

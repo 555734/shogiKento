@@ -37,6 +37,12 @@ public final class StudySession implements Serializable {
   remember();game.board[r][c]=ShogiGame.side(p)*(Math.abs(p)>8?type:type+8);return true;
  }
  public boolean undo(){if(history.isEmpty())return false;history.removeLast().restore(game);return true;}
+ /** Restore a retained graph position atomically, rebuilding undo without losing future graph keys. */
+ public boolean seek(List<String> positions,int target){
+  if(target<0||target>=positions.size())return false;ArrayList<Snapshot> restored=new ArrayList<>();
+  try{for(int i=Math.max(0,target-300);i<=target;i++)restored.add(new Snapshot(UsiPosition.studyPosition(positions.get(i))));}catch(IllegalArgumentException ex){return false;}
+  history.clear();for(int i=0;i<restored.size()-1;i++)history.addLast(restored.get(i));restored.get(restored.size()-1).restore(game);return true;
+ }
  public void reset(){game.restart();history.clear();}
 }
 

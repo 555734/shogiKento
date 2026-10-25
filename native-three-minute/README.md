@@ -1,4 +1,58 @@
-# Native shogi v1.8.4 — reference layout
+## v1.15.0 コーヒー応援の買い切り購入
+
+広告除去・対局AI Lv.10解放・購入復元と、2回目以降の起動案内／非表示設定を追加しました。商品IDは `coffee_support_unlock`、日本の設定予定価格は200円です。ストア商品は未登録で、通常起動では準備中です。ストアでの登録と検証公開鍵の設定など、本番準備と検証範囲は [`docs/coffee-purchase.md`](../docs/coffee-purchase.md) を参照してください。
+
+## v1.14.0 テスト広告版
+
+Googleの公式テスト広告をホーム・対局・検討・過去の棋譜の末尾へ追加しました。検討の盤面・駒の寸法を保ち、広告へはスクロールして到達します。広告は本番配信されず、収益は発生しません。詳細は [`docs/test-ads.md`](../docs/test-ads.md) を参照してください。
+
+## v1.13.0（20）：対局設定と棋譜再生SE
+
+「対局設定」でAIの強さLv.1〜10、双方の持ち時間（1・3・5・10・15・30分の切れ負け）、あなたの先手／後手を指定できます。初期値は3分・先手・Lv.8です。後手では盤面を反転し、CPUが先に指します。設定は再起動後も保持し、棋譜にも時間・レベル・先後の名前を記録します。
+
+設定画面では時計と探索を停止します。キャンセルでは現在の対局を保持し、異なる設定の適用では現在の棋譜を保存して新しい盤面へ切り替えます。新しい対局は「対局開始」で開始します。
+
+同じやねうら王＋つようら王11microを使い、Lv.1〜10のノード上限は100 / 300 / 800 / 2,000 / 5,000 / 10,000 / 20,000 / 50,000 / 100,000 / 250,000、探索時間上限は50 / 75 / 100 / 150 / 250 / 400 / 600 / 750 / 1,200 / 2,000msです。段級位やレーティングの保証値ではありません。検討の継続解析は対局レベルの影響を受けません。
+
+検討での手順・グラフ・前後・初期／最終の局面移動にもSEを付けます。同じ局面、無効な移動、背景では鳴らさず、SE OFF・音量0を守ります。再生で振動は追加しません。
+
+# Shogi Kento v1.12.0
+
+参照画像に合わせて赤と金のホームへ変更しました。大きな検討ボタン、対局・貼り付け・過去の棋譜、小さな設定ボタンを配置。効果音の音量・SE ON/OFF・着手時の振動を調整して保存できます。詳細と生成素材・プロンプトは [HOME_DESIGN.md](HOME_DESIGN.md)。versionCode 19。
+
+## v1.11.0 の変更（履歴）
+
+ホームの「過去の棋譜」から、コピーして取り込んだ棋譜とアプリ内の対局を一覧で開けます。端末内へ自動保存し、最終局面・全手順の移動・AI検討を再利用できます。対局途中、投了、時間切れ、やり直し前の棋譜も保持します。詳細は [RECORD_ARCHIVE.md](RECORD_ARCHIVE.md)。versionCode 18。
+
+## v1.10.1 の変更（履歴）
+
+選択した駒の合法な移動先を明るい金色、選択元を青色で表示します。移動できないマスは選択解除、別の自分の駒は選択切り替え。持ち駒・王手・ピン・成りにも対応します。検討の標準操作は合法手のみとなり、従来の自由配置は解析欄左上の操作メニューから切り替えられます。棋譜取り込み・全手順移動・継続解析は維持。詳細は [LEGAL_SELECTION.md](LEGAL_SELECTION.md)。versionCode 17。
+
+## v1.9.0 の変更（履歴）
+
+開発リポジトリ: https://github.com/555734/shogiKento
+
+検討画面から「モード」「初期配置」「一手戻す」を除去し、空いた上部を詰めています。画面を戻るにはAndroidの戻る操作を使用します。対局画面の操作は維持します。
+
+評価グラフをタップすると最も近い記録手数の盤面へ移動します。盤上の駒、成り状態、両者の持ち駒、解析側を復元します。先の履歴は残るため前後に移動できます。過去の局面で新しい手を指すと、その先の履歴を置き換えます。自由配置モードのため、記録の1手は自由編集の1操作です。最大300操作前まで保持します。
+
+検討は `go infinite` による同じ局面の継続解析です。ノード・750msで打ち切らず、同じ深さで揃ったMultiPV最大3候補を最大4Hzで更新します。結果が変われば候補手・先手基準評価値・形勢の割合・現在のグラフ点へ反映し、探索の深さとノード数も表示します。数値や候補手が必ず変わるという意味ではありません。局面変更、解析側変更、履歴移動、画面終了、バックグラウンドでは停止し、古い結果を破棄します。復帰時は表示中の局面を再解析します。違法配置や詰みでは従来通り理由・終局状態を表示します。
+
+画像・背景・対局時計・成り選択・着手音・やねうら王＋つようら王11microはv1.8.4と同じです。検討は1スレッドで探索を続けます。対局CPUの3,000/10,000/50,000ノード設定と最大750msは維持します。
+
+## Build and tests
+
+GitHub Actions: `.github/workflows/native-shogi.yml` at repository root. Java 17 / Gradle 8.9 / Android SDK 35. CI tests rule/editor/history/protocol/analysis behavior, independent python-shogi legality, exact APK ARM64 normal/scalar engines, emulator installation and UI operations. The native cache is local to this repository; the previous private repository is not required. Full pinned GPL engine source, MIT evaluation parameters and licenses are prepared and included in the complete source ZIP. Corresponding engine source and cached binaries are linked by the cache manifest's recipe hash.
+
+# Native shogi v1.10.0 — clipboard KIF study
+
+起動・前面復帰時にコピーされた平手KIFを検出し、確認後に最終局面を検討モードへ取り込めます。既存の検討は置き換え前に確認。全手順を保持し、グラフ・手順一覧・前後／初期／最終ボタンで移動、合法手がある局面では既存のAIによる継続解析を開始します。キャンセルした同じ内容は再表示しません。ホームにOS標準の貼り付け操作用の入力欄も用意しています。対応形式・OSの制約・提示された79手の棋譜の検証方法は [CLIPBOARD_IMPORT.md](CLIPBOARD_IMPORT.md)。versionCode 16。
+
+# Native shogi v1.9.1 — vermilion lacquer (historical)
+
+採用されたデザイン案③「朱漆の艶」を反映。赤い漆の背景と、山水画を除いた温かい木目の盤へ変更しました。金色の駒、全幅の盤、暗い持ち駒・解析パネルは維持。v1.9.0の連続解析・グラフからの局面移動も引き継ぎます。versionCode 15。新しい背景・盤は独立した生成素材として追加し、元素材は保持します。採用案、生成プロンプト、可逆WebPのハッシュは `GENERATED_ASSETS.md` と `design/generated/` に記録。
+
+# Native shogi v1.8.4 — reference layout (historical)
 
 This version adopts the supplied reference's broad golden pieces, thin amber board frame, compact player/clock/hand strips, dark analysis panel, blue/red percentage display and cyan score-history line. The existing red/gold Japanese background is retained byte-for-byte. Promotion selection remains available for both match and study modes.
 
@@ -93,9 +147,9 @@ The unchanged native engine binaries are reused from the SHA-pinned successful A
 
 
 
-## v1.9.0: 完全無料のオンライン対戦（P2P・サーバー不要）
+## オンライン対戦（P2P・サーバー不要）
 
-ホームに「オンライン対戦」を追加しました。「ランダム対戦」「ルームを作る（6桁コード）」「ルームに参加」の3通りで、人と3分切れ負けで対局できます。アカウント登録・サーバー契約・課金は一切不要で、開発者側にも運用サーバーはありません。対局モード/検討モードは従来どおりネット接続なしで動作し、通信はオンライン対戦中だけ行います（INTERNET権限を追加）。
+ホームの「オンライン対戦」から、「ランダム対戦」「ルームを作る（6桁コード）」「ルームに参加」の3通りで、人と3分切れ負けで対局できます。アカウント登録・サーバー契約・課金は一切不要で、開発者側にも運用サーバーはありません。リレー・STUN・P2Pの通信はオンライン対戦の画面を開いている間だけ行い、検討・CPU対局のAIは従来どおり端末内で動作します。オンライン対局の盤の下には、CPU対局と同じ広告枠（match）を表示します。
 
 仕組み（すべて無料の公開インフラだけを組み合わせています）:
 
