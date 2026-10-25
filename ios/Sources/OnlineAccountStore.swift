@@ -9,13 +9,16 @@ struct OnlineAccountStore {
     private var query:[String:Any] {[kSecClass as String:kSecClassGenericPassword,kSecAttrService as String:service,kSecAttrAccount as String:"secret"]}
     func loadSecret()->[UInt8]? {
         var q=query;q[kSecReturnData as String]=true;q[kSecMatchLimit as String]=kSecMatchLimitOne;var out:CFTypeRef?
-        guard SecItemCopyMatching(q as CFDictionary,&out)==errSecSuccess,let data=out as? Data,data.count==32 else{return nil};return [UInt8](data)
+        if SecItemCopyMatching(q as CFDictionary,&out)==errSecSuccess,let data=out as? Data,data.count==32{return [UInt8](data)}
+        return defaults.data(forKey:service+".secret").flatMap{$0.count==32 ? [UInt8]($0):nil}
     }
+    /// Prefers the Keychain; where it is unavailable (an unsigned test host) the app-private defaults keep the secret.
     @discardableResult func saveSecret(_ secret:[UInt8])->Bool {
         SecItemDelete(query as CFDictionary);var q=query;q[kSecValueData as String]=Data(secret);q[kSecAttrAccessible as String]=kSecAttrAccessibleAfterFirstUnlock
-        return SecItemAdd(q as CFDictionary,nil)==errSecSuccess
+        if SecItemAdd(q as CFDictionary,nil)==errSecSuccess{defaults.removeObject(forKey:service+".secret");return true}
+        defaults.set(Data(secret),forKey:service+".secret");return true
     }
-    func deleteAll(){SecItemDelete(query as CFDictionary);defaults.removeObject(forKey:service)}
+    func deleteAll(){SecItemDelete(query as CFDictionary);defaults.removeObject(forKey:service);defaults.removeObject(forKey:service+".secret")}
     func loadAccount()->OnlineAccount? {defaults.data(forKey:service).flatMap{try? JSONDecoder().decode(OnlineAccount.self,from:$0)}}
     func saveAccount(_ a:OnlineAccount){if let data=try? JSONEncoder().encode(a){defaults.set(data,forKey:service)}}
     /// The account key and record, created on first use. A rated game left unfinished last time is settled as a loss.
