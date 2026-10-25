@@ -1,0 +1,50 @@
+relay survey (default relays first):
+SURVEY wss://yabu.me                        ok=0 rejected=0 delivered=0/3 median=- 
+SURVEY wss://relay.snort.social             ok=0 rejected=0 delivered=0/3 median=- 
+SURVEY wss://nostr-pub.wellorder.net        ok=3 rejected=0 delivered=3/3 median=71ms 
+SURVEY wss://relay.primal.net               ok=3 rejected=0 delivered=3/3 median=204ms 
+SURVEY wss://nos.lol                        ok=3 rejected=0 delivered=3/3 median=261ms 
+SURVEY wss://nostr.mom                      ok=3 rejected=0 delivered=3/3 median=203ms 
+SURVEY wss://nostr.oxtr.dev                 ok=3 rejected=0 delivered=3/3 median=187ms 
+SURVEY wss://relay.damus.io                 ok=3 rejected=0 delivered=3/3 median=198ms WebSocket upgrade refused: HTTP/1.1 503 Service Unavailable
+SURVEY wss://nostr.bitcoiner.social         ok=3 rejected=0 delivered=3/3 median=182ms 
+SURVEY wss://relay-jp.nostr.wirednet.jp     CONNECT FAILED WebSocket upgrade refused: HTTP/1.1 403 Forbidden
+SURVEY wss://r.kojira.io                    CONNECT FAILED WebSocket upgrade refused: HTTP/1.1 403 Forbidden
+SURVEY wss://nostr.holybea.com              CONNECT FAILED Connect timed out
+SURVEY wss://relay.nostr.band               CONNECT FAILED Connect timed out
+SURVEY wss://nostr.fmt.wiz.biz              CONNECT FAILED Connect timed out
+SURVEY wss://relay.nostrich.de              CONNECT FAILED Connect timed out
+SURVEY wss://nostr.einundzwanzig.space      ok=0 rejected=1 delivered=0/3 median=- blocked: NIP-05 verification needed to publish events
+SURVEY wss://relay.nostr.wirednet.jp        ok=0 rejected=1 delivered=0/3 median=- closed by relay
+SURVEY wss://offchain.pub                   ok=3 rejected=0 delivered=3/3 median=146ms 
+SURVEY wss://nostr.wine                     ok=0 rejected=1 delivered=0/3 median=- restricted: sign up at https://nostr.wine to write events to this relay
+relays open A=7 B=7 of 8
+STUN replies A=12 candidates=[10.1.0.187:58611, 172.214.109.228:4160] symmetric=false
+match time 319ms
+direct path 10.1.0.187:54230 rtt=0
+direct move latency median=2ms max=8ms n=10
+relay-only match time 410ms
+relay-only move latency median=79ms max=130ms n=8
+PASS live public relays/STUN: 78 assertions
+diagnostics A:
+handshake: 402ms recv offer 0c5519 via wss://nostr-pub.wellorder.net | 404ms accept 0c5519 | 550ms recv confirm 0c5519 via wss://nostr-pub.wellorder.net | 550ms matched 0c5519 role 1
+state=4 relays=7/8 candidates=[10.1.0.187:56751, 172.214.109.228:4162] symmetric=false link: direct=false route=relay rtt=-1 relayRtt=157 udp=15/0 relay=11/11 candidates=1 rejected=0
+wss://yabu.me closed ok=0 rejected=0 received=0 clock=0s
+wss://relay.snort.social open ok=0 rejected=0 received=0 clock=0s
+wss://nostr-pub.wellorder.net open ok=13 rejected=0 received=12 clock=0s
+wss://relay.primal.net open ok=11 rejected=0 received=0 clock=0s
+wss://nos.lol open ok=11 rejected=0 received=0 clock=0s
+wss://nostr.mom open ok=11 rejected=0 received=0 clock=0s
+wss://nostr.oxtr.dev open ok=11 rejected=0 received=2 clock=0s
+wss://relay.damus.io open ok=0 rejected=2 received=2 clock=0s writes=paused last=banned: too many rate-limit violations, try again later
+diagnostics B:
+handshake: 326ms offer b176c9 | 475ms recv accept b176c9 via wss://nostr-pub.wellorder.net | 475ms matched b176c9 role 0
+state=4 relays=6/8 candidates=[10.1.0.187:50939] symmetric=false link: direct=false route=relay rtt=-1 relayRtt=157 udp=30/0 relay=11/12 candidates=2 rejected=0
+wss://yabu.me closed ok=0 rejected=0 received=0 clock=0s
+wss://relay.snort.social open ok=0 rejected=0 received=0 clock=0s
+wss://nostr-pub.wellorder.net open ok=14 rejected=0 received=14 clock=0s
+wss://relay.primal.net open ok=12 rejected=0 received=0 clock=0s
+wss://nos.lol open ok=13 rejected=0 received=0 clock=0s
+wss://nostr.mom open ok=13 rejected=0 received=0 clock=0s
+wss://nostr.oxtr.dev open ok=13 rejected=0 received=2 clock=0s
+wss://relay.damus.io closed ok=0 rejected=0 received=0 clock=0s last=WebSocket upgrade refused: HTTP/1.1 503 Service Unavailable
