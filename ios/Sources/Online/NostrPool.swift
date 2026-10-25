@@ -23,6 +23,8 @@ final class NostrPool {
     private let q=DispatchQueue(label:"nostr.pool");private var subscriptions=[String:NetJSON]();private var seen=[String:Int](),seenOrder=[String]();private var closed=false
     private let clockLock=NSLock();private var clockOffset:Int64=0
     var onEvent:((Event)->Void)?;var onRelays:((Int,Int)->Void)?
+    /// A relay finished sending its stored events for a subscription (EOSE): (subscription, relay URL).
+    var onEndOfStored:((String,String)->Void)?
     init(urls:[String],key:Secp256k1.Key,factory:@escaping WebSocketFactory,deliver:DispatchQueue){self.key=key;relays=urls.map(Relay.init);self.factory=factory;self.deliver=deliver}
     func start(){q.async{for r in self.relays{self.connect(r)}};pingLater()}
     private func pingLater(){q.asyncAfter(deadline:.now()+25){[weak self] in guard let self,!self.closed else{return};for r in self.relays where r.open{r.socket?.ping()};self.pingLater()}}
@@ -37,6 +39,7 @@ final class NostrPool {
     private func notifyRelays(){let open=relays.filter(\.open).count,total=relays.count;deliver.async{self.onRelays?(open,total)}}
     var openCount:Int {q.sync{relays.filter(\.open).count}}
     var writableCount:Int {q.sync{relays.filter(\.writable).count}}
+    var acceptedCount:Int {q.sync{relays.reduce(0){$0+$1.accepted}}}
     func subscribe(_ id:String,_ filter:NetJSON){q.async{self.subscriptions[id]=filter;let text=NetJSON.array([.string("REQ"),.string(id),filter]).text;for r in self.relays where r.open{r.socket?.send(text)}}}
     func unsubscribe(_ id:String){q.async{guard self.subscriptions.removeValue(forKey:id) != nil else{return};let text=NetJSON.array([.string("CLOSE"),.string(id)]).text;for r in self.relays where r.open{r.socket?.send(text)}}}
     /// Device clocks may be wrong; relays reject ephemeral events older than about a minute. Use the relays' median clock.
@@ -44,13 +47,14 @@ final class NostrPool {
     func now()->Int64 {clockLock.lock();defer{clockLock.unlock()};return Int64(Date().timeIntervalSince1970)+clockOffset}
     static func serialized(_ pubkey:String,_ createdAt:Int64,_ kind:Int,_ tags:[[String]],_ content:String)->String {NetJSON.array([.int(0),.string(pubkey),.int(createdAt),.int(Int64(kind)),.wrap(tags),.string(content)]).text}
     static func eventId(_ pubkey:String,_ createdAt:Int64,_ kind:Int,_ tags:[[String]],_ content:String)->String {Secp256k1.hex(Secp256k1.sha256(Array(serialized(pubkey,createdAt,kind,tags,content).utf8)))}
-    func sign(_ tags:[[String]],_ content:String)->NetJSON {
-        let created=now(),id=Self.eventId(key.publicHex,created,Self.kind,tags,content);var g=SystemRandomNumberGenerator();let aux=(0..<32).map{_ in UInt8.random(in:0...255,using:&g)}
+    func sign(_ tags:[[String]],_ content:String,kind:Int=NostrPool.kind)->NetJSON {
+        let created=now(),id=Self.eventId(key.publicHex,created,kind,tags,content);var g=SystemRandomNumberGenerator();let aux=(0..<32).map{_ in UInt8.random(in:0...255,using:&g)}
         let sig=key.sign(Secp256k1.unhex(id)!,aux:aux)
-        return .object([("id",.string(id)),("pubkey",.string(key.publicHex)),("created_at",.int(created)),("kind",.int(Int64(Self.kind))),("tags",.wrap(tags)),("content",.string(content)),("sig",.string(Secp256k1.hex(sig)))])
+        return .object([("id",.string(id)),("pubkey",.string(key.publicHex)),("created_at",.int(created)),("kind",.int(Int64(kind))),("tags",.wrap(tags)),("content",.string(content)),("sig",.string(Secp256k1.hex(sig)))])
     }
     /// Signs on the caller's thread and hands the event to every relay that currently accepts our writes.
-    func publish(_ tags:[[String]],_ content:String){let e=sign(tags,content),text=NetJSON.array([.string("EVENT"),e]).text,id=e["id"]?.string ?? ""
+    func publish(_ tags:[[String]],_ content:String){publish(kind:Self.kind,tags,content)}
+    func publish(kind:Int,_ tags:[[String]],_ content:String){let e=sign(tags,content,kind:kind),text=NetJSON.array([.string("EVENT"),e]).text,id=e["id"]?.string ?? ""
         q.async{guard !self.closed else{return};self.remember(id);for r in self.relays where r.writable{r.socket?.send(text)}}}
     private func remember(_ id:String){if seen[id] == nil{seen[id]=1;seenOrder.append(id);if seenOrder.count>4096{seen.removeValue(forKey:seenOrder.removeFirst())}}}
     static func parseEvent(_ raw:NetJSON,relay:String)->(Event,String)? {
@@ -72,6 +76,7 @@ final class NostrPool {
         guard let msg=try? NetJSON.parse(text),let a=msg.array,let type=a.first?.string else{return}
         if type=="EVENT",a.count>=3 {guard let (e,sig)=Self.parseEvent(a[2],relay:r.url),e.pubkey != key.publicHex,seen[e.id]==nil,Self.verified(e,sig) else{return};remember(e.id);r.received+=1;deliver.async{self.onEvent?(e)}}
         else if type=="OK",a.count>=3 {if case .bool(true)=a[2]{r.accepted+=1}else{r.rejected+=1;r.lastProblem=a.count>3 ? (a[3].string ?? "rejected"):"rejected";switch Self.refusalKind(r.lastProblem){case 1:r.pausedUntil=Date().addingTimeInterval(min(600,30*Double(1<<min(5,r.strikes))));r.strikes+=1;case 2:r.refusesWrites=true;default:break}}}
+        else if type=="EOSE",a.count>=2,let sub=a[1].string {let url=r.url;deliver.async{self.onEndOfStored?(sub,url)}}
         else if (type=="NOTICE" || type=="CLOSED"),a.count>=2 {r.lastProblem=a.last?.string ?? r.lastProblem}
     }
     var diagnostics:String {q.sync{relays.map{r in "\(r.url) \(r.open ? "open":"closed") ok=\(r.accepted) rejected=\(r.rejected) received=\(r.received) clock=\(r.offset.map{"\($0)s"} ?? "no Date header")\(r.refusesWrites ? " writes=refused":Date()<r.pausedUntil ? " writes=paused":"")\(r.lastProblem.isEmpty ? "":" last="+r.lastProblem)"}.joined(separator:"\n")}}

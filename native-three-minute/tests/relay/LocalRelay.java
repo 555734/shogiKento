@@ -8,6 +8,8 @@ public final class LocalRelay implements Closeable {
  volatile String refuse;
  /** Events whose content contains one of these strings are accepted but not forwarded, once per entry. */
  final List<String> dropOnce=new CopyOnWriteArrayList<>();
+ /** Stored (non-ephemeral) events, newest last; replaceable kinds keep one event per author (and d tag). */
+ final List<Object[]> stored=new CopyOnWriteArrayList<>();
  final ScheduledExecutorService delays=Executors.newSingleThreadScheduledExecutor(r->{Thread t=new Thread(r,"relay-delay");t.setDaemon(true);return t;});
  public LocalRelay()throws IOException{server=new ServerSocket(0,50,InetAddress.getByName("127.0.0.1"));Thread t=new Thread(this::acceptLoop,"local-relay");t.setDaemon(true);t.start();}
  public String url(){return "ws://127.0.0.1:"+server.getLocalPort()+"/";}
@@ -40,23 +42,36 @@ public final class LocalRelay implements Closeable {
  static void readFully(InputStream in,byte[] b)throws IOException{int o=0;while(o<b.length){int r=in.read(b,o,b.length-o);if(r<0)throw new EOFException();o+=r;}}
  void handle(Conn c,String text){
   List<Object> m=NetJson.array(NetJson.parse(text));String type=(String)m.get(0);
-  if(type.equals("REQ")){ArrayList<Map<String,Object>> filters=new ArrayList<>();for(Object f:m.subList(2,m.size()))filters.add(NetJson.object(f));c.subs.put((String)m.get(1),filters);c.send(NetJson.write(Arrays.asList("EOSE",m.get(1))));}
+  if(type.equals("REQ")){ArrayList<Map<String,Object>> filters=new ArrayList<>();for(Object f:m.subList(2,m.size()))filters.add(NetJson.object(f));c.subs.put((String)m.get(1),filters);
+   long limit=Long.MAX_VALUE;for(Map<String,Object> f:filters)if(f.containsKey("limit"))limit=Math.min(limit,NetJson.number(f,"limit",Long.MAX_VALUE));
+   ArrayList<Object[]> hits=new ArrayList<>();for(Object[] x:stored)if(matches(filters,(NostrRelayPool.Event)x[0]))hits.add(x);
+   hits.sort((a,b)->Long.compare(((NostrRelayPool.Event)b[0]).createdAt,((NostrRelayPool.Event)a[0]).createdAt));
+   for(int i=0;i<hits.size()&&i<limit;i++)c.send(NetJson.write(Arrays.asList("EVENT",m.get(1),hits.get(i)[1])));
+   c.send(NetJson.write(Arrays.asList("EOSE",m.get(1))));}
   else if(type.equals("CLOSE"))c.subs.remove((String)m.get(1));
   else if(type.equals("EVENT")){Map<String,Object> raw=NetJson.object(m.get(1));NostrRelayPool.Event e=NostrRelayPool.parseEvent(raw,"local");
    boolean ok=e!=null&&NostrRelayPool.verified(e,NetJson.string(raw,"sig"))&&Math.abs(e.createdAt-System.currentTimeMillis()/1000)<60;
    String refusal=refuse;if(ok&&refusal!=null){refused++;c.send(NetJson.write(Arrays.asList("OK",NetJson.string(raw,"id"),false,refusal)));return;}
    c.send(NetJson.write(Arrays.asList("OK",NetJson.string(raw,"id"),ok,ok?"":"invalid: id, signature or created_at")));if(!ok){rejected++;return;}accepted++;
    for(String d:dropOnce)if(e.content.contains(d)&&dropOnce.remove(d))return;
+   if(e.kind<20000||e.kind>=30000)store(e,raw);
    String out=null;for(Conn other:conns)for(Map.Entry<String,List<Map<String,Object>>> sub:other.subs.entrySet())if(matches(sub.getValue(),e)){
     if(dropPercent>0&&random.nextInt(100)<dropPercent)continue;String frame=NetJson.write(Arrays.asList("EVENT",sub.getKey(),raw));forwarded++;
     if(delayMillis>0)delays.schedule(()->other.send(frame),delayMillis,TimeUnit.MILLISECONDS);else other.send(frame);}
   }
+ }
+ void store(NostrRelayPool.Event e,Map<String,Object> raw){
+  boolean replaceable=e.kind==0||e.kind==3||e.kind>=10000&&e.kind<20000,parameterized=e.kind>=30000&&e.kind<40000;String d=e.tag("d")==null?"":e.tag("d");
+  if(replaceable||parameterized)for(Object[] x:stored){NostrRelayPool.Event o=(NostrRelayPool.Event)x[0];
+   if(o.kind==e.kind&&o.pubkey.equals(e.pubkey)&&(!parameterized||d.equals(o.tag("d")==null?"":o.tag("d")))){if(o.createdAt>e.createdAt)return;stored.remove(x);}}
+  stored.add(new Object[]{e,raw});
  }
  static boolean matches(List<Map<String,Object>> filters,NostrRelayPool.Event e){
   for(Map<String,Object> f:filters){boolean ok=true;
    for(Map.Entry<String,Object> x:f.entrySet()){String k=x.getKey();
     if(k.equals("kinds"))ok&=NetJson.array(x.getValue()).contains((long)e.kind);
     else if(k.equals("since"))ok&=e.createdAt>=((Number)x.getValue()).longValue();
+    else if(k.equals("authors"))ok&=NetJson.array(x.getValue()).contains(e.pubkey);
     else if(k.startsWith("#")){String v=e.tag(k.substring(1));ok&=v!=null&&NetJson.array(x.getValue()).contains(v);}
    }
    if(ok)return true;}

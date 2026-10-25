@@ -4,28 +4,34 @@ import java.io.*;import java.nio.charset.StandardCharsets;import java.util.*;
  * An Android online client driven over stdin, for cross-platform tests against the iOS implementation.
  * Usage: NetplayBot RELAY_URL|public LOBBY_TAG [auto]; "public" uses the app's public relays and STUN servers. With "auto" it seeks a quick match by itself, answers every move
  * after 300 ms, accepts rematches and seeks again once its opponent leaves (an opponent for the iOS simulator tests). Commands: seek quick|host CODE|guest CODE, stop, move, play USI, resign,
- * rematch, drop PERCENT, quit. Every change of the client's state is printed as one "STATE key=value ... sfen=SFEN" line.
+ * rematch, drop PERCENT, rating N, publish, fetch PUBKEY, quit. The bot has its own account ("AndroidBot"), exchanges
+ * account cards and plays rated random matches. Every change of the client's state is printed as one "STATE key=value ... sfen=SFEN" line.
  */
 public final class NetplayBot implements Netplay.Listener {
- final Netplay net;OnlineGame game;int rtt=-1,relaysOpen,matches;boolean direct,left,auto,seeking;long turnSeen;int turnPly=-1;String failure="",last="";final PrintStream out;
+ final Netplay net;final List<String> relays;final OnlineAccount account=new OnlineAccount(OnlineAccount.newSecret(),"AndroidBot");OnlineIdentity peerId;
+ final java.security.SecureRandom random=new java.security.SecureRandom();OnlineGame game;int rtt=-1,relaysOpen,matches;boolean direct,left,auto,seeking;long turnSeen;int turnPly=-1;String failure="",last="";final PrintStream out;
  NetplayBot(String relay,PrintStream out)throws IOException{this.out=out;boolean pub=relay.equals("public");
-  net=new Netplay(pub?NostrRelayPool.DEFAULT_RELAYS:Collections.singletonList(relay),pub?UdpEndpoint.DEFAULT_STUN:Collections.<String>emptyList(),null,this);net.start();}
+  relays=pub?NostrRelayPool.DEFAULT_RELAYS:Collections.singletonList(relay);net=new Netplay(relays,pub?UdpEndpoint.DEFAULT_STUN:Collections.<String>emptyList(),null,this);net.start();}
  static long now(){return System.nanoTime()/1000000;}
- synchronized void report(){
+ int cardRound;
+ /** Settles rated games and sends a fresh account card at the start of every round (rematches carry the new rating). */
+ synchronized void report(){account.settle(net.ratedSession(),peerId,game,System.currentTimeMillis()/1000);
+  byte[] sid=net.sessionId();if(game!=null&&sid!=null&&game.round!=cardRound){cardRound=game.round;net.send(OnlineIdentity.message(account.key,sid,account.name,account.rating,account.games,random));}
   String s=game==null?"STATE matched=0 relays="+relaysOpen+" failure="+(failure.isEmpty()?"-":failure.replace(' ','_')):
    "STATE matched="+matches+" relays="+relaysOpen+" round="+game.round+" side="+game.mySide+" started="+(game.started?1:0)+" plies="+game.game.movesPlayed+" winner="+game.game.winner+" result="+(game.game.result.isEmpty()?"-":game.game.result)
-   +" direct="+(direct?1:0)+" left="+(left?1:0)+" rematch="+(game.rematchPeer?1:0)+" error="+(game.error==null?"-":game.error.replace(' ','_'))+" sfen="+UsiPosition.sfen(game.game);
+   +" direct="+(direct?1:0)+" left="+(left?1:0)+" rematch="+(game.rematchPeer?1:0)+" error="+(game.error==null?"-":game.error.replace(' ','_'))+" rating="+account.rating+" rgames="+account.games
+   +" peer="+(peerId==null?"-":OnlineIdentity.base64url(peerId.name.getBytes(java.nio.charset.StandardCharsets.UTF_8))+":"+peerId.rating+":"+peerId.pubkey.substring(0,8))+" sfen="+UsiPosition.sfen(game.game);
   if(!s.equals(last)){last=s;out.println(s);out.flush();}
  }
- public synchronized void matched(int side){matches++;left=false;seeking=false;game=new OnlineGame(side,net::send);game.hello(now());report();}
- public synchronized void message(String t){if(game!=null){game.rttMillis=rtt;game.receive(t,now());}report();}
+ public synchronized void matched(int side){matches++;left=false;seeking=false;peerId=null;cardRound=0;game=new OnlineGame(side,net::send);game.hello(now());report();}
+ public synchronized void message(String t){if(t.startsWith("ID ")){peerId=OnlineIdentity.parse(t,net.sessionId());report();return;}if(game!=null){game.rttMillis=rtt;game.receive(t,now());}report();}
  public synchronized void path(boolean d,int r,String route){direct=d;rtt=r;report();}
  public synchronized void relays(int open,int total){relaysOpen=open;report();}
  public synchronized void peerLeft(){left=true;if(game!=null)game.peerLeft();report();}
  public synchronized void failed(String r){failure=r;report();}
  /** One step of the automatic opponent, called from the ticker. */
  synchronized void autoplay(){long t=now();
-  if(game==null){if(!seeking){seeking=true;net.seek(Netplay.QUICK,null);}return;}
+  if(game==null){if(!seeking){seeking=true;net.rating=account.rating;net.games=account.games;net.seek(Netplay.QUICK,null);}return;}
   if(game.myTurn()){if(turnPly!=game.game.movesPlayed){turnPly=game.game.movesPlayed;turnSeen=t;}else if(t-turnSeen>=300){ShogiGame.Move m=game.game.cpuChoice();if(m!=null)game.localMove(m,t);}}
   if(game.over()&&game.rematchPeer&&!game.rematchMine)game.requestRematch(t);
   if(left){game=null;left=false;turnPly=-1;}
@@ -33,7 +39,12 @@ public final class NetplayBot implements Netplay.Listener {
  synchronized void command(String line){
   String[] f=line.trim().split(" ");
   switch(f[0]){
-   case "seek":game=null;matches=0;direct=false;left=false;net.seek(f[1].equals("quick")?Netplay.QUICK:f[1].equals("host")?Netplay.HOST:Netplay.GUEST,f.length>2?f[2]:null);break;
+   case "rating":account.rating=Integer.parseInt(f[1]);break;
+   case "publish":try{out.println("PUBLISHED "+Profiles.publish(account,relays,null,4000));}catch(InterruptedException e){Thread.currentThread().interrupt();}break;
+   case "fetch":try{Profiles.Profile p=Profiles.fetch(relays,null,Profiles.authorFilter(f[1]),4000).get(f[1]);
+    out.println(p==null?"PROFILE none":"PROFILE "+OnlineIdentity.base64url(p.name.getBytes(java.nio.charset.StandardCharsets.UTF_8))+" "+p.rating+" "+p.games);}catch(InterruptedException e){Thread.currentThread().interrupt();}break;
+   case "whoami":out.println("ACCOUNT "+account.key.publicHex+" "+account.rating+" "+account.games);break;
+   case "seek":net.rating=account.rating;net.games=account.games;game=null;matches=0;direct=false;left=false;net.seek(f[1].equals("quick")?Netplay.QUICK:f[1].equals("host")?Netplay.HOST:Netplay.GUEST,f.length>2?f[2]:null);break;
    case "stop":game=null;net.stopSeeking();break;
    case "move":if(game!=null&&game.myTurn()){ShogiGame.Move m=game.game.cpuChoice();if(m!=null)game.localMove(m,now());}break;
    case "play":if(game!=null){ShogiGame.Move m=UsiPosition.legalMove(game.game,f[1]);if(m!=null)game.localMove(m,now());}break;

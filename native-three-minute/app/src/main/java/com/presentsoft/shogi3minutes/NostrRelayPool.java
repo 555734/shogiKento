@@ -10,7 +10,9 @@ final class NostrRelayPool implements Closeable {
  static final List<String> DEFAULT_RELAYS=Collections.unmodifiableList(Arrays.asList(
   "wss://yabu.me","wss://relay.snort.social","wss://nostr-pub.wellorder.net","wss://relay.primal.net","wss://nos.lol",
   "wss://nostr.mom","wss://nostr.oxtr.dev","wss://relay.damus.io"));
- interface Listener {void event(Event e);default void relays(int open,int total){}}
+ interface Listener {void event(Event e);default void relays(int open,int total){}
+  /** A relay finished sending its stored events for this subscription (EOSE). */
+  default void endOfStored(String subscription,String relay){}}
  static final class Event {
   final String id,pubkey,content;final long createdAt;final int kind;final List<List<String>> tags;final String relay;
   Event(String id,String pubkey,long createdAt,int kind,List<List<String>> tags,String content,String relay){this.id=id;this.pubkey=pubkey;this.createdAt=createdAt;this.kind=kind;this.tags=tags;this.content=content;this.relay=relay;}
@@ -57,7 +59,8 @@ final class NostrRelayPool implements Closeable {
   e.put("tags",new ArrayList<Object>(tags));e.put("content",content);e.put("sig",Schnorr.hex(key.sign(Schnorr.unhex(id),aux)));return e;
  }
  /** Publishes to every open relay and returns the number of relays it was handed to. */
- int publish(List<List<String>> tags,String content){Map<String,Object> e=sign(KIND,tags,content);synchronized(seen){seen.put((String)e.get("id"),true);}
+ int publish(List<List<String>> tags,String content){return publish(KIND,tags,content);}
+ int publish(int kind,List<List<String>> tags,String content){Map<String,Object> e=sign(kind,tags,content);synchronized(seen){seen.put((String)e.get("id"),true);}
   String text=NetJson.write(Arrays.asList("EVENT",e));int n=0;for(Relay r:relays)if(r.writable()){r.send(text);n++;}return n;}
  static Event parseEvent(Object raw,String relay){
   Map<String,Object> m=NetJson.object(raw);String id=NetJson.string(m,"id"),pubkey=NetJson.string(m,"pubkey"),sig=NetJson.string(m,"sig"),content=NetJson.string(m,"content");
@@ -79,6 +82,7 @@ final class NostrRelayPool implements Closeable {
   if(m.startsWith("blocked")||m.startsWith("restricted")||m.startsWith("auth-required")||m.startsWith("pow")||m.contains("trust")||m.contains("policy")||m.contains("payment")||m.contains("paid")||m.contains("whitelist")||m.contains("not allowed")||m.contains("kind"))return 2;
   return 0;}
  void refusal(Relay r,String message){int kind=refusalKind(message);if(kind==1){r.pausedUntil=System.currentTimeMillis()+Math.min(600000L,30000L<<Math.min(5,r.strikes++));}else if(kind==2)r.refusesWrites=true;}
+ int acceptedCount(){int n=0;for(Relay r:relays)n+=r.accepted;return n;}
  int writableCount(){int n=0;for(Relay r:relays)if(r.writable())n++;return n;}
  static boolean verified(Event e,String sig){try{return Schnorr.verify(Schnorr.unhex(e.id),Schnorr.unhex(e.pubkey),Schnorr.unhex(sig));}catch(RuntimeException x){return false;}}
  void incoming(Relay relay,String text){
@@ -89,6 +93,7 @@ final class NostrRelayPool implements Closeable {
     synchronized(seen){if(seen.put(e.id,true)!=null)return;}relay.received++;
     try{dispatch.execute(()->listener.event(e));}catch(RejectedExecutionException ignored){}
    }else if(type.equals("OK")&&msg.size()>=3){if(Boolean.TRUE.equals(msg.get(2)))relay.accepted++;else{relay.rejected++;relay.lastProblem=msg.size()>3?String.valueOf(msg.get(3)):"rejected";refusal(relay,relay.lastProblem);}}
+   else if(type.equals("EOSE")&&msg.size()>=2&&msg.get(1) instanceof String){String sub=(String)msg.get(1);try{dispatch.execute(()->listener.endOfStored(sub,relay.url));}catch(RejectedExecutionException ignored){}}
    else if((type.equals("NOTICE")||type.equals("CLOSED"))&&msg.size()>=2)relay.lastProblem=String.valueOf(msg.get(msg.size()-1));
   }catch(RuntimeException ignored){}
  }

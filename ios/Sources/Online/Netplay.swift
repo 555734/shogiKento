@@ -30,7 +30,7 @@ final class Netplay {
     static var relayOverride:[String]?,stunOverride:[String]?
     static var relays:[String] {relayOverride ?? NostrPool.defaultRelays}
     static var stunServers:[String] {stunOverride ?? UDPEndpoint.defaultSTUN}
-    final class Seek {var nonce="",ecdh:String?,role="";var since:Int64=0,lastSeen:Int64=0}
+    final class Seek {var nonce="",ecdh:String?,role="";var since:Int64=0,lastSeen:Int64=0;var rating=Rating.initial}
     final class Session {
         let peer,peerNonce:String;let role:Int;let key,id:[UInt8];var confirms=0,live=false,deadline:Int64=0,lastConfirm:Int64=0;var link:P2PLink?,peerCandidates=[String]()
         init(peer:String,peerNonce:String,role:Int,key:[UInt8],id:[UInt8]){self.peer=peer;self.peerNonce=peerNonce;self.role=role;self.key=key;self.id=id}
@@ -40,6 +40,8 @@ final class Netplay {
     let key=Secp256k1.Key.random();let pool:NostrPool;let endpoint:UDPEndpoint
     private let ecdh=P256.KeyAgreement.PrivateKey();let ecdhText:String;private let stun:[String]
     weak var listener:NetplayListener?
+    /// Announced in random-match seeks so players of similar strength meet first. Set before seeking.
+    var rating=Rating.initial,games=0
     let loop=DispatchQueue(label:"netplay");private var timer:DispatchSourceTimer?
     private var mode=Netplay.quick,state=State.idle,seeks=0;private var roomTag:String?,nonce="",target:String?,targetNonce:String?
     private var deadline:Int64=0,seekStarted:Int64=0,lastSeek:Int64=0,lastReply:Int64=0,lastHandshake:Int64=0,handshakeSends=0;private var handshake:[(String,NetJSON)]?
@@ -81,6 +83,10 @@ final class Netplay {
     /// Ordered with all other session work and never on the caller's (UI) thread.
     func send(_ text:String){run{[self] in session?.link?.send(text)}}
     var link:P2PLink? {loop.sync{session?.link}}
+    /// The matched session's id (signed into account cards) and whether it came from the rated random lobby. Any thread.
+    var sessionId:[UInt8]? {lock.lock();defer{lock.unlock()};return matchedId}
+    var ratedSession:Bool {lock.lock();defer{lock.unlock()};return matchedId != nil && matchedRated}
+    private var matchedId:[UInt8]?,matchedRated=false
     static func randomHex(_ bytes:Int)->String {var g=SystemRandomNumberGenerator();return Secp256k1.hex((0..<bytes).map{_ in UInt8.random(in:0...255,using:&g)})}
 
     // ---- matchmaking ----
@@ -98,13 +104,17 @@ final class Netplay {
             else if now>s.deadline {closeSession();state = .seeking;fail("相手の応答がありません。もう一度探します")}
             else if s.role==0 && s.confirms<4 && now-s.lastConfirm>=800 {s.confirms+=1;s.lastConfirm=now;publish(s.peer,confirm(s))}}
     }
-    private func announce(_ now:Int64){lastSeek=now;seeks+=1;publish(nil,message("seek")+[("e",.string(ecdhText)),("w",.int(seekStarted/1000)),("r",.string(mode==Self.host ? "host":mode==Self.guest ? "guest":"")),("tc",.string("3m"))])}
+    private func announce(_ now:Int64){lastSeek=now;seeks+=1;publish(nil,message("seek")+[("e",.string(ecdhText)),("w",.int(seekStarted/1000)),("r",.string(mode==Self.host ? "host":mode==Self.guest ? "guest":"")),("tc",.string("3m"))]+(mode==Self.quick ? [("rt",.int(Int64(rating))),("gm",.int(Int64(games)))]:[]))}
     private func confirm(_ s:Session)->[(String,NetJSON)] {message("confirm")+[("to",.string(s.peerNonce))]}
     private func decline(_ peer:String,_ n:String){publish(peer,message("decline")+[("to",.string(n))])}
     private func mayOffer(_ s:Seek,_ pubkey:String)->Bool {mode==Self.quick ? pubkey>key.publicHex && s.role.isEmpty:mode==Self.host && s.role=="guest"}
+    /// Rating difference accepted after waiting: ±150 at first, 50 more every 3 seconds, so nobody waits long for a match.
+    static func window(_ waitedMillis:Int64)->Int64 {150+50*(max(0,waitedMillis)/3000)}
+    private func withinWindow(_ s:Seek,_ now:Int64)->Bool {guard mode==Self.quick else{return true};return Int64(abs(s.rating-rating))<=max(Self.window(now-seekStarted),Self.window(now-s.since*1000))}
     private func offerIfPossible(_ now:Int64){
         var best:String?,pick:Seek?
-        for (k,s) in seen where blocked[k]==nil && mayOffer(s,k) {if pick==nil || s.since<pick!.since || s.since==pick!.since && k<best!{pick=s;best=k}}
+        for (k,s) in seen where blocked[k]==nil && mayOffer(s,k) && withinWindow(s,now) {let d=abs(s.rating-rating),bd=pick.map{abs($0.rating-rating)} ?? 0
+            if pick==nil || d<bd || d==bd && (s.since<pick!.since || s.since==pick!.since && k<best!){pick=s;best=k}}
         guard let pick,let best else{return};guard let s=derive(best,pick.nonce,pick.ecdh,0) else{blocked[best]=now+60000;return}
         target=best;targetNonce=pick.nonce;deadline=now+4000;state = .offered;closePending();pending=s
         let m=message("offer")+[("to",.string(pick.nonce)),("e",.string(ecdhText)),("c",.string(seal(s.key,P2PLink.encodeCandidates(endpoint.candidates))))];handshake=m;handshakeSends=1;lastHandshake=now;trace("offer \(Self.shortKey(best))");publish(best,m)
@@ -117,7 +127,7 @@ final class Netplay {
         case "seek":
             guard state != .idle,let roomTag,roomTag==e.tag("t"),m["tc"]?.string=="3m" else{return}
             var s=seen[e.pubkey];let fresh=s==nil || s!.nonce != n
-            if fresh {let x=Seek();x.nonce=n;x.ecdh=m["e"]?.string;x.since=m["w"]?.int ?? now/1000;x.role=m["r"]?.string ?? "";s=x}
+            if fresh {let x=Seek();x.nonce=n;x.ecdh=m["e"]?.string;x.since=m["w"]?.int ?? now/1000;x.role=m["r"]?.string ?? "";let rt=Int(m["rt"]?.int ?? Int64(Rating.initial));x.rating=Rating.valid(rt) ? rt:Rating.initial;s=x}
             let seek=s!;seek.lastSeen=now;if seek.ecdh != nil{seen[e.pubkey]=seek};guard state == .seeking else{return};offerIfPossible(now)
             // A newcomer that must offer to us learns about us now instead of at our next periodic announcement.
             if fresh && state == .seeking && !mayOffer(seek,e.pubkey) && now-lastReply>=1000 {lastReply=now;announce(now)}
@@ -149,7 +159,7 @@ final class Netplay {
         default:break
         }
     }
-    private func matched(_ s:Session,_ now:Int64){trace("matched \(Self.shortKey(s.peer)) role \(s.role)");handshake=nil;state = .matched;session=s;s.deadline=now+10000;pool.unsubscribe("lobby");if s.link==nil{startLink(s)}
+    private func matched(_ s:Session,_ now:Int64){trace("matched \(Self.shortKey(s.peer)) role \(s.role)");lock.lock();matchedId=s.id;matchedRated=mode==Self.quick;lock.unlock();handshake=nil;state = .matched;session=s;s.deadline=now+10000;pool.unsubscribe("lobby");if s.link==nil{startLink(s)}
         status("接続しました");listener?.matched(localSide:s.localSide)}
     private func startLink(_ s:Session){
         let pkt=message("pkt")+[("s",.string(s.shortId))],peer=s.peer
@@ -183,7 +193,7 @@ final class Netplay {
         return P2PLink.decodeCandidates(String(decoding:plain,as:UTF8.self))
     }
     private func closePending(){pending?.link?.close();pending=nil}
-    private func closeSession(){closePending();session?.link?.close();session=nil}
+    private func closeSession(){closePending();session?.link?.close();session=nil;lock.lock();matchedId=nil;lock.unlock()}
     private func status(_ text:String){guard text != lastStatus else{return};lastStatus=text;listener?.status(text)}
     private func fail(_ reason:String){listener?.failed(reason)}
     private func networkSummary(){let c=endpoint.candidates,v6=c.filter{$0.hasPrefix("[")}.count,v4=c.count-v6

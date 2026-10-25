@@ -10,10 +10,10 @@ public final class NetplayTest {
  static long now(){return System.nanoTime()/1000000;}
  static void waitFor(BooleanSupplier c,long ms,String what)throws InterruptedException{long end=now()+ms;while(!c.getAsBoolean()){if(now()>end)throw new AssertionError("timeout: "+what);Thread.sleep(1);}checks++;}
  static final class Client implements Netplay.Listener {
-  final String name;final Netplay net;volatile OnlineGame game;volatile int side,rtt=-1,relaysOpen,matches;volatile boolean direct,left;volatile String failure,route="",network="";
+  final String name;final Netplay net;volatile OnlineGame game;volatile OnlineIdentity peerId;volatile int side,rtt=-1,relaysOpen,matches;volatile boolean direct,left;volatile String failure,route="",network="";
   Client(String name,List<String> relays,List<String> stun)throws IOException{this.name=name;net=new Netplay(relays,stun,null,this);net.start();}
   public synchronized void matched(int s){side=s;matches++;game=new OnlineGame(s,net::send);game.hello(now());}
-  public synchronized void message(String t){if(game!=null){game.rttMillis=rtt;game.receive(t,now());}}
+  public synchronized void message(String t){if(t.startsWith("ID ")){peerId=OnlineIdentity.parse(t,net.sessionId());return;}if(game!=null){game.rttMillis=rtt;game.receive(t,now());}}
   public void path(boolean d,int r,String route){direct=d;rtt=r;this.route=route;}
   public void relays(int open,int total){relaysOpen=open;}
   public void network(String text){network=text;}
@@ -37,10 +37,10 @@ public final class NetplayTest {
  static String summary(List<Long> l){if(l.isEmpty())return "n/a";ArrayList<Long> s=new ArrayList<>(l);Collections.sort(s);return "median="+s.get(s.size()/2)+"ms max="+s.get(s.size()-1)+"ms n="+s.size();}
  public static void main(String[] args)throws Exception{
   if(args.length>0&&args[0].equals("--live")){live(args.length>1?args[1]:null);return;}
-  json();schnorr(args.length>0?args[0]:"tests/bip340.csv");stun();candidates();clocks();
+  json();schnorr(args.length>0?args[0]:"tests/bip340.csv");stun();candidates();clocks();accounts();
   UdpEndpoint.allowLoopback=true;link();
   try(LocalRelay relay=new LocalRelay()){List<String> relays=Collections.singletonList(relay.url());
-   quickGame(relays);fastDiscovery(relays);relayOnly(relays);failover(relays);manySeekers(relays);rooms(relays);relayRestart(relay,relays);
+   profiles(relays);ratingMatch(relays);quickGame(relays);fastDiscovery(relays);relayOnly(relays);failover(relays);manySeekers(relays);rooms(relays);relayRestart(relay,relays);
    relay.dropPercent=30;lossyRelay(relays);relay.dropPercent=0;relay.delayMillis=150;slowRelay(relays);relay.delayMillis=400;udpBeforeConfirm(relays);relay.delayMillis=0;lostHandshake(relay,relays);
    ok(relay.rejected==0,"strict relay accepted every event id/signature: rejected="+relay.rejected);
   }
@@ -109,6 +109,54 @@ public final class NetplayTest {
   m.a.requestRematch(m.t);m.run(m.t+100);ok(!m.b.started||m.b.over(),"rematch needs both");m.b.requestRematch(m.t);m.run(m.t+100);
   ok(!m.a.over()&&!m.b.over()&&m.a.mySide==-1&&m.b.mySide==1&&m.a.round==2&&m.b.round==2,"rematch swaps sides");ok(m.b.myTurn()&&m.b.game.remaining[0]==180000,"new round fresh clocks");
   OnlineGame v=new OnlineGame(1,x->{});v.hello(0);v.receive("HELLO 99",0);ok(v.over()&&v.error!=null,"protocol mismatch reported");
+ }
+ /** Elo, NIP-19 transfer codes, display names, signed account cards and the account record with abandonment. */
+ static void accounts(){
+  ok(Rating.delta(1500,0,1500,1)==20&&Rating.delta(1500,0,1500,0)==-20&&Rating.delta(1500,0,1500,0.5)==0,"equal ratings, provisional K=40");
+  ok(Rating.delta(1500,30,1700,1)==12&&Rating.delta(1500,30,1700,0)==-4,"upset win +12, expected loss -4 at K=16: "+Rating.delta(1500,30,1700,0));
+  ok(Rating.delta(1500,15,2500,1)==24&&Rating.delta(2500,15,1500,0)==-24,"difference capped at 800");ok(Rating.next(105,50,105,0)==100&&Rating.next(3995,50,3995,1)==4000,"rating floor and ceiling");
+  ok(Schnorr.hex(Nip19.decode("nsec","nsec1vl029mgpspedva04g90vltkh6fvh240zqtv9k0t9af8935ke9laqsnlfe5")).equals("67dea2ed018072d675f5415ecfaed7d2597555e202d85b3d65ea4e58d2d92ffa"),"NIP-19 nsec vector");
+  ok(Nip19.encode("npub",Schnorr.unhex("84dee6e676e5bb67b4ad4e042cf70cbd8681155db535942fcc6a0533858a7240")).equals("npub1sn0wdenkukak0d9dfczzeacvhkrgz92ak56egt7vdgzn8pv2wfqqhrjdv9"),"NIP-19 npub vector");
+  ok(Nip19.decode("nsec","nsec1vl029mgpspedva04g90vltkh6fvh240zqtv9k0t9af8935ke9laqsnlfe6")==null&&Nip19.decode("npub","nsec1vl029mgpspedva04g90vltkh6fvh240zqtv9k0t9af8935ke9laqsnlfe5")==null,"bad checksum and wrong prefix rejected");
+  ok(OnlineIdentity.cleanName("  将棋\u202E太郎\u0007 ").equals("将棋太郎")&&OnlineIdentity.cleanName("\u3000名前\u3000").equals("名前")&&OnlineIdentity.cleanName("一二三四五六七八九十一二三四五六七").length()==16,"names cleaned and bounded");
+  ok(OnlineIdentity.cleanName("😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀😀").codePointCount(0,32)==16,"16 code points, emoji intact");
+  java.security.SecureRandom r=new java.security.SecureRandom();Schnorr.Key key=new Schnorr.Key(Schnorr.newSecret(r));byte[] sid=new byte[32],other=new byte[32];r.nextBytes(sid);r.nextBytes(other);
+  String card=OnlineIdentity.message(key,sid,"先手 太郎",1520,12,r);OnlineIdentity id=OnlineIdentity.parse(card,sid);
+  ok(id!=null&&id.pubkey.equals(key.publicHex)&&id.name.equals("先手 太郎")&&id.rating==1520&&id.games==12,"account card verified");
+  ok(OnlineIdentity.parse(card,other)==null,"card bound to its session");ok(OnlineIdentity.parse(card.replace(" 1520 "," 2520 "),sid)==null,"rating cannot be raised in transit");
+  String[] f=card.split(" ");ok(OnlineIdentity.parse(f[0]+" "+f[1]+" "+f[2]+" "+f[3]+" "+OnlineIdentity.base64url("別人".getBytes(java.nio.charset.StandardCharsets.UTF_8))+" "+f[5],sid)==null,"name cannot be changed in transit");
+  OnlineAccount a=new OnlineAccount(OnlineAccount.newSecret(),"");ok(a.name.startsWith("棋士")&&a.provisional()&&a.rating==1500&&a.shortId().startsWith("npub1"),"new account defaults: "+a.name);
+  a.begin(id,1,1000);OnlineAccount reloaded=OnlineAccount.load(Schnorr.unhex("01".repeat(32)),a.json());ok(reloaded.pending!=null&&reloaded.pending.rating==1520,"pending rated game persisted");
+  OnlineAccount.Game lost=reloaded.resolveAbandoned(2000);ok(lost!=null&&lost.result==-1&&reloaded.rating==1500+Rating.delta(1500,0,1520,0)&&reloaded.losses==1&&reloaded.pending==null,"unfinished rated game is a loss on next load");
+  reloaded.record(id.pubkey,id.name,1520,1,"詰み",3000);reloaded.record(id.pubkey,id.name,1520,0.5,"千日手",4000);int[] h=reloaded.headToHead(id.pubkey);
+  ok(h[0]==1&&h[1]==1&&h[2]==1&&reloaded.games==3&&reloaded.wins+reloaded.losses+reloaded.draws==3,"record and head-to-head");
+  OnlineAccount back=OnlineAccount.load(Schnorr.unhex("01".repeat(32)),reloaded.json());ok(back.rating==reloaded.rating&&back.history.size()==3&&back.history.get(2).reason.equals("千日手"),"account JSON round trip");
+  ok(!a.rename(" \u0007 ")&&a.rename("　後手花子　")&&a.name.equals("後手花子"),"rename validated");
+  NostrRelayPool.Event pe=new NostrRelayPool.Event("0".repeat(64),a.key.publicHex,1,Profiles.KIND,Profiles.tags(),Profiles.content(back),"x");Profiles.Profile p=Profiles.parse(pe);
+  ok(p!=null&&p.rating==back.rating&&p.games==3&&p.name.equals(back.name),"profile content round trip");
+  ok(Profiles.parse(new NostrRelayPool.Event("0".repeat(64),a.key.publicHex,1,Profiles.KIND,Profiles.tags(),Profiles.content(back).replace("\"w\":1","\"w\":2"),"x"))==null,"inconsistent profile rejected");
+ }
+ /** Profiles published with the account key are found by author (transfer) and by tag (ranking); newer replaces older. */
+ static void profiles(List<String> relays)throws Exception{
+  OnlineAccount a=new OnlineAccount(OnlineAccount.newSecret(),"先手"),b=new OnlineAccount(OnlineAccount.newSecret(),"後手");a.record(b.key.publicHex,b.name,1500,1,"",System.currentTimeMillis()/1000);
+  ok(Profiles.publish(a,relays,null,4000)==1&&Profiles.publish(b,relays,null,4000)==1,"profiles accepted");
+  Map<String,Profiles.Profile> mine=Profiles.fetch(relays,null,Profiles.authorFilter(a.key.publicHex),4000);ok(mine.size()==1&&mine.get(a.key.publicHex).rating==a.rating,"own profile found for transfer");
+  a.record(b.key.publicHex,b.name,1500,1,"",System.currentTimeMillis()/1000+1);a.rename("先手改");Thread.sleep(1100);Profiles.publish(a,relays,null,4000);
+  List<Profiles.Profile> top=Profiles.ranking(Profiles.fetch(relays,null,Profiles.rankingFilter(100),4000),0);
+  ok(top.size()>=2&&top.get(0).pubkey.equals(a.key.publicHex)&&top.get(0).name.equals("先手改")&&top.get(0).games==2,"ranking sorted, replaced profile current");
+  OnlineAccount moved=new OnlineAccount(Nip19.decode("nsec",a.transferCode()),"");ok(moved.key.publicHex.equals(a.key.publicHex),"transfer code restores the account key");
+  Profiles.Profile latest=Profiles.fetch(relays,null,Profiles.authorFilter(moved.key.publicHex),4000).get(moved.key.publicHex);moved.adopt(latest);
+  ok(moved.rating==a.rating&&moved.games==2&&moved.name.equals("先手改"),"rating and name restored from the relays");
+ }
+ /** Similar ratings meet first; a far stronger seeker waits until the window has widened. Account cards cross the link. */
+ static void ratingMatch(List<String> relays)throws Exception{
+  Netplay.lobbyTag="test-lobby-rating";Client a=new Client("A",relays,Collections.emptyList()),b=new Client("B",relays,Collections.emptyList()),c=new Client("C",relays,Collections.emptyList());
+  a.net.rating=1500;b.net.rating=1520;c.net.rating=2400;waitFor(()->a.relaysOpen==1&&b.relaysOpen==1&&c.relaysOpen==1,10000,"relays");
+  a.net.seek(Netplay.QUICK,null);b.net.seek(Netplay.QUICK,null);c.net.seek(Netplay.QUICK,null);waitFor(()->a.started()&&b.started(),10000,"close ratings matched");
+  ok(paired(a,b)&&!c.started()&&a.net.ratedSession(),"1500 meets 1520; 2400 keeps waiting");ok(Netplay.window(0)==150&&Netplay.window(45000)==900,"window widens with waiting time");
+  java.security.SecureRandom r=new java.security.SecureRandom();Schnorr.Key ka=new Schnorr.Key(Schnorr.newSecret(r));
+  ok(Arrays.equals(a.net.sessionId(),b.net.sessionId()),"both sides share the session id");a.net.send(OnlineIdentity.message(ka,a.net.sessionId(),"Aさん",1500,0,r));
+  waitFor(()->b.peerId!=null,5000,"account card delivered");ok(b.peerId.pubkey.equals(ka.publicHex)&&b.peerId.name.equals("Aさん"),"card verified by the peer");close(a,b,c);
  }
  static void link()throws Exception{
   try(UdpEndpoint ea=new UdpEndpoint();UdpEndpoint eb=new UdpEndpoint()){
