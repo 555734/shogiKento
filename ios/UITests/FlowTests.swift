@@ -32,7 +32,8 @@ final class FlowTests:XCTestCase {
         XCTAssertTrue(app.staticTexts["online_relays"].waitForExistence(timeout:10));expectation(for:NSPredicate(format:"label CONTAINS %@","接続 1/1"),evaluatedWith:app.staticTexts["online_relays"]);waitForExpectations(timeout:15);shot("20-online-lobby")
         // Account: a fresh device account starts at 1500 (provisional); renaming updates the card shown to opponents.
         tap("online_account",app);XCTAssertTrue(app.staticTexts["account_rating"].waitForExistence(timeout:5));XCTAssertEqual(app.staticTexts["account_rating"].label,"1500")
-        tap("account_rename",app);let field=app.textFields["account_name_field"];XCTAssertTrue(field.waitForExistence(timeout:5));field.tap()
+        tap("account_rename",app);// SwiftUI does not pass identifiers to text fields inside alerts; the rename alert has exactly one.
+        let field=app.alerts.textFields.firstMatch;XCTAssertTrue(field.waitForExistence(timeout:5));field.tap()
         if let old=field.value as? String,!old.isEmpty{field.typeText(String(repeating:XCUIKeyboardKey.delete.rawValue,count:old.count))};field.typeText("iPhone棋士");app.alerts.buttons["変更"].tap()
         XCTAssertTrue(app.staticTexts["account_name"].waitForExistence(timeout:5));XCTAssertEqual(app.staticTexts["account_name"].label,"iPhone棋士");shot("23-online-account");tap("account_close",app)
         tap("online_quick",app);let status=app.staticTexts["online_status"],ply=app.staticTexts["online_ply"];XCTAssertTrue(status.waitForExistence(timeout:40),"matched with the Android bot")
