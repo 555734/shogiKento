@@ -4,7 +4,9 @@ public final class MainActivity extends Activity {
  static final int HOME=0,MATCH=1,STUDY=2,ONLINE=3;
  /** Online play outlives activity recreation; only leaving the mode or finishing the activity ends the match. */
  static final Handler mainLoop=new Handler(Looper.getMainLooper());static BoardView currentView;
- static final class Online {Netplay net;OnlineGame game;String status="",network="",route="",notice="",roomCode;int relaysOpen,relaysTotal,rtt=-1,seekMode=-1;boolean direct,connecting;}
+ static final class Online {Netplay net;OnlineGame game;String status="",network="",route="",notice="",roomCode;int relaysOpen,relaysTotal,rtt=-1,seekMode=-1;boolean direct,connecting;
+  /** The account (loaded once per process), the opponent's verified card, whether the session is rated, the round whose card was sent, the last rated result. */
+  OnlineAccount account;AccountStore accounts;OnlineIdentity peer;boolean rated;int cardRound;OnlineAccount.Game lastResult;}
  static final Online online=new Online();
  /** Netplay callbacks arrive on network threads; state changes only on the main thread and only for the current session. */
  static final class OnlineEvents implements Netplay.Listener {
@@ -13,17 +15,31 @@ public final class MainActivity extends Activity {
   public void status(String t){post(()->online.status=t);}
   public void relays(int open,int total){post(()->{online.relaysOpen=open;online.relaysTotal=total;});}
   public void network(String t){post(()->online.network=t);}
-  public void matched(int side){post(()->{Netplay n=owner;online.game=new OnlineGame(side,n::send);online.seekMode=-1;online.notice="";online.direct=false;online.rtt=-1;online.route="";online.game.hello(SystemClock.elapsedRealtime());});}
-  public void message(String t){post(()->{OnlineGame g=online.game;if(g==null)return;g.rttMillis=online.rtt;if(g.receive(t,SystemClock.elapsedRealtime())){BoardView v=currentView;if(v!=null)v.remoteMoved();}});}
+  public void matched(int side){post(()->{Netplay n=owner;online.peer=null;online.cardRound=0;online.lastResult=null;online.rated=n.ratedSession();online.game=new OnlineGame(side,n::send);online.seekMode=-1;online.notice="";online.direct=false;online.rtt=-1;online.route="";online.game.hello(SystemClock.elapsedRealtime());syncAccount();});}
+  public void message(String t){post(()->{if(t.startsWith("ID ")){online.peer=OnlineIdentity.parse(t,owner.sessionId());syncAccount();return;}OnlineGame g=online.game;if(g==null)return;g.rttMillis=online.rtt;boolean moved=g.receive(t,SystemClock.elapsedRealtime());syncAccount();if(moved){BoardView v=currentView;if(v!=null)v.remoteMoved();}});}
   public void path(boolean d,int rtt,String route){post(()->{online.direct=d;online.rtt=rtt;online.route=route;});}
-  public void peerLeft(){post(()->{if(online.game!=null)online.game.peerLeft();online.notice="相手が退出しました";});}
+  public void peerLeft(){post(()->{if(online.game!=null)online.game.peerLeft();online.notice="相手が退出しました";syncAccount();});}
   public void failed(String reason){post(()->online.notice=reason);}
  }
+ /**
+  * After every change of the online game (main thread): settles rated games, persisting each step so quitting
+  * cannot dodge a result, and sends a fresh signed account card at the start of every round.
+  */
+ static void syncAccount(){OnlineGame g=online.game;Netplay n=online.net;OnlineAccount a=online.account;if(g==null||a==null)return;
+  int r=a.settle(online.rated,online.peer,g,System.currentTimeMillis()/1000);
+  if(r==OnlineAccount.BEGUN)online.accounts.save(a);else if(r==OnlineAccount.SETTLED){online.lastResult=a.lastSettled;online.accounts.save(a);publishProfile();}
+  else if(r==OnlineAccount.ABORTED){online.accounts.save(a);online.notice="対局不成立のためレートは変動しません";}
+  byte[] sid=n==null?null:n.sessionId();if(sid!=null&&g.round!=online.cardRound){online.cardRound=g.round;n.send(OnlineIdentity.message(a.key,sid,a.name,a.rating,a.games,new java.security.SecureRandom()));}
+ }
+ /** Publishes a snapshot of the profile in the background when the player allows it; refusing relays are skipped. */
+ static void publishProfile(){OnlineAccount a=online.account;if(a==null||!a.publish)return;OnlineAccount copy=OnlineAccount.load(a.secret(),a.json());List<String> relays=Netplay.relays();
+  new Thread(()->{try{Profiles.publish(copy,relays,javax.net.ssl.HttpsURLConnection.getDefaultHostnameVerifier(),8000);}catch(InterruptedException|RuntimeException ignored){}},"profile-publish").start();}
+ static String shortName(String name,int max){return name.codePointCount(0,name.length())<=max?name:name.substring(0,name.offsetByCodePoints(0,max-1))+"…";}
  static final String BACKGROUND_ART="generated/background_red_lacquer_v191.webp",BOARD_ART="generated/board_v191.webp";
  CoffeeBilling coffee;final Runnable coffeeObserver=()->coffeeChanged();boolean coffeeDialogOpen,launchingArchive;
  AppSettings settings;RecordStore records;boolean archiveErrorShown;
  BoardView view;boolean resumed;AlertDialog choiceDialog;ClipboardKifImport clipboardImport;
- @Override public void onCreate(Bundle b){super.onCreate(b);setVolumeControlStream(android.media.AudioManager.STREAM_MUSIC);getWindow().setStatusBarColor(0xff400b0c);getWindow().setNavigationBarColor(0xff400b0c);getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);coffee=CoffeeBilling.get(this);coffee.registerLaunch();settings=new AppSettings(this);records=new RecordStore(new File(getFilesDir(),"records"));view=new BoardView();SafeWindow.setContent(this,view);clipboardImport=new ClipboardKifImport(this);coffee.observe(coffeeObserver);if(b!=null)view.enterMode(b.getInt("screen_mode",HOME));}
+ @Override public void onCreate(Bundle b){super.onCreate(b);setVolumeControlStream(android.media.AudioManager.STREAM_MUSIC);getWindow().setStatusBarColor(0xff400b0c);getWindow().setNavigationBarColor(0xff400b0c);getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);coffee=CoffeeBilling.get(this);coffee.registerLaunch();settings=new AppSettings(this);if(online.accounts==null){online.accounts=new AccountStore(this);online.account=online.accounts.load();if(online.accounts.settledAbandoned)publishProfile();}records=new RecordStore(new File(getFilesDir(),"records"));view=new BoardView();SafeWindow.setContent(this,view);clipboardImport=new ClipboardKifImport(this);coffee.observe(coffeeObserver);if(b!=null)view.enterMode(b.getInt("screen_mode",HOME));}
  @Override protected void onResume(){super.onResume();resumed=true;coffee.registerLaunch();launchingArchive=false;view.resumeMode();clipboardImport.resume();coffee.refresh(false);scheduleCoffeeOffer();}
  @Override protected void onPause(){clipboardImport.pause();view.pauseMode();resumed=false;view.save();super.onPause();}
  @Override protected void onStop(){super.onStop();if(!isChangingConfigurations()&&!coffeeDialogOpen&&!launchingArchive)coffee.backgrounded=true;}
@@ -181,7 +197,7 @@ public final class MainActivity extends Activity {
    studyContentHeight=coffee.unlocked()?Math.max(H,mode==STUDY?analysisY()+ANALYSIS_HEIGHT+8:0):adTop()+adHeight()+16;studyScroll=Math.max(0,Math.min(studyScroll,maxStudyScroll()));
   }
   HomeScreen.Layout homeLayout(){return new HomeScreen.Layout(H);}
-  float adTop(){return Math.max(H,mode==STUDY?analysisY()+ANALYSIS_HEIGHT+8:mode==MATCH?bottomHandY()+80:mode==ONLINE?(online.game!=null?bottomHandY()+124:lobbyPanelY()+212):homeLayout().archive.bottom)+16;}
+  float adTop(){return Math.max(H,mode==STUDY?analysisY()+ANALYSIS_HEIGHT+8:mode==MATCH?bottomHandY()+80:mode==ONLINE?(online.game!=null?bottomHandY()+150:lobbyPanelY()+212):homeLayout().archive.bottom)+16;}
   float adHeight(){return coffee.unlocked()?0:360*getResources().getDisplayMetrics().density/scale;}
   void updateAd(){if(getWidth()==0)return;if(coffee.unlocked()){if(adCard!=null){adCard.close();removeView(adCard);adCard=null;}adMode=-1;return;}if(adMode!=mode){if(adCard!=null){adCard.close();removeView(adCard);}adMode=mode;adCard=new TestAdCard(MainActivity.this,mode==STUDY?"study":mode==MATCH||mode==ONLINE?"match":"home",getIntent().getBooleanExtra("ads_fixture",false));addView(adCard);adCard.load();}int left=Math.round(12*scale),top=Math.round((adTop()-studyScroll)*scale);adCard.measure(MeasureSpec.makeMeasureSpec(getWidth()-left*2,MeasureSpec.EXACTLY),MeasureSpec.makeMeasureSpec(Math.round(adHeight()*scale),MeasureSpec.EXACTLY));adCard.layout(left,top,getWidth()-left,top+Math.round(adHeight()*scale));}
   @Override protected void onMeasure(int w,int h){super.onMeasure(w,h);if(adCard!=null)adCard.measure(MeasureSpec.makeMeasureSpec(Math.max(0,getMeasuredWidth()-Math.round(24*scale)),MeasureSpec.EXACTLY),MeasureSpec.makeMeasureSpec(Math.round(adHeight()*scale),MeasureSpec.EXACTLY));}
@@ -280,7 +296,7 @@ public final class MainActivity extends Activity {
    }}else for(ShogiGame.Move m:game.legal(side))if(selectedHand>0?m.drop==selectedHand:m.drop==0&&m.fromRow==selectedR&&m.fromCol==selectedC)list.add(m);
    highlights=list;invalidate();
   }
-  void move(ShogiGame.Move m){if(mode==ONLINE){OnlineGame g=online.game;if(g!=null&&g.localMove(m,SystemClock.elapsedRealtime())){placementSound();lastMove=m;}clearSelection();return;}clock.settle(SystemClock.elapsedRealtime());if(mode!=MATCH||!started||game.winner!=0||game.turn!=humanSide())return;applyMatchMove(m,humanSide());placementSound();lastMove=m;clearSelection();save();scheduleCpu();}
+  void move(ShogiGame.Move m){if(mode==ONLINE){OnlineGame g=online.game;if(g!=null&&g.localMove(m,SystemClock.elapsedRealtime())){placementSound();lastMove=m;syncAccount();}clearSelection();return;}clock.settle(SystemClock.elapsedRealtime());if(mode!=MATCH||!started||game.winner!=0||game.turn!=humanSide())return;applyMatchMove(m,humanSide());placementSound();lastMove=m;clearSelection();save();scheduleCpu();}
   void promotionChoice(Runnable promote,Runnable plain){
    dialogOpen=true;AlertDialog d=new AlertDialog.Builder(MainActivity.this).setTitle("成りますか？")
     .setPositiveButton("成る",(x,k)->promote.run()).setNegativeButton("成らない",(x,k)->plain.run()).setNeutralButton("キャンセル",null).create();
@@ -337,8 +353,9 @@ public final class MainActivity extends Activity {
   ShogiGame lobbyBoard;android.widget.EditText joinField;
   ShogiGame onlineBoard(){if(online.game!=null)return online.game.game;if(lobbyBoard==null)lobbyBoard=new ShogiGame();return lobbyBoard;}
   final Runnable onlineTicker=new Runnable(){String shown="";public void run(){if(!resumed||mode!=ONLINE)return;long now=SystemClock.elapsedRealtime();OnlineGame g=online.game;
-   if(g!=null){g.rttMillis=online.rtt;boolean was=g.over();g.tick(now);if(!was&&g.over())clearSelection();}String sig=onlineSignature(now);if(!sig.equals(shown)){shown=sig;invalidate();}handler.postDelayed(this,50);}};
-  String onlineSignature(long now){OnlineGame g=online.game;StringBuilder b=new StringBuilder().append(online.status).append(online.relaysOpen).append(online.network).append(online.notice).append(online.direct).append(online.rtt);
+   if(g!=null){g.rttMillis=online.rtt;boolean was=g.over();g.tick(now);syncAccount();if(!was&&g.over())clearSelection();}String sig=onlineSignature(now);if(!sig.equals(shown)){shown=sig;invalidate();}handler.postDelayed(this,50);}};
+  String onlineSignature(long now){OnlineGame g=online.game;StringBuilder b=new StringBuilder().append(online.status).append(online.relaysOpen).append(online.network).append(online.notice).append(online.direct).append(online.rtt).append(online.peer!=null).append(online.lastResult!=null);
+   if(online.account!=null)b.append(online.account.name).append(online.account.rating);
    if(g!=null)b.append((g.remaining(1,now)+999)/1000).append(',').append((g.remaining(-1,now)+999)/1000).append(g.status(now)).append(silence()/1000);return b.toString();}
   long silence(){Netplay n=online.net;P2PLink l=n==null?null:n.link();return l==null?0:l.silenceMillis();}
   void ensureNetplay(){
@@ -352,7 +369,7 @@ public final class MainActivity extends Activity {
   }
   /** Ends the current match (an unfinished game is resigned). all=true also disconnects from the relays. */
   void leaveOnline(boolean all){
-   Netplay n=online.net;if(online.game!=null)online.game.resign();online.game=null;online.seekMode=-1;online.roomCode=null;online.direct=false;online.rtt=-1;online.route="";online.notice="";
+   Netplay n=online.net;if(online.game!=null){online.game.resign();syncAccount();}online.game=null;online.peer=null;online.lastResult=null;online.seekMode=-1;online.roomCode=null;online.direct=false;online.rtt=-1;online.route="";online.notice="";
    if(all){online.net=null;online.status="";online.relaysOpen=0;if(n!=null)new Thread(n::close,"netplay-close").start();}else if(n!=null)n.stopSeeking();
    if(mode==ONLINE){game=onlineBoard();lastMove=null;studyScroll=0;clearSelection();layoutBoard(getWidth(),getHeight());updateAd();requestLayout();}
   }
@@ -363,11 +380,13 @@ public final class MainActivity extends Activity {
   void onlineUpdated(){if(mode!=ONLINE)return;ShogiGame g=onlineBoard();if(game!=g){game=g;lastMove=online.game==null?null:online.game.lastMove;studyScroll=0;clearSelection();layoutBoard(getWidth(),getHeight());updateAd();requestLayout();}invalidate();}
   void remoteMoved(){if(mode!=ONLINE||online.game==null)return;lastMove=online.game.lastMove;clearSelection();if(lastMove!=null)placementSound();invalidate();}
   void confirm(String message,String ok,Runnable action){showChoice(new AlertDialog.Builder(MainActivity.this).setMessage(message).setNegativeButton("キャンセル",null).setPositiveButton(ok,(x,k)->{action.run();invalidate();}).create());}
-  float lobbyButtonY(int i){return 108+i*86;}
+  float lobbyButtonY(int i){return 150+i*86;}
+  static final float ACCOUNT_CARD_Y=96;
   float lobbyPanelY(){return lobbyButtonY(3)+4;}
   void startSeek(int seekMode,String code){Netplay n=online.net;if(n==null){online.notice="通信を準備しています…";ensureNetplay();invalidate();return;}
-   online.seekMode=seekMode;online.roomCode=code;online.notice="";online.status="";n.seek(seekMode,code);invalidate();}
+   n.rating=online.account.rating;n.games=online.account.games;online.seekMode=seekMode;online.roomCode=code;online.notice="";online.status="";n.seek(seekMode,code);invalidate();}
   void lobbyTouch(float x,float y){
+   if(y>=ACCOUNT_CARD_Y&&y<=ACCOUNT_CARD_Y+44&&x>=12&&x<=388){showChoice(AccountDialog.create(MainActivity.this));return;}
    if(online.seekMode>=0){float py=lobbyPanelY();if(y>=py+110&&y<=py+142&&x>=120&&x<=280){Netplay n=online.net;if(n!=null)n.stopSeeking();online.seekMode=-1;online.roomCode=null;online.status="";invalidate();}return;}
    if(x<12||x>388)return;for(int i=0;i<3;i++)if(y>=lobbyButtonY(i)&&y<=lobbyButtonY(i)+52){
     if(i==0)startSeek(Netplay.QUICK,null);else if(i==1)startSeek(Netplay.HOST,Netplay.newRoomCode(new java.security.SecureRandom()));else joinRoomDialog();return;}
@@ -376,15 +395,18 @@ public final class MainActivity extends Activity {
    showChoice(new AlertDialog.Builder(MainActivity.this).setTitle("ルームに参加").setMessage("友だちの画面に表示された6桁のコードを入力してください").setView(field).setNegativeButton("キャンセル",null).setPositiveButton("参加",(x,k)->{String code=field.getText().toString().trim();
     if(code.matches("[0-9]{6}"))startSeek(Netplay.GUEST,code);else{online.notice="ルームコードは6桁の数字です";invalidate();}}).create());}
   boolean onlineTouch(float x,float y){OnlineGame g=online.game;
-   if(y<32){if(x<90)onlineBack();else if(g!=null&&x>=300){if(g.started&&!g.over())confirm("投了しますか？","投了",()->{g.resign();clearSelection();});else if(g.over()&&!g.peerLeft&&!g.rematchMine){g.requestRematch(SystemClock.elapsedRealtime());lastMove=g.lastMove;clearSelection();}}return true;}
+   if(y<32){if(x<90)onlineBack();else if(g!=null&&x>=300){if(g.started&&!g.over())confirm("投了しますか？","投了",()->{g.resign();syncAccount();clearSelection();});else if(g.over()&&!g.peerLeft&&!g.rematchMine){g.requestRematch(SystemClock.elapsedRealtime());syncAccount();lastMove=g.lastMove;clearSelection();}}return true;}
    if(g==null){lobbyTouch(x,y);return true;}if(!g.myTurn()){clearSelection();return true;}
    for(int r=0;r<9;r++)for(int col=0;col<9;col++)if(cell(r,col).contains(x,y)){choose(r,col);return true;}
    if(tapHand(x,y,viewSide(),bottomHandY()))return true;clearSelection();return true;
   }
   void onlineLobby(Canvas c){
    darkPanel(c,new RectF(4,0,396,32));text(c,"モード",45,22,11,0xfff5e4c8);text(c,"オンライン対戦",200,22,11,Color.WHITE);
-   text(c,"オンライン対戦",200,66,24,0xffffe3ae);text(c,"完全無料・登録不要・3分切れ負け",200,88,11,Color.WHITE);
-   String[][] labels={{"ランダム対戦","今オンラインの相手とすぐに対局"},{"ルームを作る","6桁のコードを友だちに伝えて対局"},{"ルームに参加","友だちのルームコードを入力"}};int[] modes={Netplay.QUICK,Netplay.HOST,Netplay.GUEST};
+   text(c,"オンライン対戦",200,62,24,0xffffe3ae);text(c,"完全無料・登録不要・3分切れ負け",200,84,11,Color.WHITE);
+   OnlineAccount a=online.account;float ay=ACCOUNT_CARD_Y;darkPanel(c,new RectF(4,ay,396,ay+44));
+   if(a!=null){leftText(c,shortName(a.name,12),14,ay+18,13,0xffffe3ae);leftText(c,"レート "+a.ratingText()+" · "+a.wins+"勝"+a.losses+"敗"+a.draws+"分",14,ay+36,10,Color.WHITE);}
+   paint.reset();paint.setAntiAlias(true);paint.setColor(0xff285681);c.drawRoundRect(300,ay+8,390,ay+36,4,4,paint);text(c,"アカウント",345,ay+27,11,Color.WHITE);
+   String[][] labels={{"ランダム対戦","レート戦・近いレートの相手と対局"},{"ルームを作る","6桁のコードで友だちと（レート変動なし）"},{"ルームに参加","友だちのコードを入力（レート変動なし）"}};int[] modes={Netplay.QUICK,Netplay.HOST,Netplay.GUEST};
    for(int i=0;i<3;i++){float y=lobbyButtonY(i);boolean active=online.seekMode==modes[i];tray(c,y);text(c,labels[i][0]+(active?"・待機中":""),200,y+33,19,active?0xffffdd8b:Color.WHITE);text(c,labels[i][1],200,y+68,10.5f,Color.WHITE);}
    float y=lobbyPanelY();darkPanel(c,new RectF(4,y,396,y+150));
    leftText(c,online.net==null?(online.connecting?"通信を準備しています…":"未接続"):"公開リレー接続 "+online.relaysOpen+"/"+online.relaysTotal+(online.relaysOpen==0?"（接続中…）":""),13,y+18,10,online.relaysOpen>0?0xff9be59b:0xffffd471);
@@ -400,10 +422,17 @@ public final class MainActivity extends Activity {
    if(!g.over()||!g.peerLeft){paint.reset();paint.setAntiAlias(true);paint.setColor(0xff285681);c.drawRoundRect(320,4,391,29,3,3,paint);text(c,!g.over()?"投了":g.rematchMine?"申込済":"再戦",355,22,11,Color.WHITE);}
   }
   void onlineStatus(Canvas c){OnlineGame g=online.game;String s=g.status(SystemClock.elapsedRealtime());long quiet=silence();if(g.started&&!g.over()&&quiet>9000)s+="・相手の応答なし "+quiet/1000+"秒";
-   text(c,s,200,bottomHandY()+64,g.over()?14:12,g.over()?0xffffdd8b:Color.WHITE);if(!online.notice.isEmpty())text(c,online.notice,200,bottomHandY()+84,10,0xffffb9b3);if(g.error!=null)text(c,g.error,200,bottomHandY()+102,9,0xffffb9b3);
-   if(g.over()&&!g.peerLeft)text(c,"右上の「再戦」で先後を入れ替えて次の対局",200,bottomHandY()+(g.error!=null?120:102),9.5f,0xfff2e6d0);
+   text(c,s,200,bottomHandY()+64,g.over()?14:12,g.over()?0xffffdd8b:Color.WHITE);float line=bottomHandY()+84;OnlineAccount.Game r=online.lastResult;
+   if(g.over()&&r!=null){int d=r.after-r.before;text(c,"レート "+r.before+" → "+r.after+"（"+(d>=0?"+":"")+d+"）",200,line,12,d>=0?0xff9be59b:0xffffb9b3);}
+   else text(c,opponentLine(),200,line,9.5f,0xfff2e6d0);line+=18;
+   if(!online.notice.isEmpty()){text(c,online.notice,200,line,10,0xffffb9b3);line+=18;}if(g.error!=null){text(c,g.error,200,line,9,0xffffb9b3);line+=18;}
+   if(g.over()&&!g.peerLeft)text(c,"右上の「再戦」で先後を入れ替えて次の対局",200,line,9.5f,0xfff2e6d0);
    if(!g.started){paint.reset();paint.setColor(0xe0300909);c.drawRoundRect(75,H/2-35,325,H/2+35,12,12,paint);text(c,"対局準備中…",200,H/2+7,22,0xffffdd8b);}
   }
+  /** "相手：名前（レート1520）· レート戦 · 対戦成績…" for the line under the board. */
+  String opponentLine(){OnlineIdentity p=online.peer;if(p==null)return online.rated?"相手の情報を確認しています…":"フレンド対戦（レート変動なし）";
+   int[] h=online.account==null?new int[3]:online.account.headToHead(p.pubkey);String record=h[0]+h[1]+h[2]>0?" · 対戦成績"+h[0]+"勝"+h[1]+"敗"+h[2]+"分":"";
+   return "相手："+shortName(p.name,10)+"（レート"+p.rating+(p.games<Rating.PROVISIONAL_GAMES?"・暫定":"")+"）"+(online.rated?" · レート戦":" · レート変動なし")+record;}
   @Override public boolean performClick(){super.performClick();return true;}
  }
 }

@@ -7,10 +7,13 @@ import android.graphics.*;import android.os.*;import java.io.*;import java.util.
 final class OnlineSmoke {
  static final class Peer implements Netplay.Listener {
   final Netplay net;volatile OnlineGame game;volatile boolean direct,left;volatile int relays;
+  /** A second player with its own account: sends its card each round and verifies the app's card. */
+  final OnlineAccount account=new OnlineAccount(OnlineAccount.newSecret(),"テスト相手");volatile OnlineIdentity appCard;int cardRound;
   Peer(String relay)throws IOException{net=new Netplay(Collections.singletonList(relay),Collections.emptyList(),null,this);net.start();}
   static long now(){return SystemClock.elapsedRealtime();}
-  public synchronized void matched(int side){game=new OnlineGame(side,net::send);game.hello(now());}
-  public synchronized void message(String t){if(game!=null)game.receive(t,now());}
+  public synchronized void matched(int side){appCard=null;cardRound=0;game=new OnlineGame(side,net::send);game.hello(now());card();}
+  public synchronized void message(String t){if(t.startsWith("ID ")){appCard=OnlineIdentity.parse(t,net.sessionId());return;}if(game!=null){game.receive(t,now());card();}}
+  synchronized void card(){byte[] sid=net.sessionId();if(game!=null&&sid!=null&&game.round!=cardRound){cardRound=game.round;net.send(OnlineIdentity.message(account.key,sid,account.name,account.rating,account.games,new java.security.SecureRandom()));}}
   public void path(boolean d,int rtt,String route){direct=d;}
   public void relays(int open,int total){relays=open;}
   public void peerLeft(){left=true;synchronized(this){if(game!=null)game.peerLeft();}}
@@ -47,14 +50,25 @@ final class OnlineSmoke {
    waitFor(t,()->MainActivity.online.game!=null&&MainActivity.online.game.started&&peer.game!=null&&peer.game.started,20000,"quick match started");
    t.main(()->t.check(MainActivity.online.game.mySide==-peer.game.mySide,"opposite online sides"));orientation(t);
    waitFor(t,()->MainActivity.online.direct&&peer.direct,8000,"direct UDP path on device");
+   int[] before=new int[2];t.main(()->{before[0]=MainActivity.online.account.rating;before[1]=MainActivity.online.account.games;});
+   waitFor(t,()->MainActivity.online.peer!=null&&peer.appCard!=null,5000,"account cards exchanged");
+   t.main(()->{t.check(MainActivity.online.rated&&MainActivity.online.peer.name.equals("テスト相手")&&MainActivity.online.peer.rating==1500,"app verified the peer's signed card");
+    t.check(peer.appCard.pubkey.equals(MainActivity.online.account.key.publicHex)&&peer.appCard.rating==before[0],"peer verified the app's card");
+    t.check(MainActivity.online.account.pending!=null,"rated game in progress is persisted");});
    int[] sounds=new int[1];t.main(()->sounds[0]=t.v.sounds.playCount);ArrayList<Long> latency=new ArrayList<>();play(t,peer,8,latency);
    t.main(()->{AppSettings s=t.activity.settings;t.check(!s.sound()||s.volume()==0||t.v.sounds.playCount>=sounds[0]+8,"local and remote online moves play the placement sound when enabled");});t.screenshot("52_online_game.png");
    t.main(()->y[0]=MainActivity.online.game.mySide);int firstSide=(int)y[0];
    t.tap(355,16);t.clickDialog("投了");waitFor(t,()->peer.game.over()&&MainActivity.online.game.over(),8000,"online resignation agreed");
-   t.main(()->t.check(MainActivity.online.game.game.winner==-firstSide&&peer.game.game.winner==-firstSide,"resigning player loses on both devices"));t.screenshot("53_online_result.png");
+   t.main(()->t.check(MainActivity.online.game.game.winner==-firstSide&&peer.game.game.winner==-firstSide,"resigning player loses on both devices"));
+   t.main(()->{OnlineAccount a=MainActivity.online.account;t.check(a.games==before[1]+1&&a.losses>=1&&a.rating==Rating.next(before[0],before[1],1500,0)&&MainActivity.online.lastResult!=null&&a.pending==null,"rated loss recorded: "+a.rating);
+    OnlineAccount stored=new AccountStore(t.activity).load();t.check(stored.rating==a.rating&&stored.key.publicHex.equals(a.key.publicHex),"account persisted through the keystore");});
+   t.screenshot("53_online_result.png");
    t.tap(355,16);synchronized(peer){peer.game.requestRematch(Peer.now());}waitFor(t,()->MainActivity.online.game.round==2&&!MainActivity.online.game.over()&&peer.game.round==2,8000,"rematch by touch");
    t.main(()->t.check(MainActivity.online.game.mySide==-firstSide,"rematch swaps sides"));orientation(t);play(t,peer,4,latency);t.screenshot("54_online_rematch_flipped.png");
    t.tap(45,26);t.clickDialog("投了して退出");waitFor(t,()->MainActivity.online.game==null&&peer.game.over()&&peer.game.game.winner==peer.game.mySide,8000,"leaving resigns and returns to lobby");
+   t.main(()->t.check(MainActivity.online.account.games==before[1]+2,"leaving a rated game counts as a loss"));
+   t.tap(200,MainActivity.BoardView.ACCOUNT_CARD_Y+22);waitFor(t,()->t.activity.choiceDialog!=null&&t.activity.choiceDialog.isShowing(),5000,"account screen opened from the lobby card");
+   SystemClock.sleep(500);t.screenshot("56_online_account.png");t.main(()->t.activity.choiceDialog.dismiss());
    report.append("quick match + rematch move latency (touch to peer / peer to app) ms: ").append(latency).append('\n');
    peer.net.close();
    Peer guest=new Peer(relay.url());waitFor(t,()->guest.relays==1,10000,"guest relay");
