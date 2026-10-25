@@ -26,7 +26,7 @@ with zipfile.ZipFile(OUT/'BeniShogi-complete-source.zip','w',zipfile.ZIP_DEFLATE
   if directory.exists():
    for p in directory.rglob('*'):
     relative=p.relative_to(directory)
-    if p.is_file() and not any(s in relative.parts for s in ['build','outputs','__pycache__','.git','BeniShogi.xcodeproj']):z.write(p,pathlib.Path(prefix)/relative)
+    if p.is_file() and not any(s in relative.parts for s in ['build','.build','outputs','__pycache__','.git','BeniShogi.xcodeproj']):z.write(p,pathlib.Path(prefix)/relative)
  # Asset preparation is reproducible from the corresponding Android artwork and pinned model recipe.
  for folder in ['scripts','app/src/main/assets/generated','app/src/main/res/raw']:
   base=ROOT.parent/'native-three-minute'/folder

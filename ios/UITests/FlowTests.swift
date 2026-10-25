@@ -23,6 +23,23 @@ final class FlowTests:XCTestCase {
         if !app.buttons["match_settings"].isHittable{edgeScroll(app)}
         tap("match_settings",app);shot("store-05-match-settings")
     }
+    /// A real online game on the simulator against the Android client (CI starts a local relay and NetplayBot).
+    func testOnlineMatchAgainstAndroidBot()throws {
+        let env=ProcessInfo.processInfo.environment
+        guard let relay=env["ONLINE_RELAY"],!relay.isEmpty,let lobby=env["ONLINE_LOBBY"] else{throw XCTSkip("needs the CI local relay and Android bot")}
+        let app=XCUIApplication();app.launchArguments=["-coffee-test-suppress","-ads-fixture"];app.launchEnvironment["ONLINE_RELAY"]=relay;app.launchEnvironment["ONLINE_LOBBY"]=lobby;app.launch()
+        for _ in 0..<3{if app.buttons["mode_online"].isHittable{break};edgeScroll(app)};tap("mode_online",app)
+        XCTAssertTrue(app.staticTexts["online_relays"].waitForExistence(timeout:10));expectation(for:NSPredicate(format:"label CONTAINS %@","接続 1/1"),evaluatedWith:app.staticTexts["online_relays"]);waitForExpectations(timeout:15);shot("20-online-lobby")
+        tap("online_quick",app);let status=app.staticTexts["online_status"],ply=app.staticTexts["online_ply"];XCTAssertTrue(status.waitForExistence(timeout:40),"matched with the Android bot")
+        let sente=app.staticTexts["online_side"].label.contains("あなた先手")
+        func waitPly(_ n:Int){expectation(for:NSPredicate(format:"label == %@","\(n)手目"),evaluatedWith:ply);waitForExpectations(timeout:20)}
+        if sente{expectation(for:NSPredicate(format:"label CONTAINS %@","あなたの手番"),evaluatedWith:status);waitForExpectations(timeout:15);tap("cell_6_2",app);tap("cell_5_2",app);waitPly(1);waitPly(2)}
+        else{waitPly(1);tap("cell_2_6",app);tap("cell_3_6",app);waitPly(2);waitPly(3)}
+        shot("21-online-match")
+        tap("online_resign",app);let confirm=app.alerts.buttons["投了"];XCTAssertTrue(confirm.waitForExistence(timeout:5));confirm.tap()
+        expectation(for:NSPredicate(format:"label CONTAINS %@","負け・投了"),evaluatedWith:status);waitForExpectations(timeout:10);XCTAssertTrue(app.buttons["online_rematch"].exists);shot("22-online-result")
+        tap("home",app);XCTAssertTrue(app.buttons["mode_study"].waitForExistence(timeout:10))
+    }
     func shot(_ name:String){let image=XCTAttachment(screenshot:XCUIApplication().screenshot());image.name=name;image.lifetime = .keepAlways;add(image)}
     func tap(_ id:String,_ app:XCUIApplication,timeout:Double=15){let button=app.buttons[id];XCTAssertTrue(button.waitForExistence(timeout:timeout),id);button.tap()}
     func setOfferHidden(_ app:XCUIApplication){let control=app.switches["coffee_hide_offer"];if (control.value as? String) != "1"{control.coordinate(withNormalizedOffset:CGVector(dx:0.93,dy:0.5)).tap()};XCTAssertEqual(control.value as? String,"1")}

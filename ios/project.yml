@@ -67,6 +67,9 @@ targets:
         UIRequiresFullScreen: true
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         ITSAppUsesNonExemptEncryption: false
+        # Tests run the online mode against a relay on 127.0.0.1 (ws://). Public relays always use wss://.
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
   BeniShogiTests:
     type: bundle.unit-test
     platform: iOS

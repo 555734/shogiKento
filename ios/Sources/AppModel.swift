@@ -4,7 +4,7 @@ import AVFoundation
 import UIKit
 
 @MainActor final class AppModel: ObservableObject {
-    enum Screen: String {case home,study,match,archive}
+    enum Screen: String {case home,study,match,archive,online}
     @Published var screen=Screen.home
     @Published var session=CurrentSession()
     @Published var position=try! Position()
@@ -28,6 +28,9 @@ import UIKit
     @Published var records=[GameRecord]()
     @Published var damagedRecords=0
     @Published var freePlacement=UserDefaults.standard.bool(forKey:"free_placement")
+    @Published var online=OnlineState()
+    var net:Netplay?
+    var onlineEvents:OnlineEvents?
     private(set) var store:RecordStore?
     private var active=true,lastTick:Double?,audio:AVAudioPlayer?
     private var matchSettingsOpen=false
@@ -36,10 +39,12 @@ import UIKit
     var matchOptions:MatchOptions {var options=session.match.matchOptions ?? MatchOptions();if options.level==10 && !premium(){options.level=9};return options}
     var humanSide:Int {matchOptions.humanSide}
     var cpuSide:Int {-humanSide}
+    /// The local player's pieces are at the bottom: the human side against the CPU, the assigned side online.
+    var viewSide:Int {screen == .match ? humanSide:screen == .online ? online.game?.mySide ?? 1:1}
     var currentRecord:GameRecord {screen == .match ? session.match:session.study}
     var ply:Int {screen == .match ? session.match.moves:session.cursor}
     var score:Evaluation? {session.scores[session.cursor]}
-    var humanInput:Bool {active && !matchSettingsOpen && (screen == .study || screen == .match && session.matchStarted && session.winner==0 && position.side==humanSide && !thinking)}
+    var humanInput:Bool {active && !matchSettingsOpen && (screen == .study || screen == .match && session.matchStarted && session.winner==0 && position.side==humanSide && !thinking || screen == .online && online.game?.myTurn == true)}
     init(store testStore:RecordStore?=nil,premium:(@MainActor ()->Bool)? = nil){
         self.premium=premium ?? {CoffeeStore.shared.owned}
         do {let store=try testStore ?? RecordStore();self.store=store;if FileManager.default.fileExists(atPath:store.root.appendingPathComponent("current.json").path){session=try store.current()}}catch{self.error="保存データを読み込めません：\(error.localizedDescription)"}
@@ -49,11 +54,11 @@ import UIKit
         NativeEngine.shared.warmUp()
     }
     func save(){do{guard let store else{throw ShogiError.message("保存先を利用できません")};session.captureStudyTree();if session.matchStarted || session.match.moves>0 || session.winner != 0{try store.save(session.match)};try store.saveCurrent(session)}catch{self.error="棋譜を保存できません：\(error.localizedDescription)"}}
-    func enter(_ next:Screen){if screen == .match{tick()};NativeEngine.shared.cancel();thinking=false;analyzing=false;clearSelection();lastTick=nil;save();screen=next
-        do {if next == .study{position=try Position(session.study.positions[session.cursor]);refreshAnalysis()}else if next == .match{position=try Position(session.match.positions.last!);if active{lastTick=ProcessInfo.processInfo.systemUptime;scheduleCPU()}}else if next == .archive{guard let store else{throw ShogiError.message("保存先を利用できません")};records=try store.list();damagedRecords=store.damaged}}catch{self.error=error.localizedDescription}
+    func enter(_ next:Screen){if screen == .match{tick()};if screen == .online && next != .online{leaveOnline(all:true)};NativeEngine.shared.cancel();thinking=false;analyzing=false;clearSelection();lastTick=nil;save();screen=next
+        do {if next == .online{showOnlinePosition();ensureNetplay()}else if next == .study{position=try Position(session.study.positions[session.cursor]);refreshAnalysis()}else if next == .match{position=try Position(session.match.positions.last!);if active{lastTick=ProcessInfo.processInfo.systemUptime;scheduleCPU()}}else if next == .archive{guard let store else{throw ShogiError.message("保存先を利用できません")};records=try store.list();damagedRecords=store.damaged}}catch{self.error=error.localizedDescription}
     }
     func sceneActive(_ value:Bool){if !value{tick()};active=value;lastTick=nil;if !value{NativeEngine.shared.cancel();thinking=false;analyzing=false;audio?.stop();save()}else if screen == .study{refreshAnalysis()}else if screen == .match{lastTick=ProcessInfo.processInfo.systemUptime;scheduleCPU()}}
-    func tick(){guard active,!matchSettingsOpen,screen == .match,session.matchStarted,session.winner==0 else{lastTick=nil;return};let now=ProcessInfo.processInfo.systemUptime;defer{lastTick=now};guard let before=lastTick else{return};let side=position.side==1 ? 0:1;session.clocks[side]=max(0,session.clocks[side]-(now-before));if session.clocks[side]==0{finish(winner:-position.side,result:"時間切れ")}}
+    func tick(){if screen == .online{onlineTick();return};guard active,!matchSettingsOpen,screen == .match,session.matchStarted,session.winner==0 else{lastTick=nil;return};let now=ProcessInfo.processInfo.systemUptime;defer{lastTick=now};guard let before=lastTick else{return};let side=position.side==1 ? 0:1;session.clocks[side]=max(0,session.clocks[side]-(now-before));if session.clocks[side]==0{finish(winner:-position.side,result:"時間切れ")}}
     func clearSelection(){selected=nil;selectedHand=nil;targets=[];promotion=[]}
     func selectHand(_ piece:Int,side:Int){guard humanInput,screen == .study && freePlacement || side==position.side else{clearSelection();return};if selectedHand==piece && selectedSide==side{clearSelection();return};selected=nil;selectedHand=piece;selectedSide=side;computeTargets()}
     func computeTargets(){
@@ -68,7 +73,7 @@ import UIKit
         }
         let v=position.board[square];if v != 0 && (screen == .study && freePlacement || v*position.side>0){selected=square;selectedHand=nil;selectedSide=v>0 ? 1:-1;computeTargets()}else{clearSelection()}
     }
-    func commit(_ move:Move){tick();guard humanInput else{return};do {let next=try Rules.apply(position,move);if screen == .match{appendMatch(next,label:position.notation(move),human:true);scheduleCPU()}else{appendStudy(next,label:position.notation(move));feedback(human:true)};clearSelection()}catch{self.error=error.localizedDescription}}
+    func commit(_ move:Move){tick();guard humanInput else{return};if screen == .online{onlineCommit(move);return};do {let next=try Rules.apply(position,move);if screen == .match{appendMatch(next,label:position.notation(move),human:true);scheduleCPU()}else{appendStudy(next,label:position.notation(move));feedback(human:true)};clearSelection()}catch{self.error=error.localizedDescription}}
     func togglePromotion(_ square:Int){guard screen == .study,freePlacement else{return};let p=position.board[square],base=Position.base(p);guard p != 0,base != 5,base != 8 else{return};var next=position;next.board[square]=(p>0 ? 1:-1)*(abs(p)>8 ? base:base+8);next.ply+=1;appendStudy(next,label:"駒の成りを変更");clearSelection()}
     func setFree(_ value:Bool){freePlacement=value;UserDefaults.standard.set(value,forKey:"free_placement");clearSelection();refreshAnalysis()}
     func changeSide(){guard screen == .study else{return};position.side = -position.side;session.study.positions[session.cursor]=position.sfen;clearSelection();save();refreshAnalysis()}
@@ -82,7 +87,7 @@ import UIKit
             NativeEngine.shared.search(position,continuous:true){[weak self] result in guard let self,self.active,self.screen == .study,self.position.sfen==key,self.session.cursor==cursor else{return};switch result{case .failure(let e):self.candidatePosition="";self.analyzing=false;self.analysisStatus="AIエラー："+e.localizedDescription;case .success(let update):guard update.candidates.allSatisfy({legal.contains($0.move)}) else{self.candidatePosition="";self.analyzing=false;self.analysisStatus="AI候補手を検証できません";NativeEngine.shared.cancel();return};self.candidates=update.candidates;self.candidatePosition=key;self.depth=update.depth;self.nodes=update.nodes;self.analyzing=true;self.analysisStatus="探索中";if let first=update.candidates.first{self.session.scores[cursor]=first.score}}}
         }catch{analysisStatus=error.localizedDescription}
     }
-    var canShowCoffeeOffer:Bool {!matchSettingsOpen && promotion.isEmpty}
+    var canShowCoffeeOffer:Bool {!matchSettingsOpen && promotion.isEmpty && screen != .online}
     func setMatchSettingsOpen(_ value:Bool){if value{tick();NativeEngine.shared.cancel();thinking=false};matchSettingsOpen=value;lastTick=nil;if !value && active && screen == .match{lastTick=ProcessInfo.processInfo.systemUptime;scheduleCPU()}}
     func applyMatchOptions(_ options:MatchOptions){guard options.valid(),options.level<10 || premium(),options != matchOptions else{return};options.save();restartMatch()}
     func membershipChanged(){if screen == .match{NativeEngine.shared.cancel();thinking=false;scheduleCPU()}}

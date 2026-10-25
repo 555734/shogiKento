@@ -3,3 +3,5 @@ Resources/
 Assets.xcassets/
 Tests/Fixtures/
 GameAssets/
+HostTests/.build/
+HostTests/Package.resolved

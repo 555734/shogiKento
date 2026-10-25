@@ -62,7 +62,8 @@ final class Netplay {
         let t=DispatchSource.makeTimerSource(queue:loop);t.schedule(deadline:.now()+0.5,repeating:0.5,leeway:.milliseconds(50));t.setEventHandler{[weak self] in self?.tick()};t.resume();timer=t
         run{[weak self] in self?.networkSummary()}
     }
-    func run(_ block:@escaping ()->Void){loop.async{[weak self] in guard let self,!self.isClosed else{return};block()}}
+    /// Work queued before close() still runs (close waits for it), so a final RESIGN reaches the peer before BYE.
+    func run(_ block:@escaping ()->Void){guard !isClosed else{return};loop.async(execute:block)}
     static func nowMillis()->Int64 {Int64(Date().timeIntervalSince1970*1000)}
     static func filter(_ tag:String,_ value:String)->NetJSON {.object([("kinds",.array([.int(Int64(NostrPool.kind))])),(tag,.array([.string(value)])),("since",.int(nowMillis()/1000-30))])}
     static func roomTag(_ code:String)->String {"shogikento-v1-room-"+String(Secp256k1.hex(Secp256k1.sha256(Array("shogikento-room:\(code)".utf8))).prefix(24))}

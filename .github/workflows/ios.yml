@@ -32,6 +32,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
       - name: Prepare pinned engine, model, artwork and independent Quest fixture
         run: |
           set -euo pipefail
@@ -55,9 +59,17 @@ jobs:
           xcodebuild -project BeniShogi.xcodeproj -scheme BeniShogi -configuration Release -destination 'generic/platform=iOS' -derivedDataPath "$PWD/build/DeviceData" -resultBundlePath "$PWD/outputs/DeviceBuild.xcresult" CODE_SIGNING_ALLOWED=NO build 2>&1 | tee outputs/device-build.txt
       - name: Install and test real iOS application
         working-directory: ios
-        timeout-minutes: 20
+        timeout-minutes: 25
         run: |
           set -euo pipefail
+          # Online tests play against the Android client through a relay on this Mac (shared with the simulator).
+          classes="$PWD/build/online-java"
+          javac -encoding UTF-8 -implicit:class -sourcepath ../native-three-minute/app/src/main/java -d "$classes" ../native-three-minute/tests/relay/LocalRelay.java ../native-three-minute/tests/interop/*.java
+          trap 'kill $(jobs -p) 2>/dev/null || true' EXIT
+          java -cp "$classes" com.presentsoft.shogi3minutes.LocalRelay outputs/online-relay-url.txt > /dev/null 2>&1 &
+          for _ in $(seq 50); do test -s outputs/online-relay-url.txt && break; sleep 0.2; done
+          export TEST_RUNNER_ONLINE_RELAY="$(cat outputs/online-relay-url.txt)" TEST_RUNNER_ONLINE_LOBBY="ios-ci-$GITHUB_RUN_ID"
+          java -cp "$classes" com.presentsoft.shogi3minutes.NetplayBot "$TEST_RUNNER_ONLINE_RELAY" "$TEST_RUNNER_ONLINE_LOBBY" auto < /dev/null > outputs/online-bot.txt 2>&1 &
           xcrun simctl list devices available -j > outputs/simulators.json
           UDID=$(python -c 'import json; d=json.load(open("outputs/simulators.json")); phones=[v for a in d["devices"].values() for v in a if v["name"].startswith("iPhone")]; print(next((v["udid"] for v in phones if "Pro Max" in v["name"]),phones[0]["udid"]))')
           echo "$UDID" > outputs/simulator-udid.txt
@@ -73,6 +85,11 @@ jobs:
           xcrun simctl launch "$UDID" com.presentsoft.shogi3minutes || true
           sleep 3
           xcrun simctl io "$UDID" screenshot outputs/home.png
+      - name: Check the iOS online core against the Android client on the host
+        if: always()
+        run: |
+          set -euo pipefail
+          bash ios/scripts/online_interop.sh 2>&1 | tee ios/outputs/online-interop.txt
       - name: Capture iPhone store screenshots from a fresh app install
         if: always()
         working-directory: ios
