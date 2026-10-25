@@ -13,7 +13,7 @@ public final class LocalRelay implements Closeable {
  public String url(){return "ws://127.0.0.1:"+server.getLocalPort()+"/";}
  /** Standalone relay for cross-platform tests (e.g. the iOS simulator): prints its URL, optionally writes it to a file, runs until killed. */
  public static void main(String[] args)throws Exception{LocalRelay relay=new LocalRelay();System.out.println(relay.url());System.out.flush();
-  if(args.length>0)java.nio.file.Files.write(java.nio.file.Paths.get(args[0]),relay.url().getBytes(StandardCharsets.UTF_8));Thread.currentThread().join();}
+  if(args.length>0)try(FileOutputStream f=new FileOutputStream(args[0])){f.write(relay.url().getBytes(StandardCharsets.UTF_8));}Thread.currentThread().join();}
  final class Conn {
   final Socket s;final InputStream in;final OutputStream out;final Map<String,List<Map<String,Object>>> subs=new ConcurrentHashMap<>();
   Conn(Socket s)throws IOException{this.s=s;in=new BufferedInputStream(s.getInputStream());out=new BufferedOutputStream(s.getOutputStream());}

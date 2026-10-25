@@ -1,3 +1,17 @@
+## オンライン対戦（P2P・サーバー不要・Android版と対戦可）
+
+ホームの「オンライン対戦」から「ランダム対戦」「ルームを作る（6桁コード）」「ルームに参加」で、人と3分切れ負けで対局できます。仕組みはAndroid版と同じで、メッセージ形式・暗号・時計の規則まで一致させているため、iPhoneとAndroidの利用者が同じロビーでマッチングし、そのまま対局できます。登録・課金・運用サーバーは不要です（仕組みの詳細は[Android版の説明](../native-three-minute/README.md#オンライン対戦p2pサーバー不要)）。
+
+- 実装は `Sources/Online/`（Swift）: NIP-01のJSON直列化、secp256k1/BIP-340署名、公開Nostrリレー8か所への同時接続（URLSessionWebSocketTask・TLS）、デュアルスタックUDPとSTUN、P-256 ECDH＋HKDF＋AES-GCM（CryptoKit）で暗号化したP2Pリンクとリレー経由の自動切替、募集→申込→承諾→確定のマッチング、遅延補正付きの時計。合法手・千日手・連続王手の千日手・詰みの判定は内蔵エンジン（`EngineRules`）で行い、相手の指し手も全て自分側で検証します。
+- iOSはLAN内のアドレスへ送信すると「ローカルネットワーク」の許可を求めるため、オンライン対戦はLANアドレスを使いません（同じWi-Fiの相手とも公開アドレス・IPv6・リレーで接続します）。許可ダイアログは出ません。
+- オンライン対局中はアプリを離れても時計は止まりません。iOSはバックグラウンドで通信を止めるため、離れている間に時間切れになることがあります。退出は投了扱いです。対局の盤の下には対局モードと同じ広告枠（match）を表示し、コーヒー応援の案内はオンライン画面では出しません。
+- `Info.plist` の `NSAllowsLocalNetworking` は、テストで127.0.0.1のリレー（ws://）へ接続するためです。公開リレーには常にwss://で接続します。
+- 通信内容（指し手）はAES-GCMで暗号化します（CryptoKitの標準アルゴリズム）。App Store Connectの輸出コンプライアンス（`ITSAppUsesNonExemptEncryption`）の申告内容は、提出前に確認してください。
+
+検証:
+- `scripts/online_interop.sh`（macOS・Linux）: `HostTests/` のSwiftパッケージが `Sources/Online` をそのままビルドし、BIP-340公式ベクター19件とNIP-01のID、仮想時間での時計・時間切れ・猶予・不正手・再戦・千日手、30%のUDP損失下での順序保証・改ざん/リプレイ拒否・UDP断からの復帰を確認したうえで、Android版のJavaクライアント（`native-three-minute/tests/interop/NetplayBot.java`）とローカルリレー越しに完全な対局を行います: ランダム対戦（ループバックUDP直結）40手・投了・先後を入れ替えた再戦・退出、ネットワーク越しの千日手（両端末で「千日手・引き分け」）、UDP遮断時のリレーのみの対局、両方向のルーム対戦、iPhone同士の対局。Swift側のルールにはAndroidのルール（`RulesOracle.java`）を使い、毎手、両端末の局面（SFEN）が一致することを確認します。Linux上の実測: 直結の指し手到達が中央値5〜7ms、ローカルリレーのみで53〜60ms（493チェック）。
+- iOS Simulator（GitHub Actions）: CIがMac上でローカルリレーとAndroid版の自動対局ボットを起動し、`OnlineTests` がアプリのネットワークコードと内蔵エンジンのルールでボットと30手以上の対局・再戦を行い、Androidの指し手が全てiOSのルールでも合法であることを確認します。`FlowTests.testOnlineMatchAgainstAndroidBot` はUI操作でランダム対戦→着手→投了を行い、スクリーンショット20〜22を保存します。実機同士・キャリア回線間の直結率と遅延は未検証です。
+
 ## v1.15.0 コーヒー応援の買い切り購入
 
 広告除去・対局AI Lv.10解放・購入復元と、2回目以降の起動案内／非表示設定を追加しました。商品IDは `coffee_support_unlock`、日本の設定予定価格は200円です。ストア商品は未登録で、通常起動では準備中です。ストアでの登録と検証公開鍵の設定など、本番準備と検証範囲は [`docs/coffee-purchase.md`](../docs/coffee-purchase.md) を参照してください。

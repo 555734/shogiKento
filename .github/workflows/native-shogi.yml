@@ -49,6 +49,8 @@ jobs:
         run: |
           M=app/src/main/java/com/presentsoft/shogi3minutes
           javac -cp test-classes -d test-classes $M/NetJson.java $M/Schnorr.java $M/WebSocketClient.java $M/NostrRelayPool.java $M/UdpEndpoint.java $M/P2PLink.java $M/Netplay.java $M/OnlineGame.java tests/relay/LocalRelay.java tests/NetplayTest.java
+          # The iOS cross-play tools (rules oracle, scripted bot) must keep compiling against the Android sources.
+          javac -encoding UTF-8 -implicit:class -sourcepath app/src/main/java -d build/interop-classes tests/relay/LocalRelay.java tests/interop/*.java
           java -cp test-classes com.presentsoft.shogi3minutes.NetplayTest tests/bip340.csv | tee outputs/netplay.txt
       - name: Live public Nostr relays and STUN (informational)
         continue-on-error: true

@@ -44,7 +44,9 @@ final class Netplay {
     private var mode=Netplay.quick,state=State.idle,seeks=0;private var roomTag:String?,nonce="",target:String?,targetNonce:String?
     private var deadline:Int64=0,seekStarted:Int64=0,lastSeek:Int64=0,lastReply:Int64=0,lastHandshake:Int64=0,handshakeSends=0;private var handshake:[(String,NetJSON)]?
     private var session:Session?,pending:Session?;private var seen=[String:Seek](),blocked=[String:Int64]()
-    private var relaysOpen=0,relaysTotal=0,lastStatus="";private let lock=NSLock();private var closed=false
+    private var relaysOpen=0,relaysTotal=0,lastStatus=""
+    /// Recursive: start() holds it while gathering candidates, whose callback checks isClosed on the same thread.
+    private let lock=NSRecursiveLock();private var closed=false
     private let born=Date();private var traceLines=[String]()
 
     init(relays:[String]=Netplay.relays,stun:[String]=Netplay.stunServers,factory:@escaping WebSocketFactory)throws {

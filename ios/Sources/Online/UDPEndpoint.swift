@@ -148,6 +148,9 @@ final class UDPEndpoint {
         var buffer=[UInt8](repeating:0,count:2048)
         while !isClosed {var storage=sockaddr_storage(),length=socklen_t(MemoryLayout<sockaddr_storage>.size)
             let n=buffer.withUnsafeMutableBytes{b in withUnsafeMutablePointer(to:&storage){$0.withMemoryRebound(to:sockaddr.self,capacity:1){recvfrom(fd,b.baseAddress,b.count,0,$0,&length)}}}
+            // A receive timeout is EAGAIN. Other errors (iOS can reclaim a suspended app's socket) must not spin the CPU;
+            // the game then continues over the relay.
+            if n<0 {let e=errno;if e != EAGAIN && e != EWOULDBLOCK && e != EINTR{usleep(100_000)};continue}
             guard n>0,let from=Self.address(storage) else{continue};let packet=Array(buffer[0..<n])
             if n>=20 && packet[0]==1 && packet[1]==1 {lock.lock();let c=Self.parseStun(packet,pending:&pendingStun);if let c,let m=UDPAddress.parse(c){stunReplies+=1;mappedPorts[m.host,default:[]].insert(m.port);let added = !reflexive.contains(m);if added{reflexive.append(m)};lock.unlock();if added{announce()}}else{lock.unlock()};continue}
             handler?(Data(packet),from)
