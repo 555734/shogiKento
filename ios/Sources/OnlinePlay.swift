@@ -140,7 +140,7 @@ struct OnlineScreen:View {
     private var lobby:some View {
         VStack(spacing:12){
             Text("3分切れ負け・無料のオンライン対戦").font(.system(size:20,weight:.bold,design:.serif)).foregroundStyle(gold).padding(.top,12)
-            Button{accountSheet=true}label:{HStack{VStack(alignment:.leading,spacing:4){Text(model.account.name).font(.headline);Text("レート \(model.account.ratingText) · \(model.account.wins)勝\(model.account.losses)敗\(model.account.draws)分").font(.caption)};Spacer();Label("アカウント",systemImage:"person.crop.circle").font(.subheadline)}
+            Button{accountSheet=true}label:{HStack{VStack(alignment:.leading,spacing:4){Text(model.account.name).font(.headline);Text(verbatim:"レート \(model.account.ratingText) · \(model.account.wins)勝\(model.account.losses)敗\(model.account.draws)分").font(.caption)};Spacer();Label("アカウント",systemImage:"person.crop.circle").font(.subheadline)}
                 .padding(12).foregroundStyle(cream).background(Color.black.opacity(0.78)).clipShape(RoundedRectangle(cornerRadius:10))}.buttonStyle(.plain).accessibilityIdentifier("online_account")
             ForEach(Array([("ランダム対戦","レート戦・近いレートの相手と対局",Netplay.quick,"online_quick"),("ルームを作る","6桁のコードで友だちと対局（レート変動なし）",Netplay.host,"online_host"),("ルームに参加","友だちのルームコードを入力（レート変動なし）",Netplay.guest,"online_join")].enumerated()),id:\.offset){_,item in
                 let active=model.online.seekMode==item.2
@@ -150,9 +150,9 @@ struct OnlineScreen:View {
             VStack(alignment:.leading,spacing:6){
                 Text(model.net==nil ? "未接続":"公開リレー接続 \(model.online.relaysOpen)/\(model.online.relaysTotal)"+(model.online.relaysOpen==0 ? "（接続中…）":"")).font(.caption).foregroundStyle(model.online.relaysOpen>0 ? .green:.yellow).accessibilityIdentifier("online_relays")
                 Text(model.online.network.isEmpty ? "UDP候補を収集しています…":model.online.network).font(.caption2).foregroundStyle(cream.opacity(0.85))
-                if model.online.seekMode==Netplay.host,let room=model.online.roomCode{Text("ルームコード \(room.prefix(3)) \(room.suffix(3))").font(.system(size:26,weight:.bold,design:.monospaced)).foregroundStyle(gold).frame(maxWidth:.infinity).accessibilityIdentifier("online_room_code")}
+                if model.online.seekMode==Netplay.host,let room=model.online.roomCode{Text(verbatim:"ルームコード \(room.prefix(3)) \(room.suffix(3))").font(.system(size:26,weight:.bold,design:.monospaced)).foregroundStyle(gold).frame(maxWidth:.infinity).accessibilityIdentifier("online_room_code")}
                 Text(model.online.seekMode<0 ? "対局方法を選んでください":model.online.status.isEmpty ? "開始しています…":model.online.status).font(.subheadline).frame(maxWidth:.infinity).accessibilityIdentifier("online_lobby_status")
-                if model.online.seekMode==Netplay.guest,let room=model.online.roomCode{Text("ルーム \(room)").font(.caption).frame(maxWidth:.infinity)}
+                if model.online.seekMode==Netplay.guest,let room=model.online.roomCode{Text(verbatim:"ルーム \(room)").font(.caption).frame(maxWidth:.infinity)}
                 if !model.online.notice.isEmpty{Text(model.online.notice).font(.caption).foregroundStyle(.orange).frame(maxWidth:.infinity).accessibilityIdentifier("online_notice")}
                 if model.online.seekMode>=0{Button("キャンセル"){model.cancelSeek()}.buttonStyle(.bordered).frame(maxWidth:.infinity).accessibilityIdentifier("online_cancel")}
             }.padding(14).foregroundStyle(cream).background(.black.opacity(0.78)).clipShape(RoundedRectangle(cornerRadius:10))
@@ -166,15 +166,15 @@ struct OnlineGameView:View {
     @Binding var resign:Bool
     var body:some View {
         VStack(spacing:8){
-            HStack {Text(model.online.direct ? "P2P直結"+(model.online.rtt>=0 ? " \(model.online.rtt)ms":""):game.started ? "リレー経由"+(model.online.rtt>=0 ? " \(model.online.rtt)ms":""):"接続中…").foregroundStyle(model.online.direct ? .green:.yellow).accessibilityIdentifier("online_route");Spacer();Text("第\(game.round)局 · あなた\(game.mySide==1 ? "先手":"後手")").accessibilityIdentifier("online_side")}
+            HStack {Text(model.online.direct ? "P2P直結"+(model.online.rtt>=0 ? " \(model.online.rtt)ms":""):game.started ? "リレー経由"+(model.online.rtt>=0 ? " \(model.online.rtt)ms":""):"接続中…").foregroundStyle(model.online.direct ? .green:.yellow).accessibilityIdentifier("online_route");Spacer();Text(verbatim:"第\(game.round)局 · あなた\(game.mySide==1 ? "先手":"後手")").accessibilityIdentifier("online_side")}
                 .font(.caption).foregroundStyle(cream).padding(.horizontal,10).frame(height:30).background(.black.opacity(0.72))
             Text(opponentText).font(.caption).foregroundStyle(cream).frame(maxWidth:.infinity,alignment:.leading).padding(.horizontal,10).accessibilityIdentifier("online_opponent")
             HandView(side:-model.viewSide)
             BoardView().aspectRatio(1226/1283.0,contentMode:.fit)
             HandView(side:model.viewSide)
             Text(statusText).font(game.over ? .headline:.body).foregroundStyle(game.over ? gold:cream).multilineTextAlignment(.center).accessibilityIdentifier("online_status")
-            Text("\(game.movesPlayed)手目").foregroundStyle(cream).accessibilityIdentifier("online_ply")
-            if game.over,let r=model.online.lastResult{Text("レート \(r.before) → \(r.after)（\(r.after>=r.before ? "+":"")\(r.after-r.before)）").font(.headline).foregroundStyle(r.after>=r.before ? .green:.red).accessibilityIdentifier("online_rating_change")}
+            Text(verbatim:"\(game.movesPlayed)手目").foregroundStyle(cream).accessibilityIdentifier("online_ply")
+            if game.over,let r=model.online.lastResult{Text(verbatim:"レート \(r.before) → \(r.after)（\(r.after>=r.before ? "+":"")\(r.after-r.before)）").font(.headline).foregroundStyle(r.after>=r.before ? .green:.red).accessibilityIdentifier("online_rating_change")}
             if !model.online.notice.isEmpty{Text(model.online.notice).font(.caption).foregroundStyle(.orange)}
             if let error=game.error{Text(error).font(.caption).foregroundStyle(.orange)}
             HStack {

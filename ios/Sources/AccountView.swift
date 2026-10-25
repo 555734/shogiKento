@@ -18,7 +18,7 @@ struct AccountView:View {
         .alert("名前を変更",isPresented:$renaming){TextField("16文字まで",text:$newName).accessibilityIdentifier("account_name_field");Button("キャンセル",role:.cancel){};Button("変更"){message=model.renameAccount(newName) ? nil:"名前を入力してください"}.accessibilityIdentifier("account_name_save")}message:{Text("対局相手とランキングに表示されます")}
         .alert("引き継ぎコード",isPresented:$showCode){Button("コピー"){UIPasteboard.general.string=model.transferCode};Button("閉じる",role:.cancel){}}message:{Text(model.transferCode+"\n\n新しい端末の「引き継ぎコードで復元」に入力します。他人には絶対に教えないでください。")}
         .alert("引き継ぎコードで復元",isPresented:$restoring){TextField("nsec1…",text:$code).textInputAutocapitalization(.never).autocorrectionDisabled().accessibilityIdentifier("account_code_field");Button("キャンセル",role:.cancel){};Button("次へ"){confirmRestore=true}}message:{Text("別の端末で表示した引き継ぎコードを入力してください")}
-        .alert("この端末のアカウントを置き換えますか？",isPresented:$confirmRestore){Button("キャンセル",role:.cancel){};Button("置き換える",role:.destructive){message=model.restoreAccount(code) ? nil:"引き継ぎコードが正しくありません"}}message:{Text("現在のアカウント（\(model.account.name)・レート\(model.account.rating)）は、引き継ぎコードを控えていない場合は元に戻せません。")}
+        .alert("この端末のアカウントを置き換えますか？",isPresented:$confirmRestore){Button("キャンセル",role:.cancel){};Button("置き換える",role:.destructive){message=model.restoreAccount(code) ? nil:"引き継ぎコードが正しくありません"}}message:{Text(verbatim:"現在のアカウント（\(model.account.name)・レート\(model.account.rating)）は、引き継ぎコードを控えていない場合は元に戻せません。")}
     }
     private var shortId:String {String(Nip19.encode("npub",model.accountKey.publicKey).prefix(16))+"…"}
     private var graphPoints:[Int] {guard let first=model.account.history.first else{return []};return [first.before]+model.account.history.map(\.after)}
@@ -26,8 +26,8 @@ struct AccountView:View {
         Section {
             HStack {VStack(alignment:.leading,spacing:4){Text(model.account.name).font(.title2.bold()).accessibilityIdentifier("account_name");Text(shortId).font(.caption.monospaced()).foregroundStyle(.secondary).textSelection(.enabled)}
                 Spacer();Button("名前を変更"){newName=model.account.name;renaming=true}.buttonStyle(.bordered).accessibilityIdentifier("account_rename")}
-            HStack(alignment:.firstTextBaseline){Text("レート").foregroundStyle(.secondary);Text("\(model.account.rating)").font(.system(size:40,weight:.bold,design:.rounded)).foregroundStyle(gold).accessibilityIdentifier("account_rating");if model.account.provisional{Text("暫定（\(model.account.games)/\(Rating.provisionalGames)局）").font(.caption).foregroundStyle(.orange)}}
-            Text("\(model.account.games)局 · \(model.account.wins)勝 \(model.account.losses)敗 \(model.account.draws)分").accessibilityIdentifier("account_record")
+            HStack(alignment:.firstTextBaseline){Text("レート").foregroundStyle(.secondary);Text(verbatim:"\(model.account.rating)").font(.system(size:40,weight:.bold,design:.rounded)).foregroundStyle(gold).accessibilityIdentifier("account_rating");if model.account.provisional{Text(verbatim:"暫定（\(model.account.games)/\(Rating.provisionalGames)局）").font(.caption).foregroundStyle(.orange)}}
+            Text(verbatim:"\(model.account.games)局 · \(model.account.wins)勝 \(model.account.losses)敗 \(model.account.draws)分").accessibilityIdentifier("account_record")
             if graphPoints.count>=3{RatingGraph(points:graphPoints).frame(height:90).accessibilityLabel("レートの推移")}
         }header:{Text("プロフィール")}footer:{Text("ランダム対戦がレート戦です（Elo方式・初期1500・最初の10局は変動大）。ルーム対戦はレートが変わりません。対局中の退出・アプリの終了は負けになります。")}
     }
@@ -61,13 +61,13 @@ private struct GameRow:View {
     private var date:Date {Date(timeIntervalSince1970:TimeInterval(game.time))}
     var body:some View {HStack{
         Text(mark).font(.headline).foregroundStyle(color).frame(width:24)
-        VStack(alignment:.leading,spacing:2){Text("\(game.opponentName)（\(game.opponentRating)）");Text(game.reason+" · "+date.formatted(date:.abbreviated,time:.shortened)).font(.caption).foregroundStyle(.secondary)}
-        Spacer();Text("\(game.after)").monospacedDigit();Text(change>=0 ? "+\(change)":"\(change)").font(.caption.monospacedDigit()).foregroundStyle(change>=0 ? Color.green:Color.red).frame(width:36,alignment:.trailing)
+        VStack(alignment:.leading,spacing:2){Text(verbatim:"\(game.opponentName)（\(game.opponentRating)）");Text(game.reason+" · "+date.formatted(date:.abbreviated,time:.shortened)).font(.caption).foregroundStyle(.secondary)}
+        Spacer();Text(verbatim:"\(game.after)").monospacedDigit();Text(verbatim:change>=0 ? "+\(change)":"\(change)").font(.caption.monospacedDigit()).foregroundStyle(change>=0 ? Color.green:Color.red).frame(width:36,alignment:.trailing)
     }.accessibilityElement(children:.combine)}
 }
 private struct RankRow:View {
     let rank:Int,profile:Profiles.Profile,mine:Bool
-    var body:some View {HStack{Text("\(rank)").monospacedDigit().frame(width:30,alignment:.trailing);Text(profile.name).bold(mine);Spacer();Text("\(profile.rating)").monospacedDigit().foregroundStyle(gold);Text("\(profile.games)局").font(.caption).foregroundStyle(.secondary)}.accessibilityElement(children:.combine)}
+    var body:some View {HStack{Text(verbatim:"\(rank)").monospacedDigit().frame(width:30,alignment:.trailing);Text(profile.name).bold(mine);Spacer();Text(verbatim:"\(profile.rating)").monospacedDigit().foregroundStyle(gold);Text(verbatim:"\(profile.games)局").font(.caption).foregroundStyle(.secondary)}.accessibilityElement(children:.combine)}
 }
 struct RatingGraph:View {
     let points:[Int]
