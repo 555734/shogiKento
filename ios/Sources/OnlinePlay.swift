@@ -156,7 +156,7 @@ struct OnlineScreen:View {
                 if !model.online.notice.isEmpty{Text(model.online.notice).font(.caption).foregroundStyle(.orange).frame(maxWidth:.infinity).accessibilityIdentifier("online_notice")}
                 if model.online.seekMode>=0{Button("キャンセル"){model.cancelSeek()}.buttonStyle(.bordered).frame(maxWidth:.infinity).accessibilityIdentifier("online_cancel")}
             }.padding(14).foregroundStyle(cream).background(.black.opacity(0.78)).clipShape(RoundedRectangle(cornerRadius:10))
-            Text("サーバーを使わず、公開Nostrリレーで相手を探してP2P（UDP）で直接つながります。直結できない回線ではリレー経由で対局を続けます。Android版とも対戦できます。").font(.caption2).foregroundStyle(cream.opacity(0.8)).padding(.horizontal,6)
+            Text("サーバーを使わず、公開Nostrリレーで相手を探してP2P（UDP）で直接つながります。直結できない回線ではリレー経由で対局を続けます。Android版とも対戦できます。対戦相手にはあなたのIPアドレスが伝わります。対局中はアプリを離れても時計は止まりません。").font(.caption2).foregroundStyle(cream.opacity(0.8)).padding(.horizontal,6)
         }.padding(.horizontal,16)
     }
 }
