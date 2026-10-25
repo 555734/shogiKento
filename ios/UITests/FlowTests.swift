@@ -27,17 +27,25 @@ final class FlowTests:XCTestCase {
     func testOnlineMatchAgainstAndroidBot()throws {
         let env=ProcessInfo.processInfo.environment
         guard let relay=env["ONLINE_RELAY"],!relay.isEmpty,let lobby=env["ONLINE_LOBBY"] else{throw XCTSkip("needs the CI local relay and Android bot")}
-        let app=XCUIApplication();app.launchArguments=["-coffee-test-suppress","-ads-fixture"];app.launchEnvironment["ONLINE_RELAY"]=relay;app.launchEnvironment["ONLINE_LOBBY"]=lobby;app.launch()
+        let app=XCUIApplication();app.launchArguments=["-coffee-test-suppress","-ads-fixture","-online-reset-account"];app.launchEnvironment["ONLINE_RELAY"]=relay;app.launchEnvironment["ONLINE_LOBBY"]=lobby;app.launch()
         for _ in 0..<3{if app.buttons["mode_online"].isHittable{break};edgeScroll(app)};tap("mode_online",app)
         XCTAssertTrue(app.staticTexts["online_relays"].waitForExistence(timeout:10));expectation(for:NSPredicate(format:"label CONTAINS %@","接続 1/1"),evaluatedWith:app.staticTexts["online_relays"]);waitForExpectations(timeout:15);shot("20-online-lobby")
+        // Account: a fresh device account starts at 1500 (provisional); renaming updates the card shown to opponents.
+        tap("online_account",app);XCTAssertTrue(app.staticTexts["account_rating"].waitForExistence(timeout:5));XCTAssertEqual(app.staticTexts["account_rating"].label,"1500")
+        tap("account_rename",app);let field=app.textFields["account_name_field"];XCTAssertTrue(field.waitForExistence(timeout:5));field.tap()
+        if let old=field.value as? String,!old.isEmpty{field.typeText(String(repeating:XCUIKeyboardKey.delete.rawValue,count:old.count))};field.typeText("iPhone棋士");app.alerts.buttons["変更"].tap()
+        XCTAssertTrue(app.staticTexts["account_name"].waitForExistence(timeout:5));XCTAssertEqual(app.staticTexts["account_name"].label,"iPhone棋士");shot("23-online-account");tap("account_close",app)
         tap("online_quick",app);let status=app.staticTexts["online_status"],ply=app.staticTexts["online_ply"];XCTAssertTrue(status.waitForExistence(timeout:40),"matched with the Android bot")
         let sente=app.staticTexts["online_side"].label.contains("あなた先手")
-        func waitPly(_ n:Int){expectation(for:NSPredicate(format:"label == %@","\(n)手目"),evaluatedWith:ply);waitForExpectations(timeout:20)}
+        // The bot answers within about 0.3 s, so a ply count may already be one further when it is first read.
+        func waitPly(_ n:Int){expectation(for:NSPredicate(format:"label IN %@",["\(n)手目","\(n+1)手目"]),evaluatedWith:ply);waitForExpectations(timeout:20)}
         if sente{expectation(for:NSPredicate(format:"label CONTAINS %@","あなたの手番"),evaluatedWith:status);waitForExpectations(timeout:15);tap("cell_6_2",app);tap("cell_5_2",app);waitPly(1);waitPly(2)}
         else{waitPly(1);tap("cell_2_6",app);tap("cell_3_6",app);waitPly(2);waitPly(3)}
+        let opponent=app.staticTexts["online_opponent"];expectation(for:NSPredicate(format:"label CONTAINS %@","AndroidBot"),evaluatedWith:opponent);waitForExpectations(timeout:10);XCTAssertTrue(opponent.label.contains("レート戦"))
         shot("21-online-match")
         tap("online_resign",app);let confirm=app.alerts.buttons["投了"];XCTAssertTrue(confirm.waitForExistence(timeout:5));confirm.tap()
-        expectation(for:NSPredicate(format:"label CONTAINS %@","負け・投了"),evaluatedWith:status);waitForExpectations(timeout:10);XCTAssertTrue(app.buttons["online_rematch"].exists);shot("22-online-result")
+        expectation(for:NSPredicate(format:"label CONTAINS %@","負け・投了"),evaluatedWith:status);waitForExpectations(timeout:10);XCTAssertTrue(app.buttons["online_rematch"].exists)
+        let change=app.staticTexts["online_rating_change"];XCTAssertTrue(change.waitForExistence(timeout:5));XCTAssertTrue(change.label.hasPrefix("レート 1500 → "),change.label);shot("22-online-result")
         tap("home",app);XCTAssertTrue(app.buttons["mode_study"].waitForExistence(timeout:10))
     }
     func shot(_ name:String){let image=XCTAttachment(screenshot:XCUIApplication().screenshot());image.name=name;image.lifetime = .keepAlways;add(image)}

@@ -13,6 +13,9 @@ struct OnlineState {
     var status="",network="",notice="",route="",roomCode:String?
     var relaysOpen=0,relaysTotal=0,rtt = -1,seekMode = -1
     var direct=false,silenceMillis:Int64=0
+    /// The opponent's verified account card, whether this session is rated (random matches), the round whose card
+    /// was sent, and the last settled rated result for the result line.
+    var peer:OnlineIdentity?,rated=false,cardRound=0,lastResult:OnlineAccount.Game?
 }
 
 enum OnlineEvent {case status(String),relays(Int,Int),network(String),matched(Int),message(String),path(Bool,Int,String),peerLeft,failed(String)}
@@ -55,7 +58,9 @@ extension AppModel {
         case .status(let text):online.status=text
         case .relays(let open,let total):online.relaysOpen=open;online.relaysTotal=total
         case .network(let text):online.network=text
-        case .matched(let side):var g=OnlineGame(mySide:side,rules:EngineRules());g.hello(now);online.game=g;online.seekMode = -1;online.notice="";online.direct=false;online.rtt = -1;online.route="";flushOnline();showOnlinePosition()
+        case .matched(let side):var g=OnlineGame(mySide:side,rules:EngineRules());g.hello(now);online.peer=nil;online.cardRound=0;online.lastResult=nil;online.rated=net?.ratedSession ?? false
+            online.game=g;online.seekMode = -1;online.notice="";online.direct=false;online.rtt = -1;online.route="";flushOnline();showOnlinePosition()
+        case .message(let text) where text.hasPrefix("ID "):online.peer=net?.sessionId.flatMap{OnlineIdentity.parse(text,sessionId:$0)};syncAccount()
         case .message(let text):guard online.game != nil else{return};online.game!.rttMillis=online.rtt;let moved=online.game!.receive(text,now);flushOnline();if moved{showOnlinePosition();if online.game!.lastMove != nil{feedback(human:false)}}
         case .path(let direct,let rtt,let route):online.direct=direct;online.rtt=rtt;online.route=route
         case .peerLeft:online.game?.markPeerLeft();online.notice="相手が退出しました";clearSelection()
@@ -63,14 +68,41 @@ extension AppModel {
         }
     }
     /// Sends what the game queued; the network sends it off the main thread, in order.
-    func flushOnline(){guard let out=online.game?.outbox,!out.isEmpty else{return};online.game!.outbox=[];for m in out{net?.send(m)}}
+    func flushOnline(){if let out=online.game?.outbox,!out.isEmpty{online.game!.outbox=[];for m in out{net?.send(m)}};syncAccount()}
+    /// After every game change: settle rated games (persisting each step) and send a fresh account card each round.
+    func syncAccount(){
+        guard let game=online.game else{return}
+        switch account.settle(rated:online.rated,opponent:online.peer,game:game,now:Int64(Date().timeIntervalSince1970),myKey:accountKey.publicHex){
+        case .begun:accountStore.saveAccount(account)
+        case .settled(let entry):online.lastResult=entry;accountStore.saveAccount(account);publishProfile()
+        case .aborted:accountStore.saveAccount(account);online.notice="対局不成立のためレートは変動しません"
+        case .unchanged:break
+        }
+        if game.round != online.cardRound,let net,let sid=net.sessionId{online.cardRound=game.round;net.send(OnlineIdentity.message(accountKey,sessionId:sid,name:account.name,rating:account.rating,games:account.games))}
+    }
+    /// Publishes the profile (when allowed) in the background; relays that refuse are simply skipped.
+    func publishProfile(){guard account.publish else{return};let a=account,key=accountKey,relays=Netplay.relays;DispatchQueue.global(qos:.utility).async{_=Profiles.publish(a,key:key,relays:relays,factory:URLSessionWebSocket.factory,timeout:8)}}
+    func renameAccount(_ text:String)->Bool {guard account.rename(text) else{return false};account.updated=Int64(Date().timeIntervalSince1970);accountStore.saveAccount(account);publishProfile();return true}
+    func setProfilePublic(_ value:Bool){account.publish=value;accountStore.saveAccount(account);if value{publishProfile()}}
+    var transferCode:String {Nip19.encode("nsec",accountSecret)}
+    /// Replaces this device's account with the one in the transfer code and restores its published rating.
+    func restoreAccount(_ code:String)->Bool {
+        guard online.game == nil,let secret=Nip19.decode("nsec",code),let key=Secp256k1.Key(secret:secret),accountStore.saveSecret(secret) else{return false}
+        accountSecret=secret;accountKey=key;account=OnlineAccount(name:OnlineAccount.defaultName(key));accountStore.saveAccount(account);rankingStatus="引き継いだアカウントのプロフィールを探しています…"
+        let relays=Netplay.relays;DispatchQueue.global(qos:.userInitiated).async{let found=Profiles.fetch(relays:relays,filter:Profiles.authorFilter(key.publicHex),factory:URLSessionWebSocket.factory,timeout:8)[key.publicHex]
+            Task{@MainActor in guard self.accountKey.publicHex==key.publicHex else{return};self.account.adopt(found);self.accountStore.saveAccount(self.account);self.rankingStatus=found==nil ? "公開プロフィールが見つかりません。レートは1500から始まります":"レート\(self.account.rating)を復元しました"}}
+        return true
+    }
+    func loadRanking(){rankingStatus="ランキングを読み込んでいます…";let relays=Netplay.relays
+        DispatchQueue.global(qos:.userInitiated).async{let top=Profiles.ranking(Profiles.fetch(relays:relays,filter:Profiles.rankingFilter(limit:300),factory:URLSessionWebSocket.factory,timeout:8),minimumGames:1)
+            Task{@MainActor in self.ranking=Array(top.prefix(100));self.rankingStatus=top.isEmpty ? "公開プロフィールが見つかりませんでした":"公開プロフィール\(top.count)件（各端末が計算した値）"}}}
     func showOnlinePosition(){position=online.game.flatMap{try? Position($0.sfen)} ?? (try! Position());clearSelection()}
     func onlineTick(){guard online.game != nil else{return};online.game!.rttMillis=online.rtt;let was=online.game!.over;online.game!.tick(Self.onlineNow);flushOnline();if !was && online.game!.over{clearSelection()}
         online.silenceMillis=net?.link?.silenceMillis ?? 0}
     func onlineCommit(_ move:Move){guard online.game != nil else{return};if online.game!.localMove(move.usi,Self.onlineNow){flushOnline();showOnlinePosition();feedback(human:true)}else{clearSelection()}}
     func startSeek(_ mode:Int,code:String?){
         guard let net else{online.notice="通信を準備しています…";ensureNetplay();return}
-        online.seekMode=mode;online.roomCode=code;online.notice="";online.status="";net.seek(mode,code:code)
+        net.rating=account.rating;net.games=account.games;online.seekMode=mode;online.roomCode=code;online.notice="";online.status="";net.seek(mode,code:code)
     }
     func hostRoom(){startSeek(Netplay.host,code:Netplay.newRoomCode())}
     /// Accepts full-width digits too; the room tag is always derived from the ASCII code, as on Android.
@@ -94,6 +126,7 @@ struct OnlineScreen:View {
     @State private var joining=false
     @State private var code=""
     @State private var resign=false
+    @State private var accountSheet=false
     var body:some View {
         GeometryReader {viewport in ScrollView {VStack(spacing:14){
             if let game=model.online.game {OnlineGameView(game:game,resign:$resign)}else{lobby}
@@ -102,11 +135,14 @@ struct OnlineScreen:View {
         .background(Image(uiImage:AppAssets.image("background")).resizable().scaledToFill().ignoresSafeArea())
         .alert("ルームに参加",isPresented:$joining){TextField("6桁のコード",text:$code).keyboardType(.numberPad).accessibilityIdentifier("room_code_field");Button("キャンセル",role:.cancel){};Button("参加"){model.joinRoom(code)}.accessibilityIdentifier("room_join")}message:{Text("友だちのルームコードを入力してください")}
         .alert("投了しますか？",isPresented:$resign){Button("キャンセル",role:.cancel){};Button("投了",role:.destructive){model.onlineResign()}}
+        .sheet(isPresented:$accountSheet){AccountView()}
     }
     private var lobby:some View {
         VStack(spacing:12){
             Text("3分切れ負け・無料のオンライン対戦").font(.system(size:20,weight:.bold,design:.serif)).foregroundStyle(gold).padding(.top,12)
-            ForEach(Array([("ランダム対戦","今オンラインの相手とすぐに対局",Netplay.quick,"online_quick"),("ルームを作る","6桁のコードを友だちに伝えて対局",Netplay.host,"online_host"),("ルームに参加","友だちのルームコードを入力",Netplay.guest,"online_join")].enumerated()),id:\.offset){_,item in
+            Button{accountSheet=true}label:{HStack{VStack(alignment:.leading,spacing:4){Text(model.account.name).font(.headline);Text("レート \(model.account.ratingText) · \(model.account.wins)勝\(model.account.losses)敗\(model.account.draws)分").font(.caption)};Spacer();Label("アカウント",systemImage:"person.crop.circle").font(.subheadline)}
+                .padding(12).foregroundStyle(cream).background(Color.black.opacity(0.78)).clipShape(RoundedRectangle(cornerRadius:10))}.buttonStyle(.plain).accessibilityIdentifier("online_account")
+            ForEach(Array([("ランダム対戦","レート戦・近いレートの相手と対局",Netplay.quick,"online_quick"),("ルームを作る","6桁のコードで友だちと対局（レート変動なし）",Netplay.host,"online_host"),("ルームに参加","友だちのルームコードを入力（レート変動なし）",Netplay.guest,"online_join")].enumerated()),id:\.offset){_,item in
                 let active=model.online.seekMode==item.2
                 Button{if model.online.seekMode<0{switch item.2{case Netplay.quick:model.startSeek(Netplay.quick,code:nil);case Netplay.host:model.hostRoom();default:code="";joining=true}}}label:{VStack(spacing:6){Text(item.0+(active ? "・待機中":"")).font(.system(size:22,weight:.bold,design:.serif)).foregroundStyle(active ? gold:cream);Text(item.1).font(.system(size:13,design:.serif))}.frame(maxWidth:.infinity,minHeight:78).background(Color.black.opacity(0.8))}
                     .buttonStyle(HomeCard()).disabled(model.online.seekMode>=0 && !active).accessibilityIdentifier(item.3)
@@ -132,11 +168,13 @@ struct OnlineGameView:View {
         VStack(spacing:8){
             HStack {Text(model.online.direct ? "P2P直結"+(model.online.rtt>=0 ? " \(model.online.rtt)ms":""):game.started ? "リレー経由"+(model.online.rtt>=0 ? " \(model.online.rtt)ms":""):"接続中…").foregroundStyle(model.online.direct ? .green:.yellow).accessibilityIdentifier("online_route");Spacer();Text("第\(game.round)局 · あなた\(game.mySide==1 ? "先手":"後手")").accessibilityIdentifier("online_side")}
                 .font(.caption).foregroundStyle(cream).padding(.horizontal,10).frame(height:30).background(.black.opacity(0.72))
+            Text(opponentText).font(.caption).foregroundStyle(cream).frame(maxWidth:.infinity,alignment:.leading).padding(.horizontal,10).accessibilityIdentifier("online_opponent")
             HandView(side:-model.viewSide)
             BoardView().aspectRatio(1226/1283.0,contentMode:.fit)
             HandView(side:model.viewSide)
             Text(statusText).font(game.over ? .headline:.body).foregroundStyle(game.over ? gold:cream).multilineTextAlignment(.center).accessibilityIdentifier("online_status")
             Text("\(game.movesPlayed)手目").foregroundStyle(cream).accessibilityIdentifier("online_ply")
+            if game.over,let r=model.online.lastResult{Text("レート \(r.before) → \(r.after)（\(r.after>=r.before ? "+":"")\(r.after-r.before)）").font(.headline).foregroundStyle(r.after>=r.before ? .green:.red).accessibilityIdentifier("online_rating_change")}
             if !model.online.notice.isEmpty{Text(model.online.notice).font(.caption).foregroundStyle(.orange)}
             if let error=game.error{Text(error).font(.caption).foregroundStyle(.orange)}
             HStack {
@@ -145,6 +183,11 @@ struct OnlineGameView:View {
                 if game.over{Button("ロビーへ"){model.leaveOnline(all:false)}.accessibilityIdentifier("online_lobby")}
             }.buttonStyle(.bordered).padding(.horizontal)
         }
+    }
+    private var opponentText:String {
+        guard let p=model.online.peer else{return model.online.rated ? "相手の情報を確認しています…":"フレンド対戦（レート変動なし）"}
+        let h=model.account.headToHead(p.pubkey),record=h.wins+h.losses+h.draws>0 ? " · 対戦成績 \(h.wins)勝\(h.losses)敗\(h.draws)分":""
+        return "相手：\(p.name)（レート\(p.rating)\(p.games<Rating.provisionalGames ? "・暫定":"")）"+(model.online.rated ? " · レート戦":" · レート変動なし")+record
     }
     private var statusText:String {let s=game.status(AppModel.onlineNow);let quiet=model.online.silenceMillis;return game.started && !game.over && quiet>9000 ? s+"・相手の応答なし \(quiet/1000)秒":s}
 }

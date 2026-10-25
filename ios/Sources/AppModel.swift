@@ -31,6 +31,13 @@ import UIKit
     @Published var online=OnlineState()
     var net:Netplay?
     var onlineEvents:OnlineEvents?
+    /// The online account (rating, history); its key stays in the Keychain.
+    @Published var account:OnlineAccount
+    @Published var ranking=[Profiles.Profile]()
+    @Published var rankingStatus=""
+    var accountKey:Secp256k1.Key
+    var accountSecret:[UInt8]
+    let accountStore:OnlineAccountStore
     private(set) var store:RecordStore?
     private var active=true,lastTick:Double?,audio:AVAudioPlayer?
     private var matchSettingsOpen=false
@@ -45,13 +52,17 @@ import UIKit
     var ply:Int {screen == .match ? session.match.moves:session.cursor}
     var score:Evaluation? {session.scores[session.cursor]}
     var humanInput:Bool {active && !matchSettingsOpen && (screen == .study || screen == .match && session.matchStarted && session.winner==0 && position.side==humanSide && !thinking || screen == .online && online.game?.myTurn == true)}
-    init(store testStore:RecordStore?=nil,premium:(@MainActor ()->Bool)? = nil){
+    init(store testStore:RecordStore?=nil,premium:(@MainActor ()->Bool)? = nil,accounts:OnlineAccountStore = .standard){
         self.premium=premium ?? {CoffeeStore.shared.owned}
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-online-reset-account"){accounts.deleteAll()}
+        #endif
+        accountStore=accounts;let loaded=accounts.load();accountSecret=loaded.secret;accountKey=loaded.key;account=loaded.account
         do {let store=try testStore ?? RecordStore();self.store=store;if FileManager.default.fileExists(atPath:store.root.appendingPathComponent("current.json").path){session=try store.current()}}catch{self.error="保存データを読み込めません：\(error.localizedDescription)"}
         if let file=Bundle.main.url(forResource:"piece_place",withExtension:"wav",subdirectory:"GameAssets"){audio=try? AVAudioPlayer(contentsOf:file);audio?.prepareToPlay()}
         try? AVAudioSession.sharedInstance().setCategory(.ambient,mode:.default,options:.mixWithOthers)
         if !session.matchStarted && session.match.moves==0 && session.match.matchOptions==nil{let options=MatchOptions.load();session.match = .match(options);session.clocks=[options.seconds,options.seconds]}
-        NativeEngine.shared.warmUp()
+        NativeEngine.shared.warmUp();if loaded.abandoned != nil{publishProfile()}
     }
     func save(){do{guard let store else{throw ShogiError.message("保存先を利用できません")};session.captureStudyTree();if session.matchStarted || session.match.moves>0 || session.winner != 0{try store.save(session.match)};try store.saveCurrent(session)}catch{self.error="棋譜を保存できません：\(error.localizedDescription)"}}
     func enter(_ next:Screen){if screen == .match{tick()};if screen == .online && next != .online{leaveOnline(all:true)};NativeEngine.shared.cancel();thinking=false;analyzing=false;clearSelection();lastTick=nil;save();screen=next
