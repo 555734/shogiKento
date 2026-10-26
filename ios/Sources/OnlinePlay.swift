@@ -130,10 +130,12 @@ struct OnlineScreen:View {
     @State private var resign=false
     @State private var accountSheet=false
     var body:some View {
-        GeometryReader {viewport in ScrollView {VStack(spacing:14){
+        GeometryReader {viewport in ScrollViewReader {proxy in ScrollView {VStack(spacing:14){
             if let game=model.online.game {OnlineGameView(game:game,resign:$resign)}else{lobby}
             TestAdSlot(placement:"match").id("online").padding(.horizontal,12)
-        }.frame(minHeight:viewport.size.height,alignment:.top).frame(maxWidth:600).frame(maxWidth:.infinity).padding(.bottom,15)}}
+        }.frame(minHeight:viewport.size.height,alignment:.top).frame(maxWidth:600).frame(maxWidth:.infinity).padding(.bottom,15)}
+            // The result card sits below the board; bring it into view when the game ends.
+            .onChange(of:model.online.game?.over ?? false){over in if over{withAnimation(.easeOut(duration:0.35)){proxy.scrollTo("online_result",anchor:.bottom)}}}}}
         .background(Image(uiImage:AppAssets.image("background")).resizable().scaledToFill().ignoresSafeArea())
         .alert("ルームに参加",isPresented:$joining){TextField("6桁のコード",text:$code).keyboardType(.numberPad).accessibilityIdentifier("room_code_field");Button("キャンセル",role:.cancel){};Button("参加"){model.joinRoom(code)}.accessibilityIdentifier("room_join")}message:{Text("友だちのルームコードを入力してください")}
         .alert("投了しますか？",isPresented:$resign){Button("キャンセル",role:.cancel){};Button("投了",role:.destructive){model.onlineResign()}}

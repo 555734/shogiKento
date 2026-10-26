@@ -19,7 +19,7 @@ struct OnlineGameView:View {
             OnlineKomadai(side:model.viewSide)
             OnlinePlayerCard(side:model.viewSide,game:game)
             OnlineTurnPill(game:game)
-            if game.over{OnlineResultCard(game:game)}
+            if game.over{OnlineResultCard(game:game).id("online_result")}
             else if game.started{Button{resign=true}label:{Label("投了",systemImage:"flag.fill").font(.subheadline.weight(.semibold)).padding(.horizontal,18).padding(.vertical,8)}
                 .foregroundStyle(cream).background(Capsule().fill(Color.red.opacity(0.32))).overlay(Capsule().stroke(Color.red.opacity(0.7))).accessibilityIdentifier("online_resign")}
             if !model.online.notice.isEmpty{Label(model.online.notice,systemImage:"info.circle").font(.caption).foregroundStyle(.orange)}
