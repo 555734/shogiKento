@@ -1,0 +1,1455 @@
+Command line invocation:
+    /Applications/Xcode_26.3.app/Contents/Developer/usr/bin/xcodebuild -project BeniShogi.xcodeproj -scheme BeniShogi -configuration Debug -destination "platform=iOS Simulator,id=F1218AE5-3D29-4CE5-9D0F-6F21CEAA502C" -derivedDataPath build/DerivedData -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -resultBundlePath outputs/Tests.xcresult "-only-testing:BeniShogiTests" -test-timeouts-enabled YES -maximum-test-execution-time-allowance 180 test-without-building
+
+Build settings from command line:
+    CODE_SIGN_IDENTITY = -
+    CODE_SIGNING_ALLOWED = YES
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  GoogleMobileAds: https://github.com/googleads/swift-package-manager-google-mobile-ads.git @ 12.14.0
+  GoogleUserMessagingPlatform: https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git @ 3.1.0
+
+Writing result bundle at path:
+	/Users/runner/work/shogiKento/shogiKento/ios/outputs/Tests.xcresult
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:F1218AE5-3D29-4CE5-9D0F-6F21CEAA502C, OS:18.5, name:iPhone 16 Pro Max }
+{ platform:iOS Simulator, arch:x86_64, id:F1218AE5-3D29-4CE5-9D0F-6F21CEAA502C, OS:18.5, name:iPhone 16 Pro Max }
+2026-10-26 06:35:12.269879+0000 BeniShogi[12059:38779] [library] load_eligibility_plist: Failed to open /Users/runner/Library/Developer/CoreSimulator/Devices/F1218AE5-3D29-4CE5-9D0F-6F21CEAA502C/data/Containers/Data/Application/81E4F197-CEFD-41E3-BCC3-44A69BFFB618/private/var/db/eligibilityd/eligibility.plist: No such file or directory(2)
+2026-10-26 06:35:12.688005+0000 BeniShogi[12059:38779] [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x6000002285e0> F8BB1C28-BAE8-11D6-9C31-00039315CD46
+2026-10-26 06:35:13.209003+0000 BeniShogi[12059:39714] [AMCP]  58887          HALC_ProxyIOContext.cpp:1622  HALC_ProxyIOContext::IOWorkLoop: skipping cycle due to overload
+2026-10-26 06:35:15.188441+0000 BeniShogi[12059:39600] [Client] Synchronous remote object proxy returned error: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+2026-10-26 06:35:15.188441+0000 BeniShogi[12059:39622] [Client] Updating selectors failed with: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+2026-10-26 06:35:15.188964+0000 BeniShogi[12059:39600] [Client] Synchronous remote object proxy returned error: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+2026-10-26 06:35:15.189174+0000 BeniShogi[12059:39622] [Client] Updating selectors failed with: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+2026-10-26 06:35:15.246302+0000 BeniShogi[12059:39622] [Client] Updating selectors failed with: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+2026-10-26 06:35:15.246585+0000 BeniShogi[12059:39622] [Client] Updating selectors after delegate addition failed with: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+Test Suite 'All tests' started at 2026-10-26 06:35:19.909.
+Test Suite 'BeniShogiTests.xctest' started at 2026-10-26 06:35:19.909.
+Test Suite 'CoffeeTests' started at 2026-10-26 06:35:19.910.
+Test Case '-[BeniShogiTests.CoffeeTests testOfferFrequencyAndPermanentHide]' started.
+Test Case '-[BeniShogiTests.CoffeeTests testOfferFrequencyAndPermanentHide]' passed (0.008 seconds).
+Test Case '-[BeniShogiTests.CoffeeTests testStoreKitPurchaseRestoreRefundAndLevelGate]' started.
+2026-10-26 06:35:19.919700+0000 BeniShogi[12059:38779] Coffee StoreKit: begin session setup
+2026-10-26 06:35:20.408538+0000 BeniShogi[12059:38779] Coffee StoreKit: session ready
+2026-10-26 06:35:21.825021+0000 BeniShogi[12059:38779] Coffee StoreKit: local product loaded
+2026-10-26 06:35:21.825201+0000 BeniShogi[12059:38779] Coffee StoreKit: beginning production purchase with visible presentation context
+2026-10-26 06:38:11.611608+0000 BeniShogi[12059:38779] Coffee StoreKit: StoreKit 2 purchase completed
+Test Case '-[BeniShogiTests.CoffeeTests testStoreKitPurchaseRestoreRefundAndLevelGate]' exceeded execution time allowance of 3 minutes. The test may have hung; check Xcode's test report for additional diagnostics. If the test requires additional time, use -[XCTestCase executionTimeAllowance] or one of xcodebuild's command-line overrides.
+
+
+*** If you believe this error represents a bug, please attach the result bundle at /Users/runner/work/shogiKento/shogiKento/ios/outputs/Tests.xcresult
+
+2026-10-26 06:38:47.230103+0000 BeniShogi[22400:64558] [library] load_eligibility_plist: Failed to open /Users/runner/Library/Developer/CoreSimulator/Devices/F1218AE5-3D29-4CE5-9D0F-6F21CEAA502C/data/Containers/Data/Application/81E4F197-CEFD-41E3-BCC3-44A69BFFB618/private/var/db/eligibilityd/eligibility.plist: No such file or directory(2)
+2026-10-26 06:38:47.761367+0000 BeniShogi[22400:64558] [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x6000002228e0> F8BB1C28-BAE8-11D6-9C31-00039315CD46
+2026-10-26 06:38:50.188208+0000 BeniShogi[22400:66205] [Client] Synchronous remote object proxy returned error: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+2026-10-26 06:38:50.188521+0000 BeniShogi[22400:66437] [Client] Updating selectors failed with: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+2026-10-26 06:38:50.202021+0000 BeniShogi[22400:66205] [Client] Synchronous remote object proxy returned error: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+2026-10-26 06:38:50.202510+0000 BeniShogi[22400:66211] [Client] Updating selectors failed with: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+2026-10-26 06:38:50.210850+0000 BeniShogi[22400:66211] [Client] Updating selectors failed with: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+2026-10-26 06:38:50.211003+0000 BeniShogi[22400:66211] [Client] Updating selectors after delegate addition failed with: Error Domain=NSCocoaErrorDomain Code=4099 "The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process." UserInfo={NSDebugDescription=The connection to service named com.apple.commcenter.coretelephony.xpc was invalidated: failed at lookup with error 3 - No such process.}
+
+Restarting after unexpected exit, crash, or test timeout; summary will include totals from previous launches.
+
+Test Suite 'Selected tests' started at 2026-10-26 06:38:54.967.
+Test Suite 'BeniShogiTests.xctest' started at 2026-10-26 06:38:54.969.
+Test Suite 'CoffeeTests' started at 2026-10-26 06:38:54.969.
+Test Suite 'CoffeeTests' passed at 2026-10-26 06:38:54.970.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+Test Suite 'CoreTests' started at 2026-10-26 06:38:54.970.
+Test Case '-[BeniShogiTests.CoreTests testCandidateArrowGeometry]' started.
+Test Case '-[BeniShogiTests.CoreTests testCandidateArrowGeometry]' passed (0.003 seconds).
+Test Case '-[BeniShogiTests.CoreTests testClockPauseTimeoutAndMatchRetention]' started.
+Test Case '-[BeniShogiTests.CoreTests testClockPauseTimeoutAndMatchRetention]' passed (0.179 seconds).
+Test Case '-[BeniShogiTests.CoreTests testDurableIndependentArchive]' started.
+Test Case '-[BeniShogiTests.CoreTests testDurableIndependentArchive]' passed (0.192 seconds).
+Test Case '-[BeniShogiTests.CoreTests testLegalTargetsPinsDropsAndPromotion]' started.
+Test Case '-[BeniShogiTests.CoreTests testLegalTargetsPinsDropsAndPromotion]' passed (0.006 seconds).
+Test Case '-[BeniShogiTests.CoreTests testMatchOptionsAndReplaySound]' started.
+Test Case '-[BeniShogiTests.CoreTests testMatchOptionsAndReplaySound]' passed (0.227 seconds).
+Test Case '-[BeniShogiTests.CoreTests testPersistentThreeWayVariationAt65]' started.
+Test Case '-[BeniShogiTests.CoreTests testPersistentThreeWayVariationAt65]' passed (0.119 seconds).
+Test Case '-[BeniShogiTests.CoreTests testQuestEveryPositionAndNotation]' started.
+Test Case '-[BeniShogiTests.CoreTests testQuestEveryPositionAndNotation]' passed (0.309 seconds).
+Test Case '-[BeniShogiTests.CoreTests testRealEmbeddedNNUEAndContinuousSearch]' started.
+Test Case '-[BeniShogiTests.CoreTests testRealEmbeddedNNUEAndContinuousSearch]' passed (0.722 seconds).
+Test Suite 'CoreTests' passed at 2026-10-26 06:38:56.734.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 1.757 (1.764) seconds
+Test Suite 'OnlineTests' started at 2026-10-26 06:38:56.735.
+Test Case '-[BeniShogiTests.OnlineTests testAccountStoreAndRatedLifecycle]' started.
+Test Case '-[BeniShogiTests.OnlineTests testAccountStoreAndRatedLifecycle]' passed (0.277 seconds).
+Test Case '-[BeniShogiTests.OnlineTests testCompleteGamesAgainstAndroidClient]' started.
+Test Case '-[BeniShogiTests.OnlineTests testCompleteGamesAgainstAndroidClient]' passed (10.489 seconds).
+Test Case '-[BeniShogiTests.OnlineTests testEngineRulesMatchTheAndroidProtocol]' started.
+2026-10-26 06:39:07.507045+0000 BeniShogi[22400:66203] [connection] nw_socket_output_finished [C1:2] shutdown(17, SHUT_WR) [57: Socket is not connected]
+Test Case '-[BeniShogiTests.OnlineTests testEngineRulesMatchTheAndroidProtocol]' passed (0.028 seconds).
+Test Suite 'OnlineTests' passed at 2026-10-26 06:39:07.532.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 10.794 (10.797) seconds
+Test Suite 'BeniShogiTests.xctest' passed at 2026-10-26 06:39:07.533.
+	 Executed 11 tests, with 0 failures (0 unexpected) in 12.551 (12.564) seconds
+Test Suite 'Selected tests' passed at 2026-10-26 06:39:07.534.
+	 Executed 11 tests, with 0 failures (0 unexpected) in 12.551 (12.567) seconds
+2026-10-26 06:39:55.316 xcodebuild[10377:34261] [MT] IDETestOperationsObserverDebug: 310.133 elapsed -- Testing started completed.
+2026-10-26 06:39:55.316 xcodebuild[10377:34261] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-26 06:39:55.316 xcodebuild[10377:34261] [MT] IDETestOperationsObserverDebug: 310.133 sec, +310.133 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/shogiKento/shogiKento/ios/outputs/Tests.xcresult
+
+** TEST EXECUTE FAILED **
+
+Testing started
+Command line invocation:
+    /Applications/Xcode_26.3.app/Contents/Developer/usr/bin/xcodebuild -project BeniShogi.xcodeproj -scheme BeniShogi -configuration Debug -destination "platform=iOS Simulator,id=F1218AE5-3D29-4CE5-9D0F-6F21CEAA502C" -derivedDataPath build/DerivedData -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=YES CODE_SIGN_IDENTITY=- -resultBundlePath outputs/UITests.xcresult "-only-testing:BeniShogiUITests" "-skip-testing:BeniShogiUITests/FlowTests/testStoreScreenshots" test-without-building
+
+Build settings from command line:
+    CODE_SIGN_IDENTITY = -
+    CODE_SIGNING_ALLOWED = YES
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  GoogleMobileAds: https://github.com/googleads/swift-package-manager-google-mobile-ads.git @ 12.14.0
+  GoogleUserMessagingPlatform: https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git @ 3.1.0
+
+Writing result bundle at path:
+	/Users/runner/work/shogiKento/shogiKento/ios/outputs/UITests.xcresult
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:F1218AE5-3D29-4CE5-9D0F-6F21CEAA502C, OS:18.5, name:iPhone 16 Pro Max }
+{ platform:iOS Simulator, arch:x86_64, id:F1218AE5-3D29-4CE5-9D0F-6F21CEAA502C, OS:18.5, name:iPhone 16 Pro Max }
+2026-10-26 06:40:29.728883+0000 BeniShogiUITests-Runner[27809:78958] [Default] Running tests...
+2026-10-26 06:40:31.986611+0000 BeniShogiUITests-Runner[27809:79133] [General] Failed to send CA Event for app launch measurements for ca_event_type: 0 event_name: com.apple.app_launch_measurement.FirstFramePresentationMetric
+2026-10-26 06:40:34.108504+0000 BeniShogiUITests-Runner[27809:79134] [General] Failed to send CA Event for app launch measurements for ca_event_type: 1 event_name: com.apple.app_launch_measurement.ExtendedLaunchMetrics
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-26 06:40:38.770.
+Test Suite 'BeniShogiUITests.xctest' started at 2026-10-26 06:40:38.770.
+Test Suite 'FlowTests' started at 2026-10-26 06:40:38.770.
+Test Case '-[BeniShogiUITests.FlowTests testAdsStudyGeometryAndOfficialSDK]' started.
+    t =     0.00s Start Test at 2026-10-26 06:40:38.773
+    t =     0.57s Set Up
+    t =     0.58s Open com.presentsoft.shogi3minutes
+    t =     0.58s     Launch com.presentsoft.shogi3minutes
+    t =     5.15s         Setting up automation session
+    t =     6.96s         Wait for com.presentsoft.shogi3minutes to idle
+    t =    11.09s Waiting 15.0s for "mode_study" Button to exist
+    t =    12.13s     Checking `Expect predicate `existsNoRetry == 1` for object "mode_study" Button`
+    t =    12.13s         Checking existence of `"mode_study" Button`
+    t =    12.27s Tap "mode_study" Button
+    t =    12.28s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    12.28s     Find the "mode_study" Button
+    t =    12.39s     Check for interrupting elements affecting "mode_study" Button
+    t =    12.46s     Synthesize event
+    t =    12.92s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    14.43s Find the "cell_6_0" Button
+    t =    14.81s Find the "ad_study" Other
+    t =    14.90s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    15.33s Added attachment named '11-ads-study-initial'
+    t =    15.33s Find the "ad_status_study" StaticText
+    t =    15.48s Press Target Application 'com.presentsoft.shogi3minutes'[0.01, 0.80] for 0.1 seconds, then drag to Target Application 'com.presentsoft.shogi3minutes'[0.01, 0.20] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    15.48s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    15.49s     Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    15.71s     Check for interrupting elements affecting "AI将棋検討" Application
+    t =    15.86s     Synthesize event
+    t =    15.86s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    15.96s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    16.04s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    16.28s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    16.43s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    17.98s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    18.33s Find the "ad_status_study" StaticText
+    t =    18.52s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    18.91s Added attachment named '12-ads-study-scrolled'
+    t =    18.91s Find the "ad_status_study" StaticText
+    t =    19.10s Find the "ad_status_study" StaticText
+    t =    19.21s Press Target Application 'com.presentsoft.shogi3minutes'[0.01, 0.20] for 0.1 seconds, then drag to Target Application 'com.presentsoft.shogi3minutes'[0.01, 0.80] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    19.22s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    19.24s     Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    19.41s     Check for interrupting elements affecting "AI将棋検討" Application
+    t =    19.55s     Synthesize event
+    t =    19.56s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    19.64s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    19.72s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    19.82s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    19.93s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    21.49s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    21.88s Press Target Application 'com.presentsoft.shogi3minutes'[0.01, 0.20] for 0.1 seconds, then drag to Target Application 'com.presentsoft.shogi3minutes'[0.01, 0.80] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    21.88s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    21.89s     Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    22.84s     Check for interrupting elements affecting "AI将棋検討" Application
+    t =    23.27s     Synthesize event
+    t =    23.28s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    23.39s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    23.48s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    23.56s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    23.66s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    25.19s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    25.67s Press Target Application 'com.presentsoft.shogi3minutes'[0.01, 0.20] for 0.1 seconds, then drag to Target Application 'com.presentsoft.shogi3minutes'[0.01, 0.80] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    25.67s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    25.68s     Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    25.88s     Check for interrupting elements affecting "AI将棋検討" Application
+    t =    26.00s     Synthesize event
+    t =    26.00s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    26.07s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    26.16s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    26.26s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    26.37s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    27.92s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    28.39s Press Target Application 'com.presentsoft.shogi3minutes'[0.01, 0.20] for 0.1 seconds, then drag to Target Application 'com.presentsoft.shogi3minutes'[0.01, 0.80] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    28.39s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    28.39s     Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    28.56s     Check for interrupting elements affecting "AI将棋検討" Application
+    t =    28.65s     Synthesize event
+    t =    28.65s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    28.76s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    28.84s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    28.93s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    29.03s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    30.59s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    31.05s Press Target Application 'com.presentsoft.shogi3minutes'[0.01, 0.20] for 0.1 seconds, then drag to Target Application 'com.presentsoft.shogi3minutes'[0.01, 0.80] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    31.06s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    31.06s     Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    31.16s     Check for interrupting elements affecting "AI将棋検討" Application
+    t =    31.28s     Synthesize event
+    t =    31.29s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    31.41s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    31.55s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    31.70s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    31.80s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    33.35s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    33.84s Find the "cell_6_0" Button
+    t =    34.41s Find the "cell_6_0" Button
+    t =    34.55s Find the "cell_6_0" Button
+    t =    34.68s Waiting 15.0s for "cell_6_0" Button to exist
+    t =    35.72s     Checking `Expect predicate `existsNoRetry == 1` for object "cell_6_0" Button`
+    t =    35.72s         Checking existence of `"cell_6_0" Button`
+    t =    35.96s Tap "cell_6_0" Button
+    t =    35.96s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    35.96s     Find the "cell_6_0" Button
+    t =    36.06s     Check for interrupting elements affecting "cell_6_0" Button
+    t =    36.17s     Synthesize event
+    t =    36.51s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    36.51s Waiting 15.0s for "cell_5_0" Button to exist
+    t =    37.57s     Checking `Expect predicate `existsNoRetry == 1` for object "cell_5_0" Button`
+    t =    37.57s         Checking existence of `"cell_5_0" Button`
+    t =    37.87s Tap "cell_5_0" Button
+    t =    37.87s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    37.87s     Find the "cell_5_0" Button
+    t =    38.03s     Check for interrupting elements affecting "cell_5_0" Button
+    t =    38.14s     Synthesize event
+    t =    38.52s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    38.52s Find the "study_ply" StaticText
+    t =    38.76s Waiting 15.0s for "home" Button to exist
+    t =    39.82s     Checking `Expect predicate `existsNoRetry == 1` for object "home" Button`
+    t =    39.82s         Checking existence of `"home" Button`
+    t =    40.01s Tap "home" Button
+    t =    40.01s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    40.02s     Find the "home" Button
+    t =    40.16s     Check for interrupting elements affecting "home" Button
+    t =    40.40s     Synthesize event
+    t =    40.73s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    40.75s Find the "ad_status_home" StaticText
+    t =    40.82s Find the "ad_status_home" StaticText
+    t =    40.89s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    41.18s Added attachment named '13-ads-home'
+    t =    41.18s Terminate com.presentsoft.shogi3minutes:28470
+    t =    42.24s Open com.presentsoft.shogi3minutes
+    t =    42.24s     Launch com.presentsoft.shogi3minutes
+    t =    42.72s         Setting up automation session
+    t =    44.41s         Wait for com.presentsoft.shogi3minutes to idle
+    t =    46.60s Waiting 15.0s for "mode_study" Button to exist
+    t =    47.62s     Checking `Expect predicate `existsNoRetry == 1` for object "mode_study" Button`
+    t =    47.62s         Checking existence of `"mode_study" Button`
+    t =    47.81s Tap "mode_study" Button
+    t =    47.81s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    47.81s     Find the "mode_study" Button
+    t =    47.86s     Check for interrupting elements affecting "mode_study" Button
+    t =    47.89s     Synthesize event
+    t =    48.25s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    48.60s Find the "cell_6_0" Button
+    t =    49.14s Find the "ad_status_study" StaticText
+    t =    49.41s Press Target Application 'com.presentsoft.shogi3minutes'[0.01, 0.80] for 0.1 seconds, then drag to Target Application 'com.presentsoft.shogi3minutes'[0.01, 0.20] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    49.41s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    49.42s     Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    49.58s     Check for interrupting elements affecting "AI将棋検討" Application
+    t =    49.68s     Synthesize event
+    t =    49.69s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    49.83s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    49.92s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    49.98s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    50.06s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    51.61s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    51.99s Find the "ad_status_study" StaticText
+    t =    52.24s Find the "ad_status_study" StaticText
+    t =    52.49s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    52.82s Added attachment named '15-ads-failure'
+    t =    52.82s Terminate com.presentsoft.shogi3minutes:29360
+    t =    53.86s Open com.presentsoft.shogi3minutes
+    t =    53.86s     Launch com.presentsoft.shogi3minutes
+    t =    54.56s         Setting up automation session
+    t =    56.26s         Wait for com.presentsoft.shogi3minutes to idle
+    t =    59.22s Find the "ad_status_home" StaticText
+    t =    61.39s Waiting 5.0s for "ad_status_home" StaticText to exist
+    t =    62.44s     Checking `Expect predicate `existsNoRetry == 1` for object "ad_status_home" StaticText`
+    t =    62.44s         Checking existence of `"ad_status_home" StaticText`
+    t =    63.62s Checking `Expect predicate `value == "loaded" OR value == "failed"` for object "ad_status_home" StaticText`
+    t =    63.62s     Find the "ad_status_home" StaticText
+    t =    64.53s     Find the "ad_status_home" StaticText
+    t =    65.04s     Capturing element debug description
+    t =    71.93s         Requesting snapshot of accessibility hierarchy for app with pid 29941
+    t =    72.15s         Find: Descendants matching type StaticText
+    t =    72.15s         Find: Elements matching predicate '"ad_status_home" IN identifiers'
+    t =    72.15s         Requesting snapshot of accessibility hierarchy for app with pid 29941
+    t =    72.23s         Find: Descendants matching type StaticText
+    t =    72.23s         Requesting snapshot of accessibility hierarchy for app with pid 29941
+    t =    73.67s Checking `Expect predicate `value == "loaded" OR value == "failed"` for object "ad_status_home" StaticText`
+    t =    73.67s     Find the "ad_status_home" StaticText
+    t =    73.71s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    74.05s Added attachment named '14-ads-official-sdk'
+    t =    74.06s Find the "ad_status_home" StaticText
+    t =    74.13s Find the "ad_status_home" StaticText
+    t =    74.21s Added attachment named 'official-test-ad-result'
+    t =    74.22s Tear Down
+Test Case '-[BeniShogiUITests.FlowTests testAdsStudyGeometryAndOfficialSDK]' passed (74.848 seconds).
+Test Case '-[BeniShogiUITests.FlowTests testCandidateArrowsAndBoardInput]' started.
+    t =     0.00s Start Test at 2026-10-26 06:41:53.621
+    t =     0.09s Set Up
+    t =     0.09s Open com.presentsoft.shogi3minutes
+    t =     0.09s     Launch com.presentsoft.shogi3minutes
+    t =     0.10s         Terminate com.presentsoft.shogi3minutes:29941
+    t =     2.00s         Setting up automation session
+    t =     3.68s         Wait for com.presentsoft.shogi3minutes to idle
+    t =     5.86s Waiting 15.0s for "mode_study" Button to exist
+    t =     6.91s     Checking `Expect predicate `existsNoRetry == 1` for object "mode_study" Button`
+    t =     6.91s         Checking existence of `"mode_study" Button`
+    t =     7.07s Tap "mode_study" Button
+    t =     7.07s     Wait for com.presentsoft.shogi3minutes to idle
+    t =     7.08s     Find the "mode_study" Button
+    t =     7.18s     Check for interrupting elements affecting "mode_study" Button
+    t =     7.23s     Synthesize event
+    t =     7.62s     Wait for com.presentsoft.shogi3minutes to idle
+    t =     8.43s Find the "ply_0" Button
+    t =    10.57s Press Target Application 'com.presentsoft.shogi3minutes'[0.01, 0.80] for 0.1 seconds, then drag to Target Application 'com.presentsoft.shogi3minutes'[0.01, 0.20] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    10.57s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    10.57s     Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    10.90s     Check for interrupting elements affecting "AI将棋検討" Application
+    t =    11.53s     Synthesize event
+    t =    11.53s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    11.70s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    12.04s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    12.47s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    13.02s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    14.66s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    15.03s Find the "ply_0" Button
+    t =    15.78s Waiting 15.0s for "ply_0" Button to exist
+    t =    16.80s     Checking `Expect predicate `existsNoRetry == 1` for object "ply_0" Button`
+    t =    16.80s         Checking existence of `"ply_0" Button`
+    t =    17.10s Tap "ply_0" Button
+    t =    17.10s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    17.10s     Find the "ply_0" Button
+    t =    17.39s     Check for interrupting elements affecting "ply_0" Button
+    t =    17.61s     Synthesize event
+    t =    18.01s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    18.01s Find the "cell_6_0" Button
+    t =    19.92s Waiting 25.0s for "candidate_arrows" Any to exist
+    t =    20.94s     Checking `Expect predicate `existsNoRetry == 1` for object "candidate_arrows" Any`
+    t =    20.95s         Checking existence of `"candidate_arrows" Any`
+    t =    21.22s Find the "candidate_arrows" Any
+    t =    21.48s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    21.90s Added attachment named 'candidate-arrows-initial'
+    t =    21.91s Find the "cell_5_0" Button
+    t =    22.14s Waiting 15.0s for "cell_6_0" Button to exist
+    t =    23.16s     Checking `Expect predicate `existsNoRetry == 1` for object "cell_6_0" Button`
+    t =    23.16s         Checking existence of `"cell_6_0" Button`
+    t =    23.37s Tap "cell_6_0" Button
+    t =    23.37s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    23.38s     Find the "cell_6_0" Button
+    t =    23.51s     Check for interrupting elements affecting "cell_6_0" Button
+    t =    23.71s     Synthesize event
+    t =    24.09s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    24.10s Find the "cell_6_0" Button
+    t =    24.30s Waiting 15.0s for "cell_5_0" Button to exist
+    t =    25.33s     Checking `Expect predicate `existsNoRetry == 1` for object "cell_5_0" Button`
+    t =    25.33s         Checking existence of `"cell_5_0" Button`
+    t =    25.55s Tap "cell_5_0" Button
+    t =    25.55s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    25.59s     Find the "cell_5_0" Button
+    t =    25.72s     Check for interrupting elements affecting "cell_5_0" Button
+    t =    25.83s     Synthesize event
+    t =    25.84s         Scroll element to visible
+    t =    25.85s         Find the "cell_5_0" Button
+    t =    26.09s         Computed hit point {28.333333333333332, 125.33333333333331} after scrolling to visible
+    t =    26.39s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    26.41s Waiting 25.0s for "candidate_arrows" Other to exist
+    t =    27.49s     Checking `Expect predicate `existsNoRetry == 1` for object "candidate_arrows" Other`
+    t =    27.49s         Checking existence of `"candidate_arrows" Other`
+    t =    27.77s Find the "candidate_arrows" Other
+    t =    28.01s Find the "cell_5_0" Button
+    t =    28.14s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    28.55s Added attachment named 'candidate-arrows-gote'
+    t =    28.55s Waiting 15.0s for "home" Button to exist
+    t =    29.60s     Checking `Expect predicate `existsNoRetry == 1` for object "home" Button`
+    t =    29.60s         Checking existence of `"home" Button`
+    t =    29.86s Tap "home" Button
+    t =    29.86s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    29.92s     Find the "home" Button
+    t =    30.16s     Check for interrupting elements affecting "home" Button
+    t =    30.27s     Synthesize event
+    t =    30.59s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    30.61s Waiting 15.0s for "mode_match" Button to exist
+    t =    31.64s     Checking `Expect predicate `existsNoRetry == 1` for object "mode_match" Button`
+    t =    31.64s         Checking existence of `"mode_match" Button`
+    t =    31.68s Tap "mode_match" Button
+    t =    31.68s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    31.68s     Find the "mode_match" Button
+    t =    31.72s     Check for interrupting elements affecting "mode_match" Button
+    t =    31.78s     Synthesize event
+    t =    32.09s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    32.25s Checking existence of `"candidate_arrows" Other`
+    t =    32.45s Tear Down
+Test Case '-[BeniShogiUITests.FlowTests testCandidateArrowsAndBoardInput]' passed (32.703 seconds).
+Test Case '-[BeniShogiUITests.FlowTests testCoffeeOpeningPromptAndPermanentHide]' started.
+    t =     0.00s Start Test at 2026-10-26 06:42:26.326
+    t =     0.04s Set Up
+    t =     0.04s Open com.presentsoft.shogi3minutes
+    t =     0.05s     Launch com.presentsoft.shogi3minutes
+    t =     0.05s         Terminate com.presentsoft.shogi3minutes:30341
+    t =     2.20s         Setting up automation session
+    t =     4.08s         Wait for com.presentsoft.shogi3minutes to idle
+    t =     6.40s Waiting 3.0s for "coffee_buy" Button to exist
+    t =     7.41s     Checking `Expect predicate `existsNoRetry == 1` for object "coffee_buy" Button`
+    t =     7.41s         Checking existence of `"coffee_buy" Button`
+    t =     7.57s         Capturing element debug description
+    t =     8.40s     Checking `Expect predicate `existsNoRetry == 1` for object "coffee_buy" Button`
+    t =     8.41s         Checking existence of `"coffee_buy" Button`
+    t =     8.43s         Capturing element debug description
+    t =     9.44s     Checking `Expect predicate `existsNoRetry == 1` for object "coffee_buy" Button`
+    t =     9.44s         Checking existence of `"coffee_buy" Button`
+    t =     9.62s         Capturing element debug description
+    t =     9.62s     Checking existence of `"coffee_buy" Button`
+    t =     9.66s Collecting debug information to assist test failure triage
+    t =     9.66s     Requesting snapshot of accessibility hierarchy for app with pid 31407
+    t =     9.70s Terminate com.presentsoft.shogi3minutes:31407
+    t =    10.75s Open com.presentsoft.shogi3minutes
+    t =    10.75s     Launch com.presentsoft.shogi3minutes
+    t =    11.44s         Setting up automation session
+    t =    13.51s         Wait for com.presentsoft.shogi3minutes to idle
+    t =    15.85s Waiting 15.0s for "coffee_buy" Button to exist
+    t =    16.90s     Checking `Expect predicate `existsNoRetry == 1` for object "coffee_buy" Button`
+    t =    16.90s         Checking existence of `"coffee_buy" Button`
+    t =    17.28s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    17.51s Added attachment named '19-coffee-second-opening'
+    t =    17.51s Find the "coffee_hide_offer" Switch
+    t =    17.63s Tap "coffee_hide_offer" Switch[0.93, 0.50]
+    t =    17.63s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    17.63s     Find the "coffee_hide_offer" Switch
+    t =    17.68s     Check for interrupting elements affecting "coffee_hide_offer" Switch
+    t =    17.75s     Synthesize event
+    t =    17.75s         Find the "coffee_hide_offer" Switch
+    t =    17.85s         Find the "coffee_hide_offer" Switch
+    t =    17.92s         Find the "coffee_hide_offer" Switch
+    t =    18.29s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    18.31s Find the "coffee_hide_offer" Switch
+    t =    18.40s Waiting 15.0s for "coffee_close" Button to exist
+    t =    19.43s     Checking `Expect predicate `existsNoRetry == 1` for object "coffee_close" Button`
+    t =    19.43s         Checking existence of `"coffee_close" Button`
+    t =    19.54s Tap "coffee_close" Button
+    t =    19.54s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    19.54s     Find the "coffee_close" Button
+    t =    19.66s     Check for interrupting elements affecting "coffee_close" Button
+    t =    19.76s     Synthesize event
+    t =    20.23s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    20.68s Terminate com.presentsoft.shogi3minutes:31942
+    t =    21.76s Open com.presentsoft.shogi3minutes
+    t =    21.76s     Launch com.presentsoft.shogi3minutes
+    t =    22.92s         Setting up automation session
+    t =    24.35s         Wait for com.presentsoft.shogi3minutes to idle
+    t =    26.88s Waiting 3.0s for "coffee_buy" Button to exist
+    t =    27.93s     Checking `Expect predicate `existsNoRetry == 1` for object "coffee_buy" Button`
+    t =    27.93s         Checking existence of `"coffee_buy" Button`
+    t =    28.12s         Capturing element debug description
+    t =    28.96s     Checking `Expect predicate `existsNoRetry == 1` for object "coffee_buy" Button`
+    t =    28.97s         Checking existence of `"coffee_buy" Button`
+    t =    29.07s         Capturing element debug description
+    t =    29.89s     Checking `Expect predicate `existsNoRetry == 1` for object "coffee_buy" Button`
+    t =    29.89s         Checking existence of `"coffee_buy" Button`
+    t =    29.95s         Capturing element debug description
+    t =    29.95s     Checking existence of `"coffee_buy" Button`
+    t =    30.00s Collecting debug information to assist test failure triage
+    t =    30.00s     Requesting snapshot of accessibility hierarchy for app with pid 32099
+    t =    30.06s Waiting 15.0s for "settings" Button to exist
+    t =    31.10s     Checking `Expect predicate `existsNoRetry == 1` for object "settings" Button`
+    t =    31.10s         Checking existence of `"settings" Button`
+    t =    31.14s Tap "settings" Button
+    t =    31.14s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    31.14s     Find the "settings" Button
+    t =    31.17s     Check for interrupting elements affecting "settings" Button
+    t =    31.23s     Synthesize event
+    t =    31.58s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    32.33s Find the "coffee_settings" Button
+    t =    32.77s Waiting 15.0s for "coffee_settings" Button to exist
+    t =    33.82s     Checking `Expect predicate `existsNoRetry == 1` for object "coffee_settings" Button`
+    t =    33.82s         Checking existence of `"coffee_settings" Button`
+    t =    34.01s Tap "coffee_settings" Button
+    t =    34.01s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    34.02s     Find the "coffee_settings" Button
+    t =    34.12s     Check for interrupting elements affecting "coffee_settings" Button
+    t =    34.23s     Synthesize event
+    t =    34.56s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    34.89s Checking existence of `"coffee_restore" Button`
+    t =    35.31s Waiting 15.0s for "coffee_close" Button to exist
+    t =    36.36s     Checking `Expect predicate `existsNoRetry == 1` for object "coffee_close" Button`
+    t =    36.36s         Checking existence of `"coffee_close" Button`
+    t =    36.52s Tap "coffee_close" Button
+    t =    36.53s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    36.53s     Find the "coffee_close" Button
+    t =    36.65s     Check for interrupting elements affecting "coffee_close" Button
+    t =    36.78s     Synthesize event
+    t =    37.10s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    37.58s Waiting 15.0s for "settings_close" Button to exist
+    t =    38.60s     Checking `Expect predicate `existsNoRetry == 1` for object "settings_close" Button`
+    t =    38.60s         Checking existence of `"settings_close" Button`
+    t =    38.70s Tap "settings_close" Button
+    t =    38.70s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    38.70s     Find the "settings_close" Button
+    t =    38.80s     Check for interrupting elements affecting "settings_close" Button
+    t =    38.89s     Synthesize event
+    t =    39.20s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    39.67s Tear Down
+Test Case '-[BeniShogiUITests.FlowTests testCoffeeOpeningPromptAndPermanentHide]' passed (40.048 seconds).
+Test Case '-[BeniShogiUITests.FlowTests testCoffeeSettingsBuyRestoreAndHide]' started.
+    t =     0.00s Start Test at 2026-10-26 06:43:06.374
+    t =     0.07s Set Up
+    t =     0.07s Open com.presentsoft.shogi3minutes
+    t =     0.07s     Launch com.presentsoft.shogi3minutes
+    t =     0.07s         Terminate com.presentsoft.shogi3minutes:32099
+    t =     1.76s         Setting up automation session
+    t =     3.56s         Wait for com.presentsoft.shogi3minutes to idle
+    t =     6.27s Waiting 15.0s for "settings" Button to exist
+    t =     7.31s     Checking `Expect predicate `existsNoRetry == 1` for object "settings" Button`
+    t =     7.31s         Checking existence of `"settings" Button`
+    t =     7.50s Tap "settings" Button
+    t =     7.50s     Wait for com.presentsoft.shogi3minutes to idle
+    t =     7.51s     Find the "settings" Button
+    t =     7.61s     Check for interrupting elements affecting "settings" Button
+    t =     7.67s     Synthesize event
+    t =     8.01s     Wait for com.presentsoft.shogi3minutes to idle
+    t =     8.32s Find the "coffee_settings" Button
+    t =     8.75s Waiting 15.0s for "coffee_settings" Button to exist
+    t =     9.78s     Checking `Expect predicate `existsNoRetry == 1` for object "coffee_settings" Button`
+    t =     9.79s         Checking existence of `"coffee_settings" Button`
+    t =     9.94s Tap "coffee_settings" Button
+    t =     9.94s     Wait for com.presentsoft.shogi3minutes to idle
+    t =     9.95s     Find the "coffee_settings" Button
+    t =    10.09s     Check for interrupting elements affecting "coffee_settings" Button
+    t =    10.22s     Synthesize event
+    t =    10.58s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    10.80s Find the "coffee_buy" Button
+    t =    11.20s Find the "coffee_buy" Button
+    t =    11.42s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    11.62s Added attachment named '16-coffee-offer'
+    t =    11.62s Find the "coffee_hide_offer" Switch
+    t =    11.72s Find the "coffee_hide_offer" Switch
+    t =    11.79s Waiting 15.0s for "coffee_buy" Button to exist
+    t =    12.81s     Checking `Expect predicate `existsNoRetry == 1` for object "coffee_buy" Button`
+    t =    12.81s         Checking existence of `"coffee_buy" Button`
+    t =    12.90s Tap "coffee_buy" Button
+    t =    12.90s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    12.90s     Find the "coffee_buy" Button
+    t =    13.00s     Check for interrupting elements affecting "coffee_buy" Button
+    t =    13.08s     Synthesize event
+    t =    13.41s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    13.52s Find the "coffee_status" StaticText
+    t =    13.59s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    13.78s Added attachment named '17-coffee-purchased'
+    t =    13.79s Waiting 15.0s for "coffee_close" Button to exist
+    t =    14.85s     Checking `Expect predicate `existsNoRetry == 1` for object "coffee_close" Button`
+    t =    14.85s         Checking existence of `"coffee_close" Button`
+    t =    14.93s Tap "coffee_close" Button
+    t =    14.94s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    14.94s     Find the "coffee_close" Button
+    t =    15.01s     Check for interrupting elements affecting "coffee_close" Button
+    t =    15.09s     Synthesize event
+    t =    15.40s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    15.83s Waiting 15.0s for "settings_close" Button to exist
+    t =    16.89s     Checking `Expect predicate `existsNoRetry == 1` for object "settings_close" Button`
+    t =    16.89s         Checking existence of `"settings_close" Button`
+    t =    16.96s Tap "settings_close" Button
+    t =    16.96s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    16.97s     Find the "settings_close" Button
+    t =    17.02s     Check for interrupting elements affecting "settings_close" Button
+    t =    17.07s     Synthesize event
+    t =    17.40s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    17.80s Waiting 15.0s for "mode_study" Button to exist
+    t =    18.85s     Checking `Expect predicate `existsNoRetry == 1` for object "mode_study" Button`
+    t =    18.85s         Checking existence of `"mode_study" Button`
+    t =    18.88s Tap "mode_study" Button
+    t =    18.88s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    18.88s     Find the "mode_study" Button
+    t =    18.91s     Check for interrupting elements affecting "mode_study" Button
+    t =    18.94s     Synthesize event
+    t =    19.27s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    19.75s Press Target Application 'com.presentsoft.shogi3minutes'[0.01, 0.80] for 0.1 seconds, then drag to Target Application 'com.presentsoft.shogi3minutes'[0.01, 0.20] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    19.75s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    19.80s     Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    20.08s     Check for interrupting elements affecting "AI将棋検討" Application
+    t =    20.26s     Synthesize event
+    t =    20.27s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    20.35s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    20.51s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    20.70s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    20.83s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    22.42s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    22.87s Press Target Application 'com.presentsoft.shogi3minutes'[0.01, 0.80] for 0.1 seconds, then drag to Target Application 'com.presentsoft.shogi3minutes'[0.01, 0.20] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    22.87s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    22.87s     Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    23.15s     Check for interrupting elements affecting "AI将棋検討" Application
+    t =    23.31s     Synthesize event
+    t =    23.32s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    23.40s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    23.51s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    23.58s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    23.67s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    25.22s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    25.28s Press Target Application 'com.presentsoft.shogi3minutes'[0.01, 0.80] for 0.1 seconds, then drag to Target Application 'com.presentsoft.shogi3minutes'[0.01, 0.20] with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    25.28s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    25.29s     Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    25.46s     Check for interrupting elements affecting "AI将棋検討" Application
+    t =    25.67s     Synthesize event
+    t =    25.69s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    25.81s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    25.94s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    26.07s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    26.17s         Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    27.67s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    28.13s Checking existence of `"ad_status_study" StaticText`
+    t =    28.28s Waiting 15.0s for "home" Button to exist
+    t =    29.32s     Checking `Expect predicate `existsNoRetry == 1` for object "home" Button`
+    t =    29.32s         Checking existence of `"home" Button`
+    t =    29.49s Tap "home" Button
+    t =    29.49s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    29.50s     Find the "home" Button
+    t =    29.62s     Check for interrupting elements affecting "home" Button
+    t =    29.95s     Synthesize event
+    t =    30.28s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    30.29s Terminate com.presentsoft.shogi3minutes:32624
+    t =    31.31s Open com.presentsoft.shogi3minutes
+    t =    31.31s     Launch com.presentsoft.shogi3minutes
+    t =    68.87s         Setting up automation session
+    t =    70.85s         Wait for com.presentsoft.shogi3minutes to idle
+    t =    73.26s Waiting 15.0s for "settings" Button to exist
+    t =    74.27s     Checking `Expect predicate `existsNoRetry == 1` for object "settings" Button`
+    t =    74.27s         Checking existence of `"settings" Button`
+    t =    74.42s Tap "settings" Button
+    t =    74.42s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    74.43s     Find the "settings" Button
+    t =    74.51s     Check for interrupting elements affecting "settings" Button
+    t =    74.56s     Synthesize event
+    t =    74.87s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    75.09s Find the "coffee_settings" Button
+    t =    75.40s Waiting 15.0s for "coffee_settings" Button to exist
+    t =    76.45s     Checking `Expect predicate `existsNoRetry == 1` for object "coffee_settings" Button`
+    t =    76.45s         Checking existence of `"coffee_settings" Button`
+    t =    76.52s Tap "coffee_settings" Button
+    t =    76.52s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    76.52s     Find the "coffee_settings" Button
+    t =    76.60s     Check for interrupting elements affecting "coffee_settings" Button
+    t =    76.65s     Synthesize event
+    t =    76.97s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    77.06s Find the "coffee_hide_offer" Switch
+    t =    77.46s Waiting 15.0s for "coffee_restore" Button to exist
+    t =    78.50s     Checking `Expect predicate `existsNoRetry == 1` for object "coffee_restore" Button`
+    t =    78.50s         Checking existence of `"coffee_restore" Button`
+    t =    78.58s Tap "coffee_restore" Button
+    t =    78.58s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    78.58s     Find the "coffee_restore" Button
+    t =    78.73s     Check for interrupting elements affecting "coffee_restore" Button
+    t =    78.83s     Synthesize event
+    t =    79.12s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    79.24s Find the "coffee_status" StaticText
+    t =    79.37s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    79.64s Added attachment named '18-coffee-restored'
+    t =    79.64s Waiting 15.0s for "coffee_close" Button to exist
+    t =    80.66s     Checking `Expect predicate `existsNoRetry == 1` for object "coffee_close" Button`
+    t =    80.66s         Checking existence of `"coffee_close" Button`
+    t =    80.77s Tap "coffee_close" Button
+    t =    80.77s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    80.77s     Find the "coffee_close" Button
+    t =    80.91s     Check for interrupting elements affecting "coffee_close" Button
+    t =    80.97s     Synthesize event
+    t =    81.27s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    81.70s Waiting 15.0s for "settings_close" Button to exist
+    t =    82.74s     Checking `Expect predicate `existsNoRetry == 1` for object "settings_close" Button`
+    t =    82.74s         Checking existence of `"settings_close" Button`
+    t =    82.84s Tap "settings_close" Button
+    t =    82.84s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    82.85s     Find the "settings_close" Button
+    t =    82.94s     Check for interrupting elements affecting "settings_close" Button
+    t =    83.02s     Synthesize event
+    t =    83.33s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    83.74s Waiting 15.0s for "mode_match" Button to exist
+    t =    84.78s     Checking `Expect predicate `existsNoRetry == 1` for object "mode_match" Button`
+    t =    84.78s         Checking existence of `"mode_match" Button`
+    t =    84.80s Tap "mode_match" Button
+    t =    84.80s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    84.81s     Find the "mode_match" Button
+    t =    84.84s     Check for interrupting elements affecting "mode_match" Button
+    t =    84.86s     Synthesize event
+    t =    85.17s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    85.36s Find the "match_settings" Button
+    t =    85.50s Waiting 15.0s for "match_settings" Button to exist
+    t =    86.52s     Checking `Expect predicate `existsNoRetry == 1` for object "match_settings" Button`
+    t =    86.52s         Checking existence of `"match_settings" Button`
+    t =    86.69s Tap "match_settings" Button
+    t =    86.69s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    86.69s     Find the "match_settings" Button
+    t =    86.78s     Check for interrupting elements affecting "match_settings" Button
+    t =    86.84s     Synthesize event
+    t =    87.17s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    87.53s Find the "match_level-Increment" Button
+    t =    87.92s Tap "match_level-Increment" Button
+    t =    87.92s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    87.92s     Find the "match_level-Increment" Button
+    t =    88.07s     Check for interrupting elements affecting "match_level-Increment" Button
+    t =    88.17s     Synthesize event
+    t =    88.48s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    88.71s Find the "match_level-Increment" Button
+    t =    88.82s Tap "match_level-Increment" Button
+    t =    88.82s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    88.82s     Find the "match_level-Increment" Button
+    t =    88.93s     Check for interrupting elements affecting "match_level-Increment" Button
+    t =    89.05s     Synthesize event
+    t =    89.35s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    89.58s Find the "match_level-Increment" Button
+    t =    89.70s Find the "apply_match_settings" Button
+    t =    89.80s Tear Down
+Test Case '-[BeniShogiUITests.FlowTests testCoffeeSettingsBuyRestoreAndHide]' passed (90.031 seconds).
+Test Case '-[BeniShogiUITests.FlowTests testNativeHomeSettingsMatchAndQuestStudy]' started.
+    t =     0.00s Start Test at 2026-10-26 06:44:36.405
+    t =     0.03s Set Up
+    t =     0.03s Open com.presentsoft.shogi3minutes
+    t =     0.03s     Launch com.presentsoft.shogi3minutes
+    t =     0.03s         Terminate com.presentsoft.shogi3minutes:33974
+    t =     2.37s         Setting up automation session
+    t =     4.51s         Wait for com.presentsoft.shogi3minutes to idle
+    t =     6.91s Waiting 15.0s for "settings" Button to exist
+    t =     7.97s     Checking `Expect predicate `existsNoRetry == 1` for object "settings" Button`
+    t =     7.97s         Checking existence of `"settings" Button`
+    t =     8.14s Tap "settings" Button
+    t =     8.14s     Wait for com.presentsoft.shogi3minutes to idle
+    t =     8.17s     Find the "settings" Button
+    t =     8.21s     Check for interrupting elements affecting "settings" Button
+    t =     8.27s     Synthesize event
+    t =     8.60s     Wait for com.presentsoft.shogi3minutes to idle
+    t =     8.90s Checking existence of `"volume" Slider`
+    t =     9.18s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =     9.58s Added attachment named '02-settings'
+    t =     9.59s Set normalized position of "volume" Slider to 0.37
+    t =     9.60s     Wait for com.presentsoft.shogi3minutes to idle
+    t =     9.60s     Find the "volume" Slider
+    t =     9.71s     Check for interrupting elements affecting "volume" Slider
+    t =     9.80s     Synthesize event
+    t =    10.48s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    10.49s Tap "sound" Switch
+    t =    10.49s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    10.49s     Find the "sound" Switch
+    t =    10.56s     Check for interrupting elements affecting "sound" Switch
+    t =    10.61s     Synthesize event
+    t =    10.95s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    10.95s Tap "vibration" Switch
+    t =    10.95s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    10.96s     Find the "vibration" Switch
+    t =    11.03s     Check for interrupting elements affecting "vibration" Switch
+    t =    11.08s     Synthesize event
+    t =    11.37s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    11.38s Find the "sound" Switch
+    t =    11.45s Find the "vibration" Switch
+    t =    11.51s Find the "volume" Slider
+    t =    11.57s Waiting 15.0s for "閉じる" Button to exist
+    t =    12.62s     Checking `Expect predicate `existsNoRetry == 1` for object "閉じる" Button`
+    t =    12.62s         Checking existence of `"閉じる" Button`
+    t =    12.66s Tap "閉じる" Button
+    t =    12.66s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    12.67s     Find the "閉じる" Button
+    t =    12.72s     Check for interrupting elements affecting "settings_close" Button
+    t =    12.77s     Synthesize event
+    t =    13.08s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    13.48s Terminate com.presentsoft.shogi3minutes:36961
+    t =    14.49s Open com.presentsoft.shogi3minutes
+    t =    14.49s     Launch com.presentsoft.shogi3minutes
+    t =    15.27s         Setting up automation session
+    t =    16.91s         Wait for com.presentsoft.shogi3minutes to idle
+    t =    19.23s Waiting 15.0s for "settings" Button to exist
+    t =    20.25s     Checking `Expect predicate `existsNoRetry == 1` for object "settings" Button`
+    t =    20.25s         Checking existence of `"settings" Button`
+    t =    20.41s Tap "settings" Button
+    t =    20.41s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    20.43s     Find the "settings" Button
+    t =    20.47s     Check for interrupting elements affecting "settings" Button
+    t =    20.51s     Synthesize event
+    t =    20.84s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    21.22s Find the "sound" Switch
+    t =    21.52s Find the "vibration" Switch
+    t =    21.71s Find the "volume" Slider
+    t =    21.82s Waiting 15.0s for "閉じる" Button to exist
+    t =    22.84s     Checking `Expect predicate `existsNoRetry == 1` for object "閉じる" Button`
+    t =    22.84s         Checking existence of `"閉じる" Button`
+    t =    22.90s Tap "閉じる" Button
+    t =    22.90s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    22.90s     Find the "閉じる" Button
+    t =    23.01s     Check for interrupting elements affecting "settings_close" Button
+    t =    23.10s     Synthesize event
+    t =    23.40s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    23.85s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    24.24s Added attachment named '01-home'
+    t =    24.24s Waiting 15.0s for "mode_match" Button to exist
+    t =    25.25s     Checking `Expect predicate `existsNoRetry == 1` for object "mode_match" Button`
+    t =    25.25s         Checking existence of `"mode_match" Button`
+    t =    25.28s Tap "mode_match" Button
+    t =    25.28s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    25.28s     Find the "mode_match" Button
+    t =    25.31s     Check for interrupting elements affecting "mode_match" Button
+    t =    25.33s     Synthesize event
+    t =    25.63s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    25.80s Waiting 15.0s for "start_match" Button to exist
+    t =    26.81s     Checking `Expect predicate `existsNoRetry == 1` for object "start_match" Button`
+    t =    26.82s         Checking existence of `"start_match" Button`
+    t =    26.90s Tap "start_match" Button
+    t =    26.90s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    26.91s     Find the "start_match" Button
+    t =    27.05s     Check for interrupting elements affecting "start_match" Button
+    t =    27.12s     Synthesize event
+    t =    27.45s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    27.46s Waiting 15.0s for "cell_6_0" Button to exist
+    t =    28.48s     Checking `Expect predicate `existsNoRetry == 1` for object "cell_6_0" Button`
+    t =    28.48s         Checking existence of `"cell_6_0" Button`
+    t =    28.64s Tap "cell_6_0" Button
+    t =    28.64s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    28.65s     Find the "cell_6_0" Button
+    t =    28.80s     Check for interrupting elements affecting "cell_6_0" Button
+    t =    28.96s     Synthesize event
+    t =    29.40s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    29.41s Find the "cell_5_0" Button
+    t =    29.61s Waiting 15.0s for "cell_4_0" Button to exist
+    t =    30.63s     Checking `Expect predicate `existsNoRetry == 1` for object "cell_4_0" Button`
+    t =    30.63s         Checking existence of `"cell_4_0" Button`
+    t =    30.82s Tap "cell_4_0" Button
+    t =    30.82s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    30.82s     Find the "cell_4_0" Button
+    t =    31.00s     Check for interrupting elements affecting "cell_4_0" Button
+    t =    31.16s     Synthesize event
+    t =    31.55s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    31.55s Find the "cell_6_0" Button
+    t =    31.71s Waiting 15.0s for "cell_6_0" Button to exist
+    t =    32.75s     Checking `Expect predicate `existsNoRetry == 1` for object "cell_6_0" Button`
+    t =    32.75s         Checking existence of `"cell_6_0" Button`
+    t =    32.89s Tap "cell_6_0" Button
+    t =    32.89s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    32.90s     Find the "cell_6_0" Button
+    t =    33.07s     Check for interrupting elements affecting "cell_6_0" Button
+    t =    33.21s     Synthesize event
+    t =    33.60s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    33.61s Waiting 15.0s for "cell_6_1" Button to exist
+    t =    34.65s     Checking `Expect predicate `existsNoRetry == 1` for object "cell_6_1" Button`
+    t =    34.65s         Checking existence of `"cell_6_1" Button`
+    t =    34.78s Tap "cell_6_1" Button
+    t =    34.78s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    34.79s     Find the "cell_6_1" Button
+    t =    34.92s     Check for interrupting elements affecting "cell_6_1" Button
+    t =    35.04s     Synthesize event
+    t =    35.45s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    35.45s Find the "cell_6_1" Button
+    t =    35.58s Find the "cell_6_0" Button
+    t =    35.72s Find the "cell_5_1" Button
+    t =    35.87s Waiting 15.0s for "cell_6_0" Button to exist
+    t =    36.90s     Checking `Expect predicate `existsNoRetry == 1` for object "cell_6_0" Button`
+    t =    36.90s         Checking existence of `"cell_6_0" Button`
+    t =    37.03s Tap "cell_6_0" Button
+    t =    37.03s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    37.05s     Find the "cell_6_0" Button
+    t =    37.20s     Check for interrupting elements affecting "cell_6_0" Button
+    t =    37.57s     Synthesize event
+    t =    38.11s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    38.12s Waiting 15.0s for "cell_5_0" Button to exist
+    t =    39.13s     Checking `Expect predicate `existsNoRetry == 1` for object "cell_5_0" Button`
+    t =    39.13s         Checking existence of `"cell_5_0" Button`
+    t =    39.29s Tap "cell_5_0" Button
+    t =    39.29s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    39.29s     Find the "cell_5_0" Button
+    t =    39.49s     Check for interrupting elements affecting "cell_5_0" Button
+    t =    39.65s     Synthesize event
+    t =    40.05s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    41.10s Checking `Expect predicate `label == "2手目"` for object "match_ply" StaticText`
+    t =    41.10s     Find the "match_ply" StaticText
+    t =    41.28s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    41.71s Added attachment named '03-match-real-cpu'
+    t =    41.71s Waiting 15.0s for "投了" Button to exist
+    t =    42.75s     Checking `Expect predicate `existsNoRetry == 1` for object "投了" Button`
+    t =    42.75s         Checking existence of `"投了" Button`
+    t =    42.90s Tap "投了" Button
+    t =    42.90s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    42.91s     Find the "投了" Button
+    t =    43.08s     Check for interrupting elements affecting "投了" Button
+    t =    43.26s     Synthesize event
+    t =    43.71s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    44.12s Tap "投了" Button
+    t =    44.12s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    44.38s     Find the "投了" Button
+    t =    44.63s     Check for interrupting elements affecting "投了" Button
+    t =    44.86s     Synthesize event
+    t =    45.16s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    45.48s Waiting 15.0s for "home" Button to exist
+    t =    46.53s     Checking `Expect predicate `existsNoRetry == 1` for object "home" Button`
+    t =    46.53s         Checking existence of `"home" Button`
+    t =    46.70s Tap "home" Button
+    t =    46.70s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    46.71s     Find the "home" Button
+    t =    46.79s     Check for interrupting elements affecting "home" Button
+    t =    46.88s     Synthesize event
+    t =    47.18s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    47.19s Waiting 15.0s for "open_archive" Button to exist
+    t =    48.24s     Checking `Expect predicate `existsNoRetry == 1` for object "open_archive" Button`
+    t =    48.24s         Checking existence of `"open_archive" Button`
+    t =    48.27s Tap "open_archive" Button
+    t =    48.27s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    48.28s     Find the "open_archive" Button
+    t =    48.34s     Check for interrupting elements affecting "open_archive" Button
+    t =    48.38s     Synthesize event
+    t =    48.69s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    48.70s Waiting 5.0s for Button (First Match) to exist
+    t =    49.72s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    49.72s         Checking existence of `Button (First Match)`
+    t =    49.75s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    49.90s Added attachment named '04-archive-match'
+    t =    49.90s Waiting 15.0s for "home" Button to exist
+    t =    50.95s     Checking `Expect predicate `existsNoRetry == 1` for object "home" Button`
+    t =    50.95s         Checking existence of `"home" Button`
+    t =    50.97s Tap "home" Button
+    t =    50.97s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    50.98s     Find the "home" Button
+    t =    51.01s     Check for interrupting elements affecting "home" Button
+    t =    51.04s     Synthesize event
+    t =    51.34s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    51.34s Waiting 15.0s for "open_paste" Button to exist
+    t =    52.39s     Checking `Expect predicate `existsNoRetry == 1` for object "open_paste" Button`
+    t =    52.39s         Checking existence of `"open_paste" Button`
+    t =    52.42s Tap "open_paste" Button
+    t =    52.42s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    52.44s     Find the "open_paste" Button
+    t =    52.48s     Check for interrupting elements affecting "open_paste" Button
+    t =    52.53s     Synthesize event
+    t =    52.84s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    53.47s Waiting 15.0s for "system_paste" Button to exist
+    t =    54.51s     Checking `Expect predicate `existsNoRetry == 1` for object "system_paste" Button`
+    t =    54.51s         Checking existence of `"system_paste" Button`
+    t =    54.58s Tap "system_paste" Button
+    t =    54.58s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    54.58s     Find the "system_paste" Button
+    t =    54.63s     Check for interrupting elements affecting "system_paste" Button
+    t =    54.68s     Synthesize event
+    t =    54.99s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    55.03s Waiting 5.0s for "kif_text" TextView to exist
+    t =    56.05s     Checking `Expect predicate `existsNoRetry == 1` for object "kif_text" TextView`
+    t =    56.05s         Checking existence of `"kif_text" TextView`
+    t =    56.09s Find the "kif_text" TextView
+    t =    56.11s Waiting 15.0s for "load_kif" Button to exist
+    t =    57.15s     Checking `Expect predicate `existsNoRetry == 1` for object "load_kif" Button`
+    t =    57.15s         Checking existence of `"load_kif" Button`
+    t =    57.21s Tap "load_kif" Button
+    t =    57.21s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    57.21s     Find the "load_kif" Button
+    t =    57.26s     Check for interrupting elements affecting "load_kif" Button
+    t =    57.29s     Synthesize event
+    t =    57.63s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    58.04s Waiting 15.0s for "検討する" Button to exist
+    t =    59.09s     Checking `Expect predicate `existsNoRetry == 1` for object "検討する" Button`
+    t =    59.09s         Checking existence of `"検討する" Button`
+    t =    59.52s Tap "キャンセル" Button
+    t =    59.52s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    59.52s     Find the "キャンセル" Button
+    t =    59.76s     Check for interrupting elements affecting "キャンセル" Button
+    t =    59.89s     Synthesize event
+    t =    60.21s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    60.45s Checking existence of `"mode_study" Button`
+    t =    60.53s Waiting 15.0s for "open_paste" Button to exist
+    t =    61.55s     Checking `Expect predicate `existsNoRetry == 1` for object "open_paste" Button`
+    t =    61.55s         Checking existence of `"open_paste" Button`
+    t =    61.95s Tap "open_paste" Button
+    t =    61.95s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    61.96s     Find the "open_paste" Button
+    t =    62.03s     Check for interrupting elements affecting "open_paste" Button
+    t =    62.14s     Synthesize event
+    t =    62.58s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    63.07s Waiting 15.0s for "system_paste" Button to exist
+    t =    64.08s     Checking `Expect predicate `existsNoRetry == 1` for object "system_paste" Button`
+    t =    64.09s         Checking existence of `"system_paste" Button`
+    t =    64.13s Tap "system_paste" Button
+    t =    64.13s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    64.14s     Find the "system_paste" Button
+    t =    64.21s     Check for interrupting elements affecting "system_paste" Button
+    t =    64.25s     Synthesize event
+    t =    64.57s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    64.58s Waiting 15.0s for "load_kif" Button to exist
+    t =    65.59s     Checking `Expect predicate `existsNoRetry == 1` for object "load_kif" Button`
+    t =    65.59s         Checking existence of `"load_kif" Button`
+    t =    65.68s Tap "load_kif" Button
+    t =    65.68s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    65.68s     Find the "load_kif" Button
+    t =    65.75s     Check for interrupting elements affecting "load_kif" Button
+    t =    65.81s     Synthesize event
+    t =    66.14s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    66.56s Waiting 15.0s for "検討する" Button to exist
+    t =    67.62s     Checking `Expect predicate `existsNoRetry == 1` for object "検討する" Button`
+    t =    67.62s         Checking existence of `"検討する" Button`
+    t =    67.99s Tap "検討する" Button
+    t =    67.99s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    68.00s     Find the "検討する" Button
+    t =    68.08s     Check for interrupting elements affecting "検討する" Button
+    t =    68.14s     Synthesize event
+    t =    68.45s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    68.71s Waiting 15.0s for "study_ply" StaticText to exist
+    t =    69.75s     Checking `Expect predicate `existsNoRetry == 1` for object "study_ply" StaticText`
+    t =    69.75s         Checking existence of `"study_ply" StaticText`
+    t =    69.91s Find the "study_ply" StaticText
+    t =    69.98s Find the "analysis_status" StaticText
+    t =    70.04s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    70.37s Added attachment named '05-quest-final'
+    t =    70.37s Find the "ply_1" Button
+    t =    70.48s Swipe up Target Application 'com.presentsoft.shogi3minutes'
+    t =    70.48s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    70.48s     Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    70.56s     Check for interrupting elements affecting "AI将棋検討" Application
+    t =    70.64s     Synthesize event
+    t =    71.07s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    71.54s Waiting 15.0s for "ply_1" Button to exist
+    t =    72.57s     Checking `Expect predicate `existsNoRetry == 1` for object "ply_1" Button`
+    t =    72.57s         Checking existence of `"ply_1" Button`
+    t =    72.67s Tap "ply_1" Button
+    t =    72.67s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    72.80s     Find the "ply_1" Button
+    t =    72.90s     Check for interrupting elements affecting "ply_1" Button
+    t =    73.00s     Synthesize event
+    t =    73.35s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    73.35s Find the "study_ply" StaticText
+    t =    74.18s Waiting 25.0s for "candidate_0" Any to exist
+    t =    75.21s     Checking `Expect predicate `existsNoRetry == 1` for object "candidate_0" Any`
+    t =    75.21s         Checking existence of `"candidate_0" Any`
+    t =    75.41s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    75.77s Added attachment named '06-quest-native-analysis'
+    t =    75.77s Waiting 15.0s for "ply_0" Button to exist
+    t =    76.79s     Checking `Expect predicate `existsNoRetry == 1` for object "ply_0" Button`
+    t =    76.79s         Checking existence of `"ply_0" Button`
+    t =    76.95s Tap "ply_0" Button
+    t =    76.95s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    76.95s     Find the "ply_0" Button
+    t =    77.17s     Check for interrupting elements affecting "ply_0" Button
+    t =    77.39s     Synthesize event
+    t =    77.80s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    77.85s Find the "study_ply" StaticText
+    t =    78.08s Waiting 15.0s for "ply_3" Button to exist
+    t =    79.10s     Checking `Expect predicate `existsNoRetry == 1` for object "ply_3" Button`
+    t =    79.10s         Checking existence of `"ply_3" Button`
+    t =    79.33s Tap "ply_3" Button
+    t =    79.33s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    79.33s     Find the "ply_3" Button
+    t =    79.46s     Check for interrupting elements affecting "ply_3" Button
+    t =    79.59s     Synthesize event
+    t =    80.05s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    80.07s Find the "study_ply" StaticText
+    t =    80.34s Waiting 15.0s for "home" Button to exist
+    t =    81.38s     Checking `Expect predicate `existsNoRetry == 1` for object "home" Button`
+    t =    81.38s         Checking existence of `"home" Button`
+    t =    81.58s Tap "home" Button
+    t =    81.58s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    81.59s     Find the "home" Button
+    t =    81.74s     Check for interrupting elements affecting "home" Button
+    t =    81.89s     Synthesize event
+    t =    82.22s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    82.24s Terminate com.presentsoft.shogi3minutes:37365
+    t =    83.32s Open com.presentsoft.shogi3minutes
+    t =    83.32s     Launch com.presentsoft.shogi3minutes
+    t =    84.18s         Setting up automation session
+    t =    86.44s         Wait for com.presentsoft.shogi3minutes to idle
+    t =    88.93s Waiting 15.0s for "open_archive" Button to exist
+    t =    89.95s     Checking `Expect predicate `existsNoRetry == 1` for object "open_archive" Button`
+    t =    89.95s         Checking existence of `"open_archive" Button`
+    t =    90.06s Tap "open_archive" Button
+    t =    90.06s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    90.07s     Find the "open_archive" Button
+    t =    90.12s     Check for interrupting elements affecting "open_archive" Button
+    t =    90.17s     Synthesize event
+    t =    90.49s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    90.53s Waiting 10.0s for Button (First Match) to exist
+    t =    91.57s     Checking `Expect predicate `existsNoRetry == 1` for object Button (First Match)`
+    t =    91.57s         Checking existence of `Button (First Match)`
+    t =    91.63s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    91.82s Added attachment named '07-archive-persisted'
+    t =    91.82s Tap Button (First Match)
+    t =    91.82s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    91.83s     Find the Button (First Match)
+    t =    91.90s     Check for interrupting elements affecting "record_kif-4f71333acbe562c8725782332eb5b9740aeb21123777611b6b97743dc2c2a543" Button
+    t =    91.94s     Synthesize event
+    t =    92.26s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    92.38s Waiting 3.0s for "開く" Button to exist
+    t =    93.44s     Checking `Expect predicate `existsNoRetry == 1` for object "開く" Button`
+    t =    93.44s         Checking existence of `"開く" Button`
+    t =    93.50s Tap "開く" Button
+    t =    93.50s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    93.50s     Find the "開く" Button
+    t =    93.53s     Check for interrupting elements affecting "開く" Button
+    t =    93.59s     Synthesize event
+    t =    93.91s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    94.20s Find the "study_ply" StaticText
+    t =    94.70s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    95.06s Added attachment named '08-reopened-quest'
+    t =    95.07s Waiting 15.0s for "home" Button to exist
+    t =    96.09s     Checking `Expect predicate `existsNoRetry == 1` for object "home" Button`
+    t =    96.09s         Checking existence of `"home" Button`
+    t =    96.22s Tap "home" Button
+    t =    96.22s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    96.22s     Find the "home" Button
+    t =    96.41s     Check for interrupting elements affecting "home" Button
+    t =    96.55s     Synthesize event
+    t =    96.88s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    96.89s Waiting 15.0s for "mode_match" Button to exist
+    t =    97.91s     Checking `Expect predicate `existsNoRetry == 1` for object "mode_match" Button`
+    t =    97.91s         Checking existence of `"mode_match" Button`
+    t =    97.95s Tap "mode_match" Button
+    t =    97.95s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    97.95s     Find the "mode_match" Button
+    t =    97.99s     Check for interrupting elements affecting "mode_match" Button
+    t =    98.02s     Synthesize event
+    t =    98.34s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    98.35s Find the "match_settings" Button
+    t =    98.54s Waiting 15.0s for "match_settings" Button to exist
+    t =    99.57s     Checking `Expect predicate `existsNoRetry == 1` for object "match_settings" Button`
+    t =    99.57s         Checking existence of `"match_settings" Button`
+    t =    99.69s Tap "match_settings" Button
+    t =    99.69s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    99.72s     Find the "match_settings" Button
+    t =    99.83s     Check for interrupting elements affecting "match_settings" Button
+    t =    99.93s     Synthesize event
+    t =   100.31s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   100.78s Tap "match_level-Increment" Button
+    t =   100.78s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   101.27s     Find the "match_level-Increment" Button
+    t =   101.54s     Check for interrupting elements affecting "match_level-Increment" Button
+    t =   101.68s     Synthesize event
+    t =   101.98s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   102.22s Tap "match_level-Increment" Button
+    t =   102.22s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   102.22s     Find the "match_level-Increment" Button
+    t =   102.41s     Check for interrupting elements affecting "match_level-Increment" Button
+    t =   102.61s     Synthesize event
+    t =   102.92s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   103.17s Waiting 15.0s for "match_minutes" Button to exist
+    t =   104.23s     Checking `Expect predicate `existsNoRetry == 1` for object "match_minutes" Button`
+    t =   104.23s         Checking existence of `"match_minutes" Button`
+    t =   104.39s Tap "match_minutes" Button
+    t =   104.39s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   104.40s     Find the "match_minutes" Button
+    t =   104.56s     Check for interrupting elements affecting "match_minutes" Button
+    t =   104.67s     Synthesize event
+    t =   104.98s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   165.01s App animations complete notification not received, will attempt to continue.
+    t =   165.01s Waiting 15.0s for "5分" Button to exist
+    t =   166.05s     Checking `Expect predicate `existsNoRetry == 1` for object "5分" Button`
+    t =   166.05s         Checking existence of `"5分" Button`
+    t =   166.27s Tap "5分" Button
+    t =   166.27s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   166.28s     Find the "5分" Button
+    t =   166.43s     Check for interrupting elements affecting "5分" Button
+    t =   166.55s     Synthesize event
+    t =   166.86s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   166.87s Tap Button (Element at index 1)
+    t =   166.87s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   166.90s     Find the Button (Element at index 1)
+    t =   167.10s     Check for interrupting elements affecting "後手（CPUが最初に指す）" Button
+    t =   167.23s     Synthesize event
+    t =   167.25s         Scroll element to visible
+    t =   167.25s                 Retrying failed scroll-to-visible with containing cell Cell
+    t =   167.25s         Find the "後手（CPUが最初に指す）" Button
+    t =   167.44s         Computed hit point {310, 486} after scrolling to visible
+    t =   167.73s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   167.95s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =   168.20s Added attachment named '09-match-settings'
+    t =   168.20s Waiting 15.0s for "apply_match_settings" Button to exist
+    t =   169.23s     Checking `Expect predicate `existsNoRetry == 1` for object "apply_match_settings" Button`
+    t =   169.23s         Checking existence of `"apply_match_settings" Button`
+    t =   169.35s Tap "apply_match_settings" Button
+    t =   169.35s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   169.35s     Find the "apply_match_settings" Button
+    t =   169.48s     Check for interrupting elements affecting "apply_match_settings" Button
+    t =   169.61s     Synthesize event
+    t =   169.95s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   170.50s Find the "match_settings" Button
+    t =   170.68s Find the "match_settings" Button
+    t =   170.79s Find the "match_settings" Button
+    t =   170.90s Find the "start_match" Button
+    t =   171.07s Waiting 15.0s for "start_match" Button to exist
+    t =   172.10s     Checking `Expect predicate `existsNoRetry == 1` for object "start_match" Button`
+    t =   172.10s         Checking existence of `"start_match" Button`
+    t =   172.20s Tap "start_match" Button
+    t =   172.20s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   172.20s     Find the "start_match" Button
+    t =   172.34s     Check for interrupting elements affecting "start_match" Button
+    t =   172.50s     Synthesize event
+    t =   172.84s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   173.94s Checking `Expect predicate `label == "1手目"` for object "match_ply" StaticText`
+    t =   173.94s     Find the "match_ply" StaticText
+    t =   174.10s Waiting 15.0s for "cell_2_0" Button to exist
+    t =   175.10s     Checking `Expect predicate `existsNoRetry == 1` for object "cell_2_0" Button`
+    t =   175.11s         Checking existence of `"cell_2_0" Button`
+    t =   175.29s Tap "cell_2_0" Button
+    t =   175.29s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   175.29s     Find the "cell_2_0" Button
+    t =   175.50s     Check for interrupting elements affecting "cell_2_0" Button
+    t =   175.73s     Synthesize event
+    t =   176.17s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   176.17s Waiting 15.0s for "cell_3_0" Button to exist
+    t =   177.23s     Checking `Expect predicate `existsNoRetry == 1` for object "cell_3_0" Button`
+    t =   177.23s         Checking existence of `"cell_3_0" Button`
+    t =   177.45s Tap "cell_3_0" Button
+    t =   177.45s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   177.47s     Find the "cell_3_0" Button
+    t =   177.67s     Check for interrupting elements affecting "cell_3_0" Button
+    t =   177.87s     Synthesize event
+    t =   178.30s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   179.37s Checking `Expect predicate `label == "3手目"` for object "match_ply" StaticText`
+    t =   179.37s     Find the "match_ply" StaticText
+    t =   179.56s     Capturing element debug description
+    t =   180.04s         Requesting snapshot of accessibility hierarchy for app with pid 40527
+    t =   180.30s         Find: Descendants matching type StaticText
+    t =   180.30s         Find: Elements matching predicate '"match_ply" IN identifiers'
+    t =   180.30s         Requesting snapshot of accessibility hierarchy for app with pid 40527
+    t =   180.54s         Find: Descendants matching type StaticText
+    t =   180.54s         Requesting snapshot of accessibility hierarchy for app with pid 40527
+    t =   181.37s Checking `Expect predicate `label == "3手目"` for object "match_ply" StaticText`
+    t =   181.37s     Find the "match_ply" StaticText
+    t =   181.55s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =   182.03s Added attachment named '10-human-gote-real-cpu'
+    t =   182.03s Waiting 15.0s for "home" Button to exist
+    t =   183.08s     Checking `Expect predicate `existsNoRetry == 1` for object "home" Button`
+    t =   183.09s         Checking existence of `"home" Button`
+    t =   183.23s Tap "home" Button
+    t =   183.23s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   183.23s     Find the "home" Button
+    t =   183.42s     Check for interrupting elements affecting "home" Button
+    t =   183.62s     Synthesize event
+    t =   183.97s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   183.97s Terminate com.presentsoft.shogi3minutes:40527
+    t =   185.02s Open com.presentsoft.shogi3minutes
+    t =   185.02s     Launch com.presentsoft.shogi3minutes
+    t =   185.57s         Setting up automation session
+    t =   188.78s         Wait for com.presentsoft.shogi3minutes to idle
+    t =   191.65s Waiting 15.0s for "mode_match" Button to exist
+    t =   192.68s     Checking `Expect predicate `existsNoRetry == 1` for object "mode_match" Button`
+    t =   192.68s         Checking existence of `"mode_match" Button`
+    t =   192.92s Tap "mode_match" Button
+    t =   192.92s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   192.94s     Find the "mode_match" Button
+    t =   193.03s     Check for interrupting elements affecting "mode_match" Button
+    t =   193.10s     Synthesize event
+    t =   193.51s     Wait for com.presentsoft.shogi3minutes to idle
+    t =   194.07s Find the "match_settings" Button
+    t =   194.38s Find the "match_settings" Button
+    t =   194.52s Find the "match_settings" Button
+    t =   194.66s Tear Down
+Test Case '-[BeniShogiUITests.FlowTests testNativeHomeSettingsMatchAndQuestStudy]' passed (194.997 seconds).
+Test Case '-[BeniShogiUITests.FlowTests testOnlineMatchAgainstAndroidBot]' started.
+    t =     0.00s Start Test at 2026-10-26 06:47:51.403
+    t =     0.07s Set Up
+    t =     0.07s Open com.presentsoft.shogi3minutes
+    t =     0.08s     Launch com.presentsoft.shogi3minutes
+    t =     0.08s         Terminate com.presentsoft.shogi3minutes:44980
+    t =     1.68s         Setting up automation session
+    t =     3.50s         Wait for com.presentsoft.shogi3minutes to idle
+    t =     6.59s Find the "mode_online" Button
+    t =     7.15s Waiting 15.0s for "mode_online" Button to exist
+    t =     8.19s     Checking `Expect predicate `existsNoRetry == 1` for object "mode_online" Button`
+    t =     8.19s         Checking existence of `"mode_online" Button`
+    t =     8.22s Tap "mode_online" Button
+    t =     8.22s     Wait for com.presentsoft.shogi3minutes to idle
+    t =     8.22s     Find the "mode_online" Button
+    t =     8.27s     Check for interrupting elements affecting "mode_online" Button
+    t =     8.31s     Synthesize event
+    t =     8.68s     Wait for com.presentsoft.shogi3minutes to idle
+    t =     9.16s Waiting 10.0s for "online_relays" StaticText to exist
+    t =    10.19s     Checking `Expect predicate `existsNoRetry == 1` for object "online_relays" StaticText`
+    t =    10.19s         Checking existence of `"online_relays" StaticText`
+    t =    11.25s Checking `Expect predicate `label CONTAINS "接続 1/1"` for object "online_relays" StaticText`
+    t =    11.25s     Find the "online_relays" StaticText
+    t =    11.29s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    11.56s Added attachment named '20-online-lobby'
+    t =    11.56s Waiting 15.0s for "online_account" Button to exist
+    t =    12.61s     Checking `Expect predicate `existsNoRetry == 1` for object "online_account" Button`
+    t =    12.61s         Checking existence of `"online_account" Button`
+    t =    12.68s Tap "online_account" Button
+    t =    12.68s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    12.70s     Find the "online_account" Button
+    t =    12.76s     Check for interrupting elements affecting "online_account" Button
+    t =    12.84s     Synthesize event
+    t =    13.15s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    13.62s Waiting 5.0s for "account_rating" StaticText to exist
+    t =    14.69s     Checking `Expect predicate `existsNoRetry == 1` for object "account_rating" StaticText`
+    t =    14.69s         Checking existence of `"account_rating" StaticText`
+    t =    14.85s Find the "account_rating" StaticText
+    t =    14.92s Waiting 15.0s for "account_rename" Button to exist
+    t =    15.95s     Checking `Expect predicate `existsNoRetry == 1` for object "account_rename" Button`
+    t =    15.95s         Checking existence of `"account_rename" Button`
+    t =    16.01s Tap "account_rename" Button
+    t =    16.01s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    16.03s     Find the "account_rename" Button
+    t =    16.10s     Check for interrupting elements affecting "account_rename" Button
+    t =    16.16s     Synthesize event
+    t =    16.48s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    18.72s Waiting 5.0s for TextField (First Match) to exist
+    t =    19.77s     Checking `Expect predicate `existsNoRetry == 1` for object TextField (First Match)`
+    t =    19.77s         Checking existence of `TextField (First Match)`
+    t =    22.46s Tap TextField (First Match)
+    t =    22.46s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    22.46s     Find the TextField (First Match)
+    t =    25.68s     Check for interrupting elements affecting "16文字まで" TextField
+    t =    25.94s     Synthesize event
+    t =    26.35s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    26.62s Find the "16文字まで" TextField
+    t =    28.06s Type '' into "16文字まで" TextField
+    t =    28.06s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    28.06s     Find the "16文字まで" TextField
+    t =    30.54s     Check for interrupting elements affecting "16文字まで" TextField
+    t =    31.15s     Synthesize event
+    t =    31.60s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    31.96s Type 'iPhone棋士' into "16文字まで" TextField
+    t =    31.96s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    32.18s     Find the "16文字まで" TextField
+    t =    33.10s     Check for interrupting elements affecting "16文字まで" TextField
+    t =    33.25s     Synthesize event
+    t =    33.63s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    33.63s Tap "変更" Button
+    t =    33.63s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    33.64s     Find the "変更" Button
+    t =    33.79s     Check for interrupting elements affecting "account_name_save" Button
+    t =    33.95s     Synthesize event
+    t =    34.48s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    34.83s Waiting 5.0s for "account_name" StaticText to exist
+    t =    35.88s     Checking `Expect predicate `existsNoRetry == 1` for object "account_name" StaticText`
+    t =    35.88s         Checking existence of `"account_name" StaticText`
+    t =    38.02s Find the "account_name" StaticText
+    t =    38.18s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    38.62s Added attachment named '23-online-account'
+    t =    38.62s Waiting 15.0s for "account_close" Button to exist
+    t =    39.67s     Checking `Expect predicate `existsNoRetry == 1` for object "account_close" Button`
+    t =    39.67s         Checking existence of `"account_close" Button`
+    t =    39.77s Tap "account_close" Button
+    t =    39.77s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    39.77s     Find the "account_close" Button
+    t =    39.88s     Check for interrupting elements affecting "account_close" Button
+    t =    39.97s     Synthesize event
+    t =    40.30s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    40.83s Waiting 15.0s for "online_quick" Button to exist
+    t =    41.86s     Checking `Expect predicate `existsNoRetry == 1` for object "online_quick" Button`
+    t =    41.86s         Checking existence of `"online_quick" Button`
+    t =    41.92s Tap "online_quick" Button
+    t =    41.92s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    41.93s     Find the "online_quick" Button
+    t =    42.01s     Check for interrupting elements affecting "online_quick" Button
+    t =    42.04s     Synthesize event
+    t =    42.35s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    42.36s Waiting 40.0s for "online_status" StaticText to exist
+    t =    43.43s     Checking `Expect predicate `existsNoRetry == 1` for object "online_status" StaticText`
+    t =    43.43s         Checking existence of `"online_status" StaticText`
+    t =    43.97s Find the "online_side" StaticText
+    t =    45.33s Checking `Expect predicate `label CONTAINS "あなたの手番"` for object "online_status" StaticText`
+    t =    45.33s     Find the "online_status" StaticText
+    t =    45.59s Waiting 15.0s for "cell_6_2" Button to exist
+    t =    46.64s     Checking `Expect predicate `existsNoRetry == 1` for object "cell_6_2" Button`
+    t =    46.64s         Checking existence of `"cell_6_2" Button`
+    t =    46.91s Tap "cell_6_2" Button
+    t =    46.91s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    46.91s     Find the "cell_6_2" Button
+    t =    47.12s     Check for interrupting elements affecting "cell_6_2" Button
+    t =    47.55s     Synthesize event
+    t =    47.99s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    48.04s Waiting 15.0s for "cell_5_2" Button to exist
+    t =    49.07s     Checking `Expect predicate `existsNoRetry == 1` for object "cell_5_2" Button`
+    t =    49.07s         Checking existence of `"cell_5_2" Button`
+    t =    49.26s Tap "cell_5_2" Button
+    t =    49.26s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    49.26s     Find the "cell_5_2" Button
+    t =    49.44s     Check for interrupting elements affecting "cell_5_2" Button
+    t =    49.66s     Synthesize event
+    t =    50.13s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    51.14s Checking `Expect predicate `label IN {"1手目", "2手目"}` for object "online_ply" StaticText`
+    t =    51.14s     Find the "online_ply" StaticText
+    t =    52.55s Checking `Expect predicate `label IN {"2手目", "3手目"}` for object "online_ply" StaticText`
+    t =    52.55s     Find the "online_ply" StaticText
+    t =    53.85s Checking `Expect predicate `label == "AndroidBot"` for object "online_opponent_name" StaticText`
+    t =    53.85s     Find the "online_opponent_name" StaticText
+    t =    54.00s Find the "online_opponent" StaticText
+    t =    54.25s Find the "online_me_name" StaticText
+    t =    54.59s Checking existence of `"online_clock_1" StaticText`
+    t =    54.99s Checking existence of `"online_clock_-1" StaticText`
+    t =    55.20s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    55.80s Added attachment named '21-online-match'
+    t =    55.80s Waiting 15.0s for "online_resign" Button to exist
+    t =    56.84s     Checking `Expect predicate `existsNoRetry == 1` for object "online_resign" Button`
+    t =    56.84s         Checking existence of `"online_resign" Button`
+    t =    57.03s Tap "online_resign" Button
+    t =    57.03s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    57.03s     Find the "online_resign" Button
+    t =    57.27s     Check for interrupting elements affecting "online_resign" Button
+    t =    57.48s     Synthesize event
+    t =    58.12s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    58.56s Waiting 5.0s for "投了" Button to exist
+    t =    59.65s     Checking `Expect predicate `existsNoRetry == 1` for object "投了" Button`
+    t =    59.65s         Checking existence of `"投了" Button`
+    t =    59.93s Tap "投了" Button
+    t =    59.93s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    59.93s     Find the "投了" Button
+    t =    60.22s     Check for interrupting elements affecting "投了" Button
+    t =    60.51s     Synthesize event
+    t =    60.83s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    62.49s Checking `Expect predicate `label CONTAINS "負け・投了"` for object "online_status" StaticText`
+    t =    62.49s     Find the "online_status" StaticText
+    t =    62.91s Checking existence of `"online_rematch" Button`
+    t =    63.27s Waiting 5.0s for "online_rating_change" Any to exist
+    t =    64.29s     Checking `Expect predicate `existsNoRetry == 1` for object "online_rating_change" Any`
+    t =    64.29s         Checking existence of `"online_rating_change" Any`
+    t =    64.49s Checking existence of `"online_lobby" Button`
+    t =    64.72s Find the "online_rating_change" Any
+    t =    64.97s Find the Target Application 'com.presentsoft.shogi3minutes'
+    t =    65.54s Added attachment named '22-online-result'
+    t =    65.54s Waiting 15.0s for "home" Button to exist
+    t =    66.59s     Checking `Expect predicate `existsNoRetry == 1` for object "home" Button`
+    t =    66.60s         Checking existence of `"home" Button`
+    t =    66.83s Tap "home" Button
+    t =    66.84s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    66.84s     Find the "home" Button
+    t =    67.08s     Check for interrupting elements affecting "home" Button
+    t =    67.60s     Synthesize event
+    t =    68.02s     Wait for com.presentsoft.shogi3minutes to idle
+    t =    68.24s Waiting 10.0s for "mode_study" Button to exist
+    t =    69.28s     Checking `Expect predicate `existsNoRetry == 1` for object "mode_study" Button`
+    t =    69.28s         Checking existence of `"mode_study" Button`
+    t =    69.33s Tear Down
+Test Case '-[BeniShogiUITests.FlowTests testOnlineMatchAgainstAndroidBot]' passed (69.636 seconds).
+Test Suite 'FlowTests' passed at 2026-10-26 06:49:01.040.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 502.263 (502.270) seconds
+Test Suite 'BeniShogiUITests.xctest' passed at 2026-10-26 06:49:01.044.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 502.263 (502.274) seconds
+Test Suite 'Selected tests' passed at 2026-10-26 06:49:01.045.
+	 Executed 6 tests, with 0 failures (0 unexpected) in 502.263 (502.275) seconds
+2026-10-26 06:49:03.441 xcodebuild[26762:76179] [MT] IDETestOperationsObserverDebug: 523.600 elapsed -- Testing started completed.
+2026-10-26 06:49:03.441 xcodebuild[26762:76179] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-26 06:49:03.441 xcodebuild[26762:76179] [MT] IDETestOperationsObserverDebug: 523.600 sec, +523.600 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/runner/work/shogiKento/shogiKento/ios/outputs/UITests.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started
