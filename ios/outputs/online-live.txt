@@ -1,0 +1,16 @@
+relays open swift=8 android=8 of 8; swift STUN replies=12 candidates=["13.105.117.100:44120"] symmetric=false
+match time 286ms
+no direct path within 10 s (relay only)
+swift<->java live move latency median=66ms max=81ms n=10
+PASS live public relays: 27 checks
+diagnostics swift:
+handshake: 4093ms recv offer 0acc48 via wss://nostr-pub.wellorder.net | 4093ms accept 0acc48 | 4182ms matched 0acc48 role 1 | 4215ms recv confirm 0acc48 via wss://nostr-pub.wellorder.net
+state=matched relays=8/8 candidates=["13.105.117.100:44120"] symmetric=false link: direct=false route=relay rtt=-1 relayRtt=76 udp=52/0 relay=18/17 candidates=1 rejected=0
+wss://yabu.me open ok=0 rejected=0 received=0 clock=no Date header
+wss://relay.snort.social open ok=19 rejected=0 received=0 clock=0s
+wss://nostr-pub.wellorder.net open ok=21 rejected=0 received=20 clock=-1s
+wss://relay.primal.net open ok=19 rejected=0 received=0 clock=1s
+wss://nos.lol open ok=19 rejected=0 received=0 clock=0s
+wss://nostr.mom open ok=19 rejected=0 received=0 clock=0s
+wss://nostr.oxtr.dev open ok=16 rejected=3 received=0 clock=1s writes=paused last=rate limited
+wss://relay.damus.io open ok=3 rejected=5 received=0 clock=0s writes=paused last=banned: too many rate-limit violations, try again later
