@@ -448,7 +448,7 @@ public final class MainActivity extends Activity {
   void playerCard(Canvas c,int side,float y){OnlineGame g=online.game;boolean me=side==viewSide();OnlineAccount a=online.account;OnlineIdentity p=online.peer;
    boolean active=g.started&&!g.over()&&game.turn==side;long ms=Math.max(0,g.remaining(side,SystemClock.elapsedRealtime()));boolean low=g.started&&!g.over()&&ms<30000;
    String name=me?(a==null?"あなた":a.name):p==null?"対戦相手":p.name,seed=me?(a==null?"me":a.key.publicHex):p==null?"opponent":p.pubkey;
-   String detail=me?(a==null?"":"レート"+a.ratingText()+" · "+a.wins+"勝"+a.losses+"敗"+a.draws+"分"):opponentLine();
+   String detail=me?(a==null?"":"レート"+a.ratingText()+" · "+a.wins+"勝"+a.losses+"敗"+a.draws+"分"):opponentDetail();
    RectF r=new RectF(4,y,396,y+44);if(active){paint.reset();paint.setAntiAlias(true);paint.setColor(0x40ffd27a);c.drawRoundRect(new RectF(1,y-3,399,y+47),15,15,paint);}
    paint.reset();paint.setAntiAlias(true);paint.setShader(new LinearGradient(4,y,396,y,0xf0120808,0xf0361014,Shader.TileMode.CLAMP));c.drawRoundRect(r,13,13,paint);paint.setShader(null);
    paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(active?1.8f:0.8f);paint.setColor(active?GOLD:0x55b58a47);c.drawRoundRect(r,13,13,paint);
@@ -490,9 +490,9 @@ public final class MainActivity extends Activity {
    pill(c,new RectF(204,by,376,by+34),0x1affffff,0x80ffd27a);styledText(c,"ロビーへ",290,by+22,12.5f,CREAM,true,Paint.Align.CENTER,null);
    return y+156;
   }
-  String opponentLine(){OnlineIdentity p=online.peer;if(p==null)return online.rated?"相手の情報を確認しています…":"フレンド対戦（レート変動なし）";
-   int[] h=online.account==null?new int[3]:online.account.headToHead(p.pubkey);String record=h[0]+h[1]+h[2]>0?" · 対戦成績"+h[0]+"勝"+h[1]+"敗"+h[2]+"分":"";
-   return "相手："+shortName(p.name,10)+"（レート"+p.rating+(p.games<Rating.PROVISIONAL_GAMES?"・暫定":"")+"）"+(online.rated?" · レート戦":" · レート変動なし")+record;}
+  /** The opponent card's second line (the name is shown above it): "レート1520（暫定）· レート戦 · 対戦成績…". */
+  String opponentDetail(){OnlineIdentity p=online.peer;if(p==null)return online.rated?"相手の情報を確認しています…":"フレンド対戦（レート変動なし）";
+   int[] h=online.account==null?new int[3]:online.account.headToHead(p.pubkey);return "レート"+p.rating+(p.games<Rating.PROVISIONAL_GAMES?"（暫定）":"")+(online.rated?" · レート戦":" · レート変動なし")+(h[0]+h[1]+h[2]>0?" · 対戦成績"+h[0]+"勝"+h[1]+"敗"+h[2]+"分":"");}
   @Override public boolean performClick(){super.performClick();return true;}
  }
 }
