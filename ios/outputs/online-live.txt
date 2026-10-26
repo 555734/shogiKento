@@ -1,0 +1,16 @@
+relays open swift=8 android=7 of 8; swift STUN replies=12 candidates=["13.105.117.77:44554"] symmetric=false
+match time 607ms
+no direct path within 10 s (relay only)
+swift<->java live move latency median=61ms max=126ms n=10
+PASS live public relays: 27 checks
+diagnostics swift:
+handshake: 4379ms offer b9b70c | 4590ms recv accept b9b70c via wss://nostr-pub.wellorder.net | 4590ms matched b9b70c role 0
+state=matched relays=8/8 candidates=["13.105.117.77:44554"] symmetric=false link: direct=false route=relay rtt=-1 relayRtt=98 udp=51/0 relay=18/18 candidates=1 rejected=0
+wss://yabu.me open ok=0 rejected=0 received=0 clock=no Date header
+wss://relay.snort.social open ok=20 rejected=0 received=0 clock=0s
+wss://nostr-pub.wellorder.net open ok=20 rejected=0 received=20 clock=0s
+wss://relay.primal.net open ok=18 rejected=0 received=0 clock=1s
+wss://nos.lol open ok=18 rejected=0 received=0 clock=0s
+wss://nostr.mom open ok=18 rejected=0 received=0 clock=0s
+wss://nostr.oxtr.dev open ok=15 rejected=3 received=0 clock=1s writes=paused last=rate limited
+wss://relay.damus.io open ok=6 rejected=2 received=0 clock=0s writes=paused last=rate-limited: you are noting too much
