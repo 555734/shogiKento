@@ -148,13 +148,13 @@ private struct OnlineResultCard:View {
             Text(title).font(.system(size:38,weight:.heavy,design:.serif)).foregroundStyle(LinearGradient(colors:titleColors,startPoint:.top,endPoint:.bottom)).shadow(color:.black,radius:2,y:2)
             Text(game.result).font(.subheadline).foregroundStyle(cream.opacity(0.85))
             if let r=model.online.lastResult{
-                let d=r.after-r.before,signed=(d>=0 ? "+":"")+"\(d)"
+                let d=r.after-r.before,signed=(d>=0 ? "+":"")+"\(d)",spoken:String="レート \(r.before) → \(r.after)（\(signed)）"
                 HStack(spacing:10){
                     Text(verbatim:"\(r.before)").font(.title3.monospacedDigit()).foregroundStyle(cream.opacity(0.65))
                     Image(systemName:"arrow.right").foregroundStyle(cream.opacity(0.65))
                     Text(verbatim:"\(r.after)").font(.system(size:30,weight:.bold,design:.rounded).monospacedDigit()).foregroundStyle(gold)
                     Text(verbatim:signed).font(.headline.monospacedDigit()).foregroundStyle(.white).padding(.horizontal,9).padding(.vertical,3).background(Capsule().fill(d>=0 ? Color.green.opacity(0.8):Color.red.opacity(0.8)))
-                }.accessibilityElement(children:.ignore).accessibilityLabel("レート \(r.before) → \(r.after)（\(signed)）").accessibilityIdentifier("online_rating_change")
+                }.accessibilityElement(children:.ignore).accessibilityLabel(spoken).accessibilityIdentifier("online_rating_change")
             }else if !model.online.rated{Text("フレンド対戦・レート変動なし").font(.caption).foregroundStyle(cream.opacity(0.7))}
             if game.rematchMine{Label("再戦を申し込みました。相手の返事を待っています",systemImage:"hourglass").font(.caption).foregroundStyle(cream)}
             else if game.rematchPeer{Label("相手が再戦を希望しています",systemImage:"arrow.triangle.2.circlepath").font(.caption.weight(.bold)).foregroundStyle(gold)}
