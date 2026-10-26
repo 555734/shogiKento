@@ -96,6 +96,8 @@ extension AppModel {
     func loadRanking(){rankingStatus="ランキングを読み込んでいます…";let relays=Netplay.relays
         DispatchQueue.global(qos:.userInitiated).async{let top=Profiles.ranking(Profiles.fetch(relays:relays,filter:Profiles.rankingFilter(limit:300),factory:URLSessionWebSocket.factory,timeout:8),minimumGames:1)
             Task{@MainActor in self.ranking=Array(top.prefix(100));self.rankingStatus=top.isEmpty ? "公開プロフィールが見つかりませんでした":"公開プロフィール\(top.count)件（各端末が計算した値）"}}}
+    /// The squares of the last move in an online game (source may be nil for a drop), for the board highlight.
+    var lastMoveSquares:(from:Int?,to:Int)? {guard screen == .online,let usi=online.game?.lastMove,usi.count>=4 else{return nil};let m=Move(usi:usi);let to=m.destination;guard (0..<81).contains(to) else{return nil};return (m.source,to)}
     func showOnlinePosition(){position=online.game.flatMap{try? Position($0.sfen)} ?? (try! Position());clearSelection()}
     func onlineTick(){guard online.game != nil else{return};online.game!.rttMillis=online.rtt;let was=online.game!.over;online.game!.tick(Self.onlineNow);flushOnline();if !was && online.game!.over{clearSelection()}
         online.silenceMillis=net?.link?.silenceMillis ?? 0}
@@ -159,35 +161,4 @@ struct OnlineScreen:View {
             Text("サーバーを使わず、公開Nostrリレーで相手を探してP2P（UDP）で直接つながります。直結できない回線ではリレー経由で対局を続けます。Android版とも対戦できます。対戦相手にはあなたのIPアドレスが伝わります。対局中はアプリを離れても時計は止まりません。").font(.caption2).foregroundStyle(cream.opacity(0.8)).padding(.horizontal,6)
         }.padding(.horizontal,16)
     }
-}
-struct OnlineGameView:View {
-    @EnvironmentObject var model:AppModel
-    let game:OnlineGame
-    @Binding var resign:Bool
-    var body:some View {
-        VStack(spacing:8){
-            HStack {Text(model.online.direct ? "P2P直結"+(model.online.rtt>=0 ? " \(model.online.rtt)ms":""):game.started ? "リレー経由"+(model.online.rtt>=0 ? " \(model.online.rtt)ms":""):"接続中…").foregroundStyle(model.online.direct ? .green:.yellow).accessibilityIdentifier("online_route");Spacer();Text(verbatim:"第\(game.round)局 · あなた\(game.mySide==1 ? "先手":"後手")").accessibilityIdentifier("online_side")}
-                .font(.caption).foregroundStyle(cream).padding(.horizontal,10).frame(height:30).background(.black.opacity(0.72))
-            Text(opponentText).font(.caption).foregroundStyle(cream).frame(maxWidth:.infinity,alignment:.leading).padding(.horizontal,10).accessibilityIdentifier("online_opponent")
-            HandView(side:-model.viewSide)
-            BoardView().aspectRatio(1226/1283.0,contentMode:.fit)
-            HandView(side:model.viewSide)
-            Text(statusText).font(game.over ? .headline:.body).foregroundStyle(game.over ? gold:cream).multilineTextAlignment(.center).accessibilityIdentifier("online_status")
-            Text(verbatim:"\(game.movesPlayed)手目").foregroundStyle(cream).accessibilityIdentifier("online_ply")
-            if game.over,let r=model.online.lastResult{Text(verbatim:"レート \(r.before) → \(r.after)（\(r.after>=r.before ? "+":"")\(r.after-r.before)）").font(.headline).foregroundStyle(r.after>=r.before ? .green:.red).accessibilityIdentifier("online_rating_change")}
-            if !model.online.notice.isEmpty{Text(model.online.notice).font(.caption).foregroundStyle(.orange)}
-            if let error=game.error{Text(error).font(.caption).foregroundStyle(.orange)}
-            HStack {
-                if game.started && !game.over{Button("投了"){resign=true}.accessibilityIdentifier("online_resign")}
-                if game.over && !game.peerLeft && !game.rematchMine{Button("再戦する"){model.onlineRematch()}.accessibilityIdentifier("online_rematch")}
-                if game.over{Button("ロビーへ"){model.leaveOnline(all:false)}.accessibilityIdentifier("online_lobby")}
-            }.buttonStyle(.bordered).padding(.horizontal)
-        }
-    }
-    private var opponentText:String {
-        guard let p=model.online.peer else{return model.online.rated ? "相手の情報を確認しています…":"フレンド対戦（レート変動なし）"}
-        let h=model.account.headToHead(p.pubkey),record=h.wins+h.losses+h.draws>0 ? " · 対戦成績 \(h.wins)勝\(h.losses)敗\(h.draws)分":""
-        return "相手：\(p.name)（レート\(p.rating)\(p.games<Rating.provisionalGames ? "・暫定":"")）"+(model.online.rated ? " · レート戦":" · レート変動なし")+record
-    }
-    private var statusText:String {let s=game.status(AppModel.onlineNow);let quiet=model.online.silenceMillis;return game.started && !game.over && quiet>9000 ? s+"・相手の応答なし \(quiet/1000)秒":s}
 }

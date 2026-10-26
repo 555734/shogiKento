@@ -183,6 +183,7 @@ public final class MainActivity extends Activity {
   int handCount(int side){int count=0;for(int n=1;n<=handLimit();n++)if(game.hands[side==1?0:1][n]>0)count++;return count;}
   float topHandY(){return boardY-46;}float bottomHandY(){return boardY+boardHeight+2;}
   void hand(Canvas c,int side,float y){
+   if(mode==ONLINE){onlineKomadai(c,side,y);return;}
    darkPanel(c,new RectF(4,y,396,y+44));leftText(c,mode==MATCH||mode==ONLINE?(side==viewSide()?"あなた":mode==ONLINE?"相手":"CPU")+"・"+(side==1?"先手":"後手"):(side==1?"先手":"後手"),12,y+15,10.5f,Color.WHITE);
    if(mode==MATCH)clockPanel(c,y,game.remaining[side==1?0:1],started&&game.turn==side&&game.winner==0);else if(mode==ONLINE){OnlineGame g=online.game;clockPanel(c,y,Math.max(0,g.remaining(side,SystemClock.elapsedRealtime())),g.started&&game.turn==side&&!g.over());}else leftText(c,"検討・時計なし",12,y+34,8.7f,0xffc5c0b9);
    int count=handCount(side);if(count==0){text(c,"持ち駒なし",302,y+27,9,0xffc5c0b9);return;}
@@ -193,11 +194,11 @@ public final class MainActivity extends Activity {
   }
   @Override protected void onSizeChanged(int w,int h,int ow,int oh){layoutBoard(w,h);}
   void layoutBoard(int w,int h){
-   if(w<=0||h<=0)return;scale=w/400f;offsetX=0;H=h/scale;boardSize=400;boardHeight=boardSize*BOARD_HEIGHT_RATIO;boardX=0;boardY=mode==STUDY?46:80;
+   if(w<=0||h<=0)return;scale=w/400f;offsetX=0;H=h/scale;boardSize=400;boardHeight=boardSize*BOARD_HEIGHT_RATIO;boardX=0;boardY=mode==STUDY?46:mode==ONLINE?128:80;
    studyContentHeight=coffee.unlocked()?Math.max(H,mode==STUDY?analysisY()+ANALYSIS_HEIGHT+8:0):adTop()+adHeight()+16;studyScroll=Math.max(0,Math.min(studyScroll,maxStudyScroll()));
   }
   HomeScreen.Layout homeLayout(){return new HomeScreen.Layout(H);}
-  float adTop(){return Math.max(H,mode==STUDY?analysisY()+ANALYSIS_HEIGHT+8:mode==MATCH?bottomHandY()+80:mode==ONLINE?(online.game!=null?bottomHandY()+150:lobbyPanelY()+212):homeLayout().archive.bottom)+16;}
+  float adTop(){return Math.max(H,mode==STUDY?analysisY()+ANALYSIS_HEIGHT+8:mode==MATCH?bottomHandY()+80:mode==ONLINE?(online.game!=null?onlineStatusY()+168:lobbyPanelY()+212):homeLayout().archive.bottom)+16;}
   float adHeight(){return coffee.unlocked()?0:360*getResources().getDisplayMetrics().density/scale;}
   void updateAd(){if(getWidth()==0)return;if(coffee.unlocked()){if(adCard!=null){adCard.close();removeView(adCard);adCard=null;}adMode=-1;return;}if(adMode!=mode){if(adCard!=null){adCard.close();removeView(adCard);}adMode=mode;adCard=new TestAdCard(MainActivity.this,mode==STUDY?"study":mode==MATCH||mode==ONLINE?"match":"home",getIntent().getBooleanExtra("ads_fixture",false));addView(adCard);adCard.load();}int left=Math.round(12*scale),top=Math.round((adTop()-studyScroll)*scale);adCard.measure(MeasureSpec.makeMeasureSpec(getWidth()-left*2,MeasureSpec.EXACTLY),MeasureSpec.makeMeasureSpec(Math.round(adHeight()*scale),MeasureSpec.EXACTLY));adCard.layout(left,top,getWidth()-left,top+Math.round(adHeight()*scale));}
   @Override protected void onMeasure(int w,int h){super.onMeasure(w,h);if(adCard!=null)adCard.measure(MeasureSpec.makeMeasureSpec(Math.max(0,getMeasuredWidth()-Math.round(24*scale)),MeasureSpec.EXACTLY),MeasureSpec.makeMeasureSpec(Math.round(adHeight()*scale),MeasureSpec.EXACTLY));}
@@ -396,7 +397,9 @@ public final class MainActivity extends Activity {
     if(code.matches("[0-9]{6}"))startSeek(Netplay.GUEST,code);else{online.notice="ルームコードは6桁の数字です";invalidate();}}).create());}
   boolean onlineTouch(float x,float y){OnlineGame g=online.game;
    if(y<32){if(x<90)onlineBack();else if(g!=null&&x>=300){if(g.started&&!g.over())confirm("投了しますか？","投了",()->{g.resign();syncAccount();clearSelection();});else if(g.over()&&!g.peerLeft&&!g.rematchMine){g.requestRematch(SystemClock.elapsedRealtime());syncAccount();lastMove=g.lastMove;clearSelection();}}return true;}
-   if(g==null){lobbyTouch(x,y);return true;}if(!g.myTurn()){clearSelection();return true;}
+   if(g==null){lobbyTouch(x,y);return true;}
+   if(g.over()){float by=onlineStatusY()+112;if(y>=by&&y<=by+34){if(x>=24&&x<=196&&!g.peerLeft&&!g.rematchMine){g.requestRematch(SystemClock.elapsedRealtime());syncAccount();lastMove=g.lastMove;clearSelection();}else if(x>=204&&x<=376)leaveOnline(false);}return true;}
+   if(!g.myTurn()){clearSelection();return true;}
    for(int r=0;r<9;r++)for(int col=0;col<9;col++)if(cell(r,col).contains(x,y)){choose(r,col);return true;}
    if(tapHand(x,y,viewSide(),bottomHandY()))return true;clearSelection();return true;
   }
@@ -417,19 +420,76 @@ public final class MainActivity extends Activity {
    if(online.seekMode>=0){paint.reset();paint.setAntiAlias(true);paint.setColor(0xff285681);c.drawRoundRect(120,y+110,280,y+142,4,4,paint);text(c,"キャンセル",200,y+131,12,Color.WHITE);}
    float n=y+168;text(c,"P2Pで直接つなぎ、つながらない時だけ公開リレーを経由します",200,n,9,0xfff2e6d0);text(c,"対戦相手にはあなたのIPアドレスが伝わります",200,n+16,9,0xfff2e6d0);text(c,"対局中はアプリを離れても時計は止まりません",200,n+32,9,0xfff2e6d0);
   }
-  void onlineTopBar(Canvas c){OnlineGame g=online.game;darkPanel(c,new RectF(4,0,396,32));text(c,"モード",45,22,11,0xfff5e4c8);
-   text(c,online.direct?"P2P直結"+(online.rtt>=0?" "+online.rtt+"ms":""):g.started?"リレー経由"+(online.rtt>=0?" "+online.rtt+"ms":""):"接続中…",190,22,10.5f,online.direct?0xff9be59b:0xffffd471);
-   if(!g.over()||!g.peerLeft){paint.reset();paint.setAntiAlias(true);paint.setColor(0xff285681);c.drawRoundRect(320,4,391,29,3,3,paint);text(c,!g.over()?"投了":g.rematchMine?"申込済":"再戦",355,22,11,Color.WHITE);}
+  // ---- online game screen: header, player cards, komadai, turn pill and result card ----
+  static final int GOLD=0xffffd27a,CREAM=0xfffff1d6,INK=0xff2a1208;
+  float onlineStatusY(){return bottomHandY()+100;}
+  void pill(Canvas c,RectF r,int fill,int stroke){paint.reset();paint.setAntiAlias(true);paint.setColor(fill);c.drawRoundRect(r,r.height()/2,r.height()/2,paint);if(stroke!=0){paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(1);paint.setColor(stroke);c.drawRoundRect(r,r.height()/2,r.height()/2,paint);}}
+  float textWidth(String s,float size,boolean bold){paint.reset();paint.setTextSize(size);paint.setTypeface(bold?Typeface.DEFAULT_BOLD:Typeface.DEFAULT);return paint.measureText(s);}
+  void styledText(Canvas c,String s,float x,float y,float size,int color,boolean bold,Paint.Align align,Typeface face){paint.reset();paint.setAntiAlias(true);paint.setTextSize(size);paint.setColor(color);paint.setTypeface(face!=null?face:bold?Typeface.DEFAULT_BOLD:Typeface.DEFAULT);paint.setTextAlign(align);c.drawText(s,x,y,paint);}
+  void onlineTopBar(Canvas c){OnlineGame g=online.game;
+   paint.reset();paint.setAntiAlias(true);paint.setShader(new LinearGradient(0,0,0,32,0xf2241010,0xf2110707,Shader.TileMode.CLAMP));c.drawRect(4,0,396,32,paint);paint.setShader(null);paint.setColor(0x80b58a47);c.drawRect(4,31,396,32,paint);
+   styledText(c,"‹ ロビー",14,21,11,0xfff5e4c8,true,Paint.Align.LEFT,null);
+   int dot=online.direct?0xff6ee07a:g.started?0xffffc857:0xffaaaaaa;String route=(online.direct?"P2P直結":g.started?"リレー経由":"接続中…")+(online.rtt>=0&&g.started?" "+online.rtt+"ms":"");
+   float w=textWidth(route,10,true)+30,cx=200;pill(c,new RectF(cx-w/2,6,cx+w/2,26),0x99000000,(dot&0x00ffffff)|0x99000000);paint.reset();paint.setAntiAlias(true);paint.setColor(dot);c.drawCircle(cx-w/2+11,16,3.5f,paint);
+   styledText(c,route,cx-w/2+20,20,10,CREAM,true,Paint.Align.LEFT,null);
+   if(!g.over()||!g.peerLeft){boolean resignButton=!g.over();int fill=resignButton?0xffa8352a:g.rematchMine?0xff5a5050:GOLD;pill(c,new RectF(320,5,391,27),fill,resignButton?0xffe0806f:0);
+    styledText(c,resignButton?"投了":g.rematchMine?"申込済":"再戦",355.5f,21,11,resignButton||g.rematchMine?Color.WHITE:INK,true,Paint.Align.CENTER,null);}
   }
-  void onlineStatus(Canvas c){OnlineGame g=online.game;String s=g.status(SystemClock.elapsedRealtime());long quiet=silence();if(g.started&&!g.over()&&quiet>9000)s+="・相手の応答なし "+quiet/1000+"秒";
-   text(c,s,200,bottomHandY()+64,g.over()?14:12,g.over()?0xffffdd8b:Color.WHITE);float line=bottomHandY()+84;OnlineAccount.Game r=online.lastResult;
-   if(g.over()&&r!=null){int d=r.after-r.before;text(c,"レート "+r.before+" → "+r.after+"（"+(d>=0?"+":"")+d+"）",200,line,12,d>=0?0xff9be59b:0xffffb9b3);}
-   else text(c,opponentLine(),200,line,9.5f,0xfff2e6d0);line+=18;
+  /** Pieces in hand on a lacquer tray: the player's on the right, the opponent's mirrored to the left as across a real board. */
+  void onlineKomadai(Canvas c,int side,float y){boolean me=side==viewSide();RectF r=new RectF(4,y,396,y+44);
+   paint.reset();paint.setAntiAlias(true);paint.setColor(0x7a000000);c.drawRoundRect(r,10,10,paint);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(0.8f);paint.setColor(0x40ffd27a);c.drawRoundRect(r,10,10,paint);
+   int count=handCount(side);if(count==0){styledText(c,"持ち駒なし",me?378:22,y+27,9,0x80fff1d6,false,me?Paint.Align.RIGHT:Paint.Align.LEFT,null);return;}
+   int i=0;for(int n=1;n<=handLimit();n++)if(game.hands[side==1?0:1][n]>0){float x=me?handX(i,count):400-handX(i,count);
+    if(selectedSide==side&&selectedHand==n){paint.reset();paint.setAntiAlias(true);paint.setColor(0x73ffd27a);c.drawRoundRect(new RectF(x-19,y+2,x+19,y+42),7,7,paint);}
+    RectF dst=new RectF(x-16,y+3,x+16,y+37);drawPiece(c,side*n,dst,commonHeight(dst.width(),dst.height()));int k=game.hands[side==1?0:1][n];
+    if(k>1){paint.reset();paint.setAntiAlias(true);paint.setColor(GOLD);c.drawCircle(x+13,y+37,6.5f,paint);styledText(c,""+k,x+13,y+40.5f,9,INK,true,Paint.Align.CENTER,null);}i++;}
+  }
+  /** Avatar, name, rating and side, and the clock: the side to move glows gold and turns red under 30 seconds. */
+  void playerCard(Canvas c,int side,float y){OnlineGame g=online.game;boolean me=side==viewSide();OnlineAccount a=online.account;OnlineIdentity p=online.peer;
+   boolean active=g.started&&!g.over()&&game.turn==side;long ms=Math.max(0,g.remaining(side,SystemClock.elapsedRealtime()));boolean low=g.started&&!g.over()&&ms<30000;
+   String name=me?(a==null?"あなた":a.name):p==null?"対戦相手":p.name,seed=me?(a==null?"me":a.key.publicHex):p==null?"opponent":p.pubkey;
+   String detail=me?(a==null?"":"レート"+a.ratingText()+" · "+a.wins+"勝"+a.losses+"敗"+a.draws+"分"):opponentLine();
+   RectF r=new RectF(4,y,396,y+44);if(active){paint.reset();paint.setAntiAlias(true);paint.setColor(0x40ffd27a);c.drawRoundRect(new RectF(1,y-3,399,y+47),15,15,paint);}
+   paint.reset();paint.setAntiAlias(true);paint.setShader(new LinearGradient(4,y,396,y,0xf0120808,0xf0361014,Shader.TileMode.CLAMP));c.drawRoundRect(r,13,13,paint);paint.setShader(null);
+   paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(active?1.8f:0.8f);paint.setColor(active?GOLD:0x55b58a47);c.drawRoundRect(r,13,13,paint);
+   int h=7;for(int i=0;i<seed.length();i++)h=h*31+seed.charAt(i);float[] hsv={Math.abs(h%360),0.6f,0.8f};int top=Color.HSVToColor(hsv);hsv[2]=0.42f;int bottom=Color.HSVToColor(hsv);
+   paint.reset();paint.setAntiAlias(true);paint.setShader(new LinearGradient(10,y+6,40,y+38,top,bottom,Shader.TileMode.CLAMP));c.drawCircle(25,y+22,15,paint);paint.setShader(null);
+   paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(1.2f);paint.setColor(0xb3ffd27a);c.drawCircle(25,y+22,15,paint);
+   styledText(c,name.isEmpty()?"?":name.substring(0,name.offsetByCodePoints(0,1)),25,y+27.5f,14,Color.WHITE,true,Paint.Align.CENTER,null);
+   String shown=shortName(name,10);styledText(c,shown,48,y+19,12.5f,CREAM,true,Paint.Align.LEFT,null);
+   if(me){float nx=48+textWidth(shown,12.5f,true)+6;pill(c,new RectF(nx,y+8,nx+30,y+21),GOLD,0);styledText(c,"あなた",nx+15,y+18,8,INK,true,Paint.Align.CENTER,null);}
+   styledText(c,detail.length()>30?detail.substring(0,29)+"…":detail,48,y+35,8.5f,0xc0fff1d6,false,Paint.Align.LEFT,null);
+   styledText(c,side==1?"▲ 先手":"△ 後手",388,y+12,8.5f,0xccfff1d6,true,Paint.Align.RIGHT,null);
+   long sec=(ms+999)/1000;String clock=String.format(Locale.US,"%02d:%02d",sec/60,sec%60);RectF pillRect=new RectF(318,y+16,390,y+40);
+   pill(c,pillRect,low?0xffd8392f:active?GOLD:0x1fffffff,low||active?0:0x40ffd27a);styledText(c,clock,354,y+34,16,low?Color.WHITE:active?INK:CREAM,true,Paint.Align.CENTER,Typeface.create(Typeface.MONOSPACE,Typeface.BOLD));
+  }
+  void onlineStatus(Canvas c){OnlineGame g=online.game;playerCard(c,-viewSide(),34);playerCard(c,viewSide(),bottomHandY()+48);
+   float y=onlineStatusY();String s=g.status(SystemClock.elapsedRealtime());long quiet=silence();if(g.started&&!g.over()&&quiet>9000)s+="・相手の応答なし "+quiet/1000+"秒";
+   boolean check=g.myTurn()&&g.game.checked(g.mySide);
+   if(!g.over()){float w=textWidth(s,12,true)+36;pill(c,new RectF(200-w/2,y,200+w/2,y+28),check?0xffd8392f:g.myTurn()?GOLD:0xa6000000,g.myTurn()?0:0x40ffd27a);styledText(c,s,200,y+19,12,g.myTurn()&&!check?INK:Color.WHITE,true,Paint.Align.CENTER,null);}
+   float line=y+(g.over()?0:46);if(g.over())line=resultCard(c,g,y)+18;
    if(!online.notice.isEmpty()){text(c,online.notice,200,line,10,0xffffb9b3);line+=18;}if(g.error!=null){text(c,g.error,200,line,9,0xffffb9b3);line+=18;}
-   if(g.over()&&!g.peerLeft)text(c,"右上の「再戦」で先後を入れ替えて次の対局",200,line,9.5f,0xfff2e6d0);
-   if(!g.started){paint.reset();paint.setColor(0xe0300909);c.drawRoundRect(75,H/2-35,325,H/2+35,12,12,paint);text(c,"対局準備中…",200,H/2+7,22,0xffffdd8b);}
+   if(!g.started){float cy=boardY+boardHeight/2;paint.reset();paint.setAntiAlias(true);paint.setColor(0xe0140808);c.drawRoundRect(new RectF(80,cy-34,320,cy+34),16,16,paint);paint.setStyle(Paint.Style.STROKE);paint.setColor(0x99ffd27a);c.drawRoundRect(new RectF(80,cy-34,320,cy+34),16,16,paint);
+    styledText(c,"対局を準備しています…",200,cy+7,17,0xffffdd8b,true,Paint.Align.CENTER,null);}
   }
-  /** "相手：名前（レート1520）· レート戦 · 対戦成績…" for the line under the board. */
+  /** Returns the card's bottom edge. Buttons: 再戦する at x 24..196, ロビーへ at 204..376, y+112..y+146 (see onlineTouch). */
+  float resultCard(Canvas c,OnlineGame g,float y){RectF card=new RectF(14,y,386,y+156);boolean win=g.game.winner==g.mySide,draw=g.game.winner==2;
+   paint.reset();paint.setAntiAlias(true);paint.setShader(new LinearGradient(0,y,0,y+156,0xf5341014,0xf2100606,Shader.TileMode.CLAMP));c.drawRoundRect(card,18,18,paint);paint.setShader(null);
+   paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(1.4f);paint.setShader(new LinearGradient(0,y,0,y+156,GOLD,0x33ffd27a,Shader.TileMode.CLAMP));c.drawRoundRect(card,18,18,paint);paint.setShader(null);
+   String title=draw?"引き分け":win?"勝ち":"負け";paint.reset();paint.setAntiAlias(true);paint.setTextSize(30);paint.setTypeface(Typeface.create(Typeface.SERIF,Typeface.BOLD));paint.setTextAlign(Paint.Align.CENTER);
+   paint.setShader(new LinearGradient(0,y+12,0,y+44,win?0xfffff2b3:0xfffff1d6,win?0xffc98a23:0xffaab4c8,Shader.TileMode.CLAMP));c.drawText(title,200,y+42,paint);paint.setShader(null);
+   styledText(c,g.game.result,200,y+60,10.5f,0xd9fff1d6,false,Paint.Align.CENTER,null);
+   OnlineAccount.Game r=online.lastResult;
+   if(r!=null){int d=r.after-r.before;String chip=(d>=0?"+":"")+d,before=r.before+"  →",after=""+r.after;float bw=textWidth(before,13,false),aw=textWidth(after,20,true),cw=textWidth(chip,12,true)+16,total=bw+8+aw+8+cw,x0=200-total/2;
+    styledText(c,before,x0,y+87,13,0xa6fff1d6,false,Paint.Align.LEFT,null);styledText(c,after,x0+bw+8,y+88,20,GOLD,true,Paint.Align.LEFT,null);
+    pill(c,new RectF(x0+bw+8+aw+8,y+73,x0+total,y+91),d>=0?0xd92e9e4a:0xd9c8372d,0);styledText(c,chip,x0+bw+8+aw+8+cw/2,y+86,12,Color.WHITE,true,Paint.Align.CENTER,null);}
+   else if(!online.rated)styledText(c,"フレンド対戦・レート変動なし",200,y+86,10,0xb3fff1d6,false,Paint.Align.CENTER,null);
+   if(g.rematchMine)styledText(c,"再戦を申し込みました。相手の返事を待っています",200,y+105,9,CREAM,false,Paint.Align.CENTER,null);
+   else if(g.rematchPeer)styledText(c,"相手が再戦を希望しています",200,y+105,9.5f,GOLD,true,Paint.Align.CENTER,null);
+   float by=y+112;if(!g.peerLeft&&!g.rematchMine){paint.reset();paint.setAntiAlias(true);paint.setShader(new LinearGradient(0,by,0,by+34,0xfffff0a8,GOLD,Shader.TileMode.CLAMP));c.drawRoundRect(new RectF(24,by,196,by+34),17,17,paint);paint.setShader(null);styledText(c,"再戦する",110,by+22,12.5f,INK,true,Paint.Align.CENTER,null);}
+   pill(c,new RectF(204,by,376,by+34),0x1affffff,0x80ffd27a);styledText(c,"ロビーへ",290,by+22,12.5f,CREAM,true,Paint.Align.CENTER,null);
+   return y+156;
+  }
   String opponentLine(){OnlineIdentity p=online.peer;if(p==null)return online.rated?"相手の情報を確認しています…":"フレンド対戦（レート変動なし）";
    int[] h=online.account==null?new int[3]:online.account.headToHead(p.pubkey);String record=h[0]+h[1]+h[2]>0?" · 対戦成績"+h[0]+"勝"+h[1]+"敗"+h[2]+"分":"";
    return "相手："+shortName(p.name,10)+"（レート"+p.rating+(p.games<Rating.PROVISIONAL_GAMES?"・暫定":"")+"）"+(online.rated?" · レート戦":" · レート変動なし")+record;}

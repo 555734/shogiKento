@@ -10,8 +10,8 @@ settings:
     SWIFT_STRICT_CONCURRENCY: minimal
     IPHONEOS_DEPLOYMENT_TARGET: '16.0'
     CODE_SIGNING_ALLOWED: NO
-    CURRENT_PROJECT_VERSION: '26'
-    MARKETING_VERSION: '1.17.0'
+    CURRENT_PROJECT_VERSION: '27'
+    MARKETING_VERSION: '1.18.0'
 packages:
   GoogleUserMessagingPlatform:
     url: https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git
@@ -60,8 +60,8 @@ targets:
         CFBundleDevelopmentRegion: ja
         LSRequiresIPhoneOS: true
         CFBundleDisplayName: AI将棋検討
-        CFBundleShortVersionString: '1.16.0'
-        CFBundleVersion: '25'
+        CFBundleShortVersionString: '1.18.0'
+        CFBundleVersion: '27'
         GADApplicationIdentifier: '$(ADMOB_APP_ID)'
         UILaunchScreen: {}
         UIRequiresFullScreen: true

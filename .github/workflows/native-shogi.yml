@@ -169,8 +169,8 @@ jobs:
           printf '%s' "$UPLOAD_KEY_BASE64" | base64 -d > "$SHOGI_UPLOAD_KEYSTORE"
           gradle --no-daemon :app:bundleRelease :app:assembleRelease
           mkdir -p outputs/play-release
-          cp app/build/outputs/bundle/release/app-release.aab outputs/play-release/AI-Shogi-Kento-1.17.0-26.aab
-          cp app/build/outputs/apk/release/app-release.apk outputs/play-release/AI-Shogi-Kento-1.17.0-26.apk
+          cp app/build/outputs/bundle/release/app-release.aab outputs/play-release/AI-Shogi-Kento-1.18.0-27.aab
+          cp app/build/outputs/apk/release/app-release.apk outputs/play-release/AI-Shogi-Kento-1.18.0-27.apk
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs outputs/play-release/*.apk > outputs/play-release/signature.txt
           "$ANDROID_HOME/build-tools/35.0.0/aapt2" dump badging outputs/play-release/*.apk > outputs/play-release/package.txt
           grep -q "targetSdkVersion:'36'" outputs/play-release/package.txt

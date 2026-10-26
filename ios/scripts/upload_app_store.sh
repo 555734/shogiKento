@@ -15,4 +15,4 @@ xcode-project build-ipa --project BeniShogi.xcodeproj --scheme BeniShogi \
 ipa=$(find build/AppStoreIPA -name '*.ipa' -print -quit)
 test -n "$ipa"
 app-store-connect publish --path "$ipa" --enable-package-validation
-cp "$ipa" outputs/AI-Shogi-Kento-AppStore-1.17.0-26.ipa
+cp "$ipa" outputs/AI-Shogi-Kento-AppStore-1.18.0-27.ipa
