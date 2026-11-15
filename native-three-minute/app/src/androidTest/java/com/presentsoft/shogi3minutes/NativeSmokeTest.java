@@ -404,7 +404,18 @@ public final class NativeSmokeTest extends Instrumentation {
   main(()->{v.cancelCpu();check(v.playerName(v.cpuSide()).contains(v.matchOptions().cpuName())&&v.playerName(v.cpuSide()).contains(v.matchOptions().cpuRank()),"CPU panel names the persona and rank");
    check(BoardEffects.stage(0)==0&&BoardEffects.stage(45)==1&&BoardEffects.stage(80)==2&&BoardEffects.stage(150)==3,"four background stages by move count");v.game.remaining[v.humanSide()==1?0:1]=25000;v.game.movesPlayed=120;v.invalidate();});
   SystemClock.sleep(1100);main(()->check(v.effects.tintStage==3&&!v.effects.tintFading(SystemClock.uptimeMillis()),"endgame tint reached after its fade"));screenshot("66_layout_endgame_tint.png");main(()->{v.cancelCpu();v.restart();});
+  frameTimingTest();
   main(()->{activity.settings.reducedEffects(false);v.restart();});
+ }
+ /** Frame intervals while move effects run back to back (emulator rendering, not a physical device). */
+ void frameTimingTest()throws Exception{
+  java.util.List<Long> frames=Collections.synchronizedList(new ArrayList<>());boolean[] run={true};
+  main(()->android.view.Choreographer.getInstance().postFrameCallback(new android.view.Choreographer.FrameCallback(){public void doFrame(long t){frames.add(t);if(run[0])android.view.Choreographer.getInstance().postFrameCallback(this);}}));
+  for(int k=0;k<10;k++){main(()->{v.restart();v.started=true;v.clock.resume(SystemClock.elapsedRealtime(),true);for(ShogiGame.Move x:v.game.legal(v.humanSide()))if(x.drop==0&&!x.promote){v.move(x);break;}v.cancelCpu();});SystemClock.sleep(260);}
+  run[0]=false;SystemClock.sleep(50);ArrayList<Long> gaps=new ArrayList<>();synchronized(frames){for(int i=1;i<frames.size();i++)gaps.add((frames.get(i)-frames.get(i-1))/1000000);}Collections.sort(gaps);
+  long p50=gaps.get(gaps.size()/2),p95=gaps.get(gaps.size()*95/100);long over=gaps.stream().filter(g->g>17).count();
+  try(PrintWriter out=new PrintWriter(new File(getTargetContext().getExternalFilesDir(null),"move_effect_frames.txt"))){out.println("Move effects, 10 moves back to back on the CI emulator: frames="+gaps.size()+" median="+p50+"ms p95="+p95+"ms over17ms="+over+" ("+(100*over/Math.max(1,gaps.size()))+"%). Physical-device 60fps is not measured here.");}
+  check(gaps.size()>30&&p50<=34,"animation keeps producing frames (median "+p50+"ms on emulator)");
  }
  void analysisReadyIfPossible(){main(()->v.refreshAnalysis());if(!v.game.legal(v.analysisSide).isEmpty())analysisReady();}
  void matchOptionsTests(Intent intent)throws Exception{

@@ -34,6 +34,8 @@ adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/match_settings
 adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/test_ads.txt outputs/ || true
 adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/coffee_purchase.txt outputs/ || true
 adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/online_play.txt outputs/ || true
+adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/move_effect_frames.txt outputs/ || true
+adb shell dumpsys gfxinfo com.presentsoft.shogi3minutes > outputs/gfxinfo.txt || true
 adb shell dumpsys meminfo com.presentsoft.shogi3minutes > outputs/meminfo.txt
 adb logcat -d > outputs/logcat.txt
 set -e
