@@ -60,15 +60,15 @@ struct BoardScreen:View {
     @State private var matchSettings=false
     var body:some View {
         GeometryReader {viewport in ScrollView {VStack(spacing:16){VStack(spacing:8){
-            HandView(side:model.screen == .match ? model.cpuSide:-1)
+            if model.screen == .match{MatchPanel(side:model.cpuSide)}else{HandView(side:-1)}
             BoardView().aspectRatio(1226/1283.0,contentMode:.fit).anchorPreference(key:ArrowAnchorKey.self,value:.bounds){["board":$0]}
                 .overlay{if model.screen == .match,let banner=model.banner{GameBannerLayer(banner:banner)}}
                 .overlay{if model.screen == .match && model.session.winner != 0 && model.banner != nil{MatchEndButtons().offset(y:70).transition(.opacity.animation(.easeIn(duration:0.25).delay(model.reducedEffects ? 0:GameBanner.buttonsAfter)))}}
-            HandView(side:model.screen == .match ? model.humanSide:1)
+            if model.screen == .match{MatchPanel(side:model.humanSide)}else{HandView(side:1)}
             if model.screen == .match {
-                Text(model.session.winner != 0 ? model.session.match.result:!model.session.matchStarted ? "対局を開始してください":model.thinking ? "CPUの手番":"あなたの手番").accessibilityIdentifier("match_status")
+                Text(model.session.winner != 0 ? model.session.match.result:!model.session.matchStarted ? "対局を開始してください":model.thinking ? "CPUの手番":"あなたの手番").font(.system(size:20,weight:.bold)).foregroundStyle(model.session.matchStarted && model.session.winner==0 && model.position.side==model.humanSide ? gold:cream).accessibilityIdentifier("match_status")
                 Text("\(model.session.match.moves)手目").accessibilityIdentifier("match_ply")
-                if !model.session.matchStarted{Button("対局開始"){model.startMatch()}.buttonStyle(.borderedProminent).accessibilityIdentifier("start_match")}
+                if !model.session.matchStarted{Button{model.startMatch()}label:{Text("対局開始").font(.system(size:22,weight:.heavy)).padding(.horizontal,28).padding(.vertical,6)}.buttonStyle(.borderedProminent).tint(Color(red:0.75,green:0.22,blue:0.17)).accessibilityIdentifier("start_match")}
                 HStack {Button("やり直し"){restart=true};Spacer();Button("AI再試行"){model.scheduleCPU()}.disabled(!model.thinking && model.position.side==model.humanSide);Spacer();Button("投了"){resign=true}.disabled(!model.session.matchStarted || model.session.winner != 0)}.buttonStyle(.bordered).padding(.horizontal)
                 Button("対局設定 · \(model.matchOptions.minutes)分 / AI Lv.\(model.matchOptions.level) / あなた\(model.humanSide==1 ? "先手":"後手")"){matchSettings=true}.buttonStyle(.bordered).accessibilityIdentifier("match_settings").padding(.horizontal)
             }else{AnalysisView(showMoves:$showMoves)}
@@ -77,7 +77,7 @@ struct BoardScreen:View {
             if let board=anchors["board"],!model.boardCandidates.isEmpty {
                 DropCandidateArrows(candidates:model.boardCandidates,side:model.position.side,board:proxy[board],hands:handFrames(anchors,proxy:proxy))
             }
-        }}.frame(minHeight:viewport.size.height,alignment:.top)
+        }}.frame(minHeight:viewport.size.height,alignment:model.screen == .match ? .center:.top)
             TestAdSlot(placement:model.screen == .study ? "study":"match").id(model.screen.rawValue).padding(.horizontal,12)
         }.frame(maxWidth:600).frame(maxWidth:.infinity).padding(.bottom,15)}}
         .background(Image(uiImage:AppAssets.image("background")).resizable().scaledToFill().ignoresSafeArea())
@@ -105,6 +105,39 @@ struct BoardView:View {
                 if !model.boardCandidates.isEmpty{CandidateArrows(candidates:model.boardCandidates,side:model.position.side,handDrops:Set((1...7).filter{model.position.hands[model.position.side==1 ? 0:1][$0]>0}))}
             }
         }
+    }
+}
+/// CPU-match player panel, 1.5x the study strip: icon, name, clock (red from 30 seconds) and komadai. The side to
+/// move is lit with a gold frame; the other is dimmed.
+struct MatchPanel:View {
+    @EnvironmentObject var model:AppModel
+    let side:Int
+    var body:some View {
+        let turn=model.session.matchStarted && model.session.winner==0 && model.position.side==side
+        let seconds=model.session.clocks[side==1 ? 0:1],time=max(0,Int(ceil(seconds)))
+        HStack(spacing:10){
+            PlayerIcon(side:side,lit:turn).frame(width:58,height:58)
+            VStack(alignment:.leading,spacing:0){
+                Text(model.playerName(side)).font(.system(size:16,weight:.bold)).foregroundStyle(turn ? gold:cream.opacity(0.85)).lineLimit(1).minimumScaleFactor(0.7)
+                Text(String(format:"%02d:%02d",time/60,time%60)).font(.system(size:33,weight:.bold,design:.monospaced)).foregroundStyle(seconds<=30 ? Color(red:1,green:0.35,blue:0.29):turn ? .white:cream.opacity(0.75)).accessibilityIdentifier("match_clock_\(side)")
+            }.layoutPriority(1)
+            Spacer(minLength:0)
+            ForEach(1..<8,id:\.self){p in let n=model.position.hands[side==1 ? 0:1][p],shown=model.shownHand(side,p);if n>0{Button{model.selectHand(p,side:side)}label:{ZStack(alignment:.bottomTrailing){Image(uiImage:AppAssets.piece(p*side)).resizable().scaledToFit().rotationEffect(.degrees(side*model.viewSide<0 ? 180:0));Text("\(shown)").font(.system(size:14,weight:.heavy)).foregroundStyle(.white).padding(.horizontal,3).background(.black.opacity(0.7))}.opacity(shown>0 ? 1:0).scaleEffect(model.handPop==HandSlot(side:side,piece:p) ? 1.28:1).frame(maxWidth:48,maxHeight:54).background(model.selectedHand==p && model.selectedSide==side ? .yellow.opacity(0.4):.clear)}.buttonStyle(.plain).anchorPreference(key:ArrowAnchorKey.self,value:.bounds){["hand_\(side)_\(p)":$0]}.accessibilityIdentifier("hand_\(side)_\(p)")}}
+        }.foregroundStyle(cream).padding(.horizontal,10).frame(height:76)
+        .background(turn ? Color(red:0.33,green:0.2,blue:0.1).opacity(0.94):Color.black.opacity(0.82))
+        .overlay(Rectangle().strokeBorder(turn ? gold:Color.clear,lineWidth:2.4))
+        .anchorPreference(key:ArrowAnchorKey.self,value:.bounds){["handbar_\(side)":$0]}
+    }
+}
+/// Player icon in the match panels.
+struct PlayerIcon:View {
+    @EnvironmentObject var model:AppModel
+    let side:Int,lit:Bool
+    var body:some View {
+        let me=side==model.humanSide
+        Circle().fill(me ? Color(red:0.18,green:0.36,blue:0.56):Color(red:0.48,green:0.16,blue:0.13))
+            .overlay(Text(me ? "自":"AI").font(.system(size:22,weight:.heavy)).foregroundStyle(.white))
+            .overlay(Circle().strokeBorder(lit ? gold:Color(red:0.61,green:0.53,blue:0.44),lineWidth:2))
     }
 }
 struct HandView:View {
