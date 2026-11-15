@@ -1,0 +1,28 @@
+{
+  "source_run": 39093678776,
+  "source_apk_sha256": "b26f5d68954798ca3306f3629752c95cd7b9be3560f8071958a3c936a7879484",
+  "recipe_sha256": "1ad312d1a6271f7878f02e30943fb393f5858d7a38d617e3ce92072f2570192f",
+  "native_objects": [
+    {
+      "abi": "arm64-v8a",
+      "engine": "libyaneuraou.so",
+      "sha256": "a3fc42ecd6a3d8bb490e9ceabbbb4cfe08f228608ad4c5c6d8b48590afe5cc8f"
+    },
+    {
+      "abi": "arm64-v8a",
+      "engine": "libyaneuraou_compat.so",
+      "sha256": "b43e65c29abc7d0fad340d2b7f90eb222cc50a6883bb0c399eeb5cbb31b2ba28"
+    },
+    {
+      "abi": "x86_64",
+      "engine": "libyaneuraou.so",
+      "sha256": "100b5026da38494a7ec2fd01d23f0d9c49d07bcf7d43bd974995c1b5d8da9932"
+    },
+    {
+      "abi": "x86_64",
+      "engine": "libyaneuraou_compat.so",
+      "sha256": "d5c87d5551d0ea6627ab6788659933955f014ad8bde47217707675eda9283943"
+    }
+  ],
+  "repository_local_cache": true
+}
