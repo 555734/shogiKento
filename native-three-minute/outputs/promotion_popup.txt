@@ -1,0 +1,1 @@
+PASS actual native popup and buttons: all six piece types; study sente/gote; promote/do-not-promote/cancel; dedicated promoted images; atomic capture/history/graph/undo/sound; leaving zone; no popup for drops/gold/king/already-promoted/outside-zone; match optional and mandatory promotion; time continues while choosing.
