@@ -83,12 +83,12 @@ import UIKit
     /// あなた / the CPU persona with its rank label (目安).
     func playerName(_ side:Int)->String {side==humanSide ? "あなた":matchOptions.cpuName+"　"+matchOptions.cpuRank}
     func clearSelection(){selected=nil;selectedHand=nil;targets=[];promotion=[]}
-    func selectHand(_ piece:Int,side:Int){if !promotion.isEmpty{clearSelection();return};guard humanInput,screen == .study && freePlacement || side==position.side else{clearSelection();return};if selectedHand==piece && selectedSide==side{clearSelection();return};selected=nil;selectedHand=piece;selectedSide=side;computeTargets()}
+    func selectHand(_ piece:Int,side:Int){if !promotion.isEmpty{promotion=[];return};guard humanInput,screen == .study && freePlacement || side==position.side else{clearSelection();return};if selectedHand==piece && selectedSide==side{clearSelection();return};selected=nil;selectedHand=piece;selectedSide=side;computeTargets()}
     func computeTargets(){
         if screen == .study && freePlacement{targets=(0..<81).compactMap{to in if let from=selected {guard from != to,position.board[to]*position.board[from]<=0 else{return nil};return Move(usi:Move.square(from)+Move.square(to))};guard let hand=selectedHand,position.board[to]==0 else{return nil};return Move(usi:String(Position.names[hand-1])+"*"+Move.square(to))};return}
         targets=((try? Rules.legal(position)) ?? []).filter{selectedHand != nil ? $0.drop==selectedHand:$0.source==selected && $0.drop==0}
     }
-    func tap(_ square:Int){if !promotion.isEmpty{clearSelection();return};guard humanInput else{return};if selected==square{clearSelection();return}
+    func tap(_ square:Int){if !promotion.isEmpty{promotion=[];return};guard humanInput else{return};if selected==square{clearSelection();return}
         let moves=targets.filter{$0.destination==square}
         if !moves.isEmpty {
             if screen == .study && freePlacement {let from=selected,drop=selectedHand ?? 0,mover=selectedSide;var next=position;if next.freeMove(source:from,drop:drop,side:mover,to:square){appendStudy(next,label:position.notation(moves[0]));feedback(human:true)};clearSelection();return}

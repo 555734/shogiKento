@@ -431,8 +431,8 @@ public final class MainActivity extends Activity {
    for(int i=0;i<2;i++){paint.reset();paint.setAntiAlias(true);paint.setColor(i==0?0xfffff0d6:0xfff3e6cf);c.drawRoundRect(r[i],8,8,paint);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(2);paint.setColor(i==0?0xffe0392b:0xffb58a47);c.drawRoundRect(r[i],8,8,paint);
     int p=pick.side*(i==0?pick.base+8:pick.base);drawPiece(c,p,r[i],Math.min(r[i].height()*.86f,boardPieceHeight()*1.15f));
     text(c,pick.edit?(i==0?"成る":"元の駒"):(i==0?"成る":"成らない"),r[i].centerX(),r[i].bottom+13,10.5f,i==0?0xffffb4a8:Color.WHITE);}}
-  /** A tap on an option commits it; any other tap cancels the move. */
-  void choosePick(float x,float y){RectF[] r=pickRects();PromotionPick p=pick;pick=null;if(r[0].contains(x,y))p.promote.run();else if(r[1].contains(x,y))p.plain.run();else clearSelection();invalidate();}
+  /** A tap on an option commits it; any other tap cancels the move and keeps the piece selected, like the old dialog's cancel. */
+  void choosePick(float x,float y){RectF[] r=pickRects();PromotionPick p=pick;pick=null;if(r[0].contains(x,y))p.promote.run();else if(r[1].contains(x,y))p.plain.run();invalidate();}
   void choose(int r,int col){
    if(selectedHand==0&&selectedR==r&&selectedC==col){clearSelection();return;}
    ArrayList<ShogiGame.Move> list=new ArrayList<>();for(ShogiGame.Move m:highlights)if(m.row==r&&m.col==col)list.add(m);
