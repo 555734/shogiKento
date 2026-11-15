@@ -1,0 +1,1 @@
+PASS reported screenshot position; dead native process replacement; injected EOF automatic single retry; error-details manual retry; rapid side switches; percentages and graph recovered.
