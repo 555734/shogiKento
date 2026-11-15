@@ -46,6 +46,8 @@ final class EvaluationHistory implements Serializable {
   LineRow(int index,int node,int ply,String move,int branch,int branches,boolean current,boolean offMain){this.index=index;this.node=node;this.ply=ply;this.move=move;this.branch=branch;this.branches=branches;this.current=current;this.offMain=offMain;}
   boolean fork(){return branches>1;}
   String branchName(){return branchName(branch);}
+  /** A normal record line; forks get a ◆ marker, the shown branch and how many alternatives exist. */
+  String display(){String text=(offMain&&!fork()?"┃ ":"")+move;return fork()?"◆ "+text+"\n　　分岐 "+branches+"通り・表示中："+branchName()+"　（タップで選択）":text;}
   static String branchName(int branch){return branch==0?"本譜":"変化"+branch;}
  }
  /** One alternative at a fork, with how many moves its continuation shows. */

@@ -242,11 +242,9 @@ public final class MainActivity extends Activity {
   }
   void studyMoves(){
    List<EvaluationHistory.LineRow> rows=evalHistory.line();String[] labels=new String[rows.size()];int checked=-1;
-   for(int i=0;i<rows.size();i++){EvaluationHistory.LineRow row=rows.get(i);labels[i]=studyLineLabel(row);if(row.current)checked=i;}
+   for(int i=0;i<rows.size();i++){EvaluationHistory.LineRow row=rows.get(i);labels[i]=row.display();if(row.current)checked=i;}
    AlertDialog d=new AlertDialog.Builder(MainActivity.this).setTitle(evalHistory.showingVariation()?"手順（変化を表示中）":"手順（本譜）").setSingleChoiceItems(labels,checked,(dialog,index)->{EvaluationHistory.LineRow row=rows.get(index);dialog.dismiss();if(row.fork())studyBranches(row.node);else jumpStudy(row.index);}).setPositiveButton("閉じる",null).create();showChoice(d);
   }
-  /** A normal record line; forks get a ◆ marker, the shown branch and how many alternatives exist. */
-  static String studyLineLabel(EvaluationHistory.LineRow row){String text=(row.offMain&&!row.fork()?"┃ ":"")+row.move;return row.fork()?"◆ "+text+"\n　　分岐 "+row.branches+"通り・表示中："+row.branchName()+"　（タップで選択）":text;}
   /** Alternatives at one fork: picking one shows that branch and keeps following it with 前へ/次へ. */
   void studyBranches(int node){
    List<EvaluationHistory.Alternative> alternatives=evalHistory.alternatives(node);if(alternatives.size()<2){jumpStudyNode(node);return;}String[] labels=new String[alternatives.size()];int checked=-1;
