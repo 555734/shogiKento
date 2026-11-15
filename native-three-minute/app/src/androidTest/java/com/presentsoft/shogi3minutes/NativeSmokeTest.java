@@ -371,7 +371,7 @@ public final class NativeSmokeTest extends Instrumentation {
  }
  /** Item 1: the move is applied at once and drawn with a short tween, landing pulse and ring; reduced effects skip it. */
  /** Photographs one animation frame: the effect clock is frozen at start+offset, so the redraw loop stops. */
- void frozenShot(java.util.function.LongSupplier start,long offset,String name){main(()->{v.frozenFrame=start.getAsLong()+offset;v.invalidate();});waitForIdleSync();screenshot(name);main(()->{v.frozenFrame=-1;v.invalidate();});}
+ void frozenShot(java.util.function.LongSupplier start,long offset,String name)throws Exception{main(()->{v.frozenFrame=start.getAsLong()+offset;v.invalidate();});waitForIdleSync();screenshot(name);main(()->{v.frozenFrame=-1;v.invalidate();});}
  void moveEffectTests()throws Exception{
   home();chooseMode(MainActivity.MATCH);ready();
   for(boolean reduced:new boolean[]{false,true}){
