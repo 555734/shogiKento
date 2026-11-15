@@ -94,4 +94,31 @@ final class BoardEffects {
   paint.setColor(Color.argb(Math.round(150*alpha),40,0,0));c.drawRoundRect(cx-size*1.35f,cy-size*.85f,cx+size*1.35f,cy+size*.55f,12,12,paint);
   paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(size*.08f);paint.setColor(Color.argb(Math.round(255*alpha),255,240,210));c.drawText("王手",cx,cy+size*.32f,paint);
   paint.setStyle(Paint.Style.FILL);paint.setColor(Color.argb(Math.round(255*alpha),215,25,25));c.drawText("王手",cx,cy+size*.32f,paint);}
+ // ---- Match start and end ----
+ static final long START=1000,FLASH=260,END_TEXT=500,CONFETTI=2600,BUTTONS_AFTER=900;
+ long startAt=Long.MIN_VALUE,endAt=Long.MIN_VALUE;String startSub="",endDetail="";int endOutcome;float[] confetti=new float[0];
+ /** White flash and a growing 対局開始 with both players' sides, about one second. */
+ void start(String sub,long now){startAt=now;startSub=sub;endAt=Long.MIN_VALUE;}
+ /** outcome: 1 the local player won, -1 lost, 0 draw. A win also throws confetti over the board. */
+ void end(int outcome,String detail,RectF board,long now){endAt=now;endOutcome=outcome;endDetail=detail;
+  java.util.Random r=new java.util.Random(now);int n=outcome>0&&!reduced?90:0;confetti=new float[n*6];
+  for(int i=0;i<n;i++){confetti[i*6]=board.left+r.nextFloat()*board.width();confetti[i*6+1]=board.top-r.nextFloat()*board.height()*.5f;confetti[i*6+2]=(r.nextFloat()-.5f)*60;confetti[i*6+3]=120+r.nextFloat()*160;confetti[i*6+4]=r.nextFloat()*360;confetti[i*6+5]=r.nextInt(5);}}
+ void clearOverlays(){startAt=endAt=Long.MIN_VALUE;confetti=new float[0];}
+ boolean ended(){return endAt!=Long.MIN_VALUE;}
+ boolean endButtonsVisible(long now){return ended()&&now-endAt>=(reduced?0:BUTTONS_AFTER);}
+ boolean overlayAnimating(long now){return startAt!=Long.MIN_VALUE&&now-startAt<START||ended()&&now-endAt<(confetti.length>0?CONFETTI:Math.max(END_TEXT,BUTTONS_AFTER));}
+ static final int[] CONFETTI_COLORS={0xffffd25a,0xffe2403a,0xffffffff,0xff3f8fe0,0xff4fc46a};
+ void drawStart(Canvas c,RectF board,long now){if(startAt==Long.MIN_VALUE)return;long t=now-startAt;if(t>=START)return;float k=t/(float)START,cx=board.centerX(),cy=board.centerY();
+  if(!reduced&&t<FLASH){paint.reset();paint.setColor(Color.argb(Math.round(220*(1-t/(float)FLASH)),255,255,255));c.drawRect(board,paint);}
+  float alpha=k<.12f?k/.12f:k>.7f?(1-k)/.3f:1,size=reduced?44:44*(.6f+.55f*easeOut(Math.min(1,k/.45f)));
+  paint.reset();paint.setAntiAlias(true);paint.setColor(Color.argb(Math.round(170*alpha),30,6,4));c.drawRoundRect(cx-150,cy-size*1.05f,cx+150,cy+size*.75f+26,14,14,paint);
+  paint.setTextAlign(Paint.Align.CENTER);paint.setTypeface(Typeface.create("serif",Typeface.BOLD));paint.setTextSize(size);paint.setColor(Color.argb(Math.round(255*alpha),255,222,140));c.drawText("対局開始",cx,cy+size*.32f,paint);
+  paint.setTypeface(Typeface.create("sans-serif",Typeface.BOLD));paint.setTextSize(14);paint.setColor(Color.argb(Math.round(255*alpha),255,255,255));c.drawText(startSub,cx,cy+size*.32f+24,paint);}
+ void drawEnd(Canvas c,RectF board,long now){if(!ended())return;long t=now-endAt;float cx=board.centerX(),cy=board.centerY()-40;
+  for(int i=0;i<confetti.length/6;i++){float s=t/1000f;if(t>=CONFETTI)break;float x=confetti[i*6]+confetti[i*6+2]*s,y=confetti[i*6+1]+confetti[i*6+3]*s+60*s*s;if(y>board.bottom)continue;
+   paint.reset();paint.setAntiAlias(true);paint.setColor(CONFETTI_COLORS[(int)confetti[i*6+5]]);paint.setAlpha(Math.round(255*Math.max(0,1-t/(float)CONFETTI)));c.save();c.rotate(confetti[i*6+4]+s*240,x,y);c.drawRect(x-3.5f,y-2,x+3.5f,y+2,paint);c.restore();}
+  float k=reduced?1:easeOut(Math.min(1,t/(float)END_TEXT)),size=64*(reduced?1:.7f+.3f*k);String word=endOutcome>0?"勝ち":endOutcome<0?"負け":"引き分け";
+  paint.reset();paint.setAntiAlias(true);paint.setColor(Color.argb(Math.round(200*k),24,6,4));c.drawRoundRect(cx-150,cy-size*.95f,cx+150,cy+size*.5f+30,16,16,paint);
+  paint.setTextAlign(Paint.Align.CENTER);paint.setTypeface(Typeface.create("serif",Typeface.BOLD));paint.setTextSize(size);int color=endOutcome>0?0xffffd25a:endOutcome<0?0xffa9c7ff:0xffffffff;paint.setColor(color);paint.setAlpha(Math.round(255*k));c.drawText(word,cx,cy+size*.3f,paint);
+  paint.setTypeface(Typeface.create("sans-serif",Typeface.BOLD));paint.setTextSize(14);paint.setColor(Color.WHITE);paint.setAlpha(Math.round(255*k));c.drawText(endDetail,cx,cy+size*.3f+24,paint);}
 }

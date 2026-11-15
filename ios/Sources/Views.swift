@@ -62,6 +62,8 @@ struct BoardScreen:View {
         GeometryReader {viewport in ScrollView {VStack(spacing:16){VStack(spacing:8){
             HandView(side:model.screen == .match ? model.cpuSide:-1)
             BoardView().aspectRatio(1226/1283.0,contentMode:.fit).anchorPreference(key:ArrowAnchorKey.self,value:.bounds){["board":$0]}
+                .overlay{if model.screen == .match,let banner=model.banner{GameBannerLayer(banner:banner)}}
+                .overlay{if model.screen == .match && model.session.winner != 0 && model.banner != nil{MatchEndButtons().offset(y:70).transition(.opacity.animation(.easeIn(duration:0.25).delay(model.reducedEffects ? 0:GameBanner.buttonsAfter)))}}
             HandView(side:model.screen == .match ? model.humanSide:1)
             if model.screen == .match {
                 Text(model.session.winner != 0 ? model.session.match.result:!model.session.matchStarted ? "対局を開始してください":model.thinking ? "CPUの手番":"あなたの手番").accessibilityIdentifier("match_status")

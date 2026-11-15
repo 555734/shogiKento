@@ -104,8 +104,8 @@ extension AppModel {
     var lastMoveSquares:(from:Int?,to:Int)? {if screen == .match{return matchLastMove};guard screen == .online,let usi=online.game?.lastMove,usi.count>=4 else{return nil};let m=Move(usi:usi);let to=m.destination;guard (0..<81).contains(to) else{return nil};return (m.source,to)}
     /// Start and end sounds once per online round.
     func observeOnlineFlow(){guard let g=online.game else{return}
-        if g.started && online.flowRound != g.round{online.flowRound=g.round;online.flowEnded=g.over;if !g.over && g.movesPlayed==0{playSound(.start)}}
-        if g.over && !online.flowEnded{online.flowEnded=true;playSound(.end)}}
+        if g.started && online.flowRound != g.round{online.flowRound=g.round;online.flowEnded=g.over;if !g.over && g.movesPlayed==0{playSound(.start);banner=GameBanner(kind:.start("あなた："+(g.mySide==1 ? "先手":"後手")+"　相手："+(g.mySide==1 ? "後手":"先手")),reduced:reducedEffects)}}
+        if g.over && !online.flowEnded{online.flowEnded=true;playSound(.end);banner=GameBanner(kind:.end(outcome:g.winner==2 ? 0:g.winner==g.mySide ? 1:-1,detail:g.result),reduced:reducedEffects)}}
     func showOnlinePosition(){position=online.game.flatMap{try? Position($0.sfen)} ?? (try! Position());clearSelection()}
     func onlineTick(){guard online.game != nil else{return};online.game!.rttMillis=online.rtt;let was=online.game!.over;online.game!.tick(Self.onlineNow);flushOnline();observeOnlineFlow();if !was && online.game!.over{clearSelection()}
         online.silenceMillis=net?.link?.silenceMillis ?? 0}

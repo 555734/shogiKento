@@ -153,7 +153,7 @@ public final class NativeSmokeTest extends Instrumentation {
   fixture();main(()->v.game.board[3][2]=4);square(3,2);square(2,2);promotionDialogVisible();clickDialog("キャンセル");main(()->check(v.game.board[3][2]==4&&v.game.board[2][2]==0&&v.game.movesPlayed==0,"cancel leaves match move uncommitted"));
   for(int[] q:new int[][]{{1,1,0,0,0},{2,1,0,0,0},{3,2,2,0,1}}){fixture();main(()->v.game.board[q[1]][q[2]]=q[0]);square(q[1],q[2]);square(q[3],q[4]);main(()->{v.cancelCpu();check(v.pick==null&&!v.dialogOpen&&v.game.board[q[3]][q[4]]==q[0]+8,"mandatory pawn, lance and knight promotion remains automatic");});}
   fixture();main(()->v.game.board[3][2]=4);square(3,2);square(2,2);promotionDialogVisible();main(()->{v.game.remaining[0]=100;v.clock.resume(SystemClock.elapsedRealtime(),true);});SystemClock.sleep(250);clickDialog("成る");main(()->check(v.game.winner==-1&&v.game.board[3][2]==4&&v.game.board[2][2]==0,"promotion popup does not pause match clock or allow a move after flag fall"));
-  try(PrintWriter out=new PrintWriter(new File(getTargetContext().getExternalFilesDir(null),"promotion_popup.txt"))){out.println("PASS actual native popup and buttons: all six piece types; study sente/gote; promote/do-not-promote/cancel; dedicated promoted images; atomic capture/history/graph/undo/sound; leaving zone; no popup for drops/gold/king/already-promoted/outside-zone; match optional and mandatory promotion; time continues while choosing.");}
+  try(PrintWriter out=new PrintWriter(new File(getTargetContext().getExternalFilesDir(null),"promotion_popup.txt"))){out.println("PASS on-board promotion picker (no OS dialog): all six piece types; study sente/gote; promote/do-not-promote/cancel; dedicated promoted images; atomic capture/history/graph/undo/sound; leaving zone; no popup for drops/gold/king/already-promoted/outside-zone; match optional and mandatory promotion; time continues while choosing.");}
   main(()->v.restart());
  }
  void compatibilityTests()throws Exception{
@@ -394,6 +394,12 @@ public final class NativeSmokeTest extends Instrumentation {
    if(sente){v.game.board[0][4]=0;v.game.board[4][1]=-8;}else{v.game.board[8][4]=0;v.game.board[4][7]=8;}v.move(sente?new ShogiGame.Move(6,1,5,1,false,0):new ShogiGame.Move(2,7,3,7,false,0));v.cancelCpu();
    check(v.effects.checkRow==4&&v.effects.checkCol==(sente?1:7)&&v.sounds.lastKind==MoveSound.Kind.CHECK,"check marks the checked king and plays the check sound");});SystemClock.sleep(300);screenshot("63_check_banner.png");SystemClock.sleep(600);
   main(()->check(!v.effects.active(SystemClock.uptimeMillis()),"check banner gone after its 600ms"));
+  // Item 6: start flash and 対局開始, then a win with confetti and the three result buttons.
+  main(()->v.restart());waitForIdleSync();tap(200,v.H/2);waitForIdleSync();main(()->{v.cancelCpu();check(v.started&&v.effects.startAt!=Long.MIN_VALUE&&v.effects.startSub.contains("先手"),"match start shows 対局開始 with both sides");});SystemClock.sleep(150);screenshot("64_match_start.png");
+  SystemClock.sleep(1000);main(()->{v.cancelCpu();v.game.resign(v.cpuSide());v.invalidate();});SystemClock.sleep(1100);waitForIdleSync();
+  main(()->check(v.effects.ended()&&v.effects.endOutcome==1&&v.effects.confetti.length>0&&v.effects.endButtonsVisible(SystemClock.uptimeMillis()),"win shows 勝ち, confetti and the result buttons"));screenshot("65_match_win.png");
+  float[] again=new float[2];main(()->{RectF b=v.endButtons()[0];again[0]=b.centerX();again[1]=b.centerY();});tap(again[0],again[1]);waitForIdleSync();
+  main(()->{v.cancelCpu();check(v.started&&v.game.winner==0&&v.game.movesPlayed==0&&!v.effects.ended(),"もう一局 starts a fresh match at once");});
   main(()->{activity.settings.reducedEffects(false);v.restart();});
  }
  void analysisReadyIfPossible(){main(()->v.refreshAnalysis());if(!v.game.legal(v.analysisSide).isEmpty())analysisReady();}

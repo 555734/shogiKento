@@ -154,3 +154,70 @@ enum SoundKind:String,CaseIterable {
         return effect.promoted ? .promote:effect.captured != 0 ? .capture:.place
     }
 }
+
+/// Match start (white flash, growing 対局開始 and both sides) and end (勝ち／負け／引き分け, confetti on a win).
+struct GameBanner:Equatable {
+    enum Kind:Equatable {case start(String),end(outcome:Int,detail:String)}
+    var kind:Kind,start=Date(),reduced=false
+    static let startDuration=1.0,flash=0.26,endText=0.5,confetti=2.6,buttonsAfter=0.9
+    var animating:Bool {let t=Date().timeIntervalSince(start);switch kind{case .start:return t<Self.startDuration;case .end(let o,_):return t<(o>0 && !reduced ? Self.confetti:Self.buttonsAfter)}}
+}
+
+struct GameBannerLayer:View {
+    let banner:GameBanner
+    private static let colors:[Color]=[Color(red:1,green:0.82,blue:0.35),Color(red:0.89,green:0.25,blue:0.23),.white,Color(red:0.25,green:0.56,blue:0.88),Color(red:0.31,green:0.77,blue:0.42)]
+    var body:some View {
+        TimelineView(.animation(paused:!banner.animating)){timeline in
+            Canvas{context,size in
+                let t=timeline.date.timeIntervalSince(banner.start),c=CGPoint(x:size.width/2,y:size.height/2)
+                switch banner.kind {
+                case .start(let sub):
+                    guard t<GameBanner.startDuration else{return};let k=t/GameBanner.startDuration
+                    if !banner.reduced && t<GameBanner.flash{context.fill(Path(CGRect(origin:.zero,size:size)),with:.color(.white.opacity(0.86*(1-t/GameBanner.flash))))}
+                    let alpha=k<0.12 ? k/0.12:k>0.7 ? (1-k)/0.3:1,font=banner.reduced ? 44:44*(0.6+0.55*MoveEffect.easeOut(min(1,k/0.45)))
+                    context.fill(Path(roundedRect:CGRect(x:c.x-150,y:c.y-font*1.05,width:300,height:font*1.8+26),cornerRadius:14),with:.color(Color(red:0.12,green:0.02,blue:0.02).opacity(0.67*alpha)))
+                    context.draw(Text("対局開始").font(.system(size:font,weight:.black,design:.serif)).foregroundColor(Color(red:1,green:0.87,blue:0.55).opacity(alpha)),at:CGPoint(x:c.x,y:c.y-font*0.1))
+                    context.draw(Text(sub).font(.system(size:14,weight:.bold)).foregroundColor(.white.opacity(alpha)),at:CGPoint(x:c.x,y:c.y+font*0.55+8))
+                case .end(let outcome,let detail):
+                    if outcome>0 && !banner.reduced && t<GameBanner.confetti {
+                        var rng=SeededRandom(seed:UInt64(banner.start.timeIntervalSince1970*1000))
+                        for _ in 0..<90 {
+                            let x0=rng.next()*size.width,y0=(-rng.next()*0.5)*size.height,vx=(rng.next()-0.5)*60,vy=120+rng.next()*160,rot=rng.next()*360,color=Self.colors[Int(rng.next()*5)%5]
+                            let x=x0+vx*t,y=y0+vy*t+60*t*t;guard y<size.height else{continue}
+                            var p=context;p.translateBy(x:x,y:y);p.rotate(by:.degrees(rot+t*240));p.opacity=max(0,1-t/GameBanner.confetti)
+                            p.fill(Path(CGRect(x:-3.5,y:-2,width:7,height:4)),with:.color(color))
+                        }
+                    }
+                    let k=banner.reduced ? 1:MoveEffect.easeOut(min(1,t/GameBanner.endText)),font=64*(banner.reduced ? 1:0.7+0.3*k),cy=c.y-40
+                    let word=outcome>0 ? "勝ち":outcome<0 ? "負け":"引き分け",color=outcome>0 ? Color(red:1,green:0.82,blue:0.35):outcome<0 ? Color(red:0.66,green:0.78,blue:1):.white
+                    context.fill(Path(roundedRect:CGRect(x:c.x-150,y:cy-font*0.95,width:300,height:font*1.45+30),cornerRadius:16),with:.color(Color(red:0.09,green:0.02,blue:0.02).opacity(0.78*k)))
+                    context.draw(Text(word).font(.system(size:font,weight:.black,design:.serif)).foregroundColor(color.opacity(k)),at:CGPoint(x:c.x,y:cy-font*0.1))
+                    context.draw(Text(detail).font(.system(size:14,weight:.bold)).foregroundColor(.white.opacity(k)),at:CGPoint(x:c.x,y:cy+font*0.5+8))
+                }
+            }
+        }.allowsHitTesting(false).accessibilityHidden(true)
+    }
+}
+
+/// Deterministic confetti so every frame draws the same particles.
+struct SeededRandom {
+    var state:UInt64
+    init(seed:UInt64){state=seed &+ 0x9E3779B97F4A7C15}
+    mutating func next()->CGFloat {state=state &* 6364136223846793005 &+ 1442695040888963407;return CGFloat((state>>33)%1_000_000)/1_000_000}
+}
+
+/// もう一局 / 検討する / ホームへ under the result of a CPU match.
+struct MatchEndButtons:View {
+    @EnvironmentObject var model:AppModel
+    var body:some View {
+        HStack(spacing:6){
+            button("もう一局",Color(red:0.75,green:0.22,blue:0.17),"end_again"){model.restartMatch();model.startMatch()}
+            button("検討する",Color(red:0.16,green:0.34,blue:0.5),"end_study"){if model.session.study.moves>0{model.archiveOffer=model.session.match}else{model.open(model.session.match)}}
+            button("ホームへ",Color(red:0.29,green:0.23,blue:0.17),"end_home"){model.enter(.home)}
+        }.padding(.horizontal,8)
+    }
+    func button(_ title:String,_ fill:Color,_ id:String,_ action:@escaping ()->Void)->some View {
+        Button(action:action){Text(title).font(.system(size:15,weight:.bold)).foregroundStyle(.white).frame(maxWidth:.infinity,minHeight:42)
+            .background(RoundedRectangle(cornerRadius:10).fill(fill)).overlay(RoundedRectangle(cornerRadius:10).stroke(Color(red:1,green:0.82,blue:0.48),lineWidth:1.4))}.buttonStyle(.plain).accessibilityIdentifier(id)
+    }
+}

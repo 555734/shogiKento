@@ -15,6 +15,7 @@ struct OnlineGameView:View {
             OnlineKomadai(side:-model.viewSide)
             BoardView().aspectRatio(1226/1283.0,contentMode:.fit).anchorPreference(key:ArrowAnchorKey.self,value:.bounds){["board":$0]}
                 .clipShape(RoundedRectangle(cornerRadius:4)).shadow(color:.black.opacity(0.55),radius:10,y:4)
+                .overlay{if let banner=model.banner{GameBannerLayer(banner:banner)}}
                 .overlay{if !game.started{VStack(spacing:10){ProgressView().tint(gold);Text("対局を準備しています…").font(.headline).foregroundStyle(cream)}.padding(22).background(RoundedRectangle(cornerRadius:16).fill(.black.opacity(0.78)))}}
             OnlineKomadai(side:model.viewSide)
             OnlinePlayerCard(side:model.viewSide,game:game)
