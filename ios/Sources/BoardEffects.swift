@@ -92,3 +92,14 @@ struct MoveEffectOverlay:View {
         }
     }
 }
+
+/// Original synthesized sounds (native-three-minute/scripts/generate_move_sound.py), copied into GameAssets.
+enum SoundKind:String,CaseIterable {
+    case place="piece_place",capture="piece_capture",promote="piece_promote",check="alert_check",start="game_start",end="game_end",tick="clock_tick"
+    /// Check > promotion > capture > placement, so every move plays exactly one sound.
+    static func forMove(_ before:Position,_ after:Position)->SoundKind {
+        if Rules.checked(after){return .check}
+        guard let effect=MoveEffect.between(before,after) else{return .place}
+        return effect.promoted ? .promote:effect.captured != 0 ? .capture:.place
+    }
+}

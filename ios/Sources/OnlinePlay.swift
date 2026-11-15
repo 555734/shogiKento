@@ -13,6 +13,8 @@ struct OnlineState {
     var status="",network="",notice="",route="",roomCode:String?
     var relaysOpen=0,relaysTotal=0,rtt = -1,seekMode = -1
     var direct=false,silenceMillis:Int64=0
+    /// Round whose start sound played and whether its end sound played.
+    var flowRound=0,flowEnded=false
     /// The chosen time control (saved) and whether the room page is shown instead of the lobby.
     var timeControl=OnlineGame.validTimeControl(UserDefaults.standard.string(forKey:"online_tc")) ? UserDefaults.standard.string(forKey:"online_tc")!:"3m",roomPage=false
     /// The opponent's verified account card, whether this session is rated (random matches), the round whose card
@@ -61,9 +63,9 @@ extension AppModel {
         case .relays(let open,let total):online.relaysOpen=open;online.relaysTotal=total
         case .network(let text):online.network=text
         case .matched(let side):var g=OnlineGame(mySide:side,rules:EngineRules(),time:OnlineGame.millis(net?.matchedTimeControl));g.hello(now);online.peer=nil;online.cardRound=0;online.lastResult=nil;online.rated=net?.ratedSession ?? false
-            online.game=g;online.seekMode = -1;online.notice="";online.direct=false;online.rtt = -1;online.route="";flushOnline();showOnlinePosition()
+            online.flowRound=0;online.flowEnded=false;online.game=g;online.seekMode = -1;online.notice="";online.direct=false;online.rtt = -1;online.route="";flushOnline();showOnlinePosition()
         case .message(let text) where text.hasPrefix("ID "):online.peer=net?.sessionId.flatMap{OnlineIdentity.parse(text,sessionId:$0)};syncAccount()
-        case .message(let text):guard online.game != nil else{return};online.game!.rttMillis=online.rtt;let before=position;let moved=online.game!.receive(text,now);flushOnline();if moved{showOnlinePosition();if online.game!.lastMove != nil{beginMoveEffect(from:before);feedback(human:false)}}
+        case .message(let text):guard online.game != nil else{return};online.game!.rttMillis=online.rtt;let before=position;let moved=online.game!.receive(text,now);flushOnline();if moved{showOnlinePosition();if online.game!.lastMove != nil{beginMoveEffect(from:before);feedback(human:false,kind:SoundKind.forMove(before,position))}};observeOnlineFlow()
         case .path(let direct,let rtt,let route):online.direct=direct;online.rtt=rtt;online.route=route
         case .peerLeft:online.game?.markPeerLeft();online.notice="相手が退出しました";clearSelection()
         case .failed(let reason):online.notice=reason
@@ -100,10 +102,14 @@ extension AppModel {
             Task{@MainActor in self.ranking=Array(top.prefix(100));self.rankingStatus=top.isEmpty ? "公開プロフィールが見つかりませんでした":"公開プロフィール\(top.count)件（各端末が計算した値）"}}}
     /// The squares of the last move in an online game (source may be nil for a drop), for the board highlight.
     var lastMoveSquares:(from:Int?,to:Int)? {guard screen == .online,let usi=online.game?.lastMove,usi.count>=4 else{return nil};let m=Move(usi:usi);let to=m.destination;guard (0..<81).contains(to) else{return nil};return (m.source,to)}
+    /// Start and end sounds once per online round.
+    func observeOnlineFlow(){guard let g=online.game else{return}
+        if g.started && online.flowRound != g.round{online.flowRound=g.round;online.flowEnded=g.over;if !g.over && g.movesPlayed==0{playSound(.start)}}
+        if g.over && !online.flowEnded{online.flowEnded=true;playSound(.end)}}
     func showOnlinePosition(){position=online.game.flatMap{try? Position($0.sfen)} ?? (try! Position());clearSelection()}
-    func onlineTick(){guard online.game != nil else{return};online.game!.rttMillis=online.rtt;let was=online.game!.over;online.game!.tick(Self.onlineNow);flushOnline();if !was && online.game!.over{clearSelection()}
+    func onlineTick(){guard online.game != nil else{return};online.game!.rttMillis=online.rtt;let was=online.game!.over;online.game!.tick(Self.onlineNow);flushOnline();observeOnlineFlow();if !was && online.game!.over{clearSelection()}
         online.silenceMillis=net?.link?.silenceMillis ?? 0}
-    func onlineCommit(_ move:Move){guard online.game != nil else{return};let before=position;if online.game!.localMove(move.usi,Self.onlineNow){flushOnline();showOnlinePosition();beginMoveEffect(from:before);feedback(human:true)}else{clearSelection()}}
+    func onlineCommit(_ move:Move){guard online.game != nil else{return};let before=position;if online.game!.localMove(move.usi,Self.onlineNow){flushOnline();showOnlinePosition();beginMoveEffect(from:before);feedback(human:true,kind:SoundKind.forMove(before,position));observeOnlineFlow()}else{clearSelection()}}
     func startSeek(_ mode:Int,code:String?){
         guard let net else{online.notice="通信を準備しています…";ensureNetplay();return}
         net.rating=account.rating;net.games=account.games;online.seekMode=mode;online.roomCode=code;online.notice="";online.status="";net.seek(mode,code:code,timeControl:online.timeControl)

@@ -42,9 +42,9 @@ import UIKit
     var accountSecret:[UInt8]
     let accountStore:OnlineAccountStore
     private(set) var store:RecordStore?
-    private var active=true,lastTick:Double?,audio:AVAudioPlayer?
+    private var active=true,lastTick:Double?,players=[SoundKind:AVAudioPlayer]()
     private var matchSettingsOpen=false
-    private(set) var soundPlayCount=0
+    private(set) var soundPlayCount=0,lastSound:SoundKind?
     private let premium:@MainActor ()->Bool
     var matchOptions:MatchOptions {var options=session.match.matchOptions ?? MatchOptions();if options.level==10 && !premium(){options.level=9};return options}
     var humanSide:Int {matchOptions.humanSide}
@@ -62,7 +62,7 @@ import UIKit
         #endif
         accountStore=accounts;let loaded=accounts.load();accountSecret=loaded.secret;accountKey=loaded.key;account=loaded.account
         do {let store=try testStore ?? RecordStore();self.store=store;if FileManager.default.fileExists(atPath:store.root.appendingPathComponent("current.json").path){session=try store.current()}}catch{self.error="保存データを読み込めません：\(error.localizedDescription)"}
-        if let file=Bundle.main.url(forResource:"piece_place",withExtension:"wav",subdirectory:"GameAssets"){audio=try? AVAudioPlayer(contentsOf:file);audio?.prepareToPlay()}
+        for kind in SoundKind.allCases{if let file=Bundle.main.url(forResource:kind.rawValue,withExtension:"wav",subdirectory:"GameAssets"),let player=try? AVAudioPlayer(contentsOf:file){player.prepareToPlay();players[kind]=player}}
         try? AVAudioSession.sharedInstance().setCategory(.ambient,mode:.default,options:.mixWithOthers)
         if !session.matchStarted && session.match.moves==0 && session.match.matchOptions==nil{let options=MatchOptions.load();session.match = .match(options);session.clocks=[options.seconds,options.seconds]}
         NativeEngine.shared.warmUp();if loaded.abandoned != nil{publishProfile()}
@@ -71,7 +71,7 @@ import UIKit
     func enter(_ next:Screen){clearMoveEffect();if screen == .match{tick()};if screen == .online && next != .online{leaveOnline(all:true)};NativeEngine.shared.cancel();thinking=false;analyzing=false;clearSelection();lastTick=nil;save();screen=next
         do {if next == .online{showOnlinePosition();ensureNetplay()}else if next == .study{position=try Position(session.study.positions[session.cursor]);refreshAnalysis()}else if next == .match{position=try Position(session.match.positions.last!);if active{lastTick=ProcessInfo.processInfo.systemUptime;scheduleCPU()}}else if next == .archive{guard let store else{throw ShogiError.message("保存先を利用できません")};records=try store.list();damagedRecords=store.damaged}}catch{self.error=error.localizedDescription}
     }
-    func sceneActive(_ value:Bool){if !value{tick()};active=value;lastTick=nil;if !value{NativeEngine.shared.cancel();thinking=false;analyzing=false;audio?.stop();save()}else if screen == .study{refreshAnalysis()}else if screen == .match{lastTick=ProcessInfo.processInfo.systemUptime;scheduleCPU()}}
+    func sceneActive(_ value:Bool){if !value{tick()};active=value;lastTick=nil;if !value{NativeEngine.shared.cancel();thinking=false;analyzing=false;players.values.forEach{$0.stop()};save()}else if screen == .study{refreshAnalysis()}else if screen == .match{lastTick=ProcessInfo.processInfo.systemUptime;scheduleCPU()}}
     func tick(){if screen == .online{onlineTick();return};guard active,!matchSettingsOpen,screen == .match,session.matchStarted,session.winner==0 else{lastTick=nil;return};let now=ProcessInfo.processInfo.systemUptime;defer{lastTick=now};guard let before=lastTick else{return};let side=position.side==1 ? 0:1;session.clocks[side]=max(0,session.clocks[side]-(now-before));if session.clocks[side]==0{finish(winner:-position.side,result:"時間切れ")}}
     func clearSelection(){selected=nil;selectedHand=nil;targets=[];promotion=[]}
     func selectHand(_ piece:Int,side:Int){guard humanInput,screen == .study && freePlacement || side==position.side else{clearSelection();return};if selectedHand==piece && selectedSide==side{clearSelection();return};selected=nil;selectedHand=piece;selectedSide=side;computeTargets()}
@@ -105,14 +105,14 @@ import UIKit
     func setMatchSettingsOpen(_ value:Bool){if value{tick();NativeEngine.shared.cancel();thinking=false};matchSettingsOpen=value;lastTick=nil;if !value && active && screen == .match{lastTick=ProcessInfo.processInfo.systemUptime;scheduleCPU()}}
     func applyMatchOptions(_ options:MatchOptions){guard options.valid(),options.level<10 || premium(),options != matchOptions else{return};options.save();restartMatch()}
     func membershipChanged(){if screen == .match{NativeEngine.shared.cancel();thinking=false;scheduleCPU()}}
-    func startMatch(){guard screen == .match,!session.matchStarted else{return};session.matchStarted=true;lastTick=ProcessInfo.processInfo.systemUptime;save();scheduleCPU()}
+    func startMatch(){guard screen == .match,!session.matchStarted else{return};session.matchStarted=true;playSound(.start);lastTick=ProcessInfo.processInfo.systemUptime;save();scheduleCPU()}
     func restartMatch(){save();NativeEngine.shared.cancel();clearMoveEffect();let options=MatchOptions.load();session.match = .match(options);session.clocks=[options.seconds,options.seconds];session.matchStarted=false;session.winner=0;session.checkingSides=[];position=try! Position();thinking=false;lastTick=nil;clearSelection();save()}
-    func appendMatch(_ next:Position,label:String,human:Bool){let mover=position.side;session.match.positions.append(next.sfen);session.match.labels.append("\(session.match.moves)手目  "+label);session.match.updated=Date();let before=position;position=next;beginMoveEffect(from:before);session.checkingSides.append(Rules.checked(next) ? mover:0);feedback(human:human)
+    func appendMatch(_ next:Position,label:String,human:Bool){let mover=position.side;session.match.positions.append(next.sfen);session.match.labels.append("\(session.match.moves)手目  "+label);session.match.updated=Date();let before=position;position=next;beginMoveEffect(from:before);session.checkingSides.append(Rules.checked(next) ? mover:0);feedback(human:human,kind:SoundKind.forMove(before,next))
         if let legal=try? Rules.legal(next),legal.isEmpty{finish(winner:-next.side,result:Rules.checked(next) ? "詰み":"合法手なし");return}
         let keys=session.match.positions.compactMap{try? Position($0).key};let repetitions=keys.indices.filter{keys[$0]==next.key}
         if repetitions.count>=4{let start=repetitions[repetitions.count-4];for side in [1,-1]{let indices=(start..<session.checkingSides.count).filter{($0%2==0 ? 1:-1)==side};if !indices.isEmpty && indices.allSatisfy({session.checkingSides[$0]==side}){finish(winner:-side,result:"連続王手の千日手");return}};finish(winner:2,result:"千日手・引き分け");return};save()
     }
-    func finish(winner:Int,result:String){session.winner=winner;session.match.result=(winner==2 ? "引き分け":winner==1 ? "先手勝ち":"後手勝ち")+"・"+result;session.match.updated=Date();thinking=false;NativeEngine.shared.cancel();clearSelection();save()}
+    func finish(winner:Int,result:String){playSound(.end);session.winner=winner;session.match.result=(winner==2 ? "引き分け":winner==1 ? "先手勝ち":"後手勝ち")+"・"+result;session.match.updated=Date();thinking=false;NativeEngine.shared.cancel();clearSelection();save()}
     func resign(){tick();if session.winner==0 && session.matchStarted{finish(winner:-humanSide,result:"投了")}}
     func scheduleCPU(){guard screen == .match,active,!matchSettingsOpen,session.matchStarted,session.winner==0,position.side == cpuSide,!thinking else{return};thinking=true;let key=position.sfen
         NativeEngine.shared.search(position,continuous:false,nodes:matchOptions.nodes,milliseconds:max(1,min(matchOptions.milliseconds,Int(session.clocks[cpuSide==1 ? 0:1]*1000)))){[weak self] result in guard let self,self.active,self.screen == .match,self.position.sfen==key,self.session.winner==0 else{return};self.tick();guard self.session.winner==0 else{return};switch result{case .failure(let e):self.thinking=false;self.error="AIエラー："+e.localizedDescription;case .success(let update):guard let best=update.best else{return};self.thinking=false;if best=="resign"{self.finish(winner:self.humanSide,result:"投了");return};do{let move=Move(usi:best),next=try Rules.apply(self.position,move);self.appendMatch(next,label:self.position.notation(move),human:false)}catch{self.error="AIの指し手が不正です："+error.localizedDescription}}}
@@ -120,6 +120,8 @@ import UIKit
     func parseClipboard(_ text:String){Task{do{let record=try await Task.detached(priority:.userInitiated){try KifParser.parse(text)}.value;importOffer=record}catch{self.error=error.localizedDescription}}}
     func acceptImport(_ record:GameRecord){do{guard let store else{throw ShogiError.message("保存先を利用できません")};try store.save(record);open(record)}catch{self.error="棋譜を保存できません："+error.localizedDescription}}
     func open(_ record:GameRecord){do{try record.validate();let next=try Position(record.positions.last!);if screen == .match{tick()};NativeEngine.shared.cancel();save();session.study=record;session.studyTree=nil;session.cursor=record.moves;session.scores=[:];position=next;screen = .study;freePlacement=false;UserDefaults.standard.set(false,forKey:"free_placement");clearSelection();save();refreshAnalysis()}catch{self.error="棋譜を開けません："+error.localizedDescription}}
-    func feedback(human:Bool){guard active else{return};if UserDefaults.standard.object(forKey:"sound")==nil || UserDefaults.standard.bool(forKey:"sound"){let gain=UserDefaults.standard.object(forKey:"volume")==nil ? 65:UserDefaults.standard.double(forKey:"volume");if gain>0{audio?.volume=Float(gain/100);audio?.currentTime=0;if audio?.play()==true{soundPlayCount+=1}}};if human && UserDefaults.standard.bool(forKey:"vibration"){UIImpactFeedbackGenerator(style:.light).impactOccurred()}}
+    /// One sound per move (check > promotion > capture > placement) and a short tap for the player's own move.
+    func feedback(human:Bool,kind:SoundKind = .place){guard active else{return};playSound(kind);if human && UserDefaults.standard.bool(forKey:"vibration"){UIImpactFeedbackGenerator(style:.light).impactOccurred()}}
+    func playSound(_ kind:SoundKind){guard active,UserDefaults.standard.object(forKey:"sound")==nil || UserDefaults.standard.bool(forKey:"sound") else{return};let gain=UserDefaults.standard.object(forKey:"volume")==nil ? 65:UserDefaults.standard.double(forKey:"volume");guard gain>0,let player=players[kind] else{return};player.volume=Float(gain/100);player.currentTime=0;if player.play(){soundPlayCount+=1;lastSound=kind}}
     func previewSound(){feedback(human:false)}
 }
