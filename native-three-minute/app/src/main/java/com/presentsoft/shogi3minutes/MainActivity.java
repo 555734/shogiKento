@@ -266,9 +266,10 @@ public final class MainActivity extends Activity {
   }
   android.widget.TextView moveRow(EvaluationHistory.ListEntry e,android.widget.TextView t){
    float dp=getResources().getDisplayMetrics().density;t.setText(e.text());t.setTypeface(null,e.kind==EvaluationHistory.ListEntry.MOVE&&!e.row.fork()?Typeface.NORMAL:Typeface.BOLD);t.setGravity(Gravity.CENTER_VERTICAL);t.setMinHeight(Math.round(44*dp));
+   t.setMaxLines(Integer.MAX_VALUE);t.setEllipsize(null);
    if(e.kind==EvaluationHistory.ListEntry.TAB){
     android.graphics.drawable.GradientDrawable tab=new android.graphics.drawable.GradientDrawable();tab.setCornerRadius(18*dp);tab.setColor(e.expanded?0xfff7c98b:0xfffde9d2);tab.setStroke(Math.round(1.5f*dp),0xffc8742e);
-    t.setBackground(new android.graphics.drawable.InsetDrawable(tab,Math.round(40*dp),Math.round(4*dp),Math.round(16*dp),Math.round(4*dp)));t.setPadding(Math.round(54*dp),0,Math.round(24*dp),0);t.setTextSize(14);t.setTextColor(0xff8a3b12);
+    t.setBackground(new android.graphics.drawable.InsetDrawable(tab,Math.round(32*dp),Math.round(4*dp),Math.round(12*dp),Math.round(4*dp)));t.setPadding(Math.round(44*dp),0,Math.round(20*dp),0);t.setMaxLines(1);t.setEllipsize(android.text.TextUtils.TruncateAt.END);t.setTextSize(14);t.setTextColor(0xff8a3b12);
    }else if(e.kind==EvaluationHistory.ListEntry.BRANCH){
     t.setBackgroundColor(e.alternative.shown?0xfffbe3c4:0xfffff6ea);t.setPadding(Math.round(56*dp),Math.round(6*dp),Math.round(16*dp),Math.round(6*dp));t.setTextSize(15);t.setTextColor(e.alternative.branch==0?0xff1d3d6b:0xff8a3b12);
    }else{
