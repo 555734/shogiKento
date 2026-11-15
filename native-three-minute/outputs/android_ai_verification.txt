@@ -1,0 +1,31 @@
+PASS Android native USI AI: 40 legal moves, cooperative node budgets, duration checks
+[
+  {
+    "model": "yaneura-tsuyou11micro",
+    "node_limit": 500,
+    "positions": 10,
+    "median_ms": 2.5011625,
+    "max_ms": 3.93208
+  },
+  {
+    "model": "yaneura-tsuyou11micro",
+    "node_limit": 3000,
+    "positions": 10,
+    "median_ms": 9.414335999999999,
+    "max_ms": 11.349267
+  },
+  {
+    "model": "yaneura-tsuyou11micro",
+    "node_limit": 10000,
+    "positions": 10,
+    "median_ms": 28.276654,
+    "max_ms": 37.225027
+  },
+  {
+    "model": "yaneura-tsuyou11micro",
+    "node_limit": 50000,
+    "positions": 10,
+    "median_ms": 139.95475199999998,
+    "max_ms": 193.488319
+  }
+]
