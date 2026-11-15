@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 mkdir -p outputs/screenshots
+# The Play Store updates Google Play services in the background a few minutes after boot, and that update
+# kills every app bound to it (observed killing the app mid-instrumentation). The tests use the debug billing
+# fixture, not a real Play purchase, so the store app is disabled for the test emulator only.
+adb shell pm disable-user --user 0 com.android.vending | tee outputs/play_store_disabled.txt || true
 adb shell wm size 1080x2400
 adb shell wm density 420
 adb install -r app/build/outputs/apk/debug/app-debug.apk
