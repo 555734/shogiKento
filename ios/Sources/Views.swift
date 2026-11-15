@@ -139,35 +139,48 @@ struct EvaluationGraph:View {
 struct MoveListView:View {
     @EnvironmentObject var model:AppModel
     @Environment(\.dismiss) var dismiss
+    @State private var expanded=Set<Int>()
     var title:String {model.session.studyLine.last?.offMain==true ? "手順（変化を表示中）":"手順（本譜）"}
     var body:some View {NavigationStack{ScrollViewReader{proxy in
         List {
-            Section {Text("◆は分岐がある手です。タップすると分岐を選べます。「次へ」「最終」は表示中の手順を進み、分岐を選んでいない所では本譜（元の棋譜）を進みます。").font(.caption).foregroundStyle(.secondary)}
-            ForEach(model.session.studyLine){row in MoveLineEntry(row:row){dismiss()}}
-        }.onAppear{proxy.scrollTo(model.session.cursor,anchor:.center)}
+            Section {Text("◆の手には分岐があります。下の「分岐」タブをタップすると展開・収納できます。「次へ」「最終」は表示中の手順を進み、分岐を選んでいない所では本譜（元の棋譜）を進みます。").font(.caption).foregroundStyle(.secondary)}
+            ForEach(model.session.studyLine){row in MoveLineEntry(row:row,expanded:binding(row.ply)){dismiss()}}
+        }.listStyle(.plain).onAppear{proxy.scrollTo(model.session.cursor,anchor:.center)}
     }.navigationTitle(title).toolbar{Button("閉じる"){dismiss()}}}}
+    func binding(_ ply:Int)->Binding<Bool> {
+        Binding(get:{expanded.contains(ply)},set:{open in if open{expanded.insert(ply)}else{expanded.remove(ply)}})
+    }
 }
-/// Study navigation label; 次へ also shows how many alternatives the next move has.
-struct NavLabel:View {
-    let label:String
-    let forks:Int
-    var body:some View {VStack(spacing:1){Text(label);if forks>0{Text("◆分岐\(forks)通り").font(.system(size:9,weight:.bold)).foregroundStyle(gold)}}}
-}
-/// A plain move jumps to its ply; a ◆ move opens the alternatives at that ply.
+/// A move jumps to its ply; under a move with alternatives a pull tab expands or collapses its branches.
 struct MoveLineEntry:View {
     @EnvironmentObject var model:AppModel
     let row:StudyTree.LineRow
+    @Binding var expanded:Bool
     let close:()->Void
     var body:some View {
+        Button{model.seek(row.ply);close()}label:{MoveLineRow(row:row)}.id(row.ply).accessibilityIdentifier("move_\(row.node)")
         if row.total>1 {
-            Menu {
-                Section("\(row.ply)手目の分岐（\(row.total)通り）") {
-                    ForEach(model.session.studyAlternatives(row.node)){alt in BranchButton(alt:alt,close:close)}
-                }
-            } label:{MoveLineRow(row:row)}.id(row.ply).accessibilityIdentifier("move_\(row.node)")
-        } else {
-            Button{model.seek(row.ply);close()}label:{MoveLineRow(row:row)}.id(row.ply).accessibilityIdentifier("move_\(row.node)")
+            BranchTab(row:row,expanded:$expanded).accessibilityIdentifier("branch_tab_\(row.ply)")
+            if expanded {
+                ForEach(model.session.studyAlternatives(row.node)){alt in BranchButton(alt:alt,close:close)}
+            }
         }
+    }
+}
+struct BranchTab:View {
+    let row:StudyTree.LineRow
+    @Binding var expanded:Bool
+    var text:String {"分岐 \(row.total)通り（表示中："+StudyTree.branchName(row.branch)+"）"}
+    var body:some View {
+        Button{withAnimation(.easeInOut(duration:0.2)){expanded.toggle()}}label:{HStack(spacing:6){
+            Image(systemName:expanded ? "chevron.down":"chevron.right").font(.caption.bold())
+            Text(text).font(.subheadline.bold())
+            Spacer()
+            Text(expanded ? "収納":"展開").font(.caption)
+        }.foregroundStyle(Color(red:0.54,green:0.23,blue:0.07)).padding(.horizontal,12).padding(.vertical,7)
+         .background(Capsule().fill(expanded ? Color(red:0.97,green:0.79,blue:0.55):Color(red:0.99,green:0.91,blue:0.82)))
+         .overlay(Capsule().stroke(Color(red:0.78,green:0.45,blue:0.18),lineWidth:1.5))}
+        .buttonStyle(.plain).padding(.leading,28)
     }
 }
 struct BranchButton:View {
@@ -179,16 +192,15 @@ struct BranchButton:View {
         let shown:String=alt.shown ? "・表示中":""
         return StudyTree.branchName(alt.branch)+"　"+alt.label+"　"+rest+shown
     }
-    var body:some View {Button{model.selectStudyNode(alt.node);close()}label:{Text(text)}.accessibilityIdentifier("branch_\(alt.node)")}
+    var body:some View {Button{model.selectStudyNode(alt.node);close()}label:{Text("└ "+text).fontWeight(alt.shown ? .bold:.regular)}.padding(.leading,44).listRowBackground(alt.shown ? Color(red:0.98,green:0.89,blue:0.77):Color(red:1,green:0.96,blue:0.92)).accessibilityIdentifier("branch_\(alt.node)")}
 }
-/// A normal record row; a fork shows ◆, the shown branch and how many alternatives exist.
+/// A normal record row; a move with alternatives shows ◆ and a pull tab below it.
 struct MoveLineRow:View {
     let row:StudyTree.LineRow
     var marker:String {row.total>1 ? "◆":row.offMain ? "┃":""}
-    var detail:String {"分岐 \(row.total)通り・表示中："+StudyTree.branchName(row.branch)+"　（タップで選択）"}
     var body:some View {HStack(alignment:.top,spacing:6){
         Text(marker).font(.system(.body,design:.monospaced)).foregroundStyle(gold).frame(width:16)
-        VStack(alignment:.leading,spacing:3){Text(row.label).foregroundStyle(.primary);if row.total>1{Text(detail).font(.caption).foregroundStyle(.secondary)}}
+        Text(row.label).fontWeight(row.total>1 ? .bold:.regular).foregroundStyle(.primary)
         Spacer();if row.current{Image(systemName:"checkmark.circle.fill").foregroundStyle(gold)}
     }.contentShape(Rectangle())}
 }

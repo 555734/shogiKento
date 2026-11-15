@@ -39,7 +39,7 @@ public final class MainActivity extends Activity {
  CoffeeBilling coffee;final Runnable coffeeObserver=()->coffeeChanged();boolean coffeeDialogOpen,launchingArchive;
  AppSettings settings;RecordStore records;boolean archiveErrorShown;
  BoardView view;boolean resumed;AlertDialog choiceDialog;ClipboardKifImport clipboardImport;
- @Override public void onCreate(Bundle b){super.onCreate(b);setVolumeControlStream(android.media.AudioManager.STREAM_MUSIC);getWindow().setStatusBarColor(0xff400b0c);getWindow().setNavigationBarColor(0xff400b0c);getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);coffee=CoffeeBilling.get(this);coffee.registerLaunch();settings=new AppSettings(this);if(online.accounts==null){online.accounts=new AccountStore(this);online.account=online.accounts.load();if(online.accounts.settledAbandoned)publishProfile();}records=new RecordStore(new File(getFilesDir(),"records"));view=new BoardView();SafeWindow.setContent(this,view);clipboardImport=new ClipboardKifImport(this);coffee.observe(coffeeObserver);if(b!=null)view.enterMode(b.getInt("screen_mode",HOME));}
+ @Override public void onCreate(Bundle b){super.onCreate(b);setVolumeControlStream(android.media.AudioManager.STREAM_MUSIC);getWindow().setStatusBarColor(0xff400b0c);getWindow().setNavigationBarColor(0xff400b0c);getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);coffee=CoffeeBilling.get(this);coffee.registerLaunch();settings=new AppSettings(this);if(online.accounts==null){online.accounts=new AccountStore(this);online.account=online.accounts.load();if(online.accounts.settledAbandoned)publishProfile();}records=new RecordStore(new File(getFilesDir(),"records"));view=new BoardView();SafeWindow.setContent(this,view);updateBack();clipboardImport=new ClipboardKifImport(this);coffee.observe(coffeeObserver);if(b!=null)view.enterMode(b.getInt("screen_mode",HOME));}
  @Override protected void onResume(){super.onResume();resumed=true;coffee.registerLaunch();launchingArchive=false;view.resumeMode();clipboardImport.resume();coffee.refresh(false);scheduleCoffeeOffer();}
  @Override protected void onPause(){clipboardImport.pause();view.pauseMode();resumed=false;view.save();super.onPause();}
  @Override protected void onStop(){super.onStop();if(!isChangingConfigurations()&&!coffeeDialogOpen&&!launchingArchive)coffee.backgrounded=true;}
@@ -47,7 +47,12 @@ public final class MainActivity extends Activity {
  @Override public void onWindowFocusChanged(boolean focus){super.onWindowFocusChanged(focus);if(focus&&clipboardImport!=null){clipboardImport.schedule();scheduleCoffeeOffer();}}
  void showChoice(AlertDialog dialog){choiceDialog=dialog;dialog.setOnDismissListener(d->{if(choiceDialog==dialog)choiceDialog=null;clipboardImport.schedule();scheduleCoffeeOffer();});dialog.show();}
  @Override protected void onSaveInstanceState(Bundle b){b.putInt("screen_mode",view.mode);view.save();super.onSaveInstanceState(b);}
- @Override public void onBackPressed(){if(view.mode==ONLINE)view.onlineBack();else if(view.mode!=HOME)view.enterMode(HOME);else super.onBackPressed();}
+ @Override public void onBackPressed(){if(view.mode!=HOME)handleBack();else super.onBackPressed();}
+ /** Back from match, study or online returns to the app's home screen; back on home leaves the app as usual. */
+ void handleBack(){if(view.mode==ONLINE)view.onlineBack();else if(view.mode!=HOME)view.enterMode(HOME);updateBack();}
+ Object backCallback;
+ /** Android 13+ delivers back only to registered callbacks (always on Android 16 with targetSdk 36), so register one while away from home. */
+ void updateBack(){boolean away=view!=null&&view.mode!=HOME;if(away==(backCallback!=null))return;if(away)backCallback=BackCompat.register(this,this::handleBack);else{BackCompat.unregister(this,backCallback);backCallback=null;}}
  void archiveError(Exception e){android.util.Log.e("Shogi","Record archive failed",e);if(!archiveErrorShown){archiveErrorShown=true;android.widget.Toast.makeText(this,"棋譜を保存できません："+e.getMessage(),android.widget.Toast.LENGTH_LONG).show();}}
  void showSettings(){showChoice(FeedbackSettingsDialog.create(this));}
  void coffeeChanged(){if(view==null)return;view.layoutBoard(view.getWidth(),view.getHeight());view.updateAd();view.requestLayout();int budget=view.matchOptions().nodes();if(view.nodeBudget!=budget){view.cancelCpu();view.nodeBudget=budget;if(resumed&&view.mode==MATCH)view.scheduleCpu();}view.invalidate();}
@@ -85,7 +90,7 @@ public final class MainActivity extends Activity {
   }
   void resumeMode(){if(mode==MATCH&&!matchSettingsOpen&&!coffeeDialogOpen){clock.resume(SystemClock.elapsedRealtime(),started);if(!ai.ready)configureAi();else scheduleCpu();handler.removeCallbacks(ticker);handler.post(ticker);}else if(mode==STUDY)refreshAnalysis();else if(mode==ONLINE){handler.removeCallbacks(onlineTicker);handler.post(onlineTicker);}invalidate();}
   void pauseMode(){if(mode==MATCH)clock.pause(SystemClock.elapsedRealtime());handler.removeCallbacks(ticker);handler.removeCallbacks(onlineTicker);cancelCpu();sounds.pause();}
-  void enterMode(int next){if(next<HOME||next>ONLINE)next=HOME;pauseMode();save();boolean leftOnline=mode==ONLINE&&next!=ONLINE;if(leftOnline)leaveOnline(true);mode=next;studyScroll=0;game=mode==STUDY?study.game:mode==ONLINE?onlineBoard():match;started=mode==STUDY||mode==MATCH&&matchStarted;clock=new MatchClock(game);lastMove=mode==ONLINE&&online.game!=null?online.game.lastMove:null;layoutBoard(getWidth(),getHeight());updateAd();requestLayout();clearSelection();if(mode==ONLINE)ensureNetplay();setContentDescription(mode==HOME?"紅将棋3分・検討モード・対局モード・オンライン対戦・棋譜を貼り付け・過去の棋譜・設定":mode==STUDY?(freePlacement?"検討モード・自由配置":"検討モード・合法手の移動先表示"):mode==ONLINE?"オンライン対戦":"3分切れ負け将棋盤");if(resumed)resumeMode();if(leftOnline){clipboardImport.schedule();scheduleCoffeeOffer();}}
+  void enterMode(int next){if(next<HOME||next>ONLINE)next=HOME;pauseMode();save();boolean leftOnline=mode==ONLINE&&next!=ONLINE;if(leftOnline)leaveOnline(true);mode=next;updateBack();studyScroll=0;game=mode==STUDY?study.game:mode==ONLINE?onlineBoard():match;started=mode==STUDY||mode==MATCH&&matchStarted;clock=new MatchClock(game);lastMove=mode==ONLINE&&online.game!=null?online.game.lastMove:null;layoutBoard(getWidth(),getHeight());updateAd();requestLayout();clearSelection();if(mode==ONLINE)ensureNetplay();setContentDescription(mode==HOME?"紅将棋3分・検討モード・対局モード・オンライン対戦・棋譜を貼り付け・過去の棋譜・設定":mode==STUDY?(freePlacement?"検討モード・自由配置":"検討モード・合法手の移動先表示"):mode==ONLINE?"オンライン対戦":"3分切れ負け将棋盤");if(resumed)resumeMode();if(leftOnline){clipboardImport.schedule();scheduleCoffeeOffer();}}
   void save(){if(mode==MATCH)matchStarted=started;archiveMatch();try{ByteArrayOutputStream out=new ByteArrayOutputStream();try(ObjectOutputStream obj=new ObjectOutputStream(out)){obj.writeBoolean(matchStarted);obj.writeObject(match);obj.writeObject(matchJournal);}getPreferences(MODE_PRIVATE).edit().putString("match_v2",Base64.encodeToString(out.toByteArray(),Base64.NO_WRAP)).commit();out=new ByteArrayOutputStream();try(ObjectOutputStream obj=new ObjectOutputStream(out)){obj.writeObject(study);obj.writeObject(evalHistory);}getPreferences(MODE_PRIVATE).edit().putString("study_v1",Base64.encodeToString(out.toByteArray(),Base64.NO_WRAP)).commit();}catch(IOException e){android.util.Log.e("Shogi","Save failed",e);}}
   void restore(){try{String encoded=getPreferences(MODE_PRIVATE).getString("match_v2",null);if(encoded!=null)try(ObjectInputStream in=new ObjectInputStream(new ByteArrayInputStream(Base64.decode(encoded,Base64.DEFAULT)))){matchStarted=in.readBoolean();match=(ShogiGame)in.readObject();try{matchJournal=(MatchJournal)in.readObject();}catch(EOFException legacy){}}}catch(Exception e){android.util.Log.e("Shogi","Invalid match",e);}if(match==null)match=new ShogiGame();if(matchJournal==null||!matchJournal.matches(match))matchJournal=new MatchJournal(match);if(!matchStarted&&match.movesPlayed==0&&matchJournal.options==null){matchJournal.options=configuredMatchOptions();match.remaining[0]=match.remaining[1]=matchOptions().initialMillis();}try{String encoded=getPreferences(MODE_PRIVATE).getString("study_v1",null);if(encoded!=null)try(ObjectInputStream in=new ObjectInputStream(new ByteArrayInputStream(Base64.decode(encoded,Base64.DEFAULT)))){study=(StudySession)in.readObject();try{evalHistory=(EvaluationHistory)in.readObject();}catch(EOFException oldVersion){evalHistory=new EvaluationHistory();}}}catch(Exception e){android.util.Log.e("Shogi","Invalid study",e);}if(study==null)study=new StudySession();if(evalHistory==null)evalHistory=new EvaluationHistory();evalHistory.sync(EvaluationHistory.key(study.game));if(evalHistory.imported&&!getPreferences(MODE_PRIVATE).getBoolean("archive_migrated",false))try{records.save(SavedRecord.migrated(evalHistory));getPreferences(MODE_PRIVATE).edit().putBoolean("archive_migrated",true).apply();}catch(IOException e){archiveError(e);}}
   void archiveMatch(){if(matchJournal==null||!matchJournal.matches(match))matchJournal=new MatchJournal(match);if(!matchStarted&&match.movesPlayed==0&&match.winner==0)return;try{records.save(matchJournal.record(match));}catch(IOException e){archiveError(e);}}
@@ -238,19 +243,38 @@ public final class MainActivity extends Activity {
   }
   void openSavedRecord(SavedRecord record){
    StudySession replacement=new StudySession();if(!replacement.seek(record.positions,record.positions.size()-1)){showChoice(new AlertDialog.Builder(MainActivity.this).setTitle("棋譜を開けません").setMessage("保存された局面を復元できません").setPositiveButton("閉じる",null).create());return;}
-   pauseMode();save();setFreePlacement(false);study=replacement;evalHistory=new EvaluationHistory();evalHistory.load(record);mode=STUDY;game=study.game;analysisSide=evalHistory.side();getPreferences(MODE_PRIVATE).edit().putInt("study_analysis_side",analysisSide).apply();game.turn=analysisSide;game.movesPlayed=evalHistory.currentEdit();started=true;clock=new MatchClock(game);lastMove=null;studyScroll=0;clearSelection();layoutBoard(getWidth(),getHeight());updateAd();requestLayout();setContentDescription("検討モード・保存した棋譜");save();if(resumed)resumeMode();
+   pauseMode();save();setFreePlacement(false);study=replacement;evalHistory=new EvaluationHistory();evalHistory.load(record);mode=STUDY;updateBack();game=study.game;analysisSide=evalHistory.side();getPreferences(MODE_PRIVATE).edit().putInt("study_analysis_side",analysisSide).apply();game.turn=analysisSide;game.movesPlayed=evalHistory.currentEdit();started=true;clock=new MatchClock(game);lastMove=null;studyScroll=0;clearSelection();layoutBoard(getWidth(),getHeight());updateAd();requestLayout();setContentDescription("検討モード・保存した棋譜");save();if(resumed)resumeMode();
   }
+  final Set<Integer> expandedForks=new HashSet<>();android.widget.ListView moveList;List<EvaluationHistory.ListEntry> moveEntries=new ArrayList<>();
+  /** The displayed line as a record; under each move with alternatives a pull tab opens or closes its branches. */
   void studyMoves(){
-   List<EvaluationHistory.LineRow> rows=evalHistory.line();String[] labels=new String[rows.size()];int checked=-1;
-   for(int i=0;i<rows.size();i++){EvaluationHistory.LineRow row=rows.get(i);labels[i]=row.display();if(row.current)checked=i;}
-   AlertDialog d=new AlertDialog.Builder(MainActivity.this).setTitle(evalHistory.showingVariation()?"手順（変化を表示中）":"手順（本譜）").setSingleChoiceItems(labels,checked,(dialog,index)->{EvaluationHistory.LineRow row=rows.get(index);dialog.dismiss();if(row.fork())studyBranches(row.node);else jumpStudy(row.index);}).setPositiveButton("閉じる",null).create();showChoice(d);
+   android.widget.ListView list=new android.widget.ListView(MainActivity.this);moveList=list;moveEntries=evalHistory.listEntries(expandedForks);list.setDivider(null);
+   android.widget.BaseAdapter adapter=new android.widget.BaseAdapter(){
+    @Override public int getCount(){return moveEntries.size();}
+    @Override public Object getItem(int i){return moveEntries.get(i);}
+    @Override public long getItemId(int i){return i;}
+    @Override public View getView(int i,View convert,ViewGroup parent){return moveRow(moveEntries.get(i),convert instanceof android.widget.TextView?(android.widget.TextView)convert:new android.widget.TextView(MainActivity.this));}
+   };
+   list.setAdapter(adapter);
+   AlertDialog d=new AlertDialog.Builder(MainActivity.this).setTitle(evalHistory.showingVariation()?"手順（変化を表示中）":"手順（本譜）").setView(list).setPositiveButton("閉じる",null).create();
+   list.setOnItemClickListener((parent,row,i,id)->{
+    EvaluationHistory.ListEntry e=moveEntries.get(i);
+    if(e.kind==EvaluationHistory.ListEntry.TAB){if(!expandedForks.remove(e.row.ply))expandedForks.add(e.row.ply);moveEntries=evalHistory.listEntries(expandedForks);adapter.notifyDataSetChanged();return;}
+    d.dismiss();if(e.kind==EvaluationHistory.ListEntry.MOVE)jumpStudy(e.row.index);else jumpStudyNode(e.alternative.node);
+   });
+   showChoice(d);int current=0;for(int i=0;i<moveEntries.size();i++)if(moveEntries.get(i).kind==EvaluationHistory.ListEntry.MOVE&&moveEntries.get(i).row.current)current=i;list.setSelection(Math.max(0,current-3));
   }
-  /** Alternatives at one fork: picking one shows that branch and keeps following it with 前へ/次へ. */
-  void studyBranches(int node){
-   List<EvaluationHistory.Alternative> alternatives=evalHistory.alternatives(node);if(alternatives.size()<2){jumpStudyNode(node);return;}String[] labels=new String[alternatives.size()];int checked=-1;
-   for(int i=0;i<alternatives.size();i++){EvaluationHistory.Alternative a=alternatives.get(i);labels[i]=EvaluationHistory.LineRow.branchName(a.branch)+"　"+a.move.replaceFirst("^\\d+手目\\s*","")+"\n　　"+(a.following==0?"続きなし":"続き"+a.following+"手")+(a.shown?"・表示中":"");if(a.shown)checked=i;}
-   String ply=alternatives.get(0).move.replaceFirst("^(\\d+手目).*$","$1");
-   AlertDialog d=new AlertDialog.Builder(MainActivity.this).setTitle(ply+"の分岐（"+alternatives.size()+"通り）").setSingleChoiceItems(labels,checked,(dialog,index)->{dialog.dismiss();EvaluationHistory.Alternative a=alternatives.get(index);if(a.node==evalHistory.currentNode())return;jumpStudyNode(a.node);}).setNegativeButton("戻る",(dialog,k)->studyMoves()).setPositiveButton("閉じる",null).create();showChoice(d);
+  android.widget.TextView moveRow(EvaluationHistory.ListEntry e,android.widget.TextView t){
+   float dp=getResources().getDisplayMetrics().density;t.setText(e.text());t.setTypeface(null,e.kind==EvaluationHistory.ListEntry.MOVE&&!e.row.fork()?Typeface.NORMAL:Typeface.BOLD);t.setGravity(Gravity.CENTER_VERTICAL);t.setMinHeight(Math.round(44*dp));
+   if(e.kind==EvaluationHistory.ListEntry.TAB){
+    android.graphics.drawable.GradientDrawable tab=new android.graphics.drawable.GradientDrawable();tab.setCornerRadius(18*dp);tab.setColor(e.expanded?0xfff7c98b:0xfffde9d2);tab.setStroke(Math.round(1.5f*dp),0xffc8742e);
+    t.setBackground(new android.graphics.drawable.InsetDrawable(tab,Math.round(40*dp),Math.round(4*dp),Math.round(16*dp),Math.round(4*dp)));t.setPadding(Math.round(54*dp),0,Math.round(24*dp),0);t.setTextSize(14);t.setTextColor(0xff8a3b12);
+   }else if(e.kind==EvaluationHistory.ListEntry.BRANCH){
+    t.setBackgroundColor(e.alternative.shown?0xfffbe3c4:0xfffff6ea);t.setPadding(Math.round(56*dp),Math.round(6*dp),Math.round(16*dp),Math.round(6*dp));t.setTextSize(15);t.setTextColor(e.alternative.branch==0?0xff1d3d6b:0xff8a3b12);
+   }else{
+    t.setBackgroundColor(e.row.current?0xfff6e3b4:Color.TRANSPARENT);t.setPadding(Math.round(24*dp),Math.round(6*dp),Math.round(16*dp),Math.round(6*dp));t.setTextSize(16);t.setTextColor(e.row.fork()?0xffa1420f:0xff222222);
+   }
+   return t;
   }
   void jumpStudyNode(int node){
    if(mode!=STUDY||node==evalHistory.currentNode())return;List<String> path=evalHistory.keysTo(node);if(path.isEmpty()||!study.seek(path,path.size()-1))return;

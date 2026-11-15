@@ -70,6 +70,23 @@ final class EvaluationHistory implements Serializable {
   for(int b=0;b<ids.size();b++){int id=ids.get(b),following=0;for(int n=next(id,main);n>=0&&following<nodes.size();n=next(n,main))following++;result.add(new Alternative(id,b,moveLabel(id,ply),following,shown.contains(nodes.get(id))));}
   return result;
  }
+ /** Move-list rows: each move, then under a move with alternatives a pull tab that expands to list them. */
+ static final class ListEntry {
+  static final int MOVE=0,TAB=1,BRANCH=2;
+  final int kind;final LineRow row;final Alternative alternative;final boolean expanded;
+  ListEntry(int kind,LineRow row,Alternative alternative,boolean expanded){this.kind=kind;this.row=row;this.alternative=alternative;this.expanded=expanded;}
+  String text(){
+   if(kind==MOVE)return (row.fork()?"◆ ":row.offMain?"┃ ":"")+row.move;
+   if(kind==TAB)return (expanded?"▼ ":"▶ ")+"分岐 "+row.branches+"通り（表示中："+row.branchName()+"）"+(expanded?"　タップで収納":"　タップで展開");
+   return "└ "+LineRow.branchName(alternative.branch)+"　"+alternative.move.replaceFirst("^\\d+手目\\s*","")+"　"+(alternative.following==0?"続きなし":"続き"+alternative.following+"手")+(alternative.shown?"・表示中":"");
+  }
+ }
+ /** Expanded pull tabs are kept by ply, so switching branches at a ply keeps its tab open. */
+ List<ListEntry> listEntries(Set<Integer> expandedPlies){
+  ArrayList<ListEntry> entries=new ArrayList<>();
+  for(LineRow row:line()){entries.add(new ListEntry(ListEntry.MOVE,row,null,false));if(!row.fork())continue;boolean open=expandedPlies.contains(row.ply);entries.add(new ListEntry(ListEntry.TAB,row,null,open));if(open)for(Alternative a:alternatives(row.node))entries.add(new ListEntry(ListEntry.BRANCH,row,a,false));}
+  return entries;
+ }
  /** True when the displayed line leaves the main line somewhere. */
  boolean showingVariation(){List<LineRow> rows=line();return !rows.isEmpty()&&rows.get(rows.size()-1).offMain;}
  /** Number of alternatives for the next move after the cursor, or 0 when there is no fork there. */
