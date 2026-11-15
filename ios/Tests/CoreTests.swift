@@ -12,9 +12,11 @@ final class CoreTests:XCTestCase {
         session.appendStudyPosition(try Rules.apply(at64,move).sfen,label:"65手目 "+at64.notation(move));let variation=session.studyNode
         for _ in 0..<2 {let p=try Position(session.study.positions[session.cursor]);let m=try XCTUnwrap(try Rules.legal(p).first);session.appendStudyPosition(try Rules.apply(p,m).sfen,label:"続き")}
         let variationEnd=session.study.positions.last!;XCTAssertEqual(session.study.moves,67)
+        let line=session.studyLine;XCTAssertEqual(line.count,68);XCTAssertEqual(line[65].total,2);XCTAssertEqual(line[65].branch,1);XCTAssertTrue(line[67].offMain);XCTAssertFalse(line[64].offMain)
+        let alts=session.studyAlternatives(variation);XCTAssertEqual(alts.map{$0.node},[65,variation]);XCTAssertEqual(alts.map{$0.following},[14,2]);XCTAssertEqual(alts.map{$0.shown},[false,true])
         // Stepping back past the fork without choosing a branch resumes the original record.
         for ply in stride(from:66,through:64,by:-1){XCTAssertTrue(session.focusStudyPly(ply))}
-        XCTAssertEqual(session.study.moves,79);XCTAssertTrue(session.focusStudyPly(65));XCTAssertEqual(session.studyNode,65);XCTAssertEqual(session.study.positions[65],record.positions[65])
+        XCTAssertEqual(session.study.moves,79);XCTAssertEqual(session.studyBranchesAfterCursor,2);XCTAssertFalse(session.studyLine.last!.offMain);XCTAssertTrue(session.focusStudyPly(65));XCTAssertEqual(session.studyNode,65);XCTAssertEqual(session.study.positions[65],record.positions[65])
         XCTAssertTrue(session.focusStudyPly(session.study.moves));XCTAssertEqual(session.study.positions[session.cursor],record.positions[79])
         let main=session.studyRows.first{$0.id==65},branch=session.studyRows.first{$0.id==variation}
         XCTAssertEqual(main?.branch,1);XCTAssertEqual(branch?.branch,2);XCTAssertEqual(branch?.total,2)

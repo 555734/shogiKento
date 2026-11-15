@@ -125,7 +125,7 @@ struct AnalysisView:View {
         else{ForEach(Array(model.candidates.enumerated()),id:\.offset){index,c in HStack{Text("\(index+1). \(model.position.notation(c.move))");Spacer();Text(c.score.text)}.font(.subheadline).accessibilityElement(children:.combine).accessibilityIdentifier("candidate_\(index)")};Text(model.analysisStatus).font(.caption2).accessibilityIdentifier("analysis_status")}
         HStack {Text("評価値の推移（先手基準）");Spacer();Text("\(model.session.cursor)手目").accessibilityIdentifier("study_ply")}.font(.caption)
         EvaluationGraph().frame(height:85)
-        HStack(spacing:5){ForEach(Array(["初期","前へ","次へ","最終","手順"].enumerated()),id:\.offset){i,label in Button(label){switch i{case 0:model.seek(0);case 1:model.seek(model.session.cursor-1);case 2:model.seek(model.session.cursor+1);case 3:model.seek(model.session.study.moves);default:showMoves=true}}.font(.subheadline).frame(maxWidth:.infinity).buttonStyle(.bordered).accessibilityIdentifier("ply_\(i)")}}
+        HStack(spacing:5){ForEach(Array(["初期","前へ","次へ","最終","手順"].enumerated()),id:\.offset){i,label in Button{switch i{case 0:model.seek(0);case 1:model.seek(model.session.cursor-1);case 2:model.seek(model.session.cursor+1);case 3:model.seek(model.session.study.moves);default:showMoves=true}}label:{let forks=i==2 ? model.session.studyBranchesAfterCursor:0;VStack(spacing:1){Text(label);if forks>0{Text("◆分岐\(forks)通り").font(.system(size:9,weight:.bold)).foregroundStyle(gold)}}}.font(.subheadline).frame(maxWidth:.infinity).buttonStyle(.bordered).accessibilityIdentifier("ply_\(i)")}}
     }.padding(14).background(.black.opacity(0.78)).foregroundStyle(cream)}
 }
 struct EvaluationGraph:View {
@@ -141,16 +141,33 @@ struct MoveListView:View {
     @Environment(\.dismiss) var dismiss
     var body:some View{NavigationStack{ScrollViewReader{proxy in
         List {
-            Section {Text("「次へ」「最終」は本譜（元の棋譜）を進みます。分岐を選ぶとその局面へ移動し、以後は選んだ分岐の続きを進みます。").font(.caption).foregroundStyle(.secondary)}
-            ForEach(model.session.studyRows){row in
-                Button{model.selectStudyNode(row.id);dismiss()}label:{HStack(alignment:.top,spacing:6){
-                    Text(String(repeating:"│ ",count:min(6,row.indent))+(row.total>1 ? "├─":"●")).font(.system(.caption,design:.monospaced)).foregroundStyle(gold)
-                    VStack(alignment:.leading,spacing:3){Text(row.label);if row.total>1{Text("\(row.ply)手目の"+(row.branch==1 ? "本譜":"変化\(row.branch-1)")+" \(row.branch)/\(row.total)").font(.caption).foregroundStyle(.secondary)}}
-                    Spacer();if row.current{Image(systemName:"checkmark.circle.fill").foregroundStyle(gold)}
-                }}.id(row.id).accessibilityIdentifier("move_\(row.id)")
+            Section {Text("◆は分岐がある手です。タップすると分岐を選べます。「次へ」「最終」は表示中の手順を進み、分岐を選んでいない所では本譜（元の棋譜）を進みます。").font(.caption).foregroundStyle(.secondary)}
+            ForEach(model.session.studyLine){row in
+                if row.total>1 {
+                    Menu {
+                        Section("\(row.ply)手目の分岐（\(row.total)通り）") {
+                            ForEach(model.session.studyAlternatives(row.node)){alt in
+                                Button{if alt.node != model.session.studyNode{model.selectStudyNode(alt.node)};dismiss()}label:{
+                                    Text(StudyTree.branchName(alt.branch)+"　"+alt.label+"　"+(alt.following==0 ? "続きなし":"続き\(alt.following)手")+(alt.shown ? "・表示中":""))
+                                }.accessibilityIdentifier("branch_\(alt.node)")
+                            }
+                        }
+                    } label:{MoveLineRow(row:row)}.id(row.ply).accessibilityIdentifier("move_\(row.node)")
+                } else {
+                    Button{model.seek(row.ply);dismiss()}label:{MoveLineRow(row:row)}.id(row.ply).accessibilityIdentifier("move_\(row.node)")
+                }
             }
-        }.onAppear{proxy.scrollTo(model.session.studyNode,anchor:.center)}
-    }.navigationTitle("手順・分岐").toolbar{Button("閉じる"){dismiss()}}}}
+        }.onAppear{proxy.scrollTo(model.session.cursor,anchor:.center)}
+    }.navigationTitle(model.session.studyLine.last?.offMain==true ? "手順（変化を表示中）":"手順（本譜）").toolbar{Button("閉じる"){dismiss()}}}}
+}
+/// A normal record row; a fork shows ◆, the shown branch and how many alternatives exist.
+struct MoveLineRow:View {
+    let row:StudyTree.LineRow
+    var body:some View {HStack(alignment:.top,spacing:6){
+        Text(row.total>1 ? "◆":row.offMain ? "┃":"").font(.system(.body,design:.monospaced)).foregroundStyle(gold).frame(width:16)
+        VStack(alignment:.leading,spacing:3){Text(row.label).foregroundStyle(.primary);if row.total>1{Text("分岐 \(row.total)通り・表示中：\(StudyTree.branchName(row.branch))　（タップで選択）").font(.caption).foregroundStyle(.secondary)}}
+        Spacer();if row.current{Image(systemName:"checkmark.circle.fill").foregroundStyle(gold)}
+    }.contentShape(Rectangle())}
 }
 struct ArchiveView:View {
     @EnvironmentObject var model:AppModel

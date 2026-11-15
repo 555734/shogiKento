@@ -241,8 +241,18 @@ public final class MainActivity extends Activity {
    pauseMode();save();setFreePlacement(false);study=replacement;evalHistory=new EvaluationHistory();evalHistory.load(record);mode=STUDY;game=study.game;analysisSide=evalHistory.side();getPreferences(MODE_PRIVATE).edit().putInt("study_analysis_side",analysisSide).apply();game.turn=analysisSide;game.movesPlayed=evalHistory.currentEdit();started=true;clock=new MatchClock(game);lastMove=null;studyScroll=0;clearSelection();layoutBoard(getWidth(),getHeight());updateAd();requestLayout();setContentDescription("検討モード・保存した棋譜");save();if(resumed)resumeMode();
   }
   void studyMoves(){
-   List<EvaluationHistory.Row> rows=evalHistory.rows();String[] labels=new String[rows.size()];int checked=-1;for(int i=0;i<rows.size();i++){labels[i]=rows.get(i).label;if(rows.get(i).current)checked=i;}
-   AlertDialog d=new AlertDialog.Builder(MainActivity.this).setTitle("手順・分岐").setSingleChoiceItems(labels,checked,(dialog,index)->{jumpStudyNode(rows.get(index).node);dialog.dismiss();}).setPositiveButton("閉じる",null).create();showChoice(d);
+   List<EvaluationHistory.LineRow> rows=evalHistory.line();String[] labels=new String[rows.size()];int checked=-1;
+   for(int i=0;i<rows.size();i++){EvaluationHistory.LineRow row=rows.get(i);labels[i]=studyLineLabel(row);if(row.current)checked=i;}
+   AlertDialog d=new AlertDialog.Builder(MainActivity.this).setTitle(evalHistory.showingVariation()?"手順（変化を表示中）":"手順（本譜）").setSingleChoiceItems(labels,checked,(dialog,index)->{EvaluationHistory.LineRow row=rows.get(index);dialog.dismiss();if(row.fork())studyBranches(row.node);else jumpStudy(row.index);}).setPositiveButton("閉じる",null).create();showChoice(d);
+  }
+  /** A normal record line; forks get a ◆ marker, the shown branch and how many alternatives exist. */
+  static String studyLineLabel(EvaluationHistory.LineRow row){String text=(row.offMain&&!row.fork()?"┃ ":"")+row.move;return row.fork()?"◆ "+text+"\n　　分岐 "+row.branches+"通り・表示中："+row.branchName()+"　（タップで選択）":text;}
+  /** Alternatives at one fork: picking one shows that branch and keeps following it with 前へ/次へ. */
+  void studyBranches(int node){
+   List<EvaluationHistory.Alternative> alternatives=evalHistory.alternatives(node);if(alternatives.size()<2){jumpStudyNode(node);return;}String[] labels=new String[alternatives.size()];int checked=-1;
+   for(int i=0;i<alternatives.size();i++){EvaluationHistory.Alternative a=alternatives.get(i);labels[i]=EvaluationHistory.LineRow.branchName(a.branch)+"　"+a.move.replaceFirst("^\\d+手目\\s*","")+"\n　　"+(a.following==0?"続きなし":"続き"+a.following+"手")+(a.shown?"・表示中":"");if(a.shown)checked=i;}
+   String ply=alternatives.get(0).move.replaceFirst("^(\\d+手目).*$","$1");
+   AlertDialog d=new AlertDialog.Builder(MainActivity.this).setTitle(ply+"の分岐（"+alternatives.size()+"通り）").setSingleChoiceItems(labels,checked,(dialog,index)->{dialog.dismiss();EvaluationHistory.Alternative a=alternatives.get(index);if(a.node==evalHistory.currentNode())return;jumpStudyNode(a.node);}).setNegativeButton("戻る",(dialog,k)->studyMoves()).setPositiveButton("閉じる",null).create();showChoice(d);
   }
   void jumpStudyNode(int node){
    if(mode!=STUDY||node==evalHistory.currentNode())return;List<String> path=evalHistory.keysTo(node);if(path.isEmpty()||!study.seek(path,path.size()-1))return;
@@ -271,7 +281,8 @@ public final class MainActivity extends Activity {
    else{int i=0;for(StudyAnalysis.Candidate candidate:analysisResult.candidates){float row=y+94+i*19;
     leftText(c,(i+1)+". "+analysisMoves.get(i),15,row,11.5f,Color.WHITE);leftText(c,candidate.score(analysisBoard.turn),272,row,11,0xffeee0c7);i++;}
    }
-   evaluationGraph(c,y);String[] nav={"初期","前へ","次へ","最終","手順"};for(int i=0;i<nav.length;i++){paint.reset();paint.setColor(0xff49352a);c.drawRoundRect(6+i*79,y+242,79+i*79,y+282,3,3,paint);text(c,nav[i],42+i*79,y+267,12,Color.WHITE);}
+   evaluationGraph(c,y);String[] nav={"初期","前へ","次へ","最終","手順"};for(int i=0;i<nav.length;i++){paint.reset();paint.setColor(0xff49352a);c.drawRoundRect(6+i*79,y+242,79+i*79,y+282,3,3,paint);text(c,nav[i],42+i*79,y+(i==2&&evalHistory.branchesAfterCursor()>0?263:267),12,Color.WHITE);}
+   int forks=evalHistory.branchesAfterCursor();if(forks>0)text(c,"◆分岐"+forks+"通り",200,y+277,7.5f,0xffffd27a);
   }
   void evaluationGraph(Canvas c,float y){
    leftText(c,"評価値の推移（先手基準）",13,y+150,10,0xffdfd8cc);text(c,evalHistory.currentEdit()+"手目",353,y+150,9,Color.WHITE);text(c,"タップで局面移動",247,y+150,7,0xffbfbab3);

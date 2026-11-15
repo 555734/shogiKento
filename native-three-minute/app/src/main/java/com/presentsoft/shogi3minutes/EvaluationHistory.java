@@ -40,6 +40,38 @@ final class EvaluationHistory implements Serializable {
  boolean selectNode(int node){tree();if(node<0||node>=nodes.size())return false;List<Integer> path=path(node);for(int i=1;i<path.size();i++){Point parent=nodes.get(path.get(i-1));parent.preferred=path.get(i);parent.chosen=true;}project(node);return true;}
  /** Moves to node without choosing a branch, so later forward navigation follows the main line. */
  boolean focusNode(int node){tree();if(node<0||node>=nodes.size())return false;project(node);return true;}
+ /** One move of the displayed line. branch 0 is the main line; branches is the number of alternatives at this ply. */
+ static final class LineRow {
+  final int index,node,ply,branch,branches;final String move;final boolean current,offMain;
+  LineRow(int index,int node,int ply,String move,int branch,int branches,boolean current,boolean offMain){this.index=index;this.node=node;this.ply=ply;this.move=move;this.branch=branch;this.branches=branches;this.current=current;this.offMain=offMain;}
+  boolean fork(){return branches>1;}
+  String branchName(){return branchName(branch);}
+  static String branchName(int branch){return branch==0?"本譜":"変化"+branch;}
+ }
+ /** One alternative at a fork, with how many moves its continuation shows. */
+ static final class Alternative {
+  final int node,branch,following;final String move;final boolean shown;
+  Alternative(int node,int branch,String move,int following,boolean shown){this.node=node;this.branch=branch;this.move=move;this.following=following;this.shown=shown;}
+ }
+ private String moveLabel(int node,int ply){Point p=nodes.get(node);return p.label==null?ply+"手目":p.label;}
+ private List<Integer> siblings(int node){ArrayList<Integer> result=new ArrayList<>();int parent=nodes.get(node).parent;if(parent<0){result.add(node);return result;}for(int i=1;i<nodes.size();i++)if(nodes.get(i).parent==parent)result.add(i);return result;}
+ /** The displayed line only, like a normal record, with fork markers. */
+ List<LineRow> line(){
+  tree();ArrayList<LineRow> rows=new ArrayList<>();if(points.isEmpty())return rows;int[] count=new int[nodes.size()],order=new int[nodes.size()];
+  for(int i=1;i<nodes.size();i++){int parent=nodes.get(i).parent;if(parent>=0){order[i]=count[parent];count[parent]++;}}
+  boolean offMain=false;for(int i=0;i<points.size();i++){int node=nodes.indexOf(points.get(i)),parent=nodes.get(node).parent,branch=parent<0?0:order[node];offMain|=branch>0;rows.add(new LineRow(i,node,firstEdit+i,moveLabel(node,firstEdit+i),branch,parent<0?1:count[parent],i==cursor,offMain));}
+  return rows;
+ }
+ /** Alternatives at the ply of node, main line first. */
+ List<Alternative> alternatives(int node){
+  tree();ArrayList<Alternative> result=new ArrayList<>();if(node<0||node>=nodes.size())return result;int[] main=mainChildren();HashSet<Point> shown=new HashSet<>(points);List<Integer> ids=siblings(node);int ply=firstEdit+path(node).size()-1;
+  for(int b=0;b<ids.size();b++){int id=ids.get(b),following=0;for(int n=next(id,main);n>=0&&following<nodes.size();n=next(n,main))following++;result.add(new Alternative(id,b,moveLabel(id,ply),following,shown.contains(nodes.get(id))));}
+  return result;
+ }
+ /** True when the displayed line leaves the main line somewhere. */
+ boolean showingVariation(){List<LineRow> rows=line();return !rows.isEmpty()&&rows.get(rows.size()-1).offMain;}
+ /** Number of alternatives for the next move after the cursor, or 0 when there is no fork there. */
+ int branchesAfterCursor(){if(cursor+1>=points.size())return 0;tree();int node=nodes.indexOf(points.get(cursor+1));int n=siblings(node).size();return n>1?n:0;}
  List<Row> rows(){
   tree();ArrayList<Row> rows=new ArrayList<>();if(nodes.isEmpty())return rows;ArrayList<ArrayList<Integer>> children=new ArrayList<>();for(int i=0;i<nodes.size();i++)children.add(new ArrayList<>());for(int i=1;i<nodes.size();i++)children.get(nodes.get(i).parent).add(i);
   ArrayDeque<int[]> stack=new ArrayDeque<>();stack.push(new int[]{0,0,0});int selected=currentNode();

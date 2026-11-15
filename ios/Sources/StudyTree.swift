@@ -9,6 +9,17 @@ struct StudyTree: Codable {
     struct Row: Identifiable {
         var id:Int,ply:Int,indent:Int,branch:Int,total:Int,label:String,current:Bool
     }
+    /// One move of the displayed line. branch 0 is the main line; total is the number of alternatives at this ply.
+    struct LineRow: Identifiable {
+        var id:Int {ply}
+        var ply:Int,node:Int,label:String,branch:Int,total:Int,offMain:Bool,current:Bool
+    }
+    /// One alternative at a fork, with how many moves its continuation shows.
+    struct Alternative: Identifiable {
+        var id:Int {node}
+        var node:Int,branch:Int,label:String,following:Int,shown:Bool
+    }
+    static func branchName(_ branch:Int)->String {branch==0 ? "本譜":"変化\(branch)"}
     var nodes:[Node]
     init(record:GameRecord,scores:[Int:Evaluation]) {
         nodes=record.positions.indices.map { i in
@@ -32,16 +43,44 @@ struct StudyTree: Codable {
         for i in nodes.indices.dropFirst().reversed(){if let parent=nodes[i].parent{main[parent]=i}}
         return main
     }
+    private func next(_ node:Int,main:[Int?])->Int? {
+        if let chosen=nodes[node].chosen,chosen>node,chosen<nodes.count,nodes[chosen].parent==node{return chosen}
+        return main[node]
+    }
+    private func children()->[[Int]] {
+        var children=Array(repeating:[Int](),count:nodes.count)
+        for i in nodes.indices.dropFirst(){if let parent=nodes[i].parent{children[parent].append(i)}}
+        return children
+    }
+    /// The displayed line only, like a normal record, with fork information.
+    func line(current:Int)->[LineRow] {
+        let children=children();var offMain=false
+        return activePath.enumerated().map{ply,id in
+            let siblings=nodes[id].parent.map{children[$0]} ?? [id],branch=siblings.firstIndex(of:id) ?? 0
+            offMain = offMain || branch>0
+            return LineRow(ply:ply,node:id,label:nodes[id].label,branch:branch,total:siblings.count,offMain:offMain,current:id==current)
+        }
+    }
+    /// Alternatives at the ply of node, main line first.
+    func alternatives(of node:Int)->[Alternative] {
+        guard node>=0,node<nodes.count else{return []}
+        let children=children(),main=mainChildren(),shown=Set(activePath)
+        let siblings=nodes[node].parent.map{children[$0]} ?? [node]
+        return siblings.enumerated().map{branch,id in
+            var following=0,cursor=next(id,main:main)
+            while let n=cursor,following<nodes.count {following+=1;cursor=next(n,main:main)}
+            return Alternative(node:id,branch:branch,label:nodes[id].label,following:following,shown:shown.contains(id))
+        }
+    }
     /// Displays the path to node, then the chosen branch where one was picked, otherwise the main line.
     mutating func focus(_ node:Int) {
         let path=path(to:node)
         for i in path.indices.dropFirst(){nodes[path[i-1]].preferred=path[i]}
         let main=mainChildren();var current=node
         while true {
-            var next=main[current]
-            if let chosen=nodes[current].chosen,chosen>current,chosen<nodes.count,nodes[chosen].parent==current{next=chosen}
-            nodes[current].preferred=next
-            guard let id=next else{break};current=id
+            let following=next(current,main:main)
+            nodes[current].preferred=following
+            guard let id=following else{break};current=id
         }
     }
     /// Explicit branch selection from the move list; navigation keeps following this branch.
@@ -103,4 +142,8 @@ extension CurrentSession {
     }
     var studyNode:Int {studyTree?.activePath[cursor] ?? cursor}
     var studyRows:[StudyTree.Row] {(studyTree ?? StudyTree(record:study,scores:scores)).rows(current:studyNode)}
+    var studyLine:[StudyTree.LineRow] {(studyTree ?? StudyTree(record:study,scores:scores)).line(current:studyNode)}
+    func studyAlternatives(_ node:Int)->[StudyTree.Alternative] {(studyTree ?? StudyTree(record:study,scores:scores)).alternatives(of:node)}
+    /// Number of alternatives for the next move after the cursor, or 0 when there is no fork there.
+    var studyBranchesAfterCursor:Int {let line=studyLine;guard cursor+1<line.count,line[cursor+1].total>1 else{return 0};return line[cursor+1].total}
 }
