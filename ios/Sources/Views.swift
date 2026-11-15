@@ -97,7 +97,7 @@ struct BoardView:View {
             ZStack {Image(uiImage:AppAssets.image("board")).resizable()
                 Canvas {context,size in var grid=Path();for i in 0...9{let x=size.width*(0.01+0.98*Double(i)/9),y=size.height*(0.01+0.98*Double(i)/9);grid.move(to:CGPoint(x:x,y:size.height*0.01));grid.addLine(to:CGPoint(x:x,y:size.height*0.99));grid.move(to:CGPoint(x:size.width*0.01,y:y));grid.addLine(to:CGPoint(x:size.width*0.99,y:y))};context.stroke(grid,with:.color(Color(red:0.30,green:0.15,blue:0.03)),lineWidth:0.8)}
                 VStack(spacing:0){ForEach(0..<9,id:\.self){r in HStack(spacing:0){ForEach(0..<9,id:\.self){c in let square=model.viewSide == -1 ? 80-r*9-c:r*9+c,piece=model.position.board[square],target=model.targets.contains{$0.destination==square}
-                    Button{model.tap(square)}label:{ZStack{if let last=model.lastMoveSquares,last.to==square || last.from==square{LastMoveMark(destination:last.to==square)};if model.selected==square{Color.blue.opacity(0.4)}else if target{Color.yellow.opacity(0.5)};if piece != 0 && model.effectHiddenSquare != square{Image(uiImage:AppAssets.piece(piece)).resizable().scaledToFit().rotationEffect(.degrees(piece*model.viewSide<0 ? 180:0)).padding(0.7)}}.frame(maxWidth:.infinity,maxHeight:.infinity).contentShape(Rectangle())}.buttonStyle(.plain).frame(width:w*0.98/9,height:h*0.98/9)
+                    Button{model.tap(square)}label:{ZStack{if let last=model.lastMoveSquares,last.to==square || last.from==square{LastMoveMark(destination:last.to==square)};if model.selected==square{Color.blue.opacity(0.4)}else if target{Color.yellow.opacity(0.5)};if piece != 0 && model.effectHiddenSquare != square{Image(uiImage:AppAssets.piece(piece)).resizable().scaledToFit().rotationEffect(.degrees(piece*model.viewSide<0 ? 180:0)).padding(0.7)};if let last=model.lastMoveSquares,last.to==square{Rectangle().strokeBorder(Color(red:0.89,green:0.37,blue:0),lineWidth:3)}}.frame(maxWidth:.infinity,maxHeight:.infinity).contentShape(Rectangle())}.buttonStyle(.plain).frame(width:w*0.98/9,height:h*0.98/9)
                         .accessibilityIdentifier("cell_\(square/9)_\(square%9)").accessibilityLabel("\(9-square%9)\(Array("一二三四五六七八九")[square/9]) \(Position.glyphs[abs(piece)])").accessibilityValue(model.selected==square ? "選択":target ? "移動可能":"")
                         .onLongPressGesture {model.togglePromotion(square)}
                 }}}}.padding(.horizontal,w*0.01).padding(.vertical,h*0.01)
@@ -313,7 +313,7 @@ struct PromotionPicker:View {
 struct LastMoveMark:View {
     let destination:Bool
     var body:some View {
-        Rectangle().fill(destination ? Color(red:1,green:0.55,blue:0.1).opacity(0.65):Color(red:0.25,green:0.56,blue:0.88).opacity(0.55))
+        Rectangle().fill(destination ? Color(red:1,green:0.55,blue:0.1).opacity(0.7):Color(red:0.16,green:0.48,blue:1).opacity(0.62))
             .overlay(Rectangle().strokeBorder(destination ? Color(red:0.82,green:0.35,blue:0):Color(red:0.18,green:0.44,blue:0.75),lineWidth:destination ? 2.5:1.2))
     }
 }

@@ -191,10 +191,11 @@ public final class MainActivity extends Activity {
   void squareColor(Canvas c,RectF rect,int fill,int edge){
    RectF inside=new RectF(rect);inside.inset(.9f,.9f);paint.reset();paint.setAntiAlias(true);paint.setColor(fill);c.drawRect(inside,paint);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(.8f);paint.setColor(edge);c.drawRect(inside,paint);
   }
-  static final int LAST_FROM_FILL=0x8c3f8fe0,LAST_FROM_EDGE=0xff2f6fc0,LAST_TO_FILL=0xa6ff8c1a,LAST_TO_EDGE=0xffd25a00;
+  static final int LAST_FROM_FILL=0xa0287bff,LAST_FROM_EDGE=0xff1f5fd0,LAST_TO_FILL=0xb4ff8c1a,LAST_TO_EDGE=0xffe25f00;
   /** The previous move stays marked until the next one: its source square in blue, its destination in deep orange. */
-  void lastMoveColors(Canvas c){if(lastMove==null)return;if(lastMove.drop==0)squareColor(c,cell(lastMove.fromRow,lastMove.fromCol),LAST_FROM_FILL,LAST_FROM_EDGE);RectF to=cell(lastMove.row,lastMove.col);squareColor(c,to,LAST_TO_FILL,LAST_TO_EDGE);
-   paint.reset();paint.setAntiAlias(true);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(2.2f);paint.setColor(LAST_TO_EDGE);RectF inner=new RectF(to);inner.inset(1.6f,1.6f);c.drawRect(inner,paint);}
+  void lastMoveColors(Canvas c){if(lastMove==null)return;if(lastMove.drop==0)squareColor(c,cell(lastMove.fromRow,lastMove.fromCol),LAST_FROM_FILL,LAST_FROM_EDGE);RectF to=cell(lastMove.row,lastMove.col);squareColor(c,to,LAST_TO_FILL,LAST_TO_EDGE);}
+  /** Drawn above the pieces so the destination stays visible even under a large piece. */
+  void lastMoveFrame(Canvas c){if(lastMove==null)return;RectF to=cell(lastMove.row,lastMove.col);paint.reset();paint.setAntiAlias(true);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(3f);paint.setColor(LAST_TO_EDGE);RectF inner=new RectF(to);inner.inset(1.5f,1.5f);c.drawRect(inner,paint);}
   void selectionColors(Canvas c){
    if(selectedR>=0)squareColor(c,cell(selectedR,selectedC),SELECTED_FILL,SELECTED_EDGE);
    Set<Integer> shown=new HashSet<>();for(ShogiGame.Move m:highlights)if(shown.add(m.row*9+m.col))squareColor(c,cell(m.row,m.col),TARGET_FILL,TARGET_EDGE);
@@ -272,7 +273,7 @@ public final class MainActivity extends Activity {
    observeFlow();
    if(mode==ONLINE)onlineTopBar(c);
    if(mode==MATCH){darkPanel(c,new RectF(4,0,396,MATCH_BAR));text(c,"モード",45,29,16,0xfff5e4c8);text(c,"やり直し",145,29,15.5f,Color.WHITE);text(c,"対局設定",253,29,15.5f,Color.WHITE);paint.reset();paint.setAntiAlias(true);paint.setColor(0xffa8352a);c.drawRoundRect(318,5,392,MATCH_BAR-5,6,6,paint);text(c,"投了",355,29,16,Color.WHITE);}
-   hand(c,-viewSide(),topHandY());board(c);lastMoveColors(c);selectionColors(c);long frame=SystemClock.uptimeMillis();for(int r=0;r<9;r++)for(int col=0;col<9;col++)if(game.board[r][col]!=0&&!effects.hides(r,col,frame))boardPiece(c,game.board[r][col],cell(r,col));hand(c,viewSide(),bottomHandY());if(mode!=STUDY)effects.draw(c,geometry,frame);drawCandidateArrows(c);drawPick(c);if(mode!=STUDY){effects.drawStart(c,boardRect(),frame);effects.drawEnd(c,boardRect(),frame);if(mode==MATCH&&game.winner!=0&&effects.endButtonsVisible(frame))drawEndButtons(c);}
+   hand(c,-viewSide(),topHandY());board(c);lastMoveColors(c);selectionColors(c);long frame=SystemClock.uptimeMillis();for(int r=0;r<9;r++)for(int col=0;col<9;col++)if(game.board[r][col]!=0&&!effects.hides(r,col,frame))boardPiece(c,game.board[r][col],cell(r,col));lastMoveFrame(c);hand(c,viewSide(),bottomHandY());if(mode!=STUDY)effects.draw(c,geometry,frame);drawCandidateArrows(c);drawPick(c);if(mode!=STUDY){effects.drawStart(c,boardRect(),frame);effects.drawEnd(c,boardRect(),frame);if(mode==MATCH&&game.winner!=0&&effects.endButtonsVisible(frame))drawEndButtons(c);}
    if(mode==MATCH){String status=game.winner==2?game.result:game.winner!=0?(game.winner==humanSide()?"勝利":"敗北")+"・"+game.result:!ai.ready?(aiError==null?"AI読み込み中…":"AIエラー・対局設定から再試行"):!started?"タップして対局開始":game.turn==humanSide()?(game.checked(humanSide())?"王手です・あなたの手番":"あなたの手番"):"CPUの手番";text(c,status,200,bottomHandY()+matchPanelH+28,18,game.winner==0&&started&&game.turn==humanSide()?0xffffe08a:Color.WHITE);if(!started){float cy=boardY+boardHeight/2;paint.reset();paint.setAntiAlias(true);paint.setColor(0xe0300909);c.drawRoundRect(60,cy-44,340,cy+44,14,14,paint);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(1.6f);paint.setColor(0xffffd27a);c.drawRoundRect(60,cy-44,340,cy+44,14,14,paint);text(c,ai.ready?"タップして対局開始":"AI読み込み中…",200,cy+10,26,0xffffdd8b);}drawResignConfirm(c);}else if(mode==ONLINE)onlineStatus(c);else analysisPanel(c);c.restore();
    long tick=SystemClock.uptimeMillis();if(effects.active(tick)||effects.overlayAnimating(tick)||effects.tintFading(tick))postInvalidateOnAnimation();
   }
