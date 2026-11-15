@@ -136,6 +136,12 @@ struct EvaluationGraph:View {
             .background(Color(red:0.06,green:0.12,blue:0.2)).gesture(DragGesture(minimumDistance:0).onEnded{value in model.seek(max(0,min(model.session.study.moves,Int((value.location.x/geo.size.width*Double(count)).rounded()))))}).accessibilityLabel("評価グラフ。タップで局面へ移動")
     }}
 }
+/// Study navigation label; 次へ also shows how many alternatives the next move has.
+struct NavLabel:View {
+    let label:String
+    let forks:Int
+    var body:some View {VStack(spacing:1){Text(label);if forks>0{Text("◆分岐\(forks)通り").font(.system(size:9,weight:.bold)).foregroundStyle(gold)}}}
+}
 struct MoveListView:View {
     @EnvironmentObject var model:AppModel
     @Environment(\.dismiss) var dismiss
