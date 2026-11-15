@@ -256,7 +256,7 @@ public final class MainActivity extends Activity {
   void layoutBoard(int w,int h){
    if(w<=0||h<=0)return;scale=w/400f;offsetX=0;H=h/scale;boardSize=400;boardHeight=boardSize*BOARD_HEIGHT_RATIO;boardX=0;boardY=mode==STUDY?46:mode==ONLINE?128:80;
    if(mode==MATCH){matchPanelH=Math.max(70,Math.min(112,(H-MATCH_BAR-boardHeight-MATCH_STATUS-24)/2));float low=MATCH_BAR+8+matchPanelH+4,high=H-(boardHeight+4+matchPanelH+MATCH_STATUS);boardY=Math.max(low,Math.min(high,(H-boardHeight)/2));}
-   studyContentHeight=coffee.unlocked()?Math.max(H,mode==STUDY?analysisY()+ANALYSIS_HEIGHT+8:0):adTop()+adHeight()+16;studyScroll=Math.max(0,Math.min(studyScroll,maxStudyScroll()));
+   studyContentHeight=coffee.unlocked()?Math.max(H,mode==STUDY?analysisY()+ANALYSIS_HEIGHT+8:mode==MATCH?bottomHandY()+matchPanelH+MATCH_STATUS+8:0):adTop()+adHeight()+16;studyScroll=Math.max(0,Math.min(studyScroll,maxStudyScroll()));
   }
   HomeScreen.Layout homeLayout(){return new HomeScreen.Layout(H);}
   float adTop(){return Math.max(H,mode==STUDY?analysisY()+ANALYSIS_HEIGHT+8:mode==MATCH?bottomHandY()+matchPanelH+MATCH_STATUS:mode==ONLINE?(online.game!=null?onlineStatusY()+168:lobbyPanelY()+212):homeLayout().archive.bottom)+16;}
