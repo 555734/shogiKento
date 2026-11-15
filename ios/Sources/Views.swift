@@ -125,7 +125,7 @@ struct AnalysisView:View {
         else{ForEach(Array(model.candidates.enumerated()),id:\.offset){index,c in HStack{Text("\(index+1). \(model.position.notation(c.move))");Spacer();Text(c.score.text)}.font(.subheadline).accessibilityElement(children:.combine).accessibilityIdentifier("candidate_\(index)")};Text(model.analysisStatus).font(.caption2).accessibilityIdentifier("analysis_status")}
         HStack {Text("評価値の推移（先手基準）");Spacer();Text("\(model.session.cursor)手目").accessibilityIdentifier("study_ply")}.font(.caption)
         EvaluationGraph().frame(height:85)
-        HStack(spacing:5){ForEach(Array(["初期","前へ","次へ","最終","手順"].enumerated()),id:\.offset){i,label in Button{switch i{case 0:model.seek(0);case 1:model.seek(model.session.cursor-1);case 2:model.seek(model.session.cursor+1);case 3:model.seek(model.session.study.moves);default:showMoves=true}}label:{let forks=i==2 ? model.session.studyBranchesAfterCursor:0;VStack(spacing:1){Text(label);if forks>0{Text("◆分岐\(forks)通り").font(.system(size:9,weight:.bold)).foregroundStyle(gold)}}}.font(.subheadline).frame(maxWidth:.infinity).buttonStyle(.bordered).accessibilityIdentifier("ply_\(i)")}}
+        HStack(spacing:5){ForEach(Array(["初期","前へ","次へ","最終","手順"].enumerated()),id:\.offset){i,label in Button{switch i{case 0:model.seek(0);case 1:model.seek(model.session.cursor-1);case 2:model.seek(model.session.cursor+1);case 3:model.seek(model.session.study.moves);default:showMoves=true}}label:{NavLabel(label:label,forks:i==2 ? model.session.studyBranchesAfterCursor:0)}.font(.subheadline).frame(maxWidth:.infinity).buttonStyle(.bordered).accessibilityIdentifier("ply_\(i)")}}
     }.padding(14).background(.black.opacity(0.78)).foregroundStyle(cream)}
 }
 struct EvaluationGraph:View {
@@ -139,33 +139,56 @@ struct EvaluationGraph:View {
 struct MoveListView:View {
     @EnvironmentObject var model:AppModel
     @Environment(\.dismiss) var dismiss
-    var body:some View{NavigationStack{ScrollViewReader{proxy in
+    var title:String {model.session.studyLine.last?.offMain==true ? "手順（変化を表示中）":"手順（本譜）"}
+    var body:some View {NavigationStack{ScrollViewReader{proxy in
         List {
             Section {Text("◆は分岐がある手です。タップすると分岐を選べます。「次へ」「最終」は表示中の手順を進み、分岐を選んでいない所では本譜（元の棋譜）を進みます。").font(.caption).foregroundStyle(.secondary)}
-            ForEach(model.session.studyLine){row in
-                if row.total>1 {
-                    Menu {
-                        Section("\(row.ply)手目の分岐（\(row.total)通り）") {
-                            ForEach(model.session.studyAlternatives(row.node)){alt in
-                                Button{if alt.node != model.session.studyNode{model.selectStudyNode(alt.node)};dismiss()}label:{
-                                    Text(StudyTree.branchName(alt.branch)+"　"+alt.label+"　"+(alt.following==0 ? "続きなし":"続き\(alt.following)手")+(alt.shown ? "・表示中":""))
-                                }.accessibilityIdentifier("branch_\(alt.node)")
-                            }
-                        }
-                    } label:{MoveLineRow(row:row)}.id(row.ply).accessibilityIdentifier("move_\(row.node)")
-                } else {
-                    Button{model.seek(row.ply);dismiss()}label:{MoveLineRow(row:row)}.id(row.ply).accessibilityIdentifier("move_\(row.node)")
-                }
-            }
+            ForEach(model.session.studyLine){row in MoveLineEntry(row:row){dismiss()}}
         }.onAppear{proxy.scrollTo(model.session.cursor,anchor:.center)}
-    }.navigationTitle(model.session.studyLine.last?.offMain==true ? "手順（変化を表示中）":"手順（本譜）").toolbar{Button("閉じる"){dismiss()}}}}
+    }.navigationTitle(title).toolbar{Button("閉じる"){dismiss()}}}}
+}
+/// Study navigation label; 次へ also shows how many alternatives the next move has.
+struct NavLabel:View {
+    let label:String
+    let forks:Int
+    var body:some View {VStack(spacing:1){Text(label);if forks>0{Text("◆分岐\(forks)通り").font(.system(size:9,weight:.bold)).foregroundStyle(gold)}}}
+}
+/// A plain move jumps to its ply; a ◆ move opens the alternatives at that ply.
+struct MoveLineEntry:View {
+    @EnvironmentObject var model:AppModel
+    let row:StudyTree.LineRow
+    let close:()->Void
+    var body:some View {
+        if row.total>1 {
+            Menu {
+                Section("\(row.ply)手目の分岐（\(row.total)通り）") {
+                    ForEach(model.session.studyAlternatives(row.node)){alt in BranchButton(alt:alt,close:close)}
+                }
+            } label:{MoveLineRow(row:row)}.id(row.ply).accessibilityIdentifier("move_\(row.node)")
+        } else {
+            Button{model.seek(row.ply);close()}label:{MoveLineRow(row:row)}.id(row.ply).accessibilityIdentifier("move_\(row.node)")
+        }
+    }
+}
+struct BranchButton:View {
+    @EnvironmentObject var model:AppModel
+    let alt:StudyTree.Alternative
+    let close:()->Void
+    var text:String {
+        let rest:String=alt.following==0 ? "続きなし":"続き\(alt.following)手"
+        let shown:String=alt.shown ? "・表示中":""
+        return StudyTree.branchName(alt.branch)+"　"+alt.label+"　"+rest+shown
+    }
+    var body:some View {Button{model.selectStudyNode(alt.node);close()}label:{Text(text)}.accessibilityIdentifier("branch_\(alt.node)")}
 }
 /// A normal record row; a fork shows ◆, the shown branch and how many alternatives exist.
 struct MoveLineRow:View {
     let row:StudyTree.LineRow
+    var marker:String {row.total>1 ? "◆":row.offMain ? "┃":""}
+    var detail:String {"分岐 \(row.total)通り・表示中："+StudyTree.branchName(row.branch)+"　（タップで選択）"}
     var body:some View {HStack(alignment:.top,spacing:6){
-        Text(row.total>1 ? "◆":row.offMain ? "┃":"").font(.system(.body,design:.monospaced)).foregroundStyle(gold).frame(width:16)
-        VStack(alignment:.leading,spacing:3){Text(row.label).foregroundStyle(.primary);if row.total>1{Text("分岐 \(row.total)通り・表示中：\(StudyTree.branchName(row.branch))　（タップで選択）").font(.caption).foregroundStyle(.secondary)}}
+        Text(marker).font(.system(.body,design:.monospaced)).foregroundStyle(gold).frame(width:16)
+        VStack(alignment:.leading,spacing:3){Text(row.label).foregroundStyle(.primary);if row.total>1{Text(detail).font(.caption).foregroundStyle(.secondary)}}
         Spacer();if row.current{Image(systemName:"checkmark.circle.fill").foregroundStyle(gold)}
     }.contentShape(Rectangle())}
 }
