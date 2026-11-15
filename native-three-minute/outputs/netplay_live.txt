@@ -1,0 +1,50 @@
+relay survey (default relays first):
+SURVEY wss://yabu.me                        ok=3 rejected=0 delivered=3/3 median=143ms 
+SURVEY wss://relay.snort.social             ok=3 rejected=0 delivered=3/3 median=129ms 
+SURVEY wss://nostr-pub.wellorder.net        CONNECT FAILED WebSocket upgrade refused: HTTP/1.1 503 Service Unavailable
+SURVEY wss://relay.primal.net               ok=3 rejected=0 delivered=3/3 median=334ms 
+SURVEY wss://nos.lol                        ok=3 rejected=0 delivered=3/3 median=228ms 
+SURVEY wss://nostr.mom                      ok=3 rejected=0 delivered=3/3 median=268ms 
+SURVEY wss://nostr.oxtr.dev                 ok=3 rejected=0 delivered=3/3 median=262ms 
+SURVEY wss://relay.damus.io                 CONNECT FAILED WebSocket upgrade refused: HTTP/1.1 521 <none>
+SURVEY wss://nostr.bitcoiner.social         ok=3 rejected=0 delivered=3/3 median=127ms 
+SURVEY wss://relay-jp.nostr.wirednet.jp     CONNECT FAILED WebSocket upgrade refused: HTTP/1.1 403 Forbidden
+SURVEY wss://r.kojira.io                    CONNECT FAILED WebSocket upgrade refused: HTTP/1.1 403 Forbidden
+SURVEY wss://nostr.holybea.com              CONNECT FAILED Connect timed out
+SURVEY wss://relay.nostr.band               CONNECT FAILED Connect timed out
+SURVEY wss://nostr.fmt.wiz.biz              CONNECT FAILED Connect timed out
+SURVEY wss://relay.nostrich.de              CONNECT FAILED (internal_error) Received fatal alert: internal_error
+SURVEY wss://nostr.einundzwanzig.space      ok=0 rejected=1 delivered=0/3 median=- blocked: NIP-05 verification needed to publish events
+SURVEY wss://relay.nostr.wirednet.jp        ok=0 rejected=1 delivered=0/3 median=- closed by relay
+SURVEY wss://offchain.pub                   ok=3 rejected=0 delivered=3/3 median=174ms 
+SURVEY wss://nostr.wine                     ok=0 rejected=1 delivered=0/3 median=- restricted: sign up at https://nostr.wine to write events to this relay
+relays open A=6 B=6 of 8
+STUN replies A=12 candidates=[10.1.0.19:47597, 20.83.228.121:20536] symmetric=false
+match time 551ms
+direct path 10.1.0.19:60288 rtt=0
+direct move latency median=2ms max=6ms n=10
+relay-only match time 5093ms
+relay-only move latency median=130ms max=135ms n=8
+PASS live public relays/STUN: 78 assertions
+diagnostics A:
+handshake: 499ms offer e5b813 | 2005ms resend offer e5b813 | 3506ms resend offer e5b813 | 4507ms offer timed out e5b813 | 5009ms offer 60c94f | 5262ms recv accept 60c94f via wss://yabu.me | 5262ms matched 60c94f role 0
+state=4 relays=6/8 candidates=[10.1.0.19:37707, 20.83.228.121:20538] symmetric=false link: direct=false route=relay rtt=-1 relayRtt=247 udp=21/0 relay=11/11 candidates=1 rejected=0
+wss://yabu.me open ok=17 rejected=0 received=6 clock=no Date header
+wss://relay.snort.social open ok=17 rejected=0 received=10 clock=0s
+wss://nostr-pub.wellorder.net closed ok=0 rejected=0 received=0 clock=0s last=WebSocket upgrade refused: HTTP/1.1 503 Service Unavailable
+wss://relay.primal.net open ok=15 rejected=0 received=0 clock=0s
+wss://nos.lol open ok=16 rejected=0 received=0 clock=0s
+wss://nostr.mom open ok=16 rejected=0 received=0 clock=0s
+wss://nostr.oxtr.dev open ok=15 rejected=1 received=0 clock=0s writes=paused last=rate limited
+wss://relay.damus.io closed ok=0 rejected=0 received=0 clock=0s last=Relay closed connection
+diagnostics B:
+handshake: 493ms offer e5b813 | 2005ms resend offer e5b813 | 3506ms resend offer e5b813 | 4506ms offer timed out e5b813 | 5132ms recv offer 51dc79 via wss://relay.snort.social | 5134ms accept 51dc79 | 5372ms recv confirm 51dc79 via wss://yabu.me | 5372ms matched 51dc79 role 1
+state=4 relays=6/8 candidates=[10.1.0.19:43151] symmetric=false link: direct=false route=relay rtt=-1 relayRtt=252 udp=52/0 relay=11/12 candidates=2 rejected=0
+wss://yabu.me open ok=17 rejected=0 received=4 clock=no Date header
+wss://relay.snort.social open ok=17 rejected=0 received=14 clock=0s
+wss://nostr-pub.wellorder.net closed ok=0 rejected=0 received=0 clock=0s last=WebSocket upgrade refused: HTTP/1.1 503 Service Unavailable
+wss://relay.primal.net open ok=15 rejected=0 received=0 clock=0s
+wss://nos.lol open ok=16 rejected=0 received=0 clock=0s
+wss://nostr.mom open ok=16 rejected=0 received=0 clock=0s
+wss://nostr.oxtr.dev open ok=15 rejected=1 received=0 clock=0s writes=paused last=rate limited
+wss://relay.damus.io closed ok=0 rejected=0 received=0 clock=0s last=WebSocket upgrade refused: HTTP/1.1 521 <none>
