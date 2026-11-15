@@ -13,7 +13,7 @@ struct OnlineGameView:View {
             OnlineHeader(game:game)
             OnlinePlayerCard(side:-model.viewSide,game:game)
             OnlineKomadai(side:-model.viewSide)
-            BoardView().aspectRatio(1226/1283.0,contentMode:.fit)
+            BoardView().aspectRatio(1226/1283.0,contentMode:.fit).anchorPreference(key:ArrowAnchorKey.self,value:.bounds){["board":$0]}
                 .clipShape(RoundedRectangle(cornerRadius:4)).shadow(color:.black.opacity(0.55),radius:10,y:4)
                 .overlay{if !game.started{VStack(spacing:10){ProgressView().tint(gold);Text("対局を準備しています…").font(.headline).foregroundStyle(cream)}.padding(22).background(RoundedRectangle(cornerRadius:16).fill(.black.opacity(0.78)))}}
             OnlineKomadai(side:model.viewSide)
@@ -25,6 +25,7 @@ struct OnlineGameView:View {
             if !model.online.notice.isEmpty{Label(model.online.notice,systemImage:"info.circle").font(.caption).foregroundStyle(.orange)}
             if let error=game.error{Label(error,systemImage:"exclamationmark.triangle").font(.caption).foregroundStyle(.orange)}
         }.padding(.horizontal,10).padding(.top,4)
+        .overlayPreferenceValue(ArrowAnchorKey.self){anchors in GeometryReader{proxy in MoveEffectOverlay(anchors:anchors,proxy:proxy)}}
     }
 }
 
@@ -115,9 +116,9 @@ private struct OnlineKomadai:View {
                     Image(uiImage:AppAssets.piece(p*side)).resizable().scaledToFit().rotationEffect(.degrees(side*model.viewSide<0 ? 180:0))
                     if n>1{Text(verbatim:"\(n)").font(.system(size:11,weight:.heavy)).foregroundStyle(ink).frame(minWidth:15,minHeight:15).background(Circle().fill(gold))}
                 }.frame(width:34,height:38).padding(2).background(RoundedRectangle(cornerRadius:6).fill(model.selectedHand==p && model.selectedSide==side ? gold.opacity(0.45):.clear))}
-                .buttonStyle(.plain).accessibilityIdentifier("hand_\(side)_\(p)")
+                .buttonStyle(.plain).anchorPreference(key:ArrowAnchorKey.self,value:.bounds){["hand_\(side)_\(p)":$0]}.accessibilityIdentifier("hand_\(side)_\(p)")
             }
-        }.frame(maxWidth:.infinity,minHeight:42,alignment:side==model.viewSide ? .trailing:.leading).padding(.horizontal,8).padding(.vertical,2)
+        }.anchorPreference(key:ArrowAnchorKey.self,value:.bounds){["handbar_\(side)":$0]}.frame(maxWidth:.infinity,minHeight:42,alignment:side==model.viewSide ? .trailing:.leading).padding(.horizontal,8).padding(.vertical,2)
             .background(RoundedRectangle(cornerRadius:10).fill(Color.black.opacity(0.42))).overlay(RoundedRectangle(cornerRadius:10).stroke(gold.opacity(0.15)))
     }
 }

@@ -362,6 +362,20 @@ public final class NativeSmokeTest extends Instrumentation {
   waitForIdleSync();main(()->{if(activity.choiceDialog!=null)activity.choiceDialog.dismiss();});waitForIdleSync();main(()->check(v.mode==MainActivity.STUDY,"study screen before system back"));
   sendKeyDownUpSync(android.view.KeyEvent.KEYCODE_BACK);waitForIdleSync();main(()->check(v.mode==MainActivity.HOME&&!activity.isFinishing(),"system back key returns from study to the app home screen"));
  }
+ /** Item 1: the move is applied at once and drawn with a short tween, landing pulse and ring; reduced effects skip it. */
+ void moveEffectTests()throws Exception{
+  home();chooseMode(MainActivity.MATCH);ready();
+  for(boolean reduced:new boolean[]{false,true}){
+   main(()->{activity.settings.reducedEffects(reduced);v.restart();v.started=true;v.clock.resume(SystemClock.elapsedRealtime(),true);});
+   ShogiGame.Move[] m=new ShogiGame.Move[1];long[] took=new long[1];
+   main(()->{for(ShogiGame.Move x:v.game.legal(v.humanSide()))if(x.drop==0&&!x.promote){m[0]=x;break;}long t0=SystemClock.uptimeMillis();v.move(m[0]);took[0]=SystemClock.uptimeMillis()-t0;v.cancelCpu();long now=SystemClock.uptimeMillis();
+    check(v.game.movesPlayed==1&&v.game.board[m[0].row][m[0].col]!=0,"move applied immediately, before any animation");check(took[0]<100,"committing a move does not wait for the animation: "+took[0]+"ms");
+    check(reduced?!v.effects.active(now):v.effects.active(now)&&v.effects.hides(m[0].row,m[0].col,now),reduced?"reduced effects: no tween":"tween hides the static destination piece while it flies");});
+   if(!reduced){SystemClock.sleep(60);screenshot("60_move_tween.png");}
+   SystemClock.sleep(450);main(()->check(!v.effects.active(SystemClock.uptimeMillis())&&!v.effects.hides(m[0].row,m[0].col,SystemClock.uptimeMillis()),"effect finished within 450ms"));
+  }
+  main(()->{activity.settings.reducedEffects(false);v.restart();});
+ }
  void analysisReadyIfPossible(){main(()->v.refreshAnalysis());if(!v.game.legal(v.analysisSide).isEmpty())analysisReady();}
  void matchOptionsTests(Intent intent)throws Exception{
   main(()->activity.coffee.debugGrant(true));
@@ -421,7 +435,7 @@ public final class NativeSmokeTest extends Instrumentation {
   main(()->{v.restart();v.started=true;v.clock.resume(SystemClock.elapsedRealtime(),true);v.invalidate();});ready();uniformPieces();screenshot("04_enlarged_native_ai.png");screenshot("20_reference_match_layout.png");
   OnlineSmoke.run(this);
   try(PrintWriter audio=new PrintWriter(new File(getTargetContext().getExternalFilesDir(null),"placement_audio.txt"))){audio.println("PASS native SoundPool decoded placement WAV; study/match/human/CPU/capture/drop accepted playback once each; selection/illegal/background silent. Last active player streams accepted: "+v.sounds.playCount);}
-  clipboardTests(intent);archiveTests(intent);variationTests(intent);matchOptionsTests(intent);adTests(intent);coffeeTests();out.putString("stream","PASS native instrumentation: "+assertions+" assertions; UI screenshots saved");finish(Activity.RESULT_OK,out);
+  clipboardTests(intent);archiveTests(intent);variationTests(intent);moveEffectTests();matchOptionsTests(intent);adTests(intent);coffeeTests();out.putString("stream","PASS native instrumentation: "+assertions+" assertions; UI screenshots saved");finish(Activity.RESULT_OK,out);
  }catch(Throwable t){try{screenshot("99_failure.png");}catch(Throwable ignored){}android.util.Log.e("NativeSmokeTest","FAIL",t);out.putString("stream","FAIL: "+t);finish(Activity.RESULT_CANCELED,out);}}
 }
 

@@ -8,6 +8,9 @@ final class AppSettings {
  int volume(){return Math.max(0,Math.min(100,prefs.getInt("volume",65)));}
  boolean sound(){return prefs.getBoolean("sound",true);}
  boolean vibration(){return prefs.getBoolean("vibration",false);}
+ /** Low-end devices: no tweens, particles or rotations; colours and text remain. */
+ boolean reducedEffects(){return prefs.getBoolean("reduced_effects",false);}
+ void reducedEffects(boolean enabled){prefs.edit().putBoolean("reduced_effects",enabled).apply();}
  void volume(int value){prefs.edit().putInt("volume",Math.max(0,Math.min(100,value))).apply();}
  void sound(boolean enabled){prefs.edit().putBoolean("sound",enabled).apply();}
  void vibration(boolean enabled){prefs.edit().putBoolean("vibration",enabled).apply();}

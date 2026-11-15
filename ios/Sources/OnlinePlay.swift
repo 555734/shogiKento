@@ -63,7 +63,7 @@ extension AppModel {
         case .matched(let side):var g=OnlineGame(mySide:side,rules:EngineRules(),time:OnlineGame.millis(net?.matchedTimeControl));g.hello(now);online.peer=nil;online.cardRound=0;online.lastResult=nil;online.rated=net?.ratedSession ?? false
             online.game=g;online.seekMode = -1;online.notice="";online.direct=false;online.rtt = -1;online.route="";flushOnline();showOnlinePosition()
         case .message(let text) where text.hasPrefix("ID "):online.peer=net?.sessionId.flatMap{OnlineIdentity.parse(text,sessionId:$0)};syncAccount()
-        case .message(let text):guard online.game != nil else{return};online.game!.rttMillis=online.rtt;let moved=online.game!.receive(text,now);flushOnline();if moved{showOnlinePosition();if online.game!.lastMove != nil{feedback(human:false)}}
+        case .message(let text):guard online.game != nil else{return};online.game!.rttMillis=online.rtt;let before=position;let moved=online.game!.receive(text,now);flushOnline();if moved{showOnlinePosition();if online.game!.lastMove != nil{beginMoveEffect(from:before);feedback(human:false)}}
         case .path(let direct,let rtt,let route):online.direct=direct;online.rtt=rtt;online.route=route
         case .peerLeft:online.game?.markPeerLeft();online.notice="相手が退出しました";clearSelection()
         case .failed(let reason):online.notice=reason
@@ -103,7 +103,7 @@ extension AppModel {
     func showOnlinePosition(){position=online.game.flatMap{try? Position($0.sfen)} ?? (try! Position());clearSelection()}
     func onlineTick(){guard online.game != nil else{return};online.game!.rttMillis=online.rtt;let was=online.game!.over;online.game!.tick(Self.onlineNow);flushOnline();if !was && online.game!.over{clearSelection()}
         online.silenceMillis=net?.link?.silenceMillis ?? 0}
-    func onlineCommit(_ move:Move){guard online.game != nil else{return};if online.game!.localMove(move.usi,Self.onlineNow){flushOnline();showOnlinePosition();feedback(human:true)}else{clearSelection()}}
+    func onlineCommit(_ move:Move){guard online.game != nil else{return};let before=position;if online.game!.localMove(move.usi,Self.onlineNow){flushOnline();showOnlinePosition();beginMoveEffect(from:before);feedback(human:true)}else{clearSelection()}}
     func startSeek(_ mode:Int,code:String?){
         guard let net else{online.notice="通信を準備しています…";ensureNetplay();return}
         net.rating=account.rating;net.games=account.games;online.seekMode=mode;online.roomCode=code;online.notice="";online.status="";net.seek(mode,code:code,timeControl:online.timeControl)
