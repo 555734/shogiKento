@@ -77,7 +77,7 @@ final class EvaluationHistory implements Serializable {
   ListEntry(int kind,LineRow row,Alternative alternative,boolean expanded){this.kind=kind;this.row=row;this.alternative=alternative;this.expanded=expanded;}
   String text(){
    if(kind==MOVE)return (row.fork()?"◆ ":row.offMain?"┃ ":"")+row.move;
-   if(kind==TAB)return (expanded?"▼ ":"▶ ")+"分岐 "+row.branches+"通り（表示中："+row.branchName()+"）"+(expanded?"　タップで収納":"　タップで展開");
+   if(kind==TAB)return (expanded?"▼ ":"▶ ")+"分岐 "+row.branches+"通り（表示中："+row.branchName()+"）"+(expanded?"　閉じる":"　開く");
    return "└ "+LineRow.branchName(alternative.branch)+"　"+alternative.move.replaceFirst("^\\d+手目\\s*","")+"　"+(alternative.following==0?"続きなし":"続き"+alternative.following+"手")+(alternative.shown?"・表示中":"");
   }
  }
