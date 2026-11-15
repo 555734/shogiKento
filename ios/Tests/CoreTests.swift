@@ -3,6 +3,25 @@ import SwiftUI
 @testable import BeniShogi
 
 final class CoreTests:XCTestCase {
+    func testUnchosenForkFollowsOriginalRecord()throws {
+        let record=try KifParser.parse(String(contentsOf:fixture("kif"),encoding:.utf8))
+        var session=CurrentSession();session.study=record;session.cursor=64
+        let at64=try Position(record.positions[64])
+        let move=try XCTUnwrap(try Rules.legal(at64).first(where:{(try? Rules.apply(at64,$0).sfen) != record.positions[65]}))
+        XCTAssertTrue(session.focusStudyPly(64))
+        session.appendStudyPosition(try Rules.apply(at64,move).sfen,label:"65手目 "+at64.notation(move));let variation=session.studyNode
+        for _ in 0..<2 {let p=try Position(session.study.positions[session.cursor]);let m=try XCTUnwrap(try Rules.legal(p).first);session.appendStudyPosition(try Rules.apply(p,m).sfen,label:"続き")}
+        let variationEnd=session.study.positions.last!;XCTAssertEqual(session.study.moves,67)
+        // Stepping back past the fork without choosing a branch resumes the original record.
+        for ply in stride(from:66,through:64,by:-1){XCTAssertTrue(session.focusStudyPly(ply))}
+        XCTAssertEqual(session.study.moves,79);XCTAssertTrue(session.focusStudyPly(65));XCTAssertEqual(session.studyNode,65);XCTAssertEqual(session.study.positions[65],record.positions[65])
+        XCTAssertTrue(session.focusStudyPly(session.study.moves));XCTAssertEqual(session.study.positions[session.cursor],record.positions[79])
+        let main=session.studyRows.first{$0.id==65},branch=session.studyRows.first{$0.id==variation}
+        XCTAssertEqual(main?.branch,1);XCTAssertEqual(branch?.branch,2);XCTAssertEqual(branch?.total,2)
+        // A branch chosen from the move list is kept by later prev/next until the main line is chosen again.
+        XCTAssertTrue(session.selectStudyNode(variation));XCTAssertTrue(session.focusStudyPly(60));XCTAssertTrue(session.focusStudyPly(session.study.moves));XCTAssertEqual(session.study.positions[session.cursor],variationEnd)
+        XCTAssertTrue(session.selectStudyNode(70));XCTAssertTrue(session.focusStudyPly(60));XCTAssertTrue(session.focusStudyPly(session.study.moves));XCTAssertEqual(session.study.positions[session.cursor],record.positions[79])
+    }
     func testPersistentThreeWayVariationAt65()throws {
         let record=try KifParser.parse(String(contentsOf:fixture("kif"),encoding:.utf8))
         var session=CurrentSession();session.study=record;session.cursor=64

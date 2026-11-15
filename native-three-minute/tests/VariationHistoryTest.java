@@ -5,6 +5,24 @@ public final class VariationHistoryTest {
  static void ok(boolean value,String message){checks++;if(!value)throw new AssertionError(message);}
  static void select(StudySession s,EvaluationHistory h,int node){List<String> path=h.keysTo(node);ok(s.seek(path,path.size()-1)&&h.selectNode(node),"tree selection restores board");s.game.turn=h.side();ok(EvaluationHistory.key(s.game).equals(h.points.get(h.cursor).key),"board, hands and selected node agree");}
  static void play(StudySession s,EvaluationHistory h,ShogiGame.Move move){int side=s.game.turn;String label=StudyAnalysis.notation(s.game,move);ok(move.drop>0?s.drop(side,move.drop,move.row,move.col):s.move(move.fromRow,move.fromCol,move.row,move.col,move.promote),"legal move accepted");h.advance(EvaluationHistory.key(s.game),label);h.side(-side);s.game.turn=-side;}
+ static void step(StudySession s,EvaluationHistory h,int index){ok(s.seek(h.keys(),index)&&h.seek(index),"step navigation accepted");s.game.turn=h.side();ok(EvaluationHistory.key(s.game).equals(h.points.get(h.cursor).key),"board follows step navigation");}
+ /** Prev/next without choosing a branch keeps the original record as the main line. */
+ static void mainLineNavigation(KifRecord record){
+  EvaluationHistory h=new EvaluationHistory();h.load(record);StudySession s=new StudySession();ok(s.seek(h.keys(),h.cursor),"record restored");
+  while(h.cursor>64)step(s,h,h.cursor-1);ok(h.points.size()==80,"stepping back keeps the record continuation");
+  ShogiGame.Move move=null;for(ShogiGame.Move m:s.game.legal(s.game.turn)){ShogiGame after=UsiPosition.studyPosition(h.points.get(64).key);after.turn=s.game.turn;after.apply(m,after.turn);if(!EvaluationHistory.key(after).equals(record.positions.get(65))){move=m;break;}}
+  play(s,h,move);int variation=h.currentNode();for(int i=0;i<3;i++)play(s,h,s.game.legal(s.game.turn).get(0));String variationEnd=EvaluationHistory.key(s.game);ok(h.cursor==68&&h.points.size()==69,"AI study variation is displayed while it is played");
+  ok(h.rows().stream().anyMatch(row->row.node==65&&row.label.contains("本譜 1/2"))&&h.rows().stream().anyMatch(row->row.node==variation&&row.label.contains("変化1 2/2")),"move list names the main line and the variation");
+  while(h.cursor>64)step(s,h,h.cursor-1);ok(h.points.size()==80&&h.points.get(65).key.equals(record.positions.get(65)),"back at the fork the original record is the continuation");
+  step(s,h,65);ok(h.currentNode()==65&&EvaluationHistory.key(s.game).equals(record.positions.get(65)),"next follows the original record, not the AI study variation");
+  step(s,h,h.points.size()-1);ok(h.cursor==79&&EvaluationHistory.key(s.game).equals(record.positions.get(79)),"final follows the original record");
+  step(s,h,0);step(s,h,h.points.size()-1);ok(h.cursor==79,"initial then final stays on the original record");
+  select(s,h,variation);ok(h.points.size()==69&&h.points.get(68).key.equals(variationEnd),"choosing a variation shows its continuation");
+  while(h.cursor>60)step(s,h,h.cursor-1);while(h.cursor<h.points.size()-1)step(s,h,h.cursor+1);ok(EvaluationHistory.key(s.game).equals(variationEnd),"a chosen variation is kept by prev/next");
+  select(s,h,70);while(h.cursor>60)step(s,h,h.cursor-1);while(h.cursor<h.points.size()-1)step(s,h,h.cursor+1);ok(EvaluationHistory.key(s.game).equals(record.positions.get(79)),"choosing a record move restores the main line");
+  select(s,h,64);play(s,h,recordMove(s,record.positions.get(65)));ok(h.currentNode()==65&&h.points.size()==80,"replaying the record move rejoins the main line with its continuation");
+ }
+ static ShogiGame.Move recordMove(StudySession s,String key){for(ShogiGame.Move m:s.game.legal(s.game.turn)){ShogiGame after=StudyAnalysis.snapshot(s.game,s.game.turn);after.apply(m,after.turn);if(EvaluationHistory.key(after).equals(key))return m;}throw new AssertionError("record move not legal");}
  public static void main(String[] args)throws Exception {
   KifRecord record=KifRecord.parse(Files.readString(Path.of("tests/fixtures/shogi_quest_79.kif")));
   EvaluationHistory h=new EvaluationHistory();h.load(record);StudySession s=new StudySession();select(s,h,64);
@@ -22,6 +40,7 @@ public final class VariationHistoryTest {
   select(s,h,64);int count=h.rows().size(); // Replay a known existing child using its key.
   h.advance(record.positions.get(65));ok(h.currentNode()==65&&h.rows().size()==count,"same continuation reuses node and retains later moves");
   EvaluationHistory legacy=new EvaluationHistory();legacy.points.add(new EvaluationHistory.Point(record.positions.get(0)));legacy.points.add(new EvaluationHistory.Point(record.positions.get(1)));legacy.cursor=1;ok(legacy.rows().size()==2&&legacy.selectNode(0)&&legacy.points.size()==2,"legacy linear history migrates without losing future");
+  mainLineNavigation(record);
   System.out.println("PASS persistent variation tree: "+checks+" assertions");
  }
 }

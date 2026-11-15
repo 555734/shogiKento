@@ -337,7 +337,10 @@ public final class NativeSmokeTest extends Instrumentation {
    for(ShogiGame.Move m:legal){if(picked==2)break;v.jumpStudyNode(64);ShogiGame after=StudyAnalysis.snapshot(v.game,v.analysisSide);after.apply(m,after.turn);if(EvaluationHistory.key(after).equals(record.positions.get(65)))continue;
     check(v.commitStudyMove(m.fromRow,m.fromCol,m.row,m.col,m.drop,v.analysisSide,m.promote),"65th-ply variation entered through normal commit");roots[++picked]=v.evalHistory.currentNode();
     for(int j=0;j<2;j++){ShogiGame.Move reply=v.game.legal(v.analysisSide).get(0);check(v.commitStudyMove(reply.fromRow,reply.fromCol,reply.row,reply.col,reply.drop,v.analysisSide,reply.promote),"variation continuation entered");}endings[picked]=EvaluationHistory.key(v.game);
-   }check(picked==2&&v.evalHistory.rows().stream().filter(row->row.ply==65&&row.branches==3).count()==3,"three variations at ply 65");v.save();activity.finish();
+   }check(picked==2&&v.evalHistory.rows().stream().filter(row->row.ply==65&&row.branches==3).count()==3,"three variations at ply 65");
+   while(v.evalHistory.cursor>64)v.jumpStudy(v.evalHistory.cursor-1);v.jumpStudy(v.evalHistory.cursor+1);check(v.evalHistory.currentNode()==65&&EvaluationHistory.key(v.game).equals(record.positions.get(65)),"prev/next without choosing a branch follows the original record");
+   v.jumpStudy(v.evalHistory.points.size()-1);check(v.evalHistory.cursor==79&&EvaluationHistory.key(v.game).equals(record.positions.get(79)),"final without choosing a branch reaches the original record end");
+   check(v.evalHistory.rows().stream().anyMatch(row->row.node==65&&row.label.contains("本譜 1/3")),"move list marks the original record as the main line");v.save();activity.finish();
   });waitForIdleSync();activity=(MainActivity)startActivitySync(intent);v=activity.view;waitForIdleSync();noClipboardDialog();chooseMode(MainActivity.STUDY);
   for(int branch=0;branch<3;branch++){
    int node=roots[branch],selected=branch;int[] rowIndex={-1};main(()->{v.studyMoves();List<EvaluationHistory.Row> rows=v.evalHistory.rows();for(int i=0;i<rows.size();i++)if(rows.get(i).node==node)rowIndex[0]=i;check(rowIndex[0]>=0,"branch listed after recreation");activity.choiceDialog.getListView().setSelection(rowIndex[0]);});waitForIdleSync();screenshot("50_variation_65_"+branch+".png");

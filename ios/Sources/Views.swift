@@ -133,11 +133,11 @@ struct MoveListView:View {
     @Environment(\.dismiss) var dismiss
     var body:some View{NavigationStack{ScrollViewReader{proxy in
         List {
-            Section {Text("分岐を選ぶとその局面へ移動します。「次へ」「最終」で選んだ分岐の続きも確認できます。").font(.caption).foregroundStyle(.secondary)}
+            Section {Text("「次へ」「最終」は本譜（元の棋譜）を進みます。分岐を選ぶとその局面へ移動し、以後は選んだ分岐の続きを進みます。").font(.caption).foregroundStyle(.secondary)}
             ForEach(model.session.studyRows){row in
                 Button{model.selectStudyNode(row.id);dismiss()}label:{HStack(alignment:.top,spacing:6){
                     Text(String(repeating:"│ ",count:min(6,row.indent))+(row.total>1 ? "├─":"●")).font(.system(.caption,design:.monospaced)).foregroundStyle(gold)
-                    VStack(alignment:.leading,spacing:3){Text(row.label);if row.total>1{Text("\(row.ply)手目の分岐 \(row.branch)/\(row.total)").font(.caption).foregroundStyle(.secondary)}}
+                    VStack(alignment:.leading,spacing:3){Text(row.label);if row.total>1{Text("\(row.ply)手目の"+(row.branch==1 ? "本譜":"変化\(row.branch-1)")+" \(row.branch)/\(row.total)").font(.caption).foregroundStyle(.secondary)}}
                     Spacer();if row.current{Image(systemName:"checkmark.circle.fill").foregroundStyle(gold)}
                 }}.id(row.id).accessibilityIdentifier("move_\(row.id)")
             }
