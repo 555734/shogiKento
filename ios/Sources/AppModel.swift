@@ -16,6 +16,8 @@ import UIKit
     /// The latest move's visual effect and the destination square it draws itself (BoardEffects.swift).
     @Published var moveEffect:MoveEffect?
     @Published var effectHiddenSquare:Int?
+    @Published var handPending:HandSlot?
+    @Published var handPop:HandSlot?
     @Published var candidates=[Candidate]()
     @Published private(set) var candidatePosition=""
     var boardCandidates:[Candidate] {screen == .study && candidatePosition==position.sfen ? Array(candidates.prefix(3)):[]}

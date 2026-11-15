@@ -67,7 +67,7 @@ public final class MainActivity extends Activity {
    @Override public RectF handSlot(int side,int n,int[][] hands){return BoardView.this.handSlot(side,n,hands);}
    @Override public float boardPieceHeight(){return BoardView.this.boardPieceHeight();}
    @Override public float handPieceHeight(){return commonHeight(32,34);}
-   @Override public void drawPieceAt(Canvas c,int p,float x,float y,float height){drawPiece(c,p,new RectF(x-20,y-20,x+20,y+20),height);}
+   @Override public void drawPieceAt(Canvas c,int p,float x,float y,float height,float scaleX){c.save();if(scaleX!=1)c.scale(scaleX,1,x,y);drawPiece(c,p,new RectF(x-20,y-20,x+20,y+20),height);c.restore();}
   };
   TestAdCard adCard;int adMode=-1;float interceptDownX,interceptDownY;
   MatchJournal matchJournal;
@@ -104,7 +104,7 @@ public final class MainActivity extends Activity {
   void archiveMatch(){if(matchJournal==null||!matchJournal.matches(match))matchJournal=new MatchJournal(match);if(!matchStarted&&match.movesPlayed==0&&match.winner==0)return;try{records.save(matchJournal.record(match));}catch(IOException e){archiveError(e);}}
   BoardEffects.Snapshot applyMatchMove(ShogiGame.Move move,int side){if(matchJournal==null||!matchJournal.matches(match))matchJournal=new MatchJournal(match);String label=matchJournal.label(game,move);BoardEffects.Snapshot before=BoardEffects.Snapshot.of(game);game.apply(move,side);matchJournal.moved(game,label);pieceMoved(move,side,before);return before;}
   /** Starts the visual move effect; the game state is already updated. */
-  void pieceMoved(ShogiGame.Move m,int mover,BoardEffects.Snapshot before){effects.reduced=settings.reducedEffects();effects.move(m,mover,game.board[m.row][m.col],before,geometry,SystemClock.uptimeMillis());invalidate();}
+  void pieceMoved(ShogiGame.Move m,int mover,BoardEffects.Snapshot before){effects.reduced=settings.reducedEffects();effects.move(m,mover,before,BoardEffects.Snapshot.of(game),game.checked(game.turn),game.turn,geometry,SystemClock.uptimeMillis());invalidate();}
   RectF handSlot(int side,int n,int[][] hands){int slot=side==1?0:1,count=0,i=0;for(int k=1;k<=handLimit();k++)if(hands[slot][k]>0||k==n){if(k<n)i++;count++;}float x=handX(i,count);if(mode==ONLINE&&side!=viewSide())x=400-x;float y=side==viewSide()?bottomHandY():topHandY();return new RectF(x-16,y+3,x+16,y+37);}
   void cancelCpu(){handler.removeCallbacks(cpu);handler.removeCallbacks(analysisTask);analysisRevision++;ai.cancel();thinking=false;analyzing=false;}
   void refreshAnalysis(){
@@ -204,10 +204,10 @@ public final class MainActivity extends Activity {
    if(mode==ONLINE){onlineKomadai(c,side,y);return;}
    darkPanel(c,new RectF(4,y,396,y+44));leftText(c,mode==MATCH||mode==ONLINE?(side==viewSide()?"あなた":mode==ONLINE?"相手":"CPU")+"・"+(side==1?"先手":"後手"):(side==1?"先手":"後手"),12,y+15,10.5f,Color.WHITE);
    if(mode==MATCH)clockPanel(c,y,game.remaining[side==1?0:1],started&&game.turn==side&&game.winner==0);else if(mode==ONLINE){OnlineGame g=online.game;clockPanel(c,y,Math.max(0,g.remaining(side,SystemClock.elapsedRealtime())),g.started&&game.turn==side&&!g.over());}else leftText(c,"検討・時計なし",12,y+34,8.7f,0xffc5c0b9);
-   int count=handCount(side);if(count==0){text(c,"持ち駒なし",302,y+27,9,0xffc5c0b9);return;}
-   int i=0;for(int n=1;n<=handLimit();n++)if(game.hands[side==1?0:1][n]>0){float x=handX(i,count);
+   int count=handCount(side);if(count==0){text(c,"持ち駒なし",302,y+27,9,0xffc5c0b9);return;}long frame=SystemClock.uptimeMillis();
+   int i=0;for(int n=1;n<=handLimit();n++)if(game.hands[side==1?0:1][n]>0){float x=handX(i,count);int shown=game.hands[side==1?0:1][n]-(effects.handPending(side,n,frame)?1:0);
     if(selectedSide==side&&selectedHand==n)fitted(c,"ui/highlight_selected_gold.png",new RectF(x-19,y,x+19,y+44),false);
-    RectF dst=new RectF(x-16,y+3,x+16,y+37);drawPiece(c,side*n,dst,commonHeight(dst.width(),dst.height()));text(c,""+game.hands[side==1?0:1][n],x+13,y+41,9,Color.WHITE);i++;
+    RectF dst=new RectF(x-16,y+3,x+16,y+37);if(shown>0){float pop=effects.handScale(side,n,frame);drawPiece(c,side*n,dst,commonHeight(dst.width(),dst.height())*pop);text(c,""+shown,x+13,y+41,9*pop,Color.WHITE);}i++;
    }
   }
   @Override protected void onSizeChanged(int w,int h,int ow,int oh){layoutBoard(w,h);}
@@ -517,7 +517,8 @@ public final class MainActivity extends Activity {
    int count=handCount(side);if(count==0){styledText(c,"持ち駒なし",me?378:22,y+27,9,0x80fff1d6,false,me?Paint.Align.RIGHT:Paint.Align.LEFT,null);return;}
    int i=0;for(int n=1;n<=handLimit();n++)if(game.hands[side==1?0:1][n]>0){float x=me?handX(i,count):400-handX(i,count);
     if(selectedSide==side&&selectedHand==n){paint.reset();paint.setAntiAlias(true);paint.setColor(0x73ffd27a);c.drawRoundRect(new RectF(x-19,y+2,x+19,y+42),7,7,paint);}
-    RectF dst=new RectF(x-16,y+3,x+16,y+37);drawPiece(c,side*n,dst,commonHeight(dst.width(),dst.height()));int k=game.hands[side==1?0:1][n];
+    long frame=SystemClock.uptimeMillis();int k=game.hands[side==1?0:1][n]-(effects.handPending(side,n,frame)?1:0);float pop=effects.handScale(side,n,frame);
+    RectF dst=new RectF(x-16,y+3,x+16,y+37);if(k>0)drawPiece(c,side*n,dst,commonHeight(dst.width(),dst.height())*pop);
     if(k>1){paint.reset();paint.setAntiAlias(true);paint.setColor(GOLD);c.drawCircle(x+13,y+37,6.5f,paint);styledText(c,""+k,x+13,y+40.5f,9,INK,true,Paint.Align.CENTER,null);}i++;}
   }
   /** Avatar, name, rating and side, and the clock: the side to move glows gold and turns red under 30 seconds. */

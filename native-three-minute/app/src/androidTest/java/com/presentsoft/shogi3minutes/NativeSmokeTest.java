@@ -377,6 +377,16 @@ public final class NativeSmokeTest extends Instrumentation {
   // Item 2: a capture plays the stronger capture sound instead of the placement sound.
   main(()->{activity.settings.sound(true);activity.settings.volume(65);v.restart();v.started=true;v.clock.resume(SystemClock.elapsedRealtime(),true);boolean sente=v.humanSide()==1;v.game.turn=v.humanSide();if(sente)v.game.board[5][0]=-1;else v.game.board[3][8]=1;int captures=v.sounds.kindCounts[MoveSound.Kind.CAPTURE.ordinal()];
    v.move(sente?new ShogiGame.Move(6,0,5,0,false,0):new ShogiGame.Move(2,8,3,8,false,0));v.cancelCpu();check(v.game.hands[ShogiGame.slot(v.humanSide())][1]==1&&v.sounds.kindCounts[MoveSound.Kind.CAPTURE.ordinal()]==captures+1&&v.sounds.lastKind==MoveSound.Kind.CAPTURE,"capture plays the capture sound");});
+  // Item 3: the captured pawn flies to the komadai (count updates on arrival), promotion flips, check shows 王手 and blinks the king.
+  main(()->{long now=SystemClock.uptimeMillis();int side=v.humanSide();check(v.effects.handPending(side,1,now)&&v.effects.captured!=0,"captured piece is in flight; komadai count waits");});SystemClock.sleep(80);screenshot("61_capture_flight.png");
+  SystemClock.sleep(600);main(()->{long now=SystemClock.uptimeMillis();check(!v.effects.handPending(v.humanSide(),1,now)&&!v.effects.active(now),"capture effect finished; komadai shows the new count");});
+  main(()->{v.restart();v.started=true;v.clock.resume(SystemClock.elapsedRealtime(),true);boolean sente=v.humanSide()==1;v.game.turn=v.humanSide();
+   if(sente){v.game.board[3][0]=1;}else{v.game.board[5][8]=-1;}v.move(sente?new ShogiGame.Move(3,0,2,0,true,0):new ShogiGame.Move(5,8,6,8,true,0));v.cancelCpu();long now=SystemClock.uptimeMillis();
+   check(v.effects.promoted&&Math.abs(v.effects.piece)==9&&Math.abs(v.effects.pieceBefore)==1&&v.sounds.lastKind==MoveSound.Kind.PROMOTE,"promotion flips from pawn to tokin with the promotion sound");});SystemClock.sleep(230);screenshot("62_promotion_flip.png");SystemClock.sleep(500);
+  main(()->{v.restart();v.started=true;v.clock.resume(SystemClock.elapsedRealtime(),true);boolean sente=v.humanSide()==1;v.game.turn=v.humanSide();
+   if(sente){v.game.board[0][4]=0;v.game.board[4][1]=-8;}else{v.game.board[8][4]=0;v.game.board[4][7]=8;}v.move(sente?new ShogiGame.Move(6,1,5,1,false,0):new ShogiGame.Move(2,7,3,7,false,0));v.cancelCpu();
+   check(v.effects.checkRow==4&&v.effects.checkCol==(sente?1:7)&&v.sounds.lastKind==MoveSound.Kind.CHECK,"check marks the checked king and plays the check sound");});SystemClock.sleep(300);screenshot("63_check_banner.png");SystemClock.sleep(600);
+  main(()->check(!v.effects.active(SystemClock.uptimeMillis()),"check banner gone after its 600ms"));
   main(()->{activity.settings.reducedEffects(false);v.restart();});
  }
  void analysisReadyIfPossible(){main(()->v.refreshAnalysis());if(!v.game.legal(v.analysisSide).isEmpty())analysisReady();}

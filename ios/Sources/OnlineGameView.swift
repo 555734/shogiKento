@@ -111,9 +111,9 @@ private struct OnlineKomadai:View {
     var body:some View {
         HStack(spacing:4){
             if counts.isEmpty{Text("持ち駒なし").font(.caption2).foregroundStyle(cream.opacity(0.45))}
-            ForEach(counts,id:\.0){p,n in
+            ForEach(counts,id:\.0){p,total in let n=model.shownHand(side,p)
                 Button{model.selectHand(p,side:side)}label:{ZStack(alignment:.bottomTrailing){
-                    Image(uiImage:AppAssets.piece(p*side)).resizable().scaledToFit().rotationEffect(.degrees(side*model.viewSide<0 ? 180:0))
+                    Image(uiImage:AppAssets.piece(p*side)).resizable().scaledToFit().rotationEffect(.degrees(side*model.viewSide<0 ? 180:0)).opacity(n>0 ? 1:0).scaleEffect(model.handPop==HandSlot(side:side,piece:p) ? 1.28:1)
                     if n>1{Text(verbatim:"\(n)").font(.system(size:11,weight:.heavy)).foregroundStyle(ink).frame(minWidth:15,minHeight:15).background(Circle().fill(gold))}
                 }.frame(width:34,height:38).padding(2).background(RoundedRectangle(cornerRadius:6).fill(model.selectedHand==p && model.selectedSide==side ? gold.opacity(0.45):.clear))}
                 .buttonStyle(.plain).anchorPreference(key:ArrowAnchorKey.self,value:.bounds){["hand_\(side)_\(p)":$0]}.accessibilityIdentifier("hand_\(side)_\(p)")
