@@ -1,0 +1,1 @@
+FAIL: java.lang.AssertionError: visible native dialog button clicked: 成らない
