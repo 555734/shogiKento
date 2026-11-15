@@ -56,7 +56,7 @@ public final class MainActivity extends Activity {
  void archiveError(Exception e){android.util.Log.e("Shogi","Record archive failed",e);if(!archiveErrorShown){archiveErrorShown=true;android.widget.Toast.makeText(this,"棋譜を保存できません："+e.getMessage(),android.widget.Toast.LENGTH_LONG).show();}}
  void showSettings(){showChoice(FeedbackSettingsDialog.create(this));}
  void coffeeChanged(){if(view==null)return;view.layoutBoard(view.getWidth(),view.getHeight());view.updateAd();view.requestLayout();int budget=view.matchOptions().nodes();if(view.nodeBudget!=budget){view.cancelCpu();view.nodeBudget=budget;if(resumed&&view.mode==MATCH)view.scheduleCpu();}view.invalidate();}
- void scheduleCoffeeOffer(){if(view==null)return;view.handler.postDelayed(()->{if(!resumed||!hasWindowFocus()||choiceDialog!=null||view.matchSettingsOpen||view.dialogOpen||view.mode==ONLINE||!coffee.wantsPrompt()||BuildConfig.DEBUG&&getIntent().getBooleanExtra("coffee_test_suppress",false))return;coffee.promptPending=false;showCoffee();},1200);}
+ void scheduleCoffeeOffer(){if(view==null)return;view.handler.postDelayed(()->{if(!resumed||!hasWindowFocus()||choiceDialog!=null||view.matchSettingsOpen||view.dialogOpen||view.pick!=null||view.mode==ONLINE||!coffee.wantsPrompt()||BuildConfig.DEBUG&&getIntent().getBooleanExtra("coffee_test_suppress",false))return;coffee.promptPending=false;showCoffee();},1200);}
  void showCoffee(){if(coffeeDialogOpen)return;coffee.promptPending=false;coffeeDialogOpen=true;view.pauseMode();if(!coffee.fixture)coffee.queryOrConnect();AlertDialog dialog=CoffeeDialog.create(this);showChoice(dialog);dialog.setOnDismissListener(d->{coffeeDialogOpen=false;if(choiceDialog==dialog)choiceDialog=null;if(resumed){view.resumeMode();clipboardImport.schedule();}scheduleCoffeeOffer();});}
  void showArchive(){launchingArchive=true;view.save();startActivityForResult(new android.content.Intent(this,RecordArchiveActivity.class).putExtra("ads_fixture",getIntent().getBooleanExtra("ads_fixture",false)).putExtra("coffee_test_suppress",BuildConfig.DEBUG&&getIntent().getBooleanExtra("coffee_test_suppress",false)),41);}
  @Override protected void onActivityResult(int request,int result,android.content.Intent data){super.onActivityResult(request,result,data);if(request!=41||result!=RESULT_OK||data==null)return;try{SavedRecord record=records.read(data.getStringExtra("record_id"));Runnable open=()->view.openSavedRecord(record);boolean occupied=view.evalHistory.points.size()>1||view.evalHistory.imported||!EvaluationHistory.key(view.study.game).equals(EvaluationHistory.key(new ShogiGame()));if(occupied)showChoice(new AlertDialog.Builder(this).setTitle("検討棋譜の置き換え").setMessage("保存した棋譜を開き、現在の検討内容を置き換えますか？\n保存済みの棋譜は残ります。").setNegativeButton("キャンセル",null).setPositiveButton("開く",(d,k)->open.run()).create());else open.run();}catch(IOException e){showChoice(new AlertDialog.Builder(this).setTitle("棋譜を開けません").setMessage(e.getMessage()).setPositiveButton("閉じる",null).create());}}
@@ -229,7 +229,7 @@ public final class MainActivity extends Activity {
    observeFlow();
    if(mode==ONLINE)onlineTopBar(c);
    if(mode==MATCH){darkPanel(c,new RectF(4,0,396,32));text(c,"モード",45,22,11,0xfff5e4c8);text(c,"やり直し",145,22,10.5f,Color.WHITE);text(c,"対局設定",253,22,10.5f,Color.WHITE);paint.setColor(0xff285681);c.drawRoundRect(320,4,391,29,3,3,paint);text(c,"投了",355,22,11,Color.WHITE);}
-   hand(c,-viewSide(),topHandY());board(c);if(lastMove!=null&&selectedR<0&&selectedHand==0)fitted(c,"ui/highlight_move_target_pink.png",cell(lastMove.row,lastMove.col),false);selectionColors(c);long frame=SystemClock.uptimeMillis();for(int r=0;r<9;r++)for(int col=0;col<9;col++)if(game.board[r][col]!=0&&!effects.hides(r,col,frame))boardPiece(c,game.board[r][col],cell(r,col));hand(c,viewSide(),bottomHandY());if(mode!=STUDY)effects.draw(c,geometry,frame);drawCandidateArrows(c);
+   hand(c,-viewSide(),topHandY());board(c);if(lastMove!=null&&selectedR<0&&selectedHand==0)fitted(c,"ui/highlight_move_target_pink.png",cell(lastMove.row,lastMove.col),false);selectionColors(c);long frame=SystemClock.uptimeMillis();for(int r=0;r<9;r++)for(int col=0;col<9;col++)if(game.board[r][col]!=0&&!effects.hides(r,col,frame))boardPiece(c,game.board[r][col],cell(r,col));hand(c,viewSide(),bottomHandY());if(mode!=STUDY)effects.draw(c,geometry,frame);drawCandidateArrows(c);drawPick(c);
    if(mode==MATCH){String status=game.winner==2?game.result:game.winner!=0?(game.winner==humanSide()?"勝利":"敗北")+"・"+game.result:!ai.ready?(aiError==null?"AI読み込み中…":"AIエラー・対局設定から再試行"):!started?"タップして対局開始":game.turn==humanSide()?(game.checked(humanSide())?"王手です・あなたの手番":"あなたの手番"):"CPUの手番";text(c,status,200,bottomHandY()+64,12,Color.WHITE);if(!started){paint.setColor(0xe0300909);c.drawRoundRect(75,H/2-35,325,H/2+35,12,12,paint);text(c,ai.ready?"対局開始":"AI読み込み中…",200,H/2+7,25,0xffffdd8b);}}else if(mode==ONLINE)onlineStatus(c);else analysisPanel(c);c.restore();
    if(effects.active(SystemClock.uptimeMillis()))postInvalidateOnAnimation();
   }
@@ -351,7 +351,7 @@ public final class MainActivity extends Activity {
    if(game.winner!=0&&!flowEnded){flowEnded=true;onGameEnd();}else if(game.winner==0)flowEnded=false;}
   void onGameStart(){if(resumed)sounds.play(MoveSound.Kind.START);}
   void onGameEnd(){if(resumed)sounds.play(MoveSound.Kind.END);}
-  void clearSelection(){selectedR=selectedC=-1;selectedHand=0;highlights=Collections.emptyList();invalidate();}
+  void clearSelection(){pick=null;selectedR=selectedC=-1;selectedHand=0;highlights=Collections.emptyList();invalidate();}
   void select(){
    ArrayList<ShogiGame.Move> list=new ArrayList<>();int side=mode==MATCH||mode==ONLINE?viewSide():selectedSide;
    if(mode==STUDY&&freePlacement){for(int r=0;r<9;r++)for(int c=0;c<9;c++){
@@ -361,17 +361,28 @@ public final class MainActivity extends Activity {
    highlights=list;invalidate();
   }
   void move(ShogiGame.Move m){if(mode==ONLINE){OnlineGame g=online.game;BoardEffects.Snapshot before=g==null?null:BoardEffects.Snapshot.of(g.game);if(g!=null&&g.localMove(m,SystemClock.elapsedRealtime())){pieceMoved(m,g.mySide,before);placementSound(moveKind(m,before));lastMove=m;syncAccount();}clearSelection();return;}clock.settle(SystemClock.elapsedRealtime());if(mode!=MATCH||!started||game.winner!=0||game.turn!=humanSide())return;placementSound(moveKind(m,applyMatchMove(m,humanSide())));lastMove=m;clearSelection();save();scheduleCpu();}
-  void promotionChoice(Runnable promote,Runnable plain){
-   dialogOpen=true;AlertDialog d=new AlertDialog.Builder(MainActivity.this).setTitle("成りますか？")
-    .setPositiveButton("成る",(x,k)->promote.run()).setNegativeButton("成らない",(x,k)->plain.run()).setNeutralButton("キャンセル",null).create();
-   d.setOnDismissListener(x->{dialogOpen=false;if(choiceDialog==d)choiceDialog=null;invalidate();});choiceDialog=d;d.show();
-  }
+  /** On-board promotion choice: the promoted and the unpromoted piece side by side at the destination, no OS dialog. */
+  static final class PromotionPick {final int row,col,side,base;final Runnable promote,plain;final boolean edit;
+   PromotionPick(int row,int col,int side,int base,Runnable promote,Runnable plain,boolean edit){this.row=row;this.col=col;this.side=side;this.base=base;this.promote=promote;this.plain=plain;this.edit=edit;}}
+  PromotionPick pick;
+  void promotionChoice(int r,int c,int side,int base,Runnable promote,Runnable plain){pick=new PromotionPick(r,c,side,base,promote,plain,false);invalidate();}
+  /** [promoted option, unpromoted option], next to each other over the destination and kept inside the board. */
+  RectF[] pickRects(){RectF cell=cell(pick.row,pick.col),a=gridCell(0,0),z=gridCell(8,8);float w=cell.width()*1.3f,h=cell.height()*1.3f,gap=6,total=w*2+gap;
+   float left=Math.max(a.left+2,Math.min(z.right-2-total,cell.centerX()-total/2)),top=Math.max(a.top+2,Math.min(z.bottom-2-h,cell.centerY()-h/2));
+   return new RectF[]{new RectF(left,top,left+w,top+h),new RectF(left+w+gap,top,left+total,top+h)};}
+  void drawPick(Canvas c){if(pick==null)return;RectF[] r=pickRects();RectF all=new RectF(r[0].left-6,r[0].top-6,r[1].right+6,r[1].bottom+18);
+   paint.reset();paint.setAntiAlias(true);paint.setColor(0xd0200807);c.drawRoundRect(all,10,10,paint);
+   for(int i=0;i<2;i++){paint.reset();paint.setAntiAlias(true);paint.setColor(i==0?0xfffff0d6:0xfff3e6cf);c.drawRoundRect(r[i],8,8,paint);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(2);paint.setColor(i==0?0xffe0392b:0xffb58a47);c.drawRoundRect(r[i],8,8,paint);
+    int p=pick.side*(i==0?pick.base+8:pick.base);drawPiece(c,p,r[i],Math.min(r[i].height()*.86f,boardPieceHeight()*1.15f));
+    text(c,pick.edit?(i==0?"成る":"元の駒"):(i==0?"成る":"成らない"),r[i].centerX(),r[i].bottom+13,10.5f,i==0?0xffffb4a8:Color.WHITE);}}
+  /** A tap on an option commits it; any other tap cancels the move. */
+  void choosePick(float x,float y){RectF[] r=pickRects();PromotionPick p=pick;pick=null;if(r[0].contains(x,y))p.promote.run();else if(r[1].contains(x,y))p.plain.run();else clearSelection();invalidate();}
   void choose(int r,int col){
    if(selectedHand==0&&selectedR==r&&selectedC==col){clearSelection();return;}
    ArrayList<ShogiGame.Move> list=new ArrayList<>();for(ShogiGame.Move m:highlights)if(m.row==r&&m.col==col)list.add(m);
    if(!list.isEmpty()){
     ShogiGame.Move pro=null,plain=null;for(ShogiGame.Move m:list){if(m.promote)pro=m;else plain=m;}
-    if(pro!=null&&plain!=null){ShogiGame.Move promoted=pro,unpromoted=plain;promotionChoice(()->move(promoted),()->move(unpromoted));}
+    if(pro!=null&&plain!=null){ShogiGame.Move promoted=pro,unpromoted=plain;int mover=ShogiGame.side(game.board[pro.fromRow][pro.fromCol]);promotionChoice(r,col,mover,ShogiGame.base(game.board[pro.fromRow][pro.fromCol]),()->move(promoted),()->move(unpromoted));}
     else move(list.get(0));return;
    }
    if(ShogiGame.side(game.board[r][col])==viewSide()){selectedR=r;selectedC=col;selectedHand=0;selectedSide=viewSide();select();}else clearSelection();
@@ -389,22 +400,25 @@ public final class MainActivity extends Activity {
     ArrayList<ShogiGame.Move> targets=new ArrayList<>();for(ShogiGame.Move m:highlights)if(m.row==r&&m.col==c)targets.add(m);
     if(!targets.isEmpty()){
      ShogiGame.Move pro=null,plain=null;for(ShogiGame.Move m:targets){if(m.promote)pro=m;else plain=m;}
-     int side=selectedSide;if(pro!=null&&plain!=null){ShogiGame.Move p=pro,n=plain;promotionChoice(()->commitStudyMove(p.fromRow,p.fromCol,p.row,p.col,p.drop,side,true),()->commitStudyMove(n.fromRow,n.fromCol,n.row,n.col,n.drop,side,false));}
+     int side=selectedSide;if(pro!=null&&plain!=null){ShogiGame.Move p=pro,n=plain;promotionChoice(r,c,ShogiGame.side(game.board[p.fromRow][p.fromCol]),ShogiGame.base(game.board[p.fromRow][p.fromCol]),()->commitStudyMove(p.fromRow,p.fromCol,p.row,p.col,p.drop,side,true),()->commitStudyMove(n.fromRow,n.fromCol,n.row,n.col,n.drop,side,false));}
      else{ShogiGame.Move m=targets.get(0);commitStudyMove(m.fromRow,m.fromCol,m.row,m.col,m.drop,side,m.promote);}return;
     }
     if(ShogiGame.side(game.board[r][c])==analysisSide){selectedR=r;selectedC=c;selectedHand=0;selectedSide=analysisSide;select();}else clearSelection();return;
    }
    if(selectedHand>0&&commitStudyMove(sr,sc,r,c,selectedHand,selectedSide,false))return;
    if(sr>=0&&study.canMove(sr,sc,r,c)){
-    if(study.canPromoteOnMove(sr,sc,r,c))promotionChoice(()->commitStudyMove(sr,sc,r,c,0,selectedSide,true),()->commitStudyMove(sr,sc,r,c,0,selectedSide,false));
+    if(study.canPromoteOnMove(sr,sc,r,c)){int mover=selectedSide;promotionChoice(r,c,ShogiGame.side(game.board[sr][sc]),ShogiGame.base(game.board[sr][sc]),()->commitStudyMove(sr,sc,r,c,0,mover,true),()->commitStudyMove(sr,sc,r,c,0,mover,false));}
     else commitStudyMove(sr,sc,r,c,0,selectedSide,false);return;
    }
    if(game.board[r][c]!=0){selectedR=r;selectedC=c;selectedHand=0;selectedSide=ShogiGame.side(game.board[r][c]);select();}else clearSelection();
   }
-  void promotionEditor(int r,int c){dialogOpen=true;String label=Math.abs(game.board[r][c])>8?"成りを戻す":"成る";AlertDialog d=new AlertDialog.Builder(MainActivity.this).setTitle("駒の変更").setNegativeButton("キャンセル",null).setPositiveButton(label,(x,k)->{study.togglePromotion(r,c);evalHistory.advance(EvaluationHistory.key(game));clearSelection();save();refreshAnalysis();}).create();d.setOnDismissListener(x->{dialogOpen=false;choiceDialog=null;invalidate();});choiceDialog=d;d.show();}
+  /** Free-placement promotion edit, on the board like the move choice: promoted or original face. */
+  void promotionEditor(int r,int c){int p=game.board[r][c];boolean promoted=Math.abs(p)>8;Runnable toggle=()->{study.togglePromotion(r,c);evalHistory.advance(EvaluationHistory.key(game));clearSelection();save();refreshAnalysis();};
+   pick=new PromotionPick(r,c,ShogiGame.side(p),ShogiGame.base(p),()->{if(!promoted)toggle.run();else clearSelection();},()->{if(promoted)toggle.run();else clearSelection();},true);invalidate();}
   void restart(){cancelCpu();effects.clear();if(mode==STUDY){study.reset();evalHistory.reset(EvaluationHistory.key(game));studyScroll=0;}else{save();match.restart();matchJournal=new MatchJournal(match);matchJournal.options=configuredMatchOptions();match.remaining[0]=match.remaining[1]=matchOptions().initialMillis();nodeBudget=matchOptions().nodes();matchJournal.options=matchOptions();matchStarted=false;started=false;clock=new MatchClock(game);}lastMove=null;clearSelection();save();if(mode==STUDY)refreshAnalysis();}
   boolean tapHand(float x,float y,int side,float top){if(y<top||y>=top+44)return false;int count=handCount(side),i=0;for(int n=1;n<=handLimit();n++)if(game.hands[side==1?0:1][n]>0){if(Math.abs(x-handX(i,count))<handStep(count)/2){if(mode==STUDY&&!freePlacement&&(side!=analysisSide||n==ShogiGame.OU)||selectedR<0&&selectedHand==n&&selectedSide==side){clearSelection();return true;}selectedR=selectedC=-1;selectedHand=n;selectedSide=side;select();return true;}i++;}return false;}
   @Override public boolean onTouchEvent(MotionEvent e){if(e.getAction()==MotionEvent.ACTION_CANCEL){gestures.onTouchEvent(e);clearSelection();return true;}if(e.getAction()==MotionEvent.ACTION_DOWN){longPressed=false;dragged=false;}gestures.onTouchEvent(e);if(e.getAction()!=MotionEvent.ACTION_UP)return true;performClick();if(dialogOpen||longPressed||dragged)return true;float x=(e.getX()-offsetX)/scale,y=e.getY()/scale+studyScroll;
+   if(pick!=null&&mode!=HOME){choosePick(x,y);return true;}
    if(mode==HOME){HomeScreen.Layout l=homeLayout();if(l.settings.contains(x,y))showSettings();else if(l.study.contains(x,y))enterMode(STUDY);else if(l.match.contains(x,y))enterMode(MATCH);else if(l.online.contains(x,y))enterMode(ONLINE);else if(l.paste.contains(x,y))clipboardImport.paste();else if(l.archive.contains(x,y))showArchive();return true;}
    if(mode==ONLINE)return onlineTouch(x,y);
    if(mode==MATCH)clock.settle(SystemClock.elapsedRealtime());if(mode==MATCH&&y<32){if(x<90){enterMode(HOME);return true;}if(x<200){new AlertDialog.Builder(MainActivity.this).setMessage("対局をやり直しますか？").setNegativeButton("キャンセル",null).setPositiveButton("やり直す",(d,k)->restart()).show();}else if(x<300)aiSettings();else if(started&&game.winner==0)new AlertDialog.Builder(MainActivity.this).setMessage("投了しますか？").setNegativeButton("戻る",null).setPositiveButton("投了",(d,k)->{clock.settle(SystemClock.elapsedRealtime());game.resign(humanSide());clearSelection();save();}).show();return true;}

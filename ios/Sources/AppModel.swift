@@ -76,12 +76,12 @@ import UIKit
     func sceneActive(_ value:Bool){if !value{tick()};active=value;lastTick=nil;if !value{NativeEngine.shared.cancel();thinking=false;analyzing=false;players.values.forEach{$0.stop()};save()}else if screen == .study{refreshAnalysis()}else if screen == .match{lastTick=ProcessInfo.processInfo.systemUptime;scheduleCPU()}}
     func tick(){if screen == .online{onlineTick();return};guard active,!matchSettingsOpen,screen == .match,session.matchStarted,session.winner==0 else{lastTick=nil;return};let now=ProcessInfo.processInfo.systemUptime;defer{lastTick=now};guard let before=lastTick else{return};let side=position.side==1 ? 0:1;session.clocks[side]=max(0,session.clocks[side]-(now-before));if session.clocks[side]==0{finish(winner:-position.side,result:"時間切れ")}}
     func clearSelection(){selected=nil;selectedHand=nil;targets=[];promotion=[]}
-    func selectHand(_ piece:Int,side:Int){guard humanInput,screen == .study && freePlacement || side==position.side else{clearSelection();return};if selectedHand==piece && selectedSide==side{clearSelection();return};selected=nil;selectedHand=piece;selectedSide=side;computeTargets()}
+    func selectHand(_ piece:Int,side:Int){if !promotion.isEmpty{clearSelection();return};guard humanInput,screen == .study && freePlacement || side==position.side else{clearSelection();return};if selectedHand==piece && selectedSide==side{clearSelection();return};selected=nil;selectedHand=piece;selectedSide=side;computeTargets()}
     func computeTargets(){
         if screen == .study && freePlacement{targets=(0..<81).compactMap{to in if let from=selected {guard from != to,position.board[to]*position.board[from]<=0 else{return nil};return Move(usi:Move.square(from)+Move.square(to))};guard let hand=selectedHand,position.board[to]==0 else{return nil};return Move(usi:String(Position.names[hand-1])+"*"+Move.square(to))};return}
         targets=((try? Rules.legal(position)) ?? []).filter{selectedHand != nil ? $0.drop==selectedHand:$0.source==selected && $0.drop==0}
     }
-    func tap(_ square:Int){guard humanInput else{return};if selected==square{clearSelection();return}
+    func tap(_ square:Int){if !promotion.isEmpty{clearSelection();return};guard humanInput else{return};if selected==square{clearSelection();return}
         let moves=targets.filter{$0.destination==square}
         if !moves.isEmpty {
             if screen == .study && freePlacement {let from=selected,drop=selectedHand ?? 0,mover=selectedSide;var next=position;if next.freeMove(source:from,drop:drop,side:mover,to:square){appendStudy(next,label:position.notation(moves[0]));feedback(human:true)};clearSelection();return}

@@ -27,7 +27,6 @@ struct RootView:View {
         .alert("検討棋譜の置き換え",isPresented:Binding(get:{model.archiveOffer != nil},set:{if !$0{model.archiveOffer=nil}})){Button("キャンセル",role:.cancel){model.archiveOffer=nil};Button("開く"){if let r=model.archiveOffer{model.archiveOffer=nil;model.open(r)}}}message:{Text("保存した棋譜を検討で開きますか？現在の検討内容を置き換えます。")}
         .alert("対局中です。投了して退出しますか？",isPresented:$leaveOnline){Button("キャンセル",role:.cancel){};Button("投了して退出",role:.destructive){model.enter(.home)}}
         .alert("エラー",isPresented:Binding(get:{model.error != nil},set:{if !$0{model.error=nil}})){Button("閉じる"){model.error=nil}}message:{Text(model.error ?? "")}
-        .confirmationDialog("成りますか？",isPresented:Binding(get:{!model.promotion.isEmpty},set:{if !$0{model.promotion=[]}}),titleVisibility:.visible){Button("成る"){if let move=model.promotion.first(where:{$0.promotes}){model.commit(move)}};Button("成らない"){if let move=model.promotion.first(where:{!$0.promotes}){model.commit(move)}};Button("キャンセル",role:.cancel){model.clearSelection()}}
     }
 }
 struct HomeView:View {
@@ -100,6 +99,7 @@ struct BoardView:View {
                         .accessibilityIdentifier("cell_\(square/9)_\(square%9)").accessibilityLabel("\(9-square%9)\(Array("一二三四五六七八九")[square/9]) \(Position.glyphs[abs(piece)])").accessibilityValue(model.selected==square ? "選択":target ? "移動可能":"")
                         .onLongPressGesture {model.togglePromotion(square)}
                 }}}}.padding(.horizontal,w*0.01).padding(.vertical,h*0.01)
+                if !model.promotion.isEmpty{PromotionPicker(size:CGSize(width:w,height:h))}
                 if !model.boardCandidates.isEmpty{CandidateArrows(candidates:model.boardCandidates,side:model.position.side,handDrops:Set((1...7).filter{model.position.hands[model.position.side==1 ? 0:1][$0]>0}))}
             }
         }
@@ -241,4 +241,31 @@ struct SettingsView:View {
     @ObservedObject private var adPrivacy=AdPrivacy.shared
     var body:some View{NavigationStack{Form{Section{Toggle("効果音（SE）",isOn:$sound).accessibilityIdentifier("sound");Text("効果音の音量 \(Int(volume))%");Slider(value:$volume,in:0...100,step:1).accessibilityIdentifier("volume");Button("効果音を試す"){model.previewSound()}.disabled(!sound || volume==0);Toggle("着手時のバイブレーション",isOn:$vibration).accessibilityIdentifier("vibration");Button("振動を試す"){UIImpactFeedbackGenerator(style:.light).impactOccurred()}.disabled(!vibration);Toggle("演出を減らす（低スペック端末向け）",isOn:$reducedEffects).accessibilityIdentifier("reduced_effects")}header:{Text("音・振動・演出の設定")}footer:{Text("設定は自動保存されます。音量・振動・消音は端末本体の設定にも従います。")};Section{Button(coffee.owned ? "☕ コーヒー応援・購入済み／復元":"☕ コーヒーを奢る・広告除去と最強AI"){coffeeSheet=true}.accessibilityIdentifier("coffee_settings")};Section{Text(AdPrivacy.testing ? "この版はGoogleの公式テスト広告のみを表示します。広告の取得で通信が発生します。本番配信・収益化は行いません。":"広告は年齢に配慮した内容に制限し、パーソナライズしません。広告の取得には通信が必要です。").font(.caption);if adPrivacy.optionsRequired{Button("広告のプライバシー設定"){adPrivacy.showOptions()}.accessibilityIdentifier("ad_privacy")}};Section{Button("ライセンスとAIについて"){licenses=true}}}.navigationTitle("設定").toolbar{Button("閉じる"){dismiss()}.accessibilityIdentifier("settings_close")}.sheet(isPresented:$coffeeSheet){CoffeeView()}.sheet(isPresented:$licenses){NavigationStack{ScrollView{Text(licenseText).font(.caption.monospaced()).padding()}.navigationTitle("ライセンス").toolbar{Button("閉じる"){licenses=false}}}}}}
     var licenseText:String {let header="やねうら王 9.80git / つようら王11micro\nエンジン GPL-3.0 / 評価関数 MIT\n対応ソースとビルド手順：https://github.com/555734/shogiKento\n\n";return header+["YaneuraOu-GPL-3.0","TsuyouraOu11micro-MIT"].compactMap{Bundle.main.url(forResource:$0,withExtension:"txt",subdirectory:"GameAssets/licenses").flatMap{try? String(contentsOf:$0,encoding:.utf8)}}.joined(separator:"\n\n")}
+}
+
+/// On-board promotion choice replacing the OS dialog: the promoted and the unpromoted piece side by side over the
+/// destination. Tapping either commits it; tapping anywhere else on the board or komadai cancels the move.
+struct PromotionPicker:View {
+    @EnvironmentObject var model:AppModel
+    let size:CGSize
+    var body:some View {
+        if let pro=model.promotion.first(where:{$0.promotes}),let plain=model.promotion.first(where:{!$0.promotes}),let source=pro.source {
+            let geo=BoardGeometry(rect:CGRect(origin:.zero,size:size),viewSide:model.viewSide),cell=geo.cell,center=geo.center(pro.destination)
+            let w=cell.width*1.3,h=cell.height*1.3,gap:CGFloat=6,total=w*2+gap,piece=model.position.board[source],sign=piece>0 ? 1:-1
+            let left=max(size.width*0.01+2,min(size.width*0.99-2-total,center.x-total/2)),top=max(size.height*0.01+2,min(size.height*0.99-2-h-16,center.y-h/2))
+            HStack(spacing:gap){
+                option(sign*(abs(piece)+8),"成る",pro,width:w,height:h,primary:true).accessibilityIdentifier("promote_yes")
+                option(piece,"成らない",plain,width:w,height:h,primary:false).accessibilityIdentifier("promote_no")
+            }.padding(6).background(RoundedRectangle(cornerRadius:10).fill(Color(red:0.13,green:0.03,blue:0.03).opacity(0.82)))
+            .position(x:left+total/2,y:top+h/2+8)
+        }
+    }
+    func option(_ piece:Int,_ label:String,_ move:Move,width:CGFloat,height:CGFloat,primary:Bool)->some View {
+        Button{model.commit(move)}label:{VStack(spacing:2){
+            Image(uiImage:AppAssets.piece(piece)).resizable().scaledToFit().rotationEffect(.degrees(piece*model.viewSide<0 ? 180:0)).padding(4)
+                .frame(width:width,height:height).background(RoundedRectangle(cornerRadius:8).fill(Color(red:1,green:0.94,blue:0.84)))
+                .overlay(RoundedRectangle(cornerRadius:8).stroke(primary ? Color(red:0.88,green:0.22,blue:0.17):Color(red:0.71,green:0.54,blue:0.28),lineWidth:2))
+            Text(label).font(.system(size:11,weight:.bold)).foregroundStyle(primary ? Color(red:1,green:0.7,blue:0.66):.white)
+        }}.buttonStyle(.plain)
+    }
 }

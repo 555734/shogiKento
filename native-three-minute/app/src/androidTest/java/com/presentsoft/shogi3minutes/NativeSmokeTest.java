@@ -17,7 +17,14 @@ public final class NativeSmokeTest extends Instrumentation {
  void fixture(){main(()->{v.cancelCpu();v.game.restart();for(int[] a:v.game.board)Arrays.fill(a,0);v.game.board[8][4]=8;v.game.board[0][4]=-8;v.started=true;v.clock=new MatchClock(v.game);v.clock.resume(SystemClock.elapsedRealtime(),true);v.clearSelection();});}
  void ready() {long until=SystemClock.elapsedRealtime()+20000;while(!v.ai.ready&&v.aiError==null&&SystemClock.elapsedRealtime()<until)SystemClock.sleep(50);main(()->check(v.ai.ready,"native model ready: "+v.aiError));}
  void chooseMode(int mode){tap(200,(mode==MainActivity.MATCH?v.homeMatchY():v.homeStudyY())+26);main(()->check(v.mode==mode,"mode selected by touch"));}
+ /** The on-board promotion picker replaced the OS dialog: its options are tapped like any board square. */
+ boolean pickerChoice(String text){boolean[] open=new boolean[1];main(()->open[0]=v.pick!=null);if(!open[0])return false;
+  float[] xy=new float[2];main(()->{RectF[] r=v.pickRects();check(activity.choiceDialog==null||!activity.choiceDialog.isShowing(),"no OS dialog while choosing promotion");
+   RectF target=text.equals("成る")?r[0]:text.equals("キャンセル")?null:r[1];if(target!=null){xy[0]=target.centerX();xy[1]=target.centerY();return;}
+   RectF all=new RectF(r[0].left-8,r[0].top-8,r[1].right+8,r[1].bottom+20);for(int row=0;row<9;row++)for(int col=0;col<9;col++){RectF f=v.cell(row,col);if(!RectF.intersects(f,all)&&v.game.board[row][col]==0){xy[0]=f.centerX();xy[1]=f.centerY();return;}}});
+  tap(xy[0],xy[1]);waitForIdleSync();main(()->check(v.pick==null,"picker closed after "+text));return true;}
  void clickDialog(String text){
+  if((text.equals("成る")||text.equals("成らない")||text.equals("成りを戻す")||text.equals("キャンセル"))&&pickerChoice(text))return;
   java.util.concurrent.atomic.AtomicBoolean clicked=new java.util.concurrent.atomic.AtomicBoolean();long end=SystemClock.elapsedRealtime()+10000;
   while(!clicked.get()&&SystemClock.elapsedRealtime()<end){
    main(()->{AlertDialog dialog=activity.choiceDialog;if(dialog==null||!dialog.isShowing())return;
@@ -30,8 +37,8 @@ public final class NativeSmokeTest extends Instrumentation {
  }
  void longPress(int r,int c){RectF f=v.cell(r,c);main(()->{long t=SystemClock.uptimeMillis();MotionEvent e=MotionEvent.obtain(t,t,MotionEvent.ACTION_DOWN,v.offsetX+f.centerX()*v.scale,(f.centerY()-(v.mode==MainActivity.STUDY?v.studyScroll:0))*v.scale,0);v.onTouchEvent(e);e.recycle();});
   java.util.concurrent.atomic.AtomicBoolean opened=new java.util.concurrent.atomic.AtomicBoolean();long end=SystemClock.elapsedRealtime()+3500;
-  while(SystemClock.elapsedRealtime()<end){main(()->opened.set(v.dialogOpen));if(opened.get())break;SystemClock.sleep(25);}
-  main(()->{long t=SystemClock.uptimeMillis();MotionEvent e=MotionEvent.obtain(t,t,MotionEvent.ACTION_UP,v.offsetX+f.centerX()*v.scale,(f.centerY()-(v.mode==MainActivity.STUDY?v.studyScroll:0))*v.scale,0);v.onTouchEvent(e);e.recycle();});waitForIdleSync();check(opened.get(),"long press opens promotion dialog");
+  while(SystemClock.elapsedRealtime()<end){main(()->opened.set(v.pick!=null));if(opened.get())break;SystemClock.sleep(25);}
+  main(()->{long t=SystemClock.uptimeMillis();MotionEvent e=MotionEvent.obtain(t,t,MotionEvent.ACTION_UP,v.offsetX+f.centerX()*v.scale,(f.centerY()-(v.mode==MainActivity.STUDY?v.studyScroll:0))*v.scale,0);v.onTouchEvent(e);e.recycle();});waitForIdleSync();check(opened.get(),"long press opens the on-board promotion picker");
  }
  void studyTests(Intent intent)throws Exception{
   main(()->check(v.mode==MainActivity.HOME,"cold launch presents mode selection"));screenshot("00_mode_selection.png");chooseMode(MainActivity.STUDY);main(()->v.setFreePlacement(true));soundReady();main(()->v.restart());
@@ -106,8 +113,8 @@ public final class NativeSmokeTest extends Instrumentation {
   home();chooseMode(MainActivity.MATCH);ready();
  }
  void promotionDialogVisible(){main(()->{
-  check(v.dialogOpen&&activity.choiceDialog!=null&&activity.choiceDialog.isShowing(),"promotion popup visible after destination tap");
-  check("成る".contentEquals(activity.choiceDialog.getButton(AlertDialog.BUTTON_POSITIVE).getText())&&"成らない".contentEquals(activity.choiceDialog.getButton(AlertDialog.BUTTON_NEGATIVE).getText()),"popup offers both promote and do-not-promote");
+  check(v.pick!=null&&(activity.choiceDialog==null||!activity.choiceDialog.isShowing()),"on-board promotion picker visible after destination tap, no OS dialog");
+  RectF[] r=v.pickRects();check(r[0].width()>0&&r[1].left>=r[0].right&&RectF.intersects(r[0],new RectF(v.boardX,v.boardY,v.boardX+v.boardSize,v.boardY+v.boardHeight)),"picker offers promote and do-not-promote side by side on the board");
  });}
  void studyPromotionFixture(int side,int type,int sr,int sc,int tr,int tc){main(()->{
   v.cancelCpu();v.study.reset();for(int[] row:v.game.board)Arrays.fill(row,0);v.game.board[8][8]=8;v.game.board[0][8]=-8;
@@ -131,10 +138,10 @@ public final class NativeSmokeTest extends Instrumentation {
   }
   studyPromotionFixture(1,1,3,2,2,2);int sounds=v.sounds.playCount;square(3,2);square(2,2);promotionDialogVisible();clickDialog("キャンセル");
   main(()->check(v.game.board[3][2]==1&&v.game.board[2][2]==-4&&v.study.undoCount()==0&&v.sounds.playCount==sounds,"cancel preserves study board, history and sound"));
-  for(int type:new int[]{5,8,9}){studyPromotionFixture(1,type,3,2,2,2);square(3,2);square(2,2);main(()->check(!v.dialogOpen&&v.game.board[2][2]==type,"gold, king and already promoted piece move without popup"));}
-  studyPromotionFixture(1,1,3,2,4,2);square(3,2);square(4,2);main(()->check(!v.dialogOpen&&v.game.board[4][2]==1,"outside-zone move has no promotion popup"));
+  for(int type:new int[]{5,8,9}){studyPromotionFixture(1,type,3,2,2,2);square(3,2);square(2,2);main(()->check(v.pick==null&&!v.dialogOpen&&v.game.board[2][2]==type,"gold, king and already promoted piece move without popup"));}
+  studyPromotionFixture(1,1,3,2,4,2);square(3,2);square(4,2);main(()->check(v.pick==null&&!v.dialogOpen&&v.game.board[4][2]==1,"outside-zone move has no promotion popup"));
   studyPromotionFixture(1,1,1,2,3,2);square(1,2);square(3,2);promotionDialogVisible();clickDialog("成る");main(()->check(v.game.board[3][2]==9,"leaving enemy zone also offers promotion"));
-  studyPromotionFixture(1,1,3,2,2,2);main(()->{v.game.board[2][2]=0;v.game.hands[0][1]=1;});tap(v.handX(0,v.handCount(1)),v.bottomHandY()+22);square(2,2);main(()->check(!v.dialogOpen&&v.game.board[2][2]==1&&v.game.hands[0][1]==0,"drop into enemy zone never prompts or promotes"));
+  studyPromotionFixture(1,1,3,2,2,2);main(()->{v.game.board[2][2]=0;v.game.hands[0][1]=1;});tap(v.handX(0,v.handCount(1)),v.bottomHandY()+22);square(2,2);main(()->check(v.pick==null&&!v.dialogOpen&&v.game.board[2][2]==1&&v.game.hands[0][1]==0,"drop into enemy zone never prompts or promotes"));
   main(()->v.restart());home();chooseMode(MainActivity.MATCH);ready();
   int[][] moves={{1,3,0,2,0},{2,3,1,2,1},{3,4,2,2,1},{4,3,2,2,2},{6,3,3,2,2},{7,3,1,2,1}};
   for(int[] q:moves)for(boolean promote:new boolean[]{false,true}){
@@ -144,7 +151,7 @@ public final class NativeSmokeTest extends Instrumentation {
    clickDialog(promote?"成る":"成らない");main(()->{v.cancelCpu();check(v.game.board[q[3]][q[4]]==q[0]+(promote?8:0),"match applies chosen form for all six piece types");});
   }
   fixture();main(()->v.game.board[3][2]=4);square(3,2);square(2,2);promotionDialogVisible();clickDialog("キャンセル");main(()->check(v.game.board[3][2]==4&&v.game.board[2][2]==0&&v.game.movesPlayed==0,"cancel leaves match move uncommitted"));
-  for(int[] q:new int[][]{{1,1,0,0,0},{2,1,0,0,0},{3,2,2,0,1}}){fixture();main(()->v.game.board[q[1]][q[2]]=q[0]);square(q[1],q[2]);square(q[3],q[4]);main(()->{v.cancelCpu();check(!v.dialogOpen&&v.game.board[q[3]][q[4]]==q[0]+8,"mandatory pawn, lance and knight promotion remains automatic");});}
+  for(int[] q:new int[][]{{1,1,0,0,0},{2,1,0,0,0},{3,2,2,0,1}}){fixture();main(()->v.game.board[q[1]][q[2]]=q[0]);square(q[1],q[2]);square(q[3],q[4]);main(()->{v.cancelCpu();check(v.pick==null&&!v.dialogOpen&&v.game.board[q[3]][q[4]]==q[0]+8,"mandatory pawn, lance and knight promotion remains automatic");});}
   fixture();main(()->v.game.board[3][2]=4);square(3,2);square(2,2);promotionDialogVisible();main(()->{v.game.remaining[0]=100;v.clock.resume(SystemClock.elapsedRealtime(),true);});SystemClock.sleep(250);clickDialog("成る");main(()->check(v.game.winner==-1&&v.game.board[3][2]==4&&v.game.board[2][2]==0,"promotion popup does not pause match clock or allow a move after flag fall"));
   try(PrintWriter out=new PrintWriter(new File(getTargetContext().getExternalFilesDir(null),"promotion_popup.txt"))){out.println("PASS actual native popup and buttons: all six piece types; study sente/gote; promote/do-not-promote/cancel; dedicated promoted images; atomic capture/history/graph/undo/sound; leaving zone; no popup for drops/gold/king/already-promoted/outside-zone; match optional and mandatory promotion; time continues while choosing.");}
   main(()->v.restart());
@@ -249,7 +256,7 @@ public final class NativeSmokeTest extends Instrumentation {
   tap(v.handX(0,v.handCount(1)),v.bottomHandY()+22);square(6,2);main(()->check(v.selectedR==6&&v.selectedC==2&&v.selectedHand==0&&target(5,2),"friendly board piece replaces selected hand piece"));tap(v.handX(1,v.handCount(1)),v.bottomHandY()+22);main(()->check(v.selectedHand==3&&!target(0,0)&&!target(1,0)&&target(2,0),"knight drop excludes both dead ranks"));tap(v.handX(0,v.handCount(-1)),v.topHandY()+22);main(()->check(v.selectedHand==0&&v.highlights.isEmpty(),"opposing hand is not selectable in normal input"));
   tap(v.handX(1,v.handCount(1)),v.bottomHandY()+22);square(2,0);main(()->check(v.game.board[2][0]==3&&v.game.hands[0][3]==0&&v.analysisSide==-1,"legal drop commits and switches analysis side"));
   legalStudyFixture(1);main(()->{v.game.hands[0][1]=1;v.game.board[0][3]=-2;v.game.board[0][5]=-2;v.game.board[1][3]=-1;v.game.board[1][5]=-1;v.game.board[2][4]=5;});tap(v.handX(0,v.handCount(1)),v.bottomHandY()+22);main(()->check(!target(1,4),"illegal pawn-drop mate is not highlighted"));square(1,4);main(()->check(v.selectedHand==0&&v.game.hands[0][1]==1&&v.game.board[1][4]==0,"pawn-drop mate cannot be played from highlighted input"));
-  legalStudyFixture(1);main(()->v.game.board[1][1]=1);square(1,1);main(()->check(target(0,1)&&v.highlights.stream().filter(m->m.row==0&&m.col==1).allMatch(m->m.promote),"forced promotion target is available only as promoted move"));square(0,1);main(()->check(v.game.board[0][1]==9&&!v.dialogOpen,"forced promotion executes without optional dialog"));
+  legalStudyFixture(1);main(()->v.game.board[1][1]=1);square(1,1);main(()->check(target(0,1)&&v.highlights.stream().filter(m->m.row==0&&m.col==1).allMatch(m->m.promote),"forced promotion target is available only as promoted move"));square(0,1);main(()->check(v.game.board[0][1]==9&&v.pick==null&&!v.dialogOpen,"forced promotion executes without optional dialog"));
   legalStudyFixture(1);main(()->v.game.board[3][2]=4);square(3,2);main(()->check(target(2,2)&&v.highlights.stream().filter(m->m.row==2&&m.col==2).count()==2,"optional promotion shares one destination with two legal choices"));square(2,2);clickDialog("キャンセル");main(()->check(v.game.board[3][2]==4&&v.game.board[2][2]==0,"promotion cancellation keeps board intact"));square(2,2);clickDialog("成らない");main(()->check(v.game.board[2][2]==4&&v.highlights.isEmpty(),"optional unpromoted choice uses the displayed legal target"));
   main(()->{v.restart();v.setAnalysisSide(1);});square(6,0);tap(80,v.analysisY()+65);main(()->{check(activity.choiceDialog!=null&&activity.choiceDialog.getListView().getCount()==2,"native input menu exposes legal and free placement modes");activity.choiceDialog.getListView().performItemClick(null,1,1);check(v.freePlacement&&v.highlights.isEmpty(),"switching input mode clears selection");});square(6,0);main(()->check(target(4,0),"explicit free editor retains nonstandard placements"));square(4,0);main(()->check(v.game.board[4][0]==1,"old free editor remains available"));main(()->{v.setFreePlacement(false);v.restart();v.enterMode(MainActivity.HOME);});
   chooseMode(MainActivity.MATCH);ready();fixture();main(()->{v.game.board[6][0]=1;v.game.board[6][1]=1;});realSquareTap(6,0);main(()->check(target(5,0)&&!target(4,0),"match uses same legal destination colors"));realSquareTap(6,1);main(()->check(v.selectedC==1&&target(5,1)&&!target(5,0),"match friendly tap switches selection"));realSquareTap(4,1);main(()->check(v.selectedR<0&&v.highlights.isEmpty()&&v.game.board[6][1]==1,"match illegal destination clears selection"));square(6,0);main(()->{long t=SystemClock.uptimeMillis();MotionEvent cancel=MotionEvent.obtain(t,t,MotionEvent.ACTION_CANCEL,0,0,0);v.onTouchEvent(cancel);cancel.recycle();check(v.selectedR<0&&v.highlights.isEmpty(),"OS cancellation clears stale selection");v.restart();v.enterMode(MainActivity.STUDY);v.restart();v.enterMode(MainActivity.HOME);});
