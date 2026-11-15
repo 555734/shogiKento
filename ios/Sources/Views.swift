@@ -134,10 +134,14 @@ struct PlayerIcon:View {
     @EnvironmentObject var model:AppModel
     let side:Int,lit:Bool
     var body:some View {
-        let me=side==model.humanSide
-        Circle().fill(me ? Color(red:0.18,green:0.36,blue:0.56):Color(red:0.48,green:0.16,blue:0.13))
-            .overlay(Text(me ? "自":"AI").font(.system(size:22,weight:.heavy)).foregroundStyle(.white))
-            .overlay(Circle().strokeBorder(lit ? gold:Color(red:0.61,green:0.53,blue:0.44),lineWidth:2))
+        let me=side==model.humanSide,level=max(1,min(10,model.matchOptions.level))
+        let art=AppAssets.image(me ? "avatar_player":String(format:"avatar_cpu_%02d",level)),rgb=MatchOptions.cpuColors[level-1]
+        ZStack{
+            if art.size.width>0 {Image(uiImage:art).resizable().scaledToFill().clipShape(Circle())}
+            else {Circle().fill(RadialGradient(colors:[me ? Color(red:0.29,green:0.53,blue:0.75):Color(red:Double(rgb>>16&255)/255,green:Double(rgb>>8&255)/255,blue:Double(rgb&255)/255),me ? Color(red:0.11,green:0.23,blue:0.36):Color(red:0.16,green:0.06,blue:0.05)],center:.init(x:0.5,y:0.35),startRadius:2,endRadius:40))
+                .overlay(Text(me ? "自":MatchOptions.cpuGlyphs[level-1]).font(.system(size:26,weight:.heavy,design:.serif)).foregroundStyle(Color(red:1,green:0.95,blue:0.84)))}
+        }.overlay(Circle().strokeBorder(lit ? gold:Color(red:0.61,green:0.53,blue:0.44),lineWidth:2.4))
+        .overlay(alignment:.bottom){Text(side==1 ? "先手":"後手").font(.system(size:9.5,weight:.bold)).foregroundStyle(side==1 ? .white:Color(red:0.16,green:0.1,blue:0.06)).padding(.horizontal,5).padding(.vertical,1).background(Capsule().fill(side==1 ? Color(white:0.12):Color(red:0.95,green:0.92,blue:0.85))).offset(y:5)}
     }
 }
 struct HandView:View {

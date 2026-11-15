@@ -80,7 +80,8 @@ import UIKit
     }
     func sceneActive(_ value:Bool){if !value{tick()};active=value;lastTick=nil;if !value{NativeEngine.shared.cancel();thinking=false;analyzing=false;players.values.forEach{$0.stop()};save()}else if screen == .study{refreshAnalysis()}else if screen == .match{lastTick=ProcessInfo.processInfo.systemUptime;scheduleCPU()}}
     func tick(){if screen == .online{onlineTick();return};guard active,!matchSettingsOpen,screen == .match,session.matchStarted,session.winner==0 else{lastTick=nil;return};let now=ProcessInfo.processInfo.systemUptime;defer{lastTick=now};guard let before=lastTick else{return};let side=position.side==1 ? 0:1;session.clocks[side]=max(0,session.clocks[side]-(now-before));if position.side==humanSide && session.clocks[side]<=10 && session.clocks[side]>0{let second=Int(ceil(session.clocks[side]));if second != lastTickSecond{lastTickSecond=second;playSound(.tick)}};if session.clocks[side]==0{finish(winner:-position.side,result:"時間切れ")}}
-    func playerName(_ side:Int)->String {(side==humanSide ? "あなた":"CPU")+"・"+(side==1 ? "先手":"後手")}
+    /// あなた / the CPU persona with its rank label (目安).
+    func playerName(_ side:Int)->String {side==humanSide ? "あなた":matchOptions.cpuName+"　"+matchOptions.cpuRank}
     func clearSelection(){selected=nil;selectedHand=nil;targets=[];promotion=[]}
     func selectHand(_ piece:Int,side:Int){if !promotion.isEmpty{clearSelection();return};guard humanInput,screen == .study && freePlacement || side==position.side else{clearSelection();return};if selectedHand==piece && selectedSide==side{clearSelection();return};selected=nil;selectedHand=piece;selectedSide=side;computeTargets()}
     func computeTargets(){

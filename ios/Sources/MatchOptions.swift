@@ -11,6 +11,13 @@ struct MatchOptions: Codable, Equatable {
     var milliseconds:Int {Self.timeBudgets[max(1,min(10,level))-1]}
     var seconds:Double {Double(minutes*60)}
     var title:String {"\(minutes)分切れ負け・AI Lv.\(level)"}
+    /// CPU persona per level: name, rank label (a guide, not a measured strength) and fallback emblem glyph/colour.
+    static let cpuNames=["からくり丸","ちょうちん坊","たぬ吉","こん狐","ふくろう先生","鶴之丞","鎧からくり","木彫りの龍","能面の軍師","金鳳凰"]
+    static let cpuRanks=["10級","8級","6級","4級","2級","初段","二段","三段","四段","五段"]
+    static let cpuGlyphs=["丸","灯","狸","狐","梟","鶴","鎧","龍","面","凰"]
+    static let cpuColors:[UInt32]=[0x6f8f4a,0xc77d2a,0x8a6a3a,0xd0702a,0x5c6f8a,0x7f8fa0,0x6d3f2a,0x4a2f1e,0x7a1e2a,0xc9962e]
+    var cpuName:String {Self.cpuNames[max(1,min(10,level))-1]}
+    var cpuRank:String {Self.cpuRanks[max(1,min(10,level))-1]}
     static func load()->Self {
         let defaults=UserDefaults.standard
         let minutes=defaults.integer(forKey:"match_minutes"),side=defaults.integer(forKey:"match_human_side"),level=defaults.integer(forKey:"match_level")

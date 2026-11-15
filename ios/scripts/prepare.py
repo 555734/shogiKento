@@ -3,6 +3,8 @@ import hashlib,json,pathlib,shutil
 from PIL import Image
 ROOT=pathlib.Path(__file__).resolve().parents[1];ANDROID=ROOT.parent/'native-three-minute';ASSETS=ANDROID/'app/src/main/assets';OUT=ROOT/'GameAssets';OUT.mkdir(exist_ok=True)
 for source,target in [('home_background_v112.webp','home_background'),('home_title_v112.webp','home_title'),('board_v191.webp','board'),('background_red_lacquer_v191.webp','background'),('pieces_v184.png','pieces')]:Image.open(ASSETS/'generated'/source).save(OUT/(target+'.png'))
+# Optional generated player/CPU icons (GENERATED_ASSETS.md); the app draws emblems when they are absent.
+for icon in sorted((ASSETS/'generated/avatars').glob('*.webp')) if (ASSETS/'generated/avatars').exists() else []:Image.open(icon).convert('RGBA').save(OUT/(icon.stem+'.png'))
 for sound in ['piece_place','piece_capture','piece_promote','alert_check','game_start','game_end','clock_tick']:shutil.copy(ANDROID/'app/src/main/res/raw'/(sound+'.wav'),OUT/(sound+'.wav'))
 (OUT/'ai').mkdir(exist_ok=True)
 provenance=json.loads((ASSETS/'ai/provenance.json').read_text())

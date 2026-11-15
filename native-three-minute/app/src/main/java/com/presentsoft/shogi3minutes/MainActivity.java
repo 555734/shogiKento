@@ -230,8 +230,17 @@ public final class MainActivity extends Activity {
     if(selectedSide==side&&selectedHand==n)fitted(c,"ui/highlight_selected_gold.png",new RectF(box.left-4,y+2,box.right+4,y+h-2),false);
     if(shown>0){float pop=effects.handScale(side,n,frame);drawPiece(c,side*n,box,commonHeight(box.width(),box.height())*pop);text(c,""+shown,box.right-3,box.bottom+12,14*pop,Color.WHITE);}i++;}
   }
-  String playerName(int side){return (side==humanSide()?"あなた":"CPU")+"・"+(side==1?"先手":"後手");}
-  void drawPlayerIcon(Canvas c,int side,RectF r,boolean lit){paint.reset();paint.setAntiAlias(true);boolean me=side==humanSide();paint.setColor(me?0xff2d5d8f:0xff7a2a22);c.drawOval(r,paint);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(2);paint.setColor(lit?0xffffd27a:0xff9b8670);c.drawOval(r,paint);text(c,me?"自":"AI",r.centerX(),r.centerY()+r.height()*.17f,r.height()*.42f,Color.WHITE);}
+  /** あなた / the CPU persona with its rank label (目安), each with the side tag. */
+  String playerName(int side){MatchOptions o=matchOptions();return side==humanSide()?"あなた":o.cpuName()+"　"+o.cpuRank();}
+  /** Generated icon (assets/generated/avatars) when supplied, otherwise an original emblem drawn per level. */
+  final Map<String,Boolean> avatarPresent=new HashMap<>();
+  boolean hasAsset(String path){Boolean known=avatarPresent.get(path);if(known!=null)return known;boolean found;try(InputStream in=getAssets().open(path)){found=true;}catch(IOException e){found=false;}avatarPresent.put(path,found);return found;}
+  void drawPlayerIcon(Canvas c,int side,RectF r,boolean lit){boolean me=side==humanSide();int level=matchOptions().level;String path=me?"generated/avatars/avatar_player.webp":String.format(Locale.US,"generated/avatars/avatar_cpu_%02d.webp",level);
+   paint.reset();paint.setAntiAlias(true);if(hasAsset(path)){c.save();Path clip=new Path();clip.addOval(r,Path.Direction.CW);c.clipPath(clip);image(c,path,null,r);c.restore();}
+   else{paint.setShader(new RadialGradient(r.centerX(),r.top+r.height()*.35f,r.width()*.7f,new int[]{me?0xff4a86c0:(MatchOptions.CPU_COLORS[level-1]|0xff000000),me?0xff1d3a5c:0xff2a0f0c},null,Shader.TileMode.CLAMP));c.drawOval(r,paint);paint.setShader(null);
+    text(c,me?"自":MatchOptions.CPU_GLYPHS[level-1],r.centerX(),r.centerY()+r.height()*.18f,r.height()*.5f,0xfffff1d6);}
+   paint.reset();paint.setAntiAlias(true);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(2.4f);paint.setColor(lit?0xffffd27a:0xff9b8670);c.drawOval(r,paint);
+   String tag=side==1?"先手":"後手";paint.reset();paint.setAntiAlias(true);paint.setColor(side==1?0xff1f1f1f:0xfff2ead8);RectF t=new RectF(r.centerX()-15,r.bottom-11,r.centerX()+15,r.bottom+3);c.drawRoundRect(t,6,6,paint);text(c,tag,t.centerX(),t.bottom-3.5f,9.5f,side==1?Color.WHITE:0xff2a1a10);}
   void hand(Canvas c,int side,float y){
    if(mode==ONLINE){onlineKomadai(c,side,y);return;}
    if(mode==MATCH){matchPanel(c,side,y);return;}
