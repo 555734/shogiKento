@@ -221,3 +221,13 @@ struct MatchEndButtons:View {
             .background(RoundedRectangle(cornerRadius:10).fill(fill)).overlay(RoundedRectangle(cornerRadius:10).stroke(Color(red:1,green:0.82,blue:0.48),lineWidth:1.4))}.buttonStyle(.plain).accessibilityIdentifier(id)
     }
 }
+
+/// Background tint by game progress: opening keeps the lacquer red; the middle game warms to amber, the late middle
+/// game deepens to crimson and the endgame turns to night indigo. Changes fade over 0.9 seconds.
+struct ProgressTint:View {
+    let moves:Int
+    static func stage(_ moves:Int)->Int {moves<0 ? 0:moves<=30 ? 0:moves<=60 ? 1:moves<=100 ? 2:3}
+    static let tints:[Color]=[.clear,Color(red:1,green:0.63,blue:0.13).opacity(0.22),Color(red:0.54,green:0.04,blue:0.24).opacity(0.3),Color(red:0.08,green:0.1,blue:0.35).opacity(0.36)]
+    @AppStorage("reduced_effects") private var reduced=false
+    var body:some View {Self.tints[Self.stage(moves)].animation(reduced ? nil:.easeInOut(duration:0.9),value:Self.stage(moves)).allowsHitTesting(false)}
+}

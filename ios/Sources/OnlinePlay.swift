@@ -146,7 +146,7 @@ struct OnlineScreen:View {
         }.frame(minHeight:viewport.size.height,alignment:.top).frame(maxWidth:600).frame(maxWidth:.infinity).padding(.bottom,15)}
             // The result card sits below the board; bring it into view when the game ends.
             .onChange(of:model.online.game?.over ?? false){over in if over{withAnimation(.easeOut(duration:0.35)){proxy.scrollTo("online_result",anchor:.bottom)}}}}}
-        .background(Image(uiImage:AppAssets.image("background")).resizable().scaledToFill().ignoresSafeArea())
+        .background(Image(uiImage:AppAssets.image("background")).resizable().scaledToFill().overlay(ProgressTint(moves:model.online.game?.movesPlayed ?? -1)).ignoresSafeArea())
         .alert("ルームに参加",isPresented:$joining){TextField("6桁のコード",text:$code).keyboardType(.numberPad).accessibilityIdentifier("room_code_field");Button("キャンセル",role:.cancel){};Button("参加"){model.joinRoom(code)}.accessibilityIdentifier("room_join")}message:{Text("友だちのルームコードを入力してください")}
         .alert("投了しますか？",isPresented:$resign){Button("キャンセル",role:.cancel){};Button("投了",role:.destructive){model.onlineResign()}}
         .sheet(isPresented:$accountSheet){AccountView()}

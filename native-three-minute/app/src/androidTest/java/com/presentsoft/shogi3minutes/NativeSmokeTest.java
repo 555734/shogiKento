@@ -400,6 +400,10 @@ public final class NativeSmokeTest extends Instrumentation {
   main(()->check(v.effects.ended()&&v.effects.endOutcome==1&&v.effects.confetti.length>0&&v.effects.endButtonsVisible(SystemClock.uptimeMillis()),"win shows 勝ち, confetti and the result buttons"));screenshot("65_match_win.png");
   float[] again=new float[2];main(()->{RectF b=v.endButtons()[0];again[0]=b.centerX();again[1]=b.centerY();});tap(again[0],again[1]);waitForIdleSync();
   main(()->{v.cancelCpu();check(v.started&&v.game.winner==0&&v.game.movesPlayed==0&&!v.effects.ended(),"もう一局 starts a fresh match at once");});
+  // Item 7: own clock under 30 seconds is red; item 8: CPU persona and rank; item 9: background tint by move count.
+  main(()->{v.cancelCpu();check(v.playerName(v.cpuSide()).contains(v.matchOptions().cpuName())&&v.playerName(v.cpuSide()).contains(v.matchOptions().cpuRank()),"CPU panel names the persona and rank");
+   check(BoardEffects.stage(0)==0&&BoardEffects.stage(45)==1&&BoardEffects.stage(80)==2&&BoardEffects.stage(150)==3,"four background stages by move count");v.game.remaining[v.humanSide()==1?0:1]=25000;v.game.movesPlayed=120;v.invalidate();});
+  SystemClock.sleep(1100);main(()->check(v.effects.tintStage==3&&!v.effects.tintFading(SystemClock.uptimeMillis()),"endgame tint reached after its fade"));screenshot("66_layout_endgame_tint.png");main(()->{v.cancelCpu();v.restart();});
   main(()->{activity.settings.reducedEffects(false);v.restart();});
  }
  void analysisReadyIfPossible(){main(()->v.refreshAnalysis());if(!v.game.legal(v.analysisSide).isEmpty())analysisReady();}

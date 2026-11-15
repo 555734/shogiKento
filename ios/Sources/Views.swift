@@ -80,7 +80,7 @@ struct BoardScreen:View {
         }}.frame(minHeight:viewport.size.height,alignment:model.screen == .match ? .center:.top)
             TestAdSlot(placement:model.screen == .study ? "study":"match").id(model.screen.rawValue).padding(.horizontal,12)
         }.frame(maxWidth:600).frame(maxWidth:.infinity).padding(.bottom,15)}}
-        .background(Image(uiImage:AppAssets.image("background")).resizable().scaledToFill().ignoresSafeArea())
+        .background(Image(uiImage:AppAssets.image("background")).resizable().scaledToFill().overlay(ProgressTint(moves:model.screen == .match ? model.session.match.moves:-1)).ignoresSafeArea())
         .sheet(isPresented:$matchSettings,onDismiss:{model.setMatchSettingsOpen(false)}){MatchSettingsView(options:model.matchOptions).onAppear{model.setMatchSettingsOpen(true)}}
         .alert("投了しますか？",isPresented:$resign){Button("キャンセル",role:.cancel){};Button("投了",role:.destructive){model.resign()}}
         .alert("対局をやり直しますか？",isPresented:$restart){Button("キャンセル",role:.cancel){};Button("やり直す",role:.destructive){model.restartMatch()}}

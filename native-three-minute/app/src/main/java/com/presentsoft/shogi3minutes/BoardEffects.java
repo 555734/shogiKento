@@ -94,6 +94,18 @@ final class BoardEffects {
   paint.setColor(Color.argb(Math.round(150*alpha),40,0,0));c.drawRoundRect(cx-size*1.35f,cy-size*.85f,cx+size*1.35f,cy+size*.55f,12,12,paint);
   paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(size*.08f);paint.setColor(Color.argb(Math.round(255*alpha),255,240,210));c.drawText("王手",cx,cy+size*.32f,paint);
   paint.setStyle(Paint.Style.FILL);paint.setColor(Color.argb(Math.round(255*alpha),215,25,25));c.drawText("王手",cx,cy+size*.32f,paint);}
+ // ---- Background tint by game progress ----
+ /** Opening (0-30 moves) keeps the lacquer red; middle game warms to amber, late middle game deepens to crimson, endgame turns to night indigo. */
+ static final int[] STAGE_TINTS={0x00000000,0x38ffa020,0x4c8a0a3c,0x5c141a5a};
+ static int stage(int moves){return moves<=30?0:moves<=60?1:moves<=100?2:3;}
+ int tintStage=-1,tintFrom;long tintAt=Long.MIN_VALUE;static final long TINT_FADE=900;
+ /** Current tint, fading over TINT_FADE when the stage changes. */
+ int tint(int moves,long now){int stage=stage(moves);if(tintStage<0){tintStage=stage;tintFrom=STAGE_TINTS[stage];tintAt=Long.MIN_VALUE;}
+  if(stage!=tintStage){tintFrom=tint(now);tintStage=stage;tintAt=now;}return tint(now);}
+ private int tint(long now){int to=STAGE_TINTS[tintStage];if(reduced||tintAt==Long.MIN_VALUE||now-tintAt>=TINT_FADE)return to;float k=(now-tintAt)/(float)TINT_FADE;
+  return Color.argb(Math.round(Color.alpha(tintFrom)+(Color.alpha(to)-Color.alpha(tintFrom))*k),Math.round(Color.red(tintFrom)+(Color.red(to)-Color.red(tintFrom))*k),Math.round(Color.green(tintFrom)+(Color.green(to)-Color.green(tintFrom))*k),Math.round(Color.blue(tintFrom)+(Color.blue(to)-Color.blue(tintFrom))*k));}
+ boolean tintFading(long now){return !reduced&&tintAt!=Long.MIN_VALUE&&now-tintAt<TINT_FADE;}
+ void resetTint(){tintStage=-1;tintAt=Long.MIN_VALUE;}
  // ---- Match start and end ----
  static final long START=1000,FLASH=260,END_TEXT=500,CONFETTI=2600,BUTTONS_AFTER=900;
  long startAt=Long.MIN_VALUE,endAt=Long.MIN_VALUE;String startSub="",endDetail="";int endOutcome;float[] confetti=new float[0];
