@@ -382,7 +382,7 @@ public final class NativeSmokeTest extends Instrumentation {
    SystemClock.sleep(450);main(()->check(!v.effects.active(SystemClock.uptimeMillis())&&!v.effects.hides(m[0].row,m[0].col,SystemClock.uptimeMillis()),"effect finished within 450ms"));
   }
   // Item 2: a capture plays the stronger capture sound instead of the placement sound.
-  main(()->{activity.settings.sound(true);activity.settings.volume(65);v.restart();v.started=true;v.clock.resume(SystemClock.elapsedRealtime(),true);boolean sente=v.humanSide()==1;v.game.turn=v.humanSide();if(sente)v.game.board[5][0]=-1;else v.game.board[3][8]=1;int captures=v.sounds.kindCounts[MoveSound.Kind.CAPTURE.ordinal()];
+  main(()->{activity.settings.reducedEffects(false);activity.settings.sound(true);activity.settings.volume(65);v.restart();v.started=true;v.clock.resume(SystemClock.elapsedRealtime(),true);boolean sente=v.humanSide()==1;v.game.turn=v.humanSide();if(sente)v.game.board[5][0]=-1;else v.game.board[3][8]=1;int captures=v.sounds.kindCounts[MoveSound.Kind.CAPTURE.ordinal()];
    v.move(sente?new ShogiGame.Move(6,0,5,0,false,0):new ShogiGame.Move(2,8,3,8,false,0));v.cancelCpu();check(v.game.hands[ShogiGame.slot(v.humanSide())][1]==1&&v.sounds.kindCounts[MoveSound.Kind.CAPTURE.ordinal()]==captures+1&&v.sounds.lastKind==MoveSound.Kind.CAPTURE,"capture plays the capture sound");});
   // Item 3: the captured pawn flies to the komadai (count updates on arrival), promotion flips, check shows 王手 and blinks the king.
   main(()->{long now=SystemClock.uptimeMillis();int side=v.humanSide();check(v.effects.handPending(side,1,now)&&v.effects.captured!=0,"captured piece is in flight; komadai count waits");});SystemClock.sleep(80);screenshot("61_capture_flight.png");
