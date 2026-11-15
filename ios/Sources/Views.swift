@@ -62,7 +62,7 @@ struct BoardScreen:View {
     var body:some View {
         GeometryReader {viewport in ScrollView {VStack(spacing:16){VStack(spacing:8){
             HandView(side:model.screen == .match ? model.cpuSide:-1)
-            BoardView().aspectRatio(1226/1283.0,contentMode:.fit)
+            BoardView().aspectRatio(1226/1283.0,contentMode:.fit).anchorPreference(key:ArrowAnchorKey.self,value:.bounds){["board":$0]}
             HandView(side:model.screen == .match ? model.humanSide:1)
             if model.screen == .match {
                 Text(model.session.winner != 0 ? model.session.match.result:!model.session.matchStarted ? "対局を開始してください":model.thinking ? "CPUの手番":"あなたの手番").accessibilityIdentifier("match_status")
@@ -71,13 +71,21 @@ struct BoardScreen:View {
                 HStack {Button("やり直し"){restart=true};Spacer();Button("AI再試行"){model.scheduleCPU()}.disabled(!model.thinking && model.position.side==model.humanSide);Spacer();Button("投了"){resign=true}.disabled(!model.session.matchStarted || model.session.winner != 0)}.buttonStyle(.bordered).padding(.horizontal)
                 Button("対局設定 · \(model.matchOptions.minutes)分 / AI Lv.\(model.matchOptions.level) / あなた\(model.humanSide==1 ? "先手":"後手")"){matchSettings=true}.buttonStyle(.bordered).accessibilityIdentifier("match_settings").padding(.horizontal)
             }else{AnalysisView(showMoves:$showMoves)}
-        }.frame(minHeight:viewport.size.height,alignment:.top)
+        }.overlayPreferenceValue(ArrowAnchorKey.self){anchors in GeometryReader{proxy in
+            if let board=anchors["board"],!model.boardCandidates.isEmpty {
+                DropCandidateArrows(candidates:model.boardCandidates,side:model.position.side,board:proxy[board],hands:handFrames(anchors,proxy:proxy))
+            }
+        }}.frame(minHeight:viewport.size.height,alignment:.top)
             TestAdSlot(placement:model.screen == .study ? "study":"match").id(model.screen.rawValue).padding(.horizontal,12)
         }.frame(maxWidth:600).frame(maxWidth:.infinity).padding(.bottom,15)}}
         .background(Image(uiImage:AppAssets.image("background")).resizable().scaledToFill().ignoresSafeArea())
         .sheet(isPresented:$matchSettings,onDismiss:{model.setMatchSettingsOpen(false)}){MatchSettingsView(options:model.matchOptions).onAppear{model.setMatchSettingsOpen(true)}}
         .alert("投了しますか？",isPresented:$resign){Button("キャンセル",role:.cancel){};Button("投了",role:.destructive){model.resign()}}
         .alert("対局をやり直しますか？",isPresented:$restart){Button("キャンセル",role:.cancel){};Button("やり直す",role:.destructive){model.restartMatch()}}
+    }
+    /// Hand pieces of the side to move, keyed by piece type.
+    func handFrames(_ anchors:[String:Anchor<CGRect>],proxy:GeometryProxy)->[Int:CGRect] {
+        var frames=[Int:CGRect]();for piece in 1...7{if let a=anchors["hand_\(model.position.side)_\(piece)"]{frames[piece]=proxy[a]}};return frames
     }
 }
 struct BoardView:View {
@@ -91,7 +99,7 @@ struct BoardView:View {
                         .accessibilityIdentifier("cell_\(square/9)_\(square%9)").accessibilityLabel("\(9-square%9)\(Array("一二三四五六七八九")[square/9]) \(Position.glyphs[abs(piece)])").accessibilityValue(model.selected==square ? "選択":target ? "移動可能":"")
                         .onLongPressGesture {model.togglePromotion(square)}
                 }}}}.padding(.horizontal,w*0.01).padding(.vertical,h*0.01)
-                if !model.boardCandidates.isEmpty{CandidateArrows(candidates:model.boardCandidates,side:model.position.side)}
+                if !model.boardCandidates.isEmpty{CandidateArrows(candidates:model.boardCandidates,side:model.position.side,handDrops:Set((1...7).filter{model.position.hands[model.position.side==1 ? 0:1][$0]>0}))}
             }
         }
     }
@@ -102,7 +110,7 @@ struct HandView:View {
     var body:some View {
         HStack(spacing:5){VStack(alignment:.leading,spacing:3){Text(model.screen == .match || model.screen == .online ? ((side==model.viewSide ? "あなた":model.screen == .online ? "相手":"CPU")+"・"+(side==1 ? "先手":"後手")):(side==1 ? "先手":"後手")).font(.caption);if model.screen == .match{let time=max(0,Int(ceil(model.session.clocks[side==1 ? 0:1])));Text(String(format:"%02d:%02d",time/60,time%60)).font(.system(.title3,design:.monospaced))}else if model.screen == .online,let game=model.online.game{let time=Int(ceil(Double(max(0,game.remaining(side,AppModel.onlineNow)))/1000));Text(String(format:"%02d:%02d",time/60,time%60)).font(.system(.title3,design:.monospaced)).foregroundStyle(game.started && !game.over && game.turn==side ? gold:cream).accessibilityIdentifier("online_clock_\(side)")}else{Text("検討・時計なし").font(.caption2)}}.frame(minWidth:90,alignment:.leading)
             Spacer(minLength:0)
-            ForEach(1..<(model.screen == .study && model.freePlacement ? 9:8),id:\.self){p in let n=model.position.hands[side==1 ? 0:1][p];if n>0{Button{model.selectHand(p,side:side)}label:{ZStack(alignment:.bottomTrailing){Image(uiImage:AppAssets.piece(p*side)).resizable().scaledToFit().rotationEffect(.degrees(side*model.viewSide<0 ? 180:0));Text("\(n)").font(.caption.bold()).foregroundStyle(.white).padding(2).background(.black.opacity(0.7))}.frame(maxWidth:36,maxHeight:40).background(model.selectedHand==p && model.selectedSide==side ? .yellow.opacity(0.4):.clear)}.buttonStyle(.plain).accessibilityIdentifier("hand_\(side)_\(p)")}}
+            ForEach(1..<(model.screen == .study && model.freePlacement ? 9:8),id:\.self){p in let n=model.position.hands[side==1 ? 0:1][p];if n>0{Button{model.selectHand(p,side:side)}label:{ZStack(alignment:.bottomTrailing){Image(uiImage:AppAssets.piece(p*side)).resizable().scaledToFit().rotationEffect(.degrees(side*model.viewSide<0 ? 180:0));Text("\(n)").font(.caption.bold()).foregroundStyle(.white).padding(2).background(.black.opacity(0.7))}.frame(maxWidth:36,maxHeight:40).background(model.selectedHand==p && model.selectedSide==side ? .yellow.opacity(0.4):.clear)}.buttonStyle(.plain).anchorPreference(key:ArrowAnchorKey.self,value:.bounds){["hand_\(side)_\(p)":$0]}.accessibilityIdentifier("hand_\(side)_\(p)")}}
         }.foregroundStyle(cream).padding(.horizontal,8).frame(height:48).background(.black.opacity(0.72))
     }
 }

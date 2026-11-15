@@ -21,14 +21,24 @@ enum CandidateArrowGeometry {
     }
 }
 
+/// Frames of the board and of each komadai piece ("hand_<side>_<piece>"), so a drop arrow can start at the hand piece.
+struct ArrowAnchorKey:PreferenceKey {
+    static var defaultValue:[String:Anchor<CGRect>]=[:]
+    static func reduce(value:inout [String:Anchor<CGRect>],nextValue:()->[String:Anchor<CGRect>]) {value.merge(nextValue()){$1}}
+}
+
 struct CandidateArrows:View {
     let candidates:[Candidate]
     let side:Int
+    /// Drops whose hand piece is shown outside the board are drawn by DropCandidateArrows instead.
+    var handDrops:Set<Int>=[]
     var body:some View {
         Canvas{context,size in
             let unit=min(size.width,size.height)*0.98/9
             for index in candidates.indices.reversed(){
-                let move=candidates[index].move,target=CandidateArrowGeometry.center(move.destination,size:size)
+                let move=candidates[index].move
+                if move.drop>0 && handDrops.contains(move.drop){continue}
+                let target=CandidateArrowGeometry.center(move.destination,size:size)
                 let source=move.source.map{CandidateArrowGeometry.center($0,size:size)}
                 let path=CandidateArrowGeometry.path(source:source,target:target,unit:unit,rank:index+1,side:side)
                 let alpha=CandidateArrowGeometry.opacities[index]
@@ -39,5 +49,30 @@ struct CandidateArrows:View {
         }.clipped().allowsHitTesting(false)
             .accessibilityElement(children:.ignore).accessibilityLabel("候補手の矢印")
             .accessibilityValue("\(candidates.count)件").accessibilityIdentifier("candidate_arrows")
+    }
+}
+
+/// Drop candidates drawn from the komadai piece to the destination square, above the board and both hands.
+struct DropCandidateArrows:View {
+    let candidates:[Candidate]
+    let side:Int
+    let board:CGRect
+    let hands:[Int:CGRect]
+    var body:some View {
+        Canvas{context,_ in
+            let unit=min(board.width,board.height)*0.98/9
+            for index in candidates.indices.reversed(){
+                let move=candidates[index].move
+                guard move.drop>0,let hand=hands[move.drop] else{continue}
+                let center=CandidateArrowGeometry.center(move.destination,size:board.size),target=CGPoint(x:board.minX+center.x,y:board.minY+center.y)
+                let source=CGPoint(x:hand.midX,y:hand.midY)
+                let path=CandidateArrowGeometry.path(source:source,target:target,unit:unit,rank:index+1,side:side)
+                let alpha=CandidateArrowGeometry.opacities[index],orange=Color(red:1,green:91.0/255,blue:24.0/255).opacity(alpha)
+                context.stroke(Path(roundedRect:hand.insetBy(dx:-1,dy:-1),cornerRadius:4),with:.color(orange),lineWidth:max(1.2,unit*0.04))
+                context.fill(path,with:.color(orange))
+                context.stroke(path,with:.color(Color(red:1,green:225.0/255,blue:159.0/255).opacity(alpha)),lineWidth:unit*0.018)
+                context.draw(Text("打").font(.system(size:unit*0.23,weight:.bold)).foregroundColor(Color(red:139.0/255,green:45.0/255,blue:7.0/255).opacity(alpha)),at:CGPoint(x:target.x+unit*0.34,y:target.y-unit*0.32))
+            }
+        }.allowsHitTesting(false).accessibilityHidden(true)
     }
 }

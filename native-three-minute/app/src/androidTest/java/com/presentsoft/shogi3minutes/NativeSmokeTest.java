@@ -64,6 +64,9 @@ public final class NativeSmokeTest extends Instrumentation {
    check(Color.alpha(image.getPixel(120,59))==0&&Color.alpha(image.getPixel(120,70))>0,"arrowhead points toward the destination, with inset");image.recycle();
   }
   for(int side:new int[]{1,-1}){Bitmap image=Bitmap.createBitmap(240,280,Bitmap.Config.ARGB_8888);CandidateArrow.draw(new Canvas(image),null,new RectF(100,100,140,140),1,side);check(Color.alpha(image.getPixel(120,120+side*10))>0,"drop arrow points inward for either side");check(Color.alpha(image.getPixel(120,120-side*10))==0,"drop does not invent a board origin");image.recycle();}
+  {Bitmap image=Bitmap.createBitmap(240,280,Bitmap.Config.ARGB_8888);RectF hand=new RectF(30,230,62,264),target=new RectF(150,40,190,80);CandidateArrow.draw(new Canvas(image),hand,target,1,1,true);
+   float mx=(hand.centerX()+target.centerX())/2,my=(hand.centerY()+target.centerY())/2;check(Color.alpha(image.getPixel(Math.round(mx),Math.round(my)))>0,"drop arrow runs from the komadai piece to the destination");
+   check(Color.alpha(image.getPixel(Math.round(hand.left)-1,Math.round(hand.centerY())))>0,"komadai source piece is outlined");float dx=target.centerX()-hand.centerX(),dy=target.centerY()-hand.centerY(),d=(float)Math.hypot(dx,dy);check(Color.alpha(image.getPixel(Math.round(target.centerX()-dx/d*10),Math.round(target.centerY()-dy/d*10)))>0,"drop arrowhead reaches the destination");image.recycle();}
  }
  void studyAnalysisTests()throws Exception{
   candidateArrowPixels();

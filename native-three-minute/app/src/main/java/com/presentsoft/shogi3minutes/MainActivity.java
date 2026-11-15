@@ -179,6 +179,8 @@ public final class MainActivity extends Activity {
   }
   float handStep(int count){return Math.min(40,260f/Math.max(1,count-1));}
   float handX(int i,int count){return 378-(count-1-i)*handStep(count);}
+  /** Drawn piece area of piece type n in side's hand panel, or null when that piece is not shown there. */
+  RectF handPieceRect(int side,int n){if(mode==ONLINE||n<1||n>handLimit()||game.hands[side==1?0:1][n]<=0)return null;int count=handCount(side),i=0;for(int k=1;k<n;k++)if(game.hands[side==1?0:1][k]>0)i++;float x=handX(i,count),y=side==viewSide()?bottomHandY():topHandY();return new RectF(x-16,y+3,x+16,y+37);}
   int handLimit(){return mode==STUDY?8:7;}
   int handCount(int side){int count=0;for(int n=1;n<=handLimit();n++)if(game.hands[side==1?0:1][n]>0)count++;return count;}
   float topHandY(){return boardY-46;}float bottomHandY(){return boardY+boardHeight+2;}
@@ -210,15 +212,17 @@ public final class MainActivity extends Activity {
    if(mode==ONLINE&&online.game==null){onlineLobby(c);c.restore();return;}
    if(mode==ONLINE)onlineTopBar(c);
    if(mode==MATCH){darkPanel(c,new RectF(4,0,396,32));text(c,"モード",45,22,11,0xfff5e4c8);text(c,"やり直し",145,22,10.5f,Color.WHITE);text(c,"対局設定",253,22,10.5f,Color.WHITE);paint.setColor(0xff285681);c.drawRoundRect(320,4,391,29,3,3,paint);text(c,"投了",355,22,11,Color.WHITE);}
-   hand(c,-viewSide(),topHandY());board(c);if(lastMove!=null&&selectedR<0&&selectedHand==0)fitted(c,"ui/highlight_move_target_pink.png",cell(lastMove.row,lastMove.col),false);selectionColors(c);for(int r=0;r<9;r++)for(int col=0;col<9;col++)if(game.board[r][col]!=0)boardPiece(c,game.board[r][col],cell(r,col));drawCandidateArrows(c);hand(c,viewSide(),bottomHandY());
+   hand(c,-viewSide(),topHandY());board(c);if(lastMove!=null&&selectedR<0&&selectedHand==0)fitted(c,"ui/highlight_move_target_pink.png",cell(lastMove.row,lastMove.col),false);selectionColors(c);for(int r=0;r<9;r++)for(int col=0;col<9;col++)if(game.board[r][col]!=0)boardPiece(c,game.board[r][col],cell(r,col));hand(c,viewSide(),bottomHandY());drawCandidateArrows(c);
    if(mode==MATCH){String status=game.winner==2?game.result:game.winner!=0?(game.winner==humanSide()?"勝利":"敗北")+"・"+game.result:!ai.ready?(aiError==null?"AI読み込み中…":"AIエラー・対局設定から再試行"):!started?"タップして対局開始":game.turn==humanSide()?(game.checked(humanSide())?"王手です・あなたの手番":"あなたの手番"):"CPUの手番";text(c,status,200,bottomHandY()+64,12,Color.WHITE);if(!started){paint.setColor(0xe0300909);c.drawRoundRect(75,H/2-35,325,H/2+35,12,12,paint);text(c,ai.ready?"対局開始":"AI読み込み中…",200,H/2+7,25,0xffffdd8b);}}else if(mode==ONLINE)onlineStatus(c);else analysisPanel(c);c.restore();
   }
   int candidateArrowCount(){return mode==STUDY&&analysisResult!=null&&analysisBoard!=null?Math.min(3,analysisRoots.size()):0;}
   void drawCandidateArrows(Canvas c){
    int count=candidateArrowCount();if(count==0)return;
-   c.save();RectF first=gridCell(0,0),last=gridCell(8,8);c.clipRect(first.left,first.top,last.right,last.bottom);
-   for(int i=count-1;i>=0;i--){ShogiGame.Move m=analysisRoots.get(i);CandidateArrow.draw(c,m.drop>0?null:cell(m.fromRow,m.fromCol),cell(m.row,m.col),i+1,analysisBoard.turn);}
-   c.restore();
+   RectF first=gridCell(0,0),last=gridCell(8,8);int side=analysisBoard.turn;
+   for(int i=count-1;i>=0;i--){ShogiGame.Move m=analysisRoots.get(i);RectF source=m.drop>0?handPieceRect(side,m.drop):cell(m.fromRow,m.fromCol);c.save();
+    // Board moves stay on the board; a drop may run from the komadai above or below it.
+    if(m.drop>0&&source!=null)c.clipRect(0,topHandY(),400,bottomHandY()+44);else c.clipRect(first.left,first.top,last.right,last.bottom);
+    CandidateArrow.draw(c,source,cell(m.row,m.col),i+1,side,m.drop>0);c.restore();}
   }
   float analysisY(){return boardY+boardHeight+50;}
   RectF graphRect(){float y=analysisY();return new RectF(43,y+159,386,y+220);}
