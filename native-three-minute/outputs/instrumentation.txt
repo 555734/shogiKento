@@ -1,0 +1,1 @@
+FAIL: java.lang.AssertionError: animation keeps producing frames (median 66ms on emulator)

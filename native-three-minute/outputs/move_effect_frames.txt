@@ -1,0 +1,1 @@
+Move effects, 10 moves back to back on the CI emulator: frames=59 median=66ms p95=183ms over17ms=47 (79%). Physical-device 60fps is not measured here.
