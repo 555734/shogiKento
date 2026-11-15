@@ -1,0 +1,1 @@
+PASS exact APK ARM64 dynamic PIE + Android 16 bionic: 36 searches, 3 independently legal candidates each, 2 CPU profiles, normal + scalar engines. Physical phone remains unverified.
