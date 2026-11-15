@@ -11,7 +11,7 @@ final class OnlineSmoke {
   final OnlineAccount account=new OnlineAccount(OnlineAccount.newSecret(),"テスト相手");volatile OnlineIdentity appCard;int cardRound;
   Peer(String relay)throws IOException{net=new Netplay(Collections.singletonList(relay),Collections.emptyList(),null,this);net.start();}
   static long now(){return SystemClock.elapsedRealtime();}
-  public synchronized void matched(int side){appCard=null;cardRound=0;game=new OnlineGame(side,net::send);game.hello(now());card();}
+  public synchronized void matched(int side){appCard=null;cardRound=0;game=new OnlineGame(side,net::send,OnlineGame.millis(net.matchedTimeControl()));game.hello(now());card();}
   public synchronized void message(String t){if(t.startsWith("ID ")){appCard=OnlineIdentity.parse(t,net.sessionId());return;}if(game!=null){game.receive(t,now());card();}}
   synchronized void card(){byte[] sid=net.sessionId();if(game!=null&&sid!=null&&game.round!=cardRound){cardRound=game.round;net.send(OnlineIdentity.message(account.key,sid,account.name,account.rating,account.games,new java.security.SecureRandom()));}}
   public void path(boolean d,int rtt,String route){direct=d;}
@@ -46,6 +46,8 @@ final class OnlineSmoke {
    waitFor(t,()->MainActivity.online.net!=null&&MainActivity.online.relaysOpen==1,15000,"app connected to relay");waitFor(t,()->!MainActivity.online.network.isEmpty(),5000,"UDP candidates summarized");
    t.screenshot("51_online_lobby.png");
    Peer peer=new Peer(relay.url());waitFor(t,()->peer.relays==1,10000,"peer relay");
+   RectF[] r=new RectF[1];t.main(()->{t.check(!MainActivity.online.roomPage,"lobby shows random match first");r[0]=t.v.timeRect(1);});t.tap(r[0].centerX(),r[0].centerY());t.main(()->t.check("10m".equals(MainActivity.online.timeControl),"10-minute chosen by touch"));
+   t.main(()->r[0]=t.v.timeRect(0));t.tap(r[0].centerX(),r[0].centerY());t.main(()->t.check("3m".equals(MainActivity.online.timeControl),"3-minute chosen by touch"));
    t.main(()->y[0]=t.v.lobbyButtonY(0)+26);t.tap(200,y[0]);t.main(()->t.check(MainActivity.online.seekMode==Netplay.QUICK,"random match started by touch"));peer.net.seek(Netplay.QUICK,null);
    waitFor(t,()->MainActivity.online.game!=null&&MainActivity.online.game.started&&peer.game!=null&&peer.game.started,20000,"quick match started");
    t.main(()->t.check(MainActivity.online.game.mySide==-peer.game.mySide,"opposite online sides"));orientation(t);
@@ -72,16 +74,21 @@ final class OnlineSmoke {
    report.append("quick match + rematch move latency (touch to peer / peer to app) ms: ").append(latency).append('\n');
    peer.net.close();
    Peer guest=new Peer(relay.url());waitFor(t,()->guest.relays==1,10000,"guest relay");
-   t.main(()->y[0]=t.v.lobbyButtonY(1)+26);t.tap(200,y[0]);String[] code=new String[1];t.main(()->code[0]=MainActivity.online.roomCode);t.check(code[0]!=null&&code[0].matches("[0-9]{6}"),"room code shown");
+   t.main(()->r[0]=t.v.roomLinkRect());t.tap(r[0].centerX(),r[0].centerY());t.main(()->t.check(MainActivity.online.roomPage&&MainActivity.online.seekMode<0,"small room link opens the room page"));t.screenshot("57_online_room_page.png");
+   t.main(()->r[0]=t.v.timeRect(1));t.tap(r[0].centerX(),r[0].centerY());
+   t.main(()->y[0]=t.v.lobbyButtonY(0)+26);t.tap(200,y[0]);String[] code=new String[1];t.main(()->code[0]=MainActivity.online.roomCode);t.check(code[0]!=null&&code[0].matches("[0-9]{6}"),"room code shown");
    t.screenshot("55_online_room_code.png");guest.net.seek(Netplay.GUEST,code[0]);
    waitFor(t,()->MainActivity.online.game!=null&&MainActivity.online.game.started&&guest.game!=null&&guest.game.started,20000,"guest joined hosted room");
-   ArrayList<Long> roomLatency=new ArrayList<>();play(t,guest,2,roomLatency);t.tap(45,26);t.clickDialog("投了して退出");waitFor(t,()->MainActivity.online.game==null,5000,"left room game");guest.net.close();
+   t.main(()->t.check(MainActivity.online.game.time==600000&&guest.game.time==600000&&MainActivity.online.game.game.remaining[0]>500000,"10-minute room on both sides"));
+   ArrayList<Long> roomLatency=new ArrayList<>();play(t,guest,2,roomLatency);t.tap(45,26);t.clickDialog("投了して退出");waitFor(t,()->MainActivity.online.game==null&&MainActivity.online.roomPage,5000,"left room game back to the room page");guest.net.close();
+   t.main(()->r[0]=t.v.timeRect(0));t.tap(r[0].centerX(),r[0].centerY());
    Peer host=new Peer(relay.url());waitFor(t,()->host.relays==1,10000,"host relay");host.net.seek(Netplay.HOST,"424242");
-   t.main(()->y[0]=t.v.lobbyButtonY(2)+26);t.tap(200,y[0]);waitFor(t,()->t.v.joinField!=null&&t.activity.choiceDialog!=null&&t.activity.choiceDialog.isShowing(),5000,"join dialog");
+   t.main(()->y[0]=t.v.lobbyButtonY(1)+26);t.tap(200,y[0]);waitFor(t,()->t.v.joinField!=null&&t.activity.choiceDialog!=null&&t.activity.choiceDialog.isShowing(),5000,"join dialog");
    t.main(()->t.v.joinField.setText("424242"));t.clickDialog("参加");
    waitFor(t,()->MainActivity.online.game!=null&&MainActivity.online.game.started&&host.game!=null&&host.game.started,20000,"joined friend's room by code");play(t,host,2,roomLatency);
    report.append("room games move latency ms: ").append(roomLatency).append('\n');
    t.tap(45,26);t.clickDialog("投了して退出");waitFor(t,()->host.game.over(),8000,"host sees guest leave");host.net.close();
+   t.tap(45,26);t.main(()->t.check(t.v.mode==MainActivity.ONLINE&&!MainActivity.online.roomPage,"back from the room page returns to the lobby"));
    t.tap(45,26);waitFor(t,()->t.v.mode==MainActivity.HOME&&MainActivity.online.net==null,5000,"leaving online mode disconnects");
    t.check(relay.rejected==0,"every app event accepted by strict relay");report.append("relay accepted=").append(relay.accepted).append(" forwarded=").append(relay.forwarded).append(" rejected=").append(relay.rejected).append('\n');
   }finally{Netplay.relayOverride=null;Netplay.stunOverride=null;UdpEndpoint.allowLoopback=false;Netplay.lobbyTag="shogikento-v1-3m";}

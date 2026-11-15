@@ -23,7 +23,7 @@ public final class NetplayBot implements Netplay.Listener {
    +" peer="+(peerId==null?"-":OnlineIdentity.base64url(peerId.name.getBytes(java.nio.charset.StandardCharsets.UTF_8))+":"+peerId.rating+":"+peerId.pubkey.substring(0,8))+" sfen="+UsiPosition.sfen(game.game);
   if(!s.equals(last)){last=s;out.println(s);out.flush();}
  }
- public synchronized void matched(int side){matches++;left=false;seeking=false;peerId=null;cardRound=0;game=new OnlineGame(side,net::send);game.hello(now());report();}
+ public synchronized void matched(int side){matches++;left=false;seeking=false;peerId=null;cardRound=0;game=new OnlineGame(side,net::send,OnlineGame.millis(net.matchedTimeControl()));game.hello(now());report();}
  public synchronized void message(String t){if(t.startsWith("ID ")){peerId=OnlineIdentity.parse(t,net.sessionId());report();return;}if(game!=null){game.rttMillis=rtt;game.receive(t,now());}report();}
  public synchronized void path(boolean d,int r,String route){direct=d;rtt=r;report();}
  public synchronized void relays(int open,int total){relaysOpen=open;report();}

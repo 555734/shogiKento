@@ -12,7 +12,7 @@ public final class NetplayTest {
  static final class Client implements Netplay.Listener {
   final String name;final Netplay net;volatile OnlineGame game;volatile OnlineIdentity peerId;volatile int side,rtt=-1,relaysOpen,matches;volatile boolean direct,left;volatile String failure,route="",network="";
   Client(String name,List<String> relays,List<String> stun)throws IOException{this.name=name;net=new Netplay(relays,stun,null,this);net.start();}
-  public synchronized void matched(int s){side=s;matches++;game=new OnlineGame(s,net::send);game.hello(now());}
+  public synchronized void matched(int s){side=s;matches++;game=new OnlineGame(s,net::send,OnlineGame.millis(net.matchedTimeControl()));game.hello(now());}
   public synchronized void message(String t){if(t.startsWith("ID ")){peerId=OnlineIdentity.parse(t,net.sessionId());return;}if(game!=null){game.rttMillis=rtt;game.receive(t,now());}}
   public void path(boolean d,int r,String route){direct=d;rtt=r;this.route=route;}
   public void relays(int open,int total){relaysOpen=open;}
@@ -40,7 +40,7 @@ public final class NetplayTest {
   json();schnorr(args.length>0?args[0]:"tests/bip340.csv");stun();candidates();clocks();accounts();
   UdpEndpoint.allowLoopback=true;link();
   try(LocalRelay relay=new LocalRelay()){List<String> relays=Collections.singletonList(relay.url());
-   profiles(relays);ratingMatch(relays);quickGame(relays);fastDiscovery(relays);relayOnly(relays);failover(relays);manySeekers(relays);rooms(relays);relayRestart(relay,relays);
+   profiles(relays);ratingMatch(relays);quickGame(relays);fastDiscovery(relays);relayOnly(relays);failover(relays);manySeekers(relays);rooms(relays);timeControls(relays);relayRestart(relay,relays);
    relay.dropPercent=30;lossyRelay(relays);relay.dropPercent=0;relay.delayMillis=150;slowRelay(relays);relay.delayMillis=400;udpBeforeConfirm(relays);relay.delayMillis=0;lostHandshake(relay,relays);
    ok(relay.rejected==0,"strict relay accepted every event id/signature: rejected="+relay.rejected);
   }
@@ -109,6 +109,10 @@ public final class NetplayTest {
   m.a.requestRematch(m.t);m.run(m.t+100);ok(!m.b.started||m.b.over(),"rematch needs both");m.b.requestRematch(m.t);m.run(m.t+100);
   ok(!m.a.over()&&!m.b.over()&&m.a.mySide==-1&&m.b.mySide==1&&m.a.round==2&&m.b.round==2,"rematch swaps sides");ok(m.b.myTurn()&&m.b.game.remaining[0]==180000,"new round fresh clocks");
   OnlineGame v=new OnlineGame(1,x->{});v.hello(0);v.receive("HELLO 99",0);ok(v.over()&&v.error!=null,"protocol mismatch reported");
+  OnlineGame ten=new OnlineGame(1,x->{},600000);ok(ten.game.remaining[0]==600000&&ten.game.remaining[1]==600000,"10-minute clocks");ten.hello(0);ten.receive("HELLO 1 180000",0);ok(ten.over()&&ten.error!=null,"time control mismatch reported");
+  OnlineGame old=new OnlineGame(1,x->{},180000);old.hello(0);old.receive("HELLO 1",0);ok(old.started&&!old.over(),"HELLO without time is the 3-minute game");
+  ok(OnlineGame.millis("10m")==600000&&OnlineGame.millis("3m")==180000&&!OnlineGame.validTimeControl("5m"),"time control table");
+  Netplay.lobbyTag="shogikento-v1-3m";ok(Netplay.quickTag("3m").equals("shogikento-v1-3m")&&Netplay.quickTag("10m").equals("shogikento-v1-10m"),"separate public lobbies per time control");
  }
  /** Elo, NIP-19 transfer codes, display names, signed account cards and the account record with abandonment. */
  static void accounts(){
@@ -231,6 +235,16 @@ public final class NetplayTest {
   Client guest=new Client("guest",relays,Collections.emptyList());waitFor(()->guest.relaysOpen==1,10000,"relay");guest.net.seek(Netplay.GUEST,"123456");
   waitFor(()->host.started()&&guest.started(),20000,"room code match");ok(paired(host,guest)&&!wrong.started()&&!quick.started(),"only the right guest");play(host,guest,6);
   close(host,wrong,quick,guest);
+ }
+ /** Random matches only pair the same time control; a room plays the host's time control whatever the guest chose. */
+ static void timeControls(List<String> relays)throws Exception{
+  Netplay.lobbyTag="test-lobby-tc";Client a=new Client("A10",relays,Collections.emptyList()),b=new Client("B3",relays,Collections.emptyList()),c=new Client("C10",relays,Collections.emptyList());
+  waitFor(()->a.relaysOpen==1&&b.relaysOpen==1&&c.relaysOpen==1,10000,"relays");a.net.seek(Netplay.QUICK,null,"10m");b.net.seek(Netplay.QUICK,null,"3m");Thread.sleep(4000);
+  ok(!a.started()&&!b.started(),"3-minute and 10-minute seekers never meet");c.net.seek(Netplay.QUICK,null,"10m");waitFor(()->a.started()&&c.started(),20000,"10-minute random match");
+  ok(paired(a,c)&&!b.started(),"10-minute seekers paired");ok(a.game.time==600000&&c.game.time==600000&&a.game.game.remaining[0]==600000,"10-minute clocks on both sides");play(a,c,4);close(a,b,c);
+  Client host=new Client("host10",relays,Collections.emptyList()),guest=new Client("guest",relays,Collections.emptyList());waitFor(()->host.relaysOpen==1&&guest.relaysOpen==1,10000,"relays");
+  host.net.seek(Netplay.HOST,"777000","10m");guest.net.seek(Netplay.GUEST,"777000","3m");waitFor(()->host.started()&&guest.started(),20000,"10-minute room");
+  ok(host.game.time==600000&&guest.game.time==600000&&"10m".equals(guest.net.matchedTimeControl()),"guest follows the host's time control");play(host,guest,4);close(host,guest);
  }
  static void relayRestart(LocalRelay relay,List<String> relays)throws Exception{
   Netplay.lobbyTag="test-lobby-restart";Client a=new Client("A",relays,Collections.emptyList()),b=new Client("B",relays,Collections.emptyList());waitFor(()->a.relaysOpen==1&&b.relaysOpen==1,10000,"relays");

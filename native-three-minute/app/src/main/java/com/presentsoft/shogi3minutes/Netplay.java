@@ -10,7 +10,7 @@ import javax.crypto.*;import javax.crypto.spec.*;import javax.net.ssl.HostnameVe
 final class Netplay implements Closeable {
  static final int QUICK=0,HOST=1,GUEST=2,VERSION=1;
  static final int IDLE=0,SEEKING=1,OFFERED=2,ACCEPTED=3,MATCHED=4;
- /** The public 3-minute lobby. Tests use a private tag so they never meet real players. */
+ /** The public 3-minute lobby; the 10-minute lobby swaps the suffix. Tests use a private tag so they never meet real players. */
  static volatile String lobbyTag="shogikento-v1-3m";
  /** Instrumentation tests point the app at an in-process relay without internet STUN. */
  static volatile List<String> relayOverride,stunOverride;
@@ -23,7 +23,7 @@ final class Netplay implements Closeable {
  }
  static final class Seek {String nonce,ecdh,role;long since,lastSeen;int rating=Rating.INITIAL;}
  static final class Session {
-  String peer,peerNonce;int role,confirms;byte[] key,id;P2PLink link;boolean live;long deadline,lastConfirm;List<String> peerCandidates=new ArrayList<>();
+  String peer,peerNonce,timeControl="3m";int role,confirms;byte[] key,id;P2PLink link;boolean live;long deadline,lastConfirm;List<String> peerCandidates=new ArrayList<>();
   int localSide(){return ((id[31]&1)==0)==(role==0)?1:-1;}
  }
  final ScheduledExecutorService loop=Executors.newSingleThreadScheduledExecutor(r->{Thread t=new Thread(r,"netplay");t.setDaemon(true);return t;});
@@ -31,7 +31,7 @@ final class Netplay implements Closeable {
  final List<String> stun;volatile Listener listener;
  /** Announced in random-match seeks so players of similar strength meet first. */
  volatile int rating=Rating.INITIAL,games;
- int mode=QUICK,state=IDLE,seeks;String roomTag,nonce,target,targetNonce;long deadline,seekStarted,lastSeek,lastReply,lastHandshake;int handshakeSends;Map<String,Object> handshake;volatile Session session;Session pending;
+ int mode=QUICK,state=IDLE,seeks;String timeControl="3m",roomTag,nonce,target,targetNonce;long deadline,seekStarted,lastSeek,lastReply,lastHandshake;int handshakeSends;Map<String,Object> handshake;volatile Session session;Session pending;
  final long born=System.currentTimeMillis();final ArrayDeque<String> trace=new ArrayDeque<>();
  /** Recent handshake steps for diagnostics (relative ms, short peer ids); never contains candidates or keys. */
  void trace(String what){synchronized(trace){trace.addLast((System.currentTimeMillis()-born)+"ms "+what);if(trace.size()>80)trace.removeFirst();}}
@@ -51,10 +51,13 @@ final class Netplay implements Closeable {
  synchronized void start(){if(closed)return;try{pool.subscribe("direct",filter("#p",key.publicHex));pool.start();endpoint.gather(stun);loop.scheduleWithFixedDelay(()->{try{tick();}catch(RuntimeException e){fail("内部エラー: "+e);}},500,500,TimeUnit.MILLISECONDS);run(this::networkSummary);}catch(RejectedExecutionException ignored){}}
  void run(Runnable r){try{loop.execute(()->{try{r.run();}catch(RuntimeException e){fail("内部エラー: "+e);}});}catch(RejectedExecutionException ignored){}}
  static Map<String,Object> filter(String tag,String value){LinkedHashMap<String,Object> f=new LinkedHashMap<>();f.put("kinds",Collections.singletonList((long)NostrRelayPool.KIND));f.put(tag,Collections.singletonList(value));f.put("since",System.currentTimeMillis()/1000-30);return f;}
+ static String quickTag(String tc){String base=lobbyTag;if("3m".equals(tc))return base;return base.endsWith("-3m")?base.substring(0,base.length()-2)+tc:base+"-"+tc;}
  static String roomTag(String code){return "shogikento-v1-room-"+Schnorr.hex(Schnorr.sha256(("shogikento-room:"+code).getBytes(StandardCharsets.UTF_8))).substring(0,24);}
  static String newRoomCode(SecureRandom r){return String.format(Locale.US,"%06d",r.nextInt(1000000));}
  // ---- public controls (any thread) ----
- void seek(int mode,String code){run(()->{closeSession();this.mode=mode;roomTag=mode==QUICK?lobbyTag:roomTag(code);nonce=randomHex(16);state=SEEKING;seekStarted=System.currentTimeMillis();lastSeek=0;seeks=0;seen.clear();blocked.clear();
+ void seek(int mode,String code){seek(mode,code,"3m");}
+ /** Random matches pair only the same time control; in a room the host's time control is used. */
+ void seek(int mode,String code,String tc){String chosen=OnlineGame.validTimeControl(tc)?tc:"3m";run(()->{closeSession();this.mode=mode;timeControl=chosen;roomTag=mode==QUICK?quickTag(chosen):roomTag(code);nonce=randomHex(16);state=SEEKING;seekStarted=System.currentTimeMillis();lastSeek=0;seeks=0;seen.clear();blocked.clear();
   pool.subscribe("lobby",filter("#t",roomTag));tick();});}
  void stopSeeking(){run(()->{state=IDLE;pool.unsubscribe("lobby");closeSession();status("");});}
  /** Ordered with all other session work and never on the caller's (UI) thread. */
@@ -63,6 +66,8 @@ final class Netplay implements Closeable {
  /** The matched session's id (signed into account cards) and whether it came from the rated random lobby. */
  byte[] sessionId(){Session s=session;return s==null?null:s.id.clone();}
  boolean ratedSession(){return session!=null&&mode==QUICK;}
+ /** The matched game's time control: our own, or the host's when we joined a room. */
+ String matchedTimeControl(){Session s=session;return s==null?timeControl:s.timeControl;}
  P2PLink link(){Session s=session;return s==null?null:s.link;}
  String randomHex(int bytes){byte[] b=new byte[bytes];random.nextBytes(b);return Schnorr.hex(b);}
  // ---- matchmaking ----
@@ -80,7 +85,9 @@ final class Netplay implements Closeable {
    else if(now>s.deadline){closeSession();state=SEEKING;fail("相手の応答がありません。もう一度探します");}
    else if(s.role==0&&s.confirms<4&&now-s.lastConfirm>=800){s.confirms++;s.lastConfirm=now;publish(s.peer,confirm(s));}}
  }
- void announce(long now){lastSeek=now;seeks++;Map<String,Object> m=message("seek");m.put("e",ecdhText);m.put("w",(seekStarted/1000));m.put("r",mode==HOST?"host":mode==GUEST?"guest":"");m.put("tc","3m");if(mode==QUICK){m.put("rt",(long)rating);m.put("gm",(long)games);}publish(null,m);}
+ void announce(long now){lastSeek=now;seeks++;Map<String,Object> m=message("seek");m.put("e",ecdhText);m.put("w",(seekStarted/1000));m.put("r",mode==HOST?"host":mode==GUEST?"guest":"");m.put("tc",mode==GUEST?"any":timeControl);if(mode==QUICK){m.put("rt",(long)rating);m.put("gm",(long)games);}publish(null,m);}
+ /** Random seekers need the same time control; a host takes any guest and a guest any valid host time control. */
+ boolean acceptsTimeControl(String tc){return mode==QUICK?timeControl.equals(tc):mode==HOST?true:OnlineGame.validTimeControl(tc);}
  Map<String,Object> confirm(Session s){Map<String,Object> m=message("confirm");m.put("to",s.peerNonce);return m;}
  boolean mayOffer(Seek s,String pubkey){return mode==QUICK?pubkey.compareTo(key.publicHex)>0&&s.role.isEmpty():mode==HOST&&s.role.equals("guest");}
  /** Rating difference accepted after waiting: ±150 at first, 50 more every 3 seconds, so nobody waits long for a match. */
@@ -91,8 +98,8 @@ final class Netplay implements Closeable {
    int d=Math.abs(s.rating-rating),bd=pick==null?0:Math.abs(pick.rating-rating);
    if(pick==null||d<bd||d==bd&&(s.since<pick.since||s.since==pick.since&&e.getKey().compareTo(best)<0)){pick=s;best=e.getKey();}}
   if(pick==null)return;Session s=derive(best,pick.nonce,pick.ecdh,0);if(s==null){blocked.put(best,now+60000);return;}
-  target=best;targetNonce=pick.nonce;deadline=now+4000;state=OFFERED;closePending();pending=s;
-  Map<String,Object> m=message("offer");m.put("to",pick.nonce);m.put("e",ecdhText);m.put("c",seal(s.key,P2PLink.encodeCandidates(endpoint.candidates())));handshake=m;handshakeSends=1;lastHandshake=now;trace("offer "+shortKey(best));publish(best,new LinkedHashMap<>(m));
+  s.timeControl=timeControl;target=best;targetNonce=pick.nonce;deadline=now+4000;state=OFFERED;closePending();pending=s;
+  Map<String,Object> m=message("offer");m.put("to",pick.nonce);m.put("tc",timeControl);m.put("e",ecdhText);m.put("c",seal(s.key,P2PLink.encodeCandidates(endpoint.candidates())));handshake=m;handshakeSends=1;lastHandshake=now;trace("offer "+shortKey(best));publish(best,new LinkedHashMap<>(m));
  }
  void incoming(NostrRelayPool.Event e){
   Map<String,Object> m;try{m=NetJson.object(NetJson.parse(e.content));}catch(RuntimeException x){return;}
@@ -100,7 +107,7 @@ final class Netplay implements Closeable {
   if(!op.equals("seek")&&!key.publicHex.equals(e.tag("p")))return;
   long now=System.currentTimeMillis();
   switch(op){
-   case "seek":{if(state==IDLE||roomTag==null||!roomTag.equals(e.tag("t"))||!"3m".equals(NetJson.string(m,"tc")))return;Seek s=seen.get(e.pubkey);boolean fresh=s==null||!s.nonce.equals(n);
+   case "seek":{if(state==IDLE||roomTag==null||!roomTag.equals(e.tag("t"))||!acceptsTimeControl(NetJson.string(m,"tc")))return;Seek s=seen.get(e.pubkey);boolean fresh=s==null||!s.nonce.equals(n);
     if(fresh){s=new Seek();s.nonce=n;s.ecdh=NetJson.string(m,"e");s.since=NetJson.number(m,"w",now/1000);String r=NetJson.string(m,"r");s.role=r==null?"":r;int rt=(int)NetJson.number(m,"rt",Rating.INITIAL);s.rating=Rating.valid(rt)?rt:Rating.INITIAL;}
     s.lastSeen=now;if(s.ecdh!=null)seen.put(e.pubkey,s);if(state!=SEEKING)return;offerIfPossible(now);
     // A newcomer that must offer to us learns about us now instead of at our next periodic announcement.
@@ -111,6 +118,7 @@ final class Netplay implements Closeable {
     boolean allowed=mode==QUICK?e.pubkey.compareTo(key.publicHex)<0:mode==GUEST;
     if(!allowed||(state!=SEEKING&&state!=OFFERED)){Map<String,Object> d=message("decline");d.put("to",n);publish(e.pubkey,d);return;}
     Session s=derive(e.pubkey,n,NetJson.string(m,"e"),1);if(s==null)return;List<String> cand=open(s.key,NetJson.string(m,"c"));if(cand==null)return;
+    String offered=NetJson.string(m,"tc");if(mode==QUICK&&offered!=null&&!timeControl.equals(offered))return;s.timeControl=mode==GUEST?(OnlineGame.validTimeControl(offered)?offered:"3m"):timeControl;
     closePending();s.peerCandidates=cand;pending=s;target=e.pubkey;targetNonce=n;deadline=now+5000;state=ACCEPTED;startLink(s);
     Map<String,Object> a=message("accept");a.put("to",n);a.put("c",seal(s.key,P2PLink.encodeCandidates(endpoint.candidates())));a.put("e",ecdhText);handshake=a;trace("accept "+shortKey(e.pubkey));publish(e.pubkey,new LinkedHashMap<>(a));status("対戦相手が見つかりました・接続中…");return;}
    case "accept":{if(!nonce.equals(to))return;trace("recv accept "+shortKey(e.pubkey)+" via "+e.relay);

@@ -1,7 +1,7 @@
 package com.presentsoft.shogi3minutes;
 import java.util.*;
 /**
- * Two-player 3-minute sudden death over an unreliable network, without a server. Both peers run the same
+ * Two-player sudden death (3 or 10 minutes) over an unreliable network, without a server. Both peers run the same
  * Java rules, so every received move must be legal here too. Each player's own clock is measured locally;
  * a mover reports its remaining time, and the receiver accepts it only within a latency allowance, so
  * neither side is charged for network delay and a modified client cannot stop its own clock.
@@ -9,15 +9,23 @@ import java.util.*;
 final class OnlineGame {
  interface Sender {void send(String message);}
  static final int PROTOCOL=1;static final long TIME=180000,MIN_ALLOWANCE=2000,GRACE=4000;
+ /** Online time controls: 3-minute and 10-minute sudden death. */
+ static final String[] TIME_CONTROLS={"3m","10m"};
+ static boolean validTimeControl(String tc){return "3m".equals(tc)||"10m".equals(tc);}
+ static long millis(String tc){return "10m".equals(tc)?600000:TIME;}
+ static String label(String tc){return "10m".equals(tc)?"10分切れ負け":"3分切れ負け";}
+ final long time;
  final ShogiGame game=new ShogiGame();final Sender out;
  int mySide,round=1;boolean helloSent,peerHello,started,rematchMine,rematchPeer,peerLeft;
- long turnStart,turnStartRemaining=TIME;int rttMillis=-1;String error;ShogiGame.Move lastMove;
- OnlineGame(int mySide,Sender out){this.mySide=mySide;this.out=out;game.restart();}
+ long turnStart,turnStartRemaining;int rttMillis=-1;String error;ShogiGame.Move lastMove;
+ OnlineGame(int mySide,Sender out){this(mySide,out,TIME);}
+ OnlineGame(int mySide,Sender out,long time){this.mySide=mySide;this.out=out;this.time=time;reset();}
+ void reset(){game.restart();game.remaining[0]=game.remaining[1]=time;turnStartRemaining=time;}
  static int slot(int side){return side==1?0:1;}
  boolean over(){return game.winner!=0;}
  boolean myTurn(){return started&&!over()&&game.turn==mySide;}
  long allowance(){return Math.max(MIN_ALLOWANCE,rttMillis<0?0:2L*rttMillis+500);}
- void hello(long now){if(!helloSent){helloSent=true;out.send("HELLO "+PROTOCOL);}maybeStart(now);}
+ void hello(long now){if(!helloSent){helloSent=true;out.send("HELLO "+PROTOCOL+" "+time);}maybeStart(now);}
  void maybeStart(long now){if(helloSent&&peerHello&&!started){started=true;turnStart=now;turnStartRemaining=game.remaining[slot(game.turn)];}}
  /** Remaining time as currently displayed; the side to move counts down from its turn start. May be negative for the opponent before a claim. */
  long remaining(int side,long now){if(!started||over()||side!=game.turn)return game.remaining[slot(side)];return turnStartRemaining-(now-turnStart);}
@@ -35,13 +43,13 @@ final class OnlineGame {
  }
  void resign(){if(started&&!over()){out.send("RESIGN "+round);finish(-mySide,"投了");}}
  void requestRematch(long now){if(!over()||rematchMine||peerLeft)return;rematchMine=true;out.send("REMATCH "+(round+1));if(rematchPeer)nextRound(now);}
- void nextRound(long now){round++;mySide=-mySide;game.restart();rematchMine=rematchPeer=false;lastMove=null;error=null;started=true;turnStart=now;turnStartRemaining=TIME;}
+ void nextRound(long now){round++;mySide=-mySide;reset();rematchMine=rematchPeer=false;lastMove=null;error=null;started=true;turnStart=now;turnStartRemaining=time;}
  void peerLeft(){peerLeft=true;if(started)finish(mySide,"相手の退出");}
  /** Applies one peer message; malformed or out-of-order input never changes the board. Returns true if the board changed. */
  boolean receive(String text,long now){
   String[] f=text.trim().split(" ");if(f.length==0)return false;
   try{switch(f[0]){
-   case "HELLO":if(f.length<2||Integer.parseInt(f[1])!=PROTOCOL){error="相手のアプリのバージョンが異なります";finish(2,"バージョン不一致");return false;}peerHello=true;maybeStart(now);return false;
+   case "HELLO":if(f.length<2||Integer.parseInt(f[1])!=PROTOCOL){error="相手のアプリのバージョンが異なります";finish(2,"バージョン不一致");return false;}if(f.length>=3&&Long.parseLong(f[2])!=time){error="相手と持ち時間が異なります";finish(2,"持ち時間の不一致");return false;}peerHello=true;maybeStart(now);return false;
    case "MOVE":{if(f.length<5||Integer.parseInt(f[1])!=round||over()||!started||game.turn==mySide)return false;int ply=Integer.parseInt(f[2]);if(ply!=game.movesPlayed+1)return false;
     ShogiGame.Move m=UsiPosition.legalMove(game,f[3]);if(m==null){error="相手から不正な手を受信しました: "+f[3];finish(mySide,"相手の不正な手");return false;}
     long reported=Long.parseLong(f[4]),measured=Math.max(0,now-turnStart),upper=turnStartRemaining-Math.max(0,measured-allowance());
