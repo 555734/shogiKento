@@ -1,0 +1,50 @@
+relay survey (default relays first):
+SURVEY wss://yabu.me                        ok=3 rejected=0 delivered=3/3 median=211ms 
+SURVEY wss://relay.snort.social             ok=3 rejected=0 delivered=3/3 median=77ms 
+SURVEY wss://nostr-pub.wellorder.net        CONNECT FAILED WebSocket upgrade refused: HTTP/1.1 503 Service Unavailable
+SURVEY wss://relay.primal.net               ok=3 rejected=0 delivered=3/3 median=263ms 
+SURVEY wss://nos.lol                        ok=3 rejected=0 delivered=3/3 median=165ms 
+SURVEY wss://nostr.mom                      ok=3 rejected=0 delivered=3/3 median=199ms 
+SURVEY wss://nostr.oxtr.dev                 ok=3 rejected=0 delivered=3/3 median=202ms 
+SURVEY wss://relay.damus.io                 CONNECT FAILED WebSocket upgrade refused: HTTP/1.1 521 <none>
+SURVEY wss://nostr.bitcoiner.social         ok=3 rejected=0 delivered=3/3 median=189ms 
+SURVEY wss://relay-jp.nostr.wirednet.jp     CONNECT FAILED WebSocket upgrade refused: HTTP/1.1 403 Forbidden
+SURVEY wss://r.kojira.io                    CONNECT FAILED WebSocket upgrade refused: HTTP/1.1 403 Forbidden
+SURVEY wss://nostr.holybea.com              CONNECT FAILED Connect timed out
+SURVEY wss://relay.nostr.band               CONNECT FAILED Connect timed out
+SURVEY wss://nostr.fmt.wiz.biz              CONNECT FAILED Connect timed out
+SURVEY wss://relay.nostrich.de              CONNECT FAILED (internal_error) Received fatal alert: internal_error
+SURVEY wss://nostr.einundzwanzig.space      ok=0 rejected=1 delivered=0/3 median=- blocked: NIP-05 verification needed to publish events
+SURVEY wss://relay.nostr.wirednet.jp        ok=0 rejected=1 delivered=0/3 median=- closed by relay
+SURVEY wss://offchain.pub                   ok=3 rejected=0 delivered=3/3 median=148ms 
+SURVEY wss://nostr.wine                     ok=0 rejected=1 delivered=0/3 median=- restricted: sign up at https://nostr.wine to write events to this relay
+relays open A=6 B=6 of 8
+STUN replies A=12 candidates=[10.1.0.100:34984, 20.161.46.33:2057] symmetric=false
+match time 334ms
+direct path 10.1.0.100:36704 rtt=0
+direct move latency median=2ms max=8ms n=10
+relay-only match time 380ms
+relay-only move latency median=78ms max=87ms n=8
+PASS live public relays/STUN: 78 assertions
+diagnostics A:
+handshake: 420ms recv offer 4d6565 via wss://relay.snort.social | 422ms accept 4d6565 | 574ms recv confirm 4d6565 via wss://relay.snort.social | 574ms matched 4d6565 role 1
+state=4 relays=6/8 candidates=[10.1.0.100:43112, 20.161.46.33:2058] symmetric=false link: direct=false route=relay rtt=-1 relayRtt=154 udp=14/0 relay=11/11 candidates=1 rejected=0
+wss://yabu.me open ok=9 rejected=0 received=0 clock=no Date header
+wss://relay.snort.social open ok=13 rejected=0 received=14 clock=0s
+wss://nostr-pub.wellorder.net closed ok=0 rejected=0 received=0 clock=0s
+wss://relay.primal.net open ok=12 rejected=0 received=0 clock=0s
+wss://nos.lol open ok=12 rejected=0 received=0 clock=0s
+wss://nostr.mom open ok=12 rejected=0 received=0 clock=0s
+wss://nostr.oxtr.dev open ok=12 rejected=0 received=2 clock=0s
+wss://relay.damus.io closed ok=0 rejected=0 received=0 clock=0s last=Relay closed connection
+diagnostics B:
+handshake: 342ms offer bd7226 | 494ms recv accept bd7226 via wss://relay.snort.social | 494ms matched bd7226 role 0
+state=4 relays=6/8 candidates=[10.1.0.100:57546] symmetric=false link: direct=false route=relay rtt=-1 relayRtt=161 udp=30/0 relay=11/12 candidates=2 rejected=0
+wss://yabu.me open ok=12 rejected=0 received=0 clock=no Date header
+wss://relay.snort.social open ok=14 rejected=0 received=13 clock=0s
+wss://nostr-pub.wellorder.net closed ok=0 rejected=0 received=0 clock=0s
+wss://relay.primal.net open ok=12 rejected=0 received=0 clock=0s
+wss://nos.lol open ok=12 rejected=0 received=0 clock=0s
+wss://nostr.mom open ok=13 rejected=0 received=2 clock=0s
+wss://nostr.oxtr.dev open ok=13 rejected=0 received=1 clock=0s
+wss://relay.damus.io closed ok=0 rejected=0 received=0 clock=0s last=Relay closed connection

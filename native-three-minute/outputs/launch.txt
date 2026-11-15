@@ -1,0 +1,6 @@
+Starting: Intent { cmp=com.presentsoft.shogi3minutes/.MainActivity }
+Status: timeout
+LaunchState: UNKNOWN (-1)
+Activity: com.presentsoft.shogi3minutes/.MainActivity
+WaitTime: 11761
+Complete
