@@ -82,7 +82,7 @@ public final class MainActivity extends Activity {
   float scale=1,offsetX,H=720,boardY,boardX,boardSize=400,boardHeight=418.6f;static final float BOARD_HEIGHT_RATIO=1283f/1226f;
   float studyScroll,studyContentHeight;static final float ANALYSIS_HEIGHT=286;
   EvaluationHistory evalHistory=new EvaluationHistory();EvaluationHistory.Score displayScore;
-  Bitmap pieceAtlas,panelTexture;
+  Bitmap pieceAtlas,panelTexture;BitmapShader panelShader;final Matrix panelMatrix=new Matrix();final PorterDuffColorFilter PANEL_TINT=new PorterDuffColorFilter(0xff655f59,PorterDuff.Mode.MULTIPLY);
   final String[] atlasNames={"fu","kyo","kei","gin","kin","kaku","hisha","gyoku","ou","to","narikyo","narikei","narigin","uma","ryu"};
   final int[][] atlasBodies={{49,35,295,303},{353,35,600,303},{653,35,901,303},{956,35,1205,303},{48,341,297,609},{351,340,602,609},{652,341,901,609},{955,340,1206,608},{48,646,298,915},{349,645,603,915},{652,645,901,915},{954,645,1206,915},{48,948,298,1214},{350,948,603,1214},{651,948,902,1214}};
   final MoveSound sounds=new MoveSound(MainActivity.this);
@@ -106,6 +106,9 @@ public final class MainActivity extends Activity {
   void archiveMatch(){if(matchJournal==null||!matchJournal.matches(match))matchJournal=new MatchJournal(match);if(!matchStarted&&match.movesPlayed==0&&match.winner==0)return;try{records.save(matchJournal.record(match));}catch(IOException e){archiveError(e);}}
   BoardEffects.Snapshot applyMatchMove(ShogiGame.Move move,int side){if(matchJournal==null||!matchJournal.matches(match))matchJournal=new MatchJournal(match);String label=matchJournal.label(game,move);BoardEffects.Snapshot before=BoardEffects.Snapshot.of(game);game.apply(move,side);matchJournal.moved(game,label);pieceMoved(move,side,before);return before;}
   /** Starts the visual move effect; the game state is already updated. */
+  /** Effect clock; tests may freeze it to photograph one animation frame (no redraw loop while frozen). */
+  long frozenFrame=-1;
+  long frameTime(){return frozenFrame>=0?frozenFrame:SystemClock.uptimeMillis();}
   void pieceMoved(ShogiGame.Move m,int mover,BoardEffects.Snapshot before){effects.reduced=settings.reducedEffects();effects.move(m,mover,before,BoardEffects.Snapshot.of(game),game.checked(game.turn),game.turn,geometry,SystemClock.uptimeMillis());invalidate();}
   RectF handSlot(int side,int n,int[][] hands){int slot=side==1?0:1,count=0,i=0;for(int k=1;k<=handLimit();k++)if(hands[slot][k]>0||k==n){if(k<n)i++;count++;}float x=handX(i,count);if(mode==ONLINE&&side!=viewSide())x=400-x;float y=side==viewSide()?bottomHandY():topHandY();return handBox(x,y);}
   void cancelCpu(){handler.removeCallbacks(cpu);handler.removeCallbacks(analysisTask);analysisRevision++;ai.cancel();thinking=false;analyzing=false;}
@@ -162,9 +165,10 @@ public final class MainActivity extends Activity {
       image(c,p,new Rect(381,194,541,552),new RectF(12,y,35,y+height));image(c,p,new Rect(541,194,601,552),new RectF(35,y,365,y+height));image(c,p,new Rect(1629,194,1789,552),new RectF(365,y,388,y+height));}
     void darkPanel(Canvas c,RectF rect){
       if(panelTexture==null)panelTexture=Bitmap.createBitmap(load("ui/piece_tray_fu_kei_gin.png"),541,258,60,230);
-      paint.reset();paint.setAntiAlias(true);paint.setFilterBitmap(true);BitmapShader texture=new BitmapShader(panelTexture,Shader.TileMode.REPEAT,Shader.TileMode.CLAMP);
-      Matrix matrix=new Matrix();float f=rect.height()/panelTexture.getHeight();matrix.setScale(f,f);matrix.postTranslate(rect.left,rect.top);texture.setLocalMatrix(matrix);
-      paint.setShader(texture);paint.setColorFilter(new PorterDuffColorFilter(0xff655f59,PorterDuff.Mode.MULTIPLY));c.drawRect(rect,paint);
+      // Shader, matrix and tint are reused: panels are redrawn on every animation frame.
+      if(panelShader==null)panelShader=new BitmapShader(panelTexture,Shader.TileMode.REPEAT,Shader.TileMode.CLAMP);
+      paint.reset();paint.setAntiAlias(true);paint.setFilterBitmap(true);float f=rect.height()/panelTexture.getHeight();panelMatrix.setScale(f,f);panelMatrix.postTranslate(rect.left,rect.top);panelShader.setLocalMatrix(panelMatrix);
+      paint.setShader(panelShader);paint.setColorFilter(PANEL_TINT);c.drawRect(rect,paint);paint.setShader(null);paint.setColorFilter(null);
       paint.reset();paint.setColor(0xff5a4c3d);paint.setStrokeWidth(.6f);c.drawLine(rect.left,rect.top,rect.right,rect.top,paint);c.drawLine(rect.left,rect.bottom,rect.right,rect.bottom,paint);
     }
     void clockPanel(Canvas c,float y,long time,boolean active){
@@ -226,7 +230,7 @@ public final class MainActivity extends Activity {
    float icon=Math.min(h-14,60);drawPlayerIcon(c,side,new RectF(10,y+(h-icon)/2,10+icon,y+(h-icon)/2+icon),turn);float tx=18+icon;
    leftText(c,playerName(side),tx,y+h/2-8,16,turn?0xffffe3ae:0xffd9cfc2);
    long left=game.remaining[side==1?0:1],sec=(Math.max(0,left)+999)/1000;leftText(c,String.format(Locale.US,"%02d:%02d",sec/60,sec%60),tx,y+h/2+26,33,left<=30000?0xffff5a4a:(turn?Color.WHITE:0xffbdb4aa));
-   int count=handCount(side);if(count==0){text(c,"持ち駒なし",310,y+h/2+6,13.5f,0xffc5c0b9);return;}long frame=SystemClock.uptimeMillis();
+   int count=handCount(side);if(count==0){text(c,"持ち駒なし",310,y+h/2+6,13.5f,0xffc5c0b9);return;}long frame=frameTime();
    int i=0;for(int n=1;n<=handLimit();n++)if(game.hands[side==1?0:1][n]>0){float x=handX(i,count);int shown=game.hands[side==1?0:1][n]-(effects.handPending(side,n,frame)?1:0);RectF box=handBox(x,y);
     if(selectedSide==side&&selectedHand==n)fitted(c,"ui/highlight_selected_gold.png",new RectF(box.left-4,y+2,box.right+4,y+h-2),false);
     if(shown>0){float pop=effects.handScale(side,n,frame);drawPiece(c,side*n,box,commonHeight(box.width(),box.height())*pop);text(c,""+shown,box.right-3,box.bottom+12,14*pop,Color.WHITE);}i++;}
@@ -247,7 +251,7 @@ public final class MainActivity extends Activity {
    if(mode==MATCH){matchPanel(c,side,y);return;}
    darkPanel(c,new RectF(4,y,396,y+44));leftText(c,mode==MATCH||mode==ONLINE?(side==viewSide()?"あなた":mode==ONLINE?"相手":"CPU")+"・"+(side==1?"先手":"後手"):(side==1?"先手":"後手"),12,y+15,10.5f,Color.WHITE);
    if(mode==MATCH)clockPanel(c,y,game.remaining[side==1?0:1],started&&game.turn==side&&game.winner==0);else if(mode==ONLINE){OnlineGame g=online.game;clockPanel(c,y,Math.max(0,g.remaining(side,SystemClock.elapsedRealtime())),g.started&&game.turn==side&&!g.over());}else leftText(c,"検討・時計なし",12,y+34,8.7f,0xffc5c0b9);
-   int count=handCount(side);if(count==0){text(c,"持ち駒なし",302,y+27,9,0xffc5c0b9);return;}long frame=SystemClock.uptimeMillis();
+   int count=handCount(side);if(count==0){text(c,"持ち駒なし",302,y+27,9,0xffc5c0b9);return;}long frame=frameTime();
    int i=0;for(int n=1;n<=handLimit();n++)if(game.hands[side==1?0:1][n]>0){float x=handX(i,count);int shown=game.hands[side==1?0:1][n]-(effects.handPending(side,n,frame)?1:0);
     if(selectedSide==side&&selectedHand==n)fitted(c,"ui/highlight_selected_gold.png",new RectF(x-19,y,x+19,y+44),false);
     RectF dst=new RectF(x-16,y+3,x+16,y+37);if(shown>0){float pop=effects.handScale(side,n,frame);drawPiece(c,side*n,dst,commonHeight(dst.width(),dst.height())*pop);text(c,""+shown,x+13,y+41,9*pop,Color.WHITE);}i++;
@@ -268,14 +272,14 @@ public final class MainActivity extends Activity {
   @Override public boolean onInterceptTouchEvent(MotionEvent e){if(e.getAction()==MotionEvent.ACTION_DOWN){interceptDownX=e.getX();interceptDownY=e.getY();}if(e.getAction()==MotionEvent.ACTION_MOVE&&Math.abs(e.getY()-interceptDownY)>ViewConfiguration.get(MainActivity.this).getScaledTouchSlop()&&Math.abs(e.getY()-interceptDownY)>Math.abs(e.getX()-interceptDownX)){MotionEvent down=MotionEvent.obtain(e.getDownTime(),e.getDownTime(),MotionEvent.ACTION_DOWN,interceptDownX,interceptDownY,0);gestures.onTouchEvent(down);down.recycle();dragged=true;return true;}return false;}
   float homeMatchY(){return homeLayout().match.top;}float homeStudyY(){return homeLayout().study.top;}
   float homeImportY(){return homeLayout().paste.top;}float homeArchiveY(){return homeLayout().archive.top;}float homeOnlineY(){return homeLayout().online.top;}
-  @Override protected void onDraw(Canvas c){super.onDraw(c);c.save();c.clipRect(0,0,getWidth(),getHeight());if(mode==HOME){c.translate(offsetX,-studyScroll*scale);c.scale(scale,scale);homeScreen.draw(c,H,load(HomeScreen.BACKGROUND),load(HomeScreen.TITLE),load("pieces/normal/ou.png"));c.restore();return;}fitted(c,BACKGROUND_ART,new RectF(0,0,getWidth(),getHeight()),true);if(mode==MATCH||mode==ONLINE&&online.game!=null){int tint=effects.tint(game.movesPlayed,SystemClock.uptimeMillis());if(Color.alpha(tint)>0){paint.reset();paint.setColor(tint);c.drawRect(0,0,getWidth(),getHeight(),paint);}}c.translate(offsetX,-studyScroll*scale);c.scale(scale,scale);
+  @Override protected void onDraw(Canvas c){super.onDraw(c);c.save();c.clipRect(0,0,getWidth(),getHeight());if(mode==HOME){c.translate(offsetX,-studyScroll*scale);c.scale(scale,scale);homeScreen.draw(c,H,load(HomeScreen.BACKGROUND),load(HomeScreen.TITLE),load("pieces/normal/ou.png"));c.restore();return;}fitted(c,BACKGROUND_ART,new RectF(0,0,getWidth(),getHeight()),true);if(mode==MATCH||mode==ONLINE&&online.game!=null){int tint=effects.tint(game.movesPlayed,frameTime());if(Color.alpha(tint)>0){paint.reset();paint.setColor(tint);c.drawRect(0,0,getWidth(),getHeight(),paint);}}c.translate(offsetX,-studyScroll*scale);c.scale(scale,scale);
    if(mode==ONLINE&&online.game==null){onlineLobby(c);c.restore();return;}
    observeFlow();
    if(mode==ONLINE)onlineTopBar(c);
    if(mode==MATCH){darkPanel(c,new RectF(4,0,396,MATCH_BAR));text(c,"モード",45,29,16,0xfff5e4c8);text(c,"やり直し",145,29,15.5f,Color.WHITE);text(c,"対局設定",253,29,15.5f,Color.WHITE);paint.reset();paint.setAntiAlias(true);paint.setColor(0xffa8352a);c.drawRoundRect(318,5,392,MATCH_BAR-5,6,6,paint);text(c,"投了",355,29,16,Color.WHITE);}
-   hand(c,-viewSide(),topHandY());board(c);lastMoveColors(c);selectionColors(c);long frame=SystemClock.uptimeMillis();for(int r=0;r<9;r++)for(int col=0;col<9;col++)if(game.board[r][col]!=0&&!effects.hides(r,col,frame))boardPiece(c,game.board[r][col],cell(r,col));lastMoveFrame(c);hand(c,viewSide(),bottomHandY());if(mode!=STUDY)effects.draw(c,geometry,frame);drawCandidateArrows(c);drawPick(c);if(mode!=STUDY){effects.drawStart(c,boardRect(),frame);effects.drawEnd(c,boardRect(),frame);if(mode==MATCH&&game.winner!=0&&effects.endButtonsVisible(frame))drawEndButtons(c);}
+   hand(c,-viewSide(),topHandY());board(c);lastMoveColors(c);selectionColors(c);long frame=frameTime();for(int r=0;r<9;r++)for(int col=0;col<9;col++)if(game.board[r][col]!=0&&!effects.hides(r,col,frame))boardPiece(c,game.board[r][col],cell(r,col));lastMoveFrame(c);hand(c,viewSide(),bottomHandY());if(mode!=STUDY)effects.draw(c,geometry,frame);drawCandidateArrows(c);drawPick(c);if(mode!=STUDY){effects.drawStart(c,boardRect(),frame);effects.drawEnd(c,boardRect(),frame);if(mode==MATCH&&game.winner!=0&&effects.endButtonsVisible(frame))drawEndButtons(c);}
    if(mode==MATCH){String status=game.winner==2?game.result:game.winner!=0?(game.winner==humanSide()?"勝利":"敗北")+"・"+game.result:!ai.ready?(aiError==null?"AI読み込み中…":"AIエラー・対局設定から再試行"):!started?"タップして対局開始":game.turn==humanSide()?(game.checked(humanSide())?"王手です・あなたの手番":"あなたの手番"):"CPUの手番";text(c,status,200,bottomHandY()+matchPanelH+28,18,game.winner==0&&started&&game.turn==humanSide()?0xffffe08a:Color.WHITE);if(!started){float cy=boardY+boardHeight/2;paint.reset();paint.setAntiAlias(true);paint.setColor(0xe0300909);c.drawRoundRect(60,cy-44,340,cy+44,14,14,paint);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(1.6f);paint.setColor(0xffffd27a);c.drawRoundRect(60,cy-44,340,cy+44,14,14,paint);text(c,ai.ready?"タップして対局開始":"AI読み込み中…",200,cy+10,26,0xffffdd8b);}drawResignConfirm(c);}else if(mode==ONLINE)onlineStatus(c);else analysisPanel(c);c.restore();
-   long tick=SystemClock.uptimeMillis();if(effects.active(tick)||effects.overlayAnimating(tick)||effects.tintFading(tick))postInvalidateOnAnimation();
+   long tick=frameTime();if(frozenFrame<0&&(effects.active(tick)||effects.overlayAnimating(tick)||effects.tintFading(tick)))postInvalidateOnAnimation();
   }
   int candidateArrowCount(){return mode==STUDY&&analysisResult!=null&&analysisBoard!=null?Math.min(3,analysisRoots.size()):0;}
   void drawCandidateArrows(Canvas c){
@@ -592,7 +596,7 @@ public final class MainActivity extends Activity {
    int count=handCount(side);if(count==0){styledText(c,"持ち駒なし",me?378:22,y+27,9,0x80fff1d6,false,me?Paint.Align.RIGHT:Paint.Align.LEFT,null);return;}
    int i=0;for(int n=1;n<=handLimit();n++)if(game.hands[side==1?0:1][n]>0){float x=me?handX(i,count):400-handX(i,count);
     if(selectedSide==side&&selectedHand==n){paint.reset();paint.setAntiAlias(true);paint.setColor(0x73ffd27a);c.drawRoundRect(new RectF(x-19,y+2,x+19,y+42),7,7,paint);}
-    long frame=SystemClock.uptimeMillis();int k=game.hands[side==1?0:1][n]-(effects.handPending(side,n,frame)?1:0);float pop=effects.handScale(side,n,frame);
+    long frame=frameTime();int k=game.hands[side==1?0:1][n]-(effects.handPending(side,n,frame)?1:0);float pop=effects.handScale(side,n,frame);
     RectF dst=new RectF(x-16,y+3,x+16,y+37);if(k>0)drawPiece(c,side*n,dst,commonHeight(dst.width(),dst.height())*pop);
     if(k>1){paint.reset();paint.setAntiAlias(true);paint.setColor(GOLD);c.drawCircle(x+13,y+37,6.5f,paint);styledText(c,""+k,x+13,y+40.5f,9,INK,true,Paint.Align.CENTER,null);}i++;}
   }

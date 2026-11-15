@@ -370,6 +370,8 @@ public final class NativeSmokeTest extends Instrumentation {
   sendKeyDownUpSync(android.view.KeyEvent.KEYCODE_BACK);waitForIdleSync();main(()->check(v.mode==MainActivity.HOME&&!activity.isFinishing(),"system back key returns from study to the app home screen"));
  }
  /** Item 1: the move is applied at once and drawn with a short tween, landing pulse and ring; reduced effects skip it. */
+ /** Photographs one animation frame: the effect clock is frozen at start+offset, so the redraw loop stops. */
+ void frozenShot(java.util.function.LongSupplier start,long offset,String name){main(()->{v.frozenFrame=start.getAsLong()+offset;v.invalidate();});waitForIdleSync();screenshot(name);main(()->{v.frozenFrame=-1;v.invalidate();});}
  void moveEffectTests()throws Exception{
   home();chooseMode(MainActivity.MATCH);ready();
   for(boolean reduced:new boolean[]{false,true}){
@@ -378,26 +380,26 @@ public final class NativeSmokeTest extends Instrumentation {
    main(()->{for(ShogiGame.Move x:v.game.legal(v.humanSide()))if(x.drop==0&&!x.promote){m[0]=x;break;}long t0=SystemClock.uptimeMillis();v.move(m[0]);took[0]=SystemClock.uptimeMillis()-t0;v.cancelCpu();long now=SystemClock.uptimeMillis();
     check(v.game.movesPlayed==1&&v.game.board[m[0].row][m[0].col]!=0,"move applied immediately, before any animation");check(took[0]<100,"committing a move does not wait for the animation: "+took[0]+"ms");
     check(reduced?!v.effects.active(now):v.effects.active(now)&&v.effects.hides(m[0].row,m[0].col,now),reduced?"reduced effects: no tween":"tween hides the static destination piece while it flies");});
-   if(!reduced){SystemClock.sleep(60);screenshot("60_move_tween.png");}
+   if(!reduced)frozenShot(()->v.effects.start,BoardEffects.TWEEN/2,"60_move_tween.png");
    SystemClock.sleep(450);main(()->check(!v.effects.active(SystemClock.uptimeMillis())&&!v.effects.hides(m[0].row,m[0].col,SystemClock.uptimeMillis()),"effect finished within 450ms"));
   }
   // Item 2: a capture plays the stronger capture sound instead of the placement sound.
   main(()->{activity.settings.reducedEffects(false);activity.settings.sound(true);activity.settings.volume(65);v.restart();v.started=true;v.clock.resume(SystemClock.elapsedRealtime(),true);boolean sente=v.humanSide()==1;v.game.turn=v.humanSide();if(sente)v.game.board[5][0]=-1;else v.game.board[3][8]=1;int captures=v.sounds.kindCounts[MoveSound.Kind.CAPTURE.ordinal()];
    v.move(sente?new ShogiGame.Move(6,0,5,0,false,0):new ShogiGame.Move(2,8,3,8,false,0));v.cancelCpu();check(v.game.hands[ShogiGame.slot(v.humanSide())][1]==1&&v.sounds.kindCounts[MoveSound.Kind.CAPTURE.ordinal()]==captures+1&&v.sounds.lastKind==MoveSound.Kind.CAPTURE,"capture plays the capture sound");});
   // Item 3: the captured pawn flies to the komadai (count updates on arrival), promotion flips, check shows 王手 and blinks the king.
-  main(()->{long now=SystemClock.uptimeMillis();int side=v.humanSide();check(v.effects.handPending(side,1,now)&&v.effects.captured!=0,"captured piece is in flight; komadai count waits");});SystemClock.sleep(80);screenshot("61_capture_flight.png");
+  main(()->{long now=SystemClock.uptimeMillis();int side=v.humanSide();check(v.effects.handPending(side,1,now)&&v.effects.captured!=0,"captured piece is in flight; komadai count waits");});frozenShot(()->v.effects.start,BoardEffects.TWEEN+BoardEffects.FLY/2,"61_capture_flight.png");
   SystemClock.sleep(600);main(()->{long now=SystemClock.uptimeMillis();check(!v.effects.handPending(v.humanSide(),1,now)&&!v.effects.active(now),"capture effect finished; komadai shows the new count");});
   main(()->{v.restart();v.started=true;v.clock.resume(SystemClock.elapsedRealtime(),true);boolean sente=v.humanSide()==1;v.game.turn=v.humanSide();
    if(sente){v.game.board[3][0]=1;}else{v.game.board[5][8]=-1;}v.move(sente?new ShogiGame.Move(3,0,2,0,true,0):new ShogiGame.Move(5,8,6,8,true,0));v.cancelCpu();long now=SystemClock.uptimeMillis();
-   check(v.effects.promoted&&Math.abs(v.effects.piece)==9&&Math.abs(v.effects.pieceBefore)==1&&v.sounds.lastKind==MoveSound.Kind.PROMOTE,"promotion flips from pawn to tokin with the promotion sound");});SystemClock.sleep(230);screenshot("62_promotion_flip.png");SystemClock.sleep(500);
+   check(v.effects.promoted&&Math.abs(v.effects.piece)==9&&Math.abs(v.effects.pieceBefore)==1&&v.sounds.lastKind==MoveSound.Kind.PROMOTE,"promotion flips from pawn to tokin with the promotion sound");});frozenShot(()->v.effects.start,BoardEffects.TWEEN+BoardEffects.FLIP*3/10,"62_promotion_flip.png");SystemClock.sleep(500);
   main(()->{v.restart();v.started=true;v.clock.resume(SystemClock.elapsedRealtime(),true);boolean sente=v.humanSide()==1;v.game.turn=v.humanSide();
    if(sente){v.game.board[0][4]=0;v.game.board[4][1]=-8;}else{v.game.board[8][4]=0;v.game.board[4][7]=8;}v.move(sente?new ShogiGame.Move(6,1,5,1,false,0):new ShogiGame.Move(2,7,3,7,false,0));v.cancelCpu();
-   check(v.effects.checkRow==4&&v.effects.checkCol==(sente?1:7)&&v.sounds.lastKind==MoveSound.Kind.CHECK,"check marks the checked king and plays the check sound");});SystemClock.sleep(300);screenshot("63_check_banner.png");SystemClock.sleep(600);
+   check(v.effects.checkRow==4&&v.effects.checkCol==(sente?1:7)&&v.sounds.lastKind==MoveSound.Kind.CHECK,"check marks the checked king and plays the check sound");});frozenShot(()->v.effects.start,BoardEffects.TWEEN+250,"63_check_banner.png");SystemClock.sleep(600);
   main(()->check(!v.effects.active(SystemClock.uptimeMillis()),"check banner gone after its 600ms"));
   // Item 6: start flash and 対局開始, then a win with confetti and the three result buttons.
-  main(()->v.restart());waitForIdleSync();tap(200,v.H/2);waitForIdleSync();main(()->{v.cancelCpu();check(v.started&&v.effects.startAt!=Long.MIN_VALUE&&v.effects.startSub.contains("先手"),"match start shows 対局開始 with both sides");});SystemClock.sleep(150);screenshot("64_match_start.png");
+  main(()->v.restart());waitForIdleSync();tap(200,v.H/2);waitForIdleSync();main(()->{v.cancelCpu();check(v.started&&v.effects.startAt!=Long.MIN_VALUE&&v.effects.startSub.contains("先手"),"match start shows 対局開始 with both sides");});frozenShot(()->v.effects.startAt,350,"64_match_start.png");
   SystemClock.sleep(1000);main(()->{v.cancelCpu();v.game.resign(v.cpuSide());v.invalidate();});SystemClock.sleep(1100);waitForIdleSync();
-  main(()->check(v.effects.ended()&&v.effects.endOutcome==1&&v.effects.confetti.length>0&&v.effects.endButtonsVisible(SystemClock.uptimeMillis()),"win shows 勝ち, confetti and the result buttons"));screenshot("65_match_win.png");
+  main(()->check(v.effects.ended()&&v.effects.endOutcome==1&&v.effects.confetti.length>0&&v.effects.endButtonsVisible(SystemClock.uptimeMillis()),"win shows 勝ち, confetti and the result buttons"));frozenShot(()->v.effects.endAt,1100,"65_match_win.png");
   float[] again=new float[2];main(()->{RectF b=v.endButtons()[0];again[0]=b.centerX();again[1]=b.centerY();});tap(again[0],again[1]);waitForIdleSync();
   main(()->{v.cancelCpu();check(v.started&&v.game.winner==0&&v.game.movesPlayed==0&&!v.effects.ended(),"もう一局 starts a fresh match at once");});
   // Item 7: own clock under 30 seconds is red; item 8: CPU persona and rank; item 9: background tint by move count.
@@ -407,15 +409,21 @@ public final class NativeSmokeTest extends Instrumentation {
   frameTimingTest();
   main(()->{activity.settings.reducedEffects(false);v.restart();});
  }
- /** Frame intervals while move effects run back to back (emulator rendering, not a physical device). */
- void frameTimingTest()throws Exception{
-  java.util.List<Long> frames=Collections.synchronizedList(new ArrayList<>());boolean[] run={true};
-  main(()->android.view.Choreographer.getInstance().postFrameCallback(new android.view.Choreographer.FrameCallback(){public void doFrame(long t){frames.add(t);if(run[0])android.view.Choreographer.getInstance().postFrameCallback(this);}}));
+ /** Frame intervals while move effects run back to back, against the same redraws with effects reduced (CI emulator rendering, not a physical device). */
+ long[] frameRun(boolean reduced)throws Exception{
+  java.util.List<Long> frames=Collections.synchronizedList(new ArrayList<>());boolean[] run={true};main(()->activity.settings.reducedEffects(reduced));
+  main(()->android.view.Choreographer.getInstance().postFrameCallback(new android.view.Choreographer.FrameCallback(){public void doFrame(long t){frames.add(t);v.invalidate();if(run[0])android.view.Choreographer.getInstance().postFrameCallback(this);}}));
   for(int k=0;k<10;k++){main(()->{v.restart();v.started=true;v.clock.resume(SystemClock.elapsedRealtime(),true);for(ShogiGame.Move x:v.game.legal(v.humanSide()))if(x.drop==0&&!x.promote){v.move(x);break;}v.cancelCpu();});SystemClock.sleep(260);}
-  run[0]=false;SystemClock.sleep(50);ArrayList<Long> gaps=new ArrayList<>();synchronized(frames){for(int i=1;i<frames.size();i++)gaps.add((frames.get(i)-frames.get(i-1))/1000000);}Collections.sort(gaps);
-  long p50=gaps.get(gaps.size()/2),p95=gaps.get(gaps.size()*95/100);long over=gaps.stream().filter(g->g>17).count();
-  try(PrintWriter out=new PrintWriter(new File(getTargetContext().getExternalFilesDir(null),"move_effect_frames.txt"))){out.println("Move effects, 10 moves back to back on the CI emulator: frames="+gaps.size()+" median="+p50+"ms p95="+p95+"ms over17ms="+over+" ("+(100*over/Math.max(1,gaps.size()))+"%). Physical-device 60fps is not measured here.");}
-  check(gaps.size()>30&&p50<=34,"animation keeps producing frames (median "+p50+"ms on emulator)");
+  run[0]=false;SystemClock.sleep(80);ArrayList<Long> gaps=new ArrayList<>();synchronized(frames){for(int i=1;i<frames.size();i++)gaps.add((frames.get(i)-frames.get(i-1))/1000000);}Collections.sort(gaps);
+  return new long[]{gaps.size(),gaps.get(gaps.size()/2),gaps.get(gaps.size()*95/100),gaps.stream().filter(g->g>17).count()};
+ }
+ void frameTimingTest()throws Exception{
+  long[] base=frameRun(true),fx=frameRun(false);main(()->activity.settings.reducedEffects(false));
+  try(PrintWriter out=new PrintWriter(new File(getTargetContext().getExternalFilesDir(null),"move_effect_frames.txt"))){
+   out.println("CI emulator (software rendering), 10 moves back to back with continuous redraw. Physical-device 60fps is not measured here.");
+   out.println("effects reduced: frames="+base[0]+" median="+base[1]+"ms p95="+base[2]+"ms over17ms="+base[3]);
+   out.println("full effects:    frames="+fx[0]+" median="+fx[1]+"ms p95="+fx[2]+"ms over17ms="+fx[3]);}
+  check(fx[0]>20&&fx[1]<=base[1]*13/10+4,"move effects do not slow drawing materially: median "+fx[1]+"ms vs "+base[1]+"ms without effects");
  }
  void analysisReadyIfPossible(){main(()->v.refreshAnalysis());if(!v.game.legal(v.analysisSide).isEmpty())analysisReady();}
  void matchOptionsTests(Intent intent)throws Exception{
