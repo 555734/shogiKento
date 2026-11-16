@@ -28,8 +28,8 @@ with zipfile.ZipFile(apk) as z:
  for p in (root/'app/src/main/java').rglob('*.java'):
   assert 'android.webkit.WebView' not in p.read_text(), 'App board must remain native'
  assert any(n.startswith('assets/licenses/Android-NDK-NOTICE') for n in names),'NDK C++ runtime notices missing'
- for face in ['ZenKakuGothicNew-Medium','ZenKakuGothicNew-Bold','ShipporiMincho-ExtraBold','YujiSyuku-Regular']:assert 'assets/fonts/'+face+'.ttf' in names,face+' font missing'
- for family in ['zenkakugothicnew','shipporimincho','yujisyuku']:assert b'SIL OPEN FONT LICENSE' in z.read('assets/licenses/'+family+'-OFL.txt').upper(),family+' OFL missing'
+ for face in ['ZenKakuGothicNew-Medium','ZenKakuGothicNew-Bold','ZenKakuGothicNew-Black']:assert 'assets/fonts/'+face+'.ttf' in names,face+' font missing'
+ for family in ['zenkakugothicnew']:assert b'SIL OPEN FONT LICENSE' in z.read('assets/licenses/'+family+'-OFL.txt').upper(),family+' OFL missing'
  provenance=json.loads(z.read('assets/ai/provenance.json'))
  model=provenance['model'];assert model['name']=='TsuyouraOu11micro' and model['arch']=='SFNN_ka2_2048_8_64_progress8'
  for name,spec in model['files'].items():

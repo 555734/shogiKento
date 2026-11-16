@@ -91,7 +91,7 @@ final class BoardEffects {
  void drawCheckBanner(Canvas c,Geometry g,long t){long b=t-TWEEN/2;if(b<0||b>=CHECK)return;float k=b/(float)CHECK,alpha=k<.15f?k/.15f:k>.75f?(1-k)/.25f:1,size=reduced?60:60*(.8f+.2f*easeOut(Math.min(1,k/.25f)));
   RectF a=g.cell(0,0),z=g.cell(8,8);float left=Math.min(a.left,z.left),right=Math.max(a.right,z.right),cx=(left+right)/2,cy=(Math.min(a.top,z.top)+Math.max(a.bottom,z.bottom))/2;
   band(c,left,right,cy,size*.62f,alpha);
-  word(c,"王手",60,size,cx,cy+size*.36f,0xffff785c,0xffce2218,alpha);}
+  word(c,"王手",56,size*.93f,cx,cy+size*.36f,0xffe8705c,0xffb0261b,alpha);}
  // ---- Banner words ----
  /** Device pixels per logical unit, set by the view so cached words stay sharp. */
  float pixelScale=1;
@@ -102,7 +102,7 @@ final class BoardEffects {
   */
  void word(Canvas c,String text,float full,float size,float cx,float baseline,int top,int bottom,float alpha){
   String key=text+"|"+full+"|"+top+"|"+bottom+"|"+pixelScale;Bitmap b=words.get(key);float[] m=wordMetrics.get(key);
-  if(b==null){Paint p=new Paint(Paint.ANTI_ALIAS_FLAG);p.setTypeface(Fonts.brush);p.setTextSize(full*pixelScale);Paint.FontMetrics fm=p.getFontMetrics();
+  if(b==null){Paint p=new Paint(Paint.ANTI_ALIAS_FLAG);p.setTypeface(Fonts.black);p.setTextSize(full*pixelScale);Paint.FontMetrics fm=p.getFontMetrics();
    int w=Math.max(1,(int)Math.ceil(p.measureText(text))+4),h=Math.max(1,(int)Math.ceil(fm.descent-fm.ascent)+4);float base=2-fm.ascent;
    b=Bitmap.createBitmap(w,h,Bitmap.Config.ARGB_8888);p.setShader(new LinearGradient(0,base-full*pixelScale*.8f,0,base,top,bottom,Shader.TileMode.CLAMP));new Canvas(b).drawText(text,2,base,p);
    m=new float[]{w/pixelScale,h/pixelScale,base/pixelScale};words.put(key,b);wordMetrics.put(key,m);}
@@ -146,12 +146,12 @@ final class BoardEffects {
  boolean endButtonsVisible(long now){return ended()&&now-endAt>=(reduced?0:BUTTONS_AFTER);}
  boolean overlayAnimating(long now){return startAt!=Long.MIN_VALUE&&now-startAt<START||ended()&&now-endAt<(confetti.length>0?CONFETTI:Math.max(END_TEXT,BUTTONS_AFTER));}
  /** Gold leaf, washi white and a little vermilion. */
- static final int[] CONFETTI_COLORS={0xffe9c46a,0xfff6e3a8,0xffc8902f,0xffd94a33,0xfffff4e0};
+ static final int[] CONFETTI_COLORS={0xffdcc48e,0xffefe2c0,0xffb8955a,0xff9a2a20,0xfff7f0e2};
  void drawStart(Canvas c,RectF board,long now){if(startAt==Long.MIN_VALUE)return;long t=now-startAt;if(t>=START)return;float k=t/(float)START,cx=board.centerX(),cy=board.centerY();
   if(!reduced&&t<FLASH){paint.reset();paint.setColor(Color.argb(Math.round(200*(1-t/(float)FLASH)),255,255,255));c.drawRect(board,paint);}
   float alpha=k<.12f?k/.12f:k>.7f?(1-k)/.3f:1,size=reduced?50:50*(.6f+.4f*easeOut(Math.min(1,k/.45f)));
   band(c,board.left,board.right,cy+4,44,alpha);
-  word(c,"対局開始",50,size,cx,cy+size*.2f-2,0xfffaeaba,0xffd4a24c,alpha);
+  word(c,"対局開始",46,size*.92f,cx,cy+size*.2f-2,0xfff2e6c6,0xffccb07a,alpha);
   paint.setTypeface(Fonts.medium);paint.setTextSize(12.5f);paint.setLetterSpacing(.08f);paint.setColor(Color.argb(Math.round(230*alpha),236,224,200));c.drawText(startSub,cx,cy+38,paint);}
  void drawEnd(Canvas c,RectF board,long now){if(!ended())return;long t=now-endAt;float cx=board.centerX(),cy=board.centerY()-40;
   for(int i=0;i<confetti.length/6;i++){float s=t/1000f;if(t>=CONFETTI)break;float x=confetti[i*6]+confetti[i*6+2]*s,y=confetti[i*6+1]+confetti[i*6+3]*s+60*s*s;if(y>board.bottom)continue;
@@ -160,7 +160,7 @@ final class BoardEffects {
    paint.reset();paint.setAntiAlias(true);paint.setColor(CONFETTI_COLORS[(int)confetti[i*6+5]]);paint.setAlpha(Math.round(235*Math.max(0,1-t/(float)CONFETTI)));c.save();c.rotate(confetti[i*6+4]+s*160,x,y);c.drawRect(x-3.6f*turn,y-2.4f,x+3.6f*turn,y+2.4f,paint);c.restore();}
   float k=reduced?1:easeOut(Math.min(1,t/(float)END_TEXT)),size=74*(reduced?1:.72f+.28f*k);String word=endOutcome>0?"勝ち":endOutcome<0?"負け":"引き分け";
   band(c,board.left,board.right,cy+4,62,k);
-  int top=endOutcome>0?0xfffaeab8:endOutcome<0?0xffe6e1d8:0xfff4ead6,bottom=endOutcome>0?0xffcc9640:endOutcome<0?0xff98a2b2:0xffcdbb98;float f=endOutcome==0?.8f:1;
+  int top=endOutcome>0?0xfff2e6c6:endOutcome<0?0xffe6e1d8:0xfff4ead6,bottom=endOutcome>0?0xffccb07a:endOutcome<0?0xff98a2b2:0xffcdbb98;float f=endOutcome==0?.8f:1;
   word(c,word,74*f,size*f,cx,cy+size*.26f,top,bottom,k);
   paint.setTypeface(Fonts.medium);paint.setTextSize(13);paint.setLetterSpacing(.06f);paint.setColor(Color.argb(Math.round(230*k),236,224,200));c.drawText(endDetail,cx,cy+50,paint);}
 }

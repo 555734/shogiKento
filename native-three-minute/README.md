@@ -199,4 +199,4 @@ Epic Online Services（EOS）について: EOSも無料ですが、Epic開発者
 
 ## Fonts
 
-UI text uses bundled typefaces under the SIL Open Font License 1.1: Zen Kaku Gothic New (Medium, Bold), Shippori Mincho (ExtraBold) and Yuji Syuku (Regular), from the Google Fonts repository. `scripts/subset_fonts.py` downloads the pinned originals (SHA-256 checked) into the ignored `fonts-src/`, subsets them to the app's own strings into `app/src/main/assets/fonts/`, and stores each OFL text in `app/src/main/assets/licenses/`. Other characters fall back to the system font.
+All UI text uses one bundled typeface family under the SIL Open Font License 1.1: Zen Kaku Gothic New (Medium, Bold, Black), from the Google Fonts repository. `scripts/subset_fonts.py` downloads the pinned originals (SHA-256 checked) into the ignored `fonts-src/`, subsets them to the app's own strings into `app/src/main/assets/fonts/`, and stores each OFL text in `app/src/main/assets/licenses/`. Other characters fall back to the system font.

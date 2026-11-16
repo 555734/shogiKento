@@ -9,7 +9,7 @@ final class HomeScreen {
   Layout(float height){unit=Math.min(1,Math.max(.65f,(height-160)/460));float top=Math.max(145*unit,Math.min(height*.395f,height-468*unit-30));titleY=Math.min(height*.20f,top-68*unit);study=new RectF(20,top,380,top+146*unit);top=study.bottom+14*unit;match=new RectF(20,top,380,top+88*unit);top=match.bottom+14*unit;online=new RectF(20,top,380,top+62*unit);top=online.bottom+14*unit;paste=new RectF(20,top,380,top+62*unit);top=paste.bottom+14*unit;archive=new RectF(20,top,380,top+54*unit);}
  }
  private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG|Paint.FILTER_BITMAP_FLAG);
- private final Typeface serif=Fonts.mincho;
+ private final Typeface serif=Fonts.black;
  void bitmap(Canvas c,Bitmap image,RectF box,boolean cover){float factor=cover?Math.max(box.width()/image.getWidth(),box.height()/image.getHeight()):Math.min(box.width()/image.getWidth(),box.height()/image.getHeight());float w=image.getWidth()*factor,h=image.getHeight()*factor;paint.reset();paint.setFilterBitmap(true);c.drawBitmap(image,null,new RectF(box.centerX()-w/2,box.centerY()-h/2,box.centerX()+w/2,box.centerY()+h/2),paint);}
  void words(Canvas c,String value,float x,float y,float size){paint.reset();paint.setAntiAlias(true);paint.setTypeface(serif);paint.setTextSize(size);paint.setColor(0xfffff2ca);paint.setShadowLayer(2,0,1,0xff170600);c.drawText(value,x,y,paint);}
  private void panel(Canvas c,RectF rect,boolean primary,Bitmap texture){

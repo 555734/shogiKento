@@ -152,7 +152,7 @@ extension AppModel {
     }
 }
 
-private let gold=Color(red:1,green:0.86,blue:0.59),cream=Color(red:1,green:0.94,blue:0.81),burgundy=Color(red:0.25,green:0.04,blue:0.06)
+private let gold=Color(red:0.86,green:0.77,blue:0.56),cream=Color(red:0.96,green:0.92,blue:0.85),burgundy=Color(red:0.25,green:0.04,blue:0.06)
 struct OnlineScreen:View {
     @EnvironmentObject var model:AppModel
     @State private var joining=false
@@ -166,26 +166,25 @@ struct OnlineScreen:View {
         }.frame(minHeight:viewport.size.height,alignment:.top).frame(maxWidth:600).frame(maxWidth:.infinity).padding(.bottom,15)}
             // The result card sits below the board; bring it into view when the game ends.
             .onChange(of:model.online.game?.over ?? false){over in if over{withAnimation(.easeOut(duration:0.35)){proxy.scrollTo("online_result",anchor:.bottom)}}}}}
-        .background(Image(uiImage:AppAssets.image("background")).resizable().scaledToFill().overlay(ProgressTint(moves:model.online.game?.movesPlayed ?? -1)).ignoresSafeArea())
+        .background(Image(uiImage:AppAssets.image("background")).resizable().scaledToFill().overlay(Color(red:0.04,green:0.01,blue:0.02).opacity(0.3)).overlay(ProgressTint(moves:model.online.game?.movesPlayed ?? -1)).ignoresSafeArea())
         .alert("ルームに参加",isPresented:$joining){TextField("6桁のコード",text:$code).keyboardType(.numberPad).accessibilityIdentifier("room_code_field");Button("キャンセル",role:.cancel){};Button("参加"){model.joinRoom(code)}.accessibilityIdentifier("room_join")}message:{Text("友だちのルームコードを入力してください")}
         .alert("投了しますか？",isPresented:$resign){Button("キャンセル",role:.cancel){};Button("投了",role:.destructive){model.onlineResign()}}
         .sheet(isPresented:$accountSheet){AccountView()}
     }
     private var timePicker:some View {
         HStack(spacing:10){ForEach(OnlineGame.timeControls,id:\.self){tc in let on=model.online.timeControl==tc
-            Button{model.chooseTimeControl(tc)}label:{VStack(spacing:1){Text(tc=="10m" ? "10分":"3分").font(AppFonts.ui(21,bold:true));Text("切れ負け").font(AppFonts.ui(10,bold:true))}
-                .foregroundStyle(on ? LacquerUI.ivory:LacquerUI.dim).outlined(on).frame(maxWidth:.infinity,minHeight:50)
+            Button{model.chooseTimeControl(tc)}label:{VStack(spacing:1){Text(tc=="10m" ? "10分":"3分").font(AppFonts.black(21));Text("切れ負け").font(AppFonts.ui(10,bold:true))}
+                .foregroundStyle(on ? LacquerUI.ivory:LacquerUI.dim).frame(maxWidth:.infinity,minHeight:50)
                 .background(RoundedRectangle(cornerRadius:8).fill(LinearGradient(colors:on ? LacquerUI.red:LacquerUI.ink,startPoint:.top,endPoint:.bottom)))
-                .overlay(RoundedRectangle(cornerRadius:8).strokeBorder(on ? gold:Lacquer.hairline,lineWidth:on ? 1.8:1))}
+                .overlay(RoundedRectangle(cornerRadius:8).strokeBorder(on ? LacquerUI.rim:Lacquer.hairline,lineWidth:on ? 1.4:1))}
                 .buttonStyle(.plain).disabled(model.online.seekMode>=0).accessibilityIdentifier("online_tc_\(tc)")}}.padding(.horizontal,28)
     }
     private func modeTile(_ title:String,_ caption:String,_ symbol:String,on:Bool,id:String,_ action:@escaping ()->Void)->some View {
         Button(action:action){HStack(spacing:12){Image(systemName:symbol).font(.system(size:34,weight:.regular)).frame(width:46)
-                VStack(alignment:.leading,spacing:2){Text(title).font(AppFonts.ui(18,bold:true)).outlined(on);Text(caption).font(AppFonts.ui(10)).opacity(0.8)};Spacer(minLength:0)}
+                VStack(alignment:.leading,spacing:2){Text(title).font(AppFonts.black(18));Text(caption).font(AppFonts.ui(10)).opacity(0.8)};Spacer(minLength:0)}
             .foregroundStyle(on ? LacquerUI.ivory:LacquerUI.dim).padding(.horizontal,14).frame(maxWidth:.infinity,minHeight:86)
             .background(RoundedRectangle(cornerRadius:10).fill(LinearGradient(colors:on ? LacquerUI.red:LacquerUI.ink,startPoint:.top,endPoint:.bottom)))
-            .overlay(alignment:.top){if on{RoundedRectangle(cornerRadius:8).fill(LinearGradient(colors:[.white.opacity(0.33),.white.opacity(0.02)],startPoint:.top,endPoint:.bottom)).frame(height:34).padding(3)}}
-            .overlay(RoundedRectangle(cornerRadius:10).strokeBorder(on ? gold:Lacquer.hairline,lineWidth:on ? 2:1)).shadow(color:.black.opacity(0.5),radius:2,y:2)}
+            .overlay(RoundedRectangle(cornerRadius:10).strokeBorder(on ? LacquerUI.rim:Lacquer.hairline,lineWidth:on ? 1.4:1)).shadow(color:.black.opacity(0.5),radius:2,y:2)}
             .buttonStyle(.plain).accessibilityIdentifier(id)
     }
     private var modeTiles:some View {
@@ -195,8 +194,7 @@ struct OnlineScreen:View {
         }
     }
     private func goldTitle(_ text:String)->some View {
-        Text(text).font(AppFonts.mincho(32)).kerning(3).foregroundStyle(LinearGradient(colors:[Color(red:1,green:0.96,blue:0.84),Color(red:1,green:0.84,blue:0.48),Color(red:0.79,green:0.54,blue:0.18)],startPoint:.top,endPoint:.bottom))
-            .shadow(color:Color(red:0.13,green:0.03,blue:0.02),radius:0,x:1.5,y:1.5).shadow(color:.black.opacity(0.6),radius:3,y:2)
+        Text(text).font(AppFonts.black(32)).kerning(4).foregroundStyle(LinearGradient(colors:[Color(red:0.95,green:0.9,blue:0.78),Color(red:0.8,green:0.69,blue:0.48)],startPoint:.top,endPoint:.bottom)).shadow(color:.black.opacity(0.55),radius:0,x:0,y:1.5)
     }
     private var accountCard:some View {
         Button{accountSheet=true}label:{HStack{VStack(alignment:.leading,spacing:4){Text(model.account.name).font(AppFonts.ui(15,bold:true));Text(verbatim:"レート \(model.account.ratingText) · \(model.account.wins)勝\(model.account.losses)敗\(model.account.draws)分").font(AppFonts.ui(11)).opacity(0.8)};Spacer()
@@ -249,9 +247,9 @@ struct OnlineScreen:View {
 
 /// Lacquer colors of the online screens.
 enum LacquerUI {
-    static let red=[Color(red:0.85,green:0.26,blue:0.21),Color(red:0.66,green:0.11,blue:0.09),Color(red:0.43,green:0.05,blue:0.04)]
-    static let ink=[Color(red:0.17,green:0.14,blue:0.13),Color(red:0.1,green:0.07,blue:0.07),Color(red:0.05,green:0.04,blue:0.03)]
-    static let ivory=Color(red:1,green:0.98,blue:0.94),dim=Color(red:0.6,green:0.55,blue:0.48)
+    static let red=[Color(red:0.59,green:0.16,blue:0.13),Color(red:0.45,green:0.1,blue:0.06),Color(red:0.33,green:0.06,blue:0.04)],champagne=[Color(red:0.93,green:0.87,blue:0.71),Color(red:0.84,green:0.74,blue:0.53),Color(red:0.68,green:0.55,blue:0.33)]
+    static let ink=[Color(red:0.16,green:0.13,blue:0.12),Color(red:0.1,green:0.07,blue:0.07),Color(red:0.05,green:0.04,blue:0.04)]
+    static let ivory=Color(red:0.96,green:0.92,blue:0.85),dim=Color(red:0.6,green:0.55,blue:0.48),rim=Color(red:0.93,green:0.86,blue:0.7).opacity(0.8)
 }
 extension View {
     /// A thin dark outline around light text on lacquer, drawn with four hard shadows.
@@ -259,22 +257,20 @@ extension View {
         if on{let c=Color(red:0.29,green:0.03,blue:0.02);self.shadow(color:c,radius:0,x:1,y:0).shadow(color:c,radius:0,x:-1,y:0).shadow(color:c,radius:0,x:0,y:1).shadow(color:c,radius:0,x:0,y:-1)}else{self}
     }
 }
-/// Big glossy lacquer button: drop shadow, three-stop body, glossy top half, light rim and an outlined white label.
+/// Big lacquer button: champagne gold or crimson, a thin bevel (no gloss), a light rim and a plain label.
 struct GlossButtonStyle:ButtonStyle {
     enum Kind {case golden,red}
     var kind:Kind,size:CGFloat,height:CGFloat
     @Environment(\.isEnabled) private var enabled
     func makeBody(configuration:Configuration)->some View {
-        let shape=RoundedRectangle(cornerRadius:min(12,height*0.28))
-        let body=kind == .golden ? [Color(red:1,green:0.88,blue:0.49),Color(red:0.96,green:0.64,blue:0.15),Color(red:0.82,green:0.43,blue:0.05)]:[Color(red:0.89,green:0.35,blue:0.29),Color(red:0.71,green:0.16,blue:0.11),Color(red:0.48,green:0.07,blue:0.05)]
-        let edge=kind == .golden ? Color(red:0.48,green:0.2,blue:0.02):Color(red:0.29,green:0.03,blue:0.02)
-        configuration.label.font(AppFonts.ui(size,bold:true)).kerning(size*0.08).foregroundStyle(Color(red:1,green:0.98,blue:0.94))
-            .shadow(color:edge,radius:0,x:1.5,y:0).shadow(color:edge,radius:0,x:-1.5,y:0).shadow(color:edge,radius:0,x:0,y:1.5).shadow(color:edge,radius:0,x:0,y:-1.5)
+        let shape=RoundedRectangle(cornerRadius:min(10,height*0.24)),golden=kind == .golden
+        configuration.label.font(AppFonts.black(size)).kerning(size*0.1).foregroundStyle(golden ? Color(red:0.17,green:0.1,blue:0.05):LacquerUI.ivory)
+            .shadow(color:golden ? .white.opacity(0.4):.black.opacity(0.5),radius:0,x:0,y:1)
             .frame(maxWidth:.infinity,minHeight:height)
-            .background(shape.fill(LinearGradient(colors:body,startPoint:.top,endPoint:.bottom)))
-            .overlay(alignment:.top){shape.fill(LinearGradient(colors:[.white.opacity(0.55),.white.opacity(0.06)],startPoint:.top,endPoint:.bottom)).frame(height:height*0.48).padding(.horizontal,3).padding(.top,2.5)}
-            .overlay(shape.strokeBorder(kind == .golden ? Color(red:1,green:0.95,blue:0.75):Color(red:1,green:0.72,blue:0.65),lineWidth:1.8))
-            .shadow(color:.black.opacity(0.55),radius:2,y:3)
+            .background(shape.fill(LinearGradient(colors:golden ? LacquerUI.champagne:LacquerUI.red,startPoint:.top,endPoint:.bottom)))
+            .overlay(alignment:.top){Rectangle().fill(.white.opacity(golden ? 0.5:0.25)).frame(height:0.8).padding(.horizontal,10).padding(.top,1.2)}
+            .overlay(shape.strokeBorder(golden ? Color(red:0.96,green:0.92,blue:0.82).opacity(0.9):LacquerUI.rim,lineWidth:1.2))
+            .shadow(color:.black.opacity(0.45),radius:1.5,y:2.5)
             .scaleEffect(configuration.isPressed ? 0.97:1).opacity(enabled ? 1:0.5)
     }
 }
@@ -285,7 +281,7 @@ struct MatchingView:View {
     private var title:String {quick ? "対戦相手を探しています":model.online.seekMode==Netplay.host ? "相手の参加を待っています":"ルームに接続しています"}
     var body:some View {
         VStack(spacing:10){
-            VStack(spacing:4){Text(title).font(AppFonts.brush(28)).foregroundStyle(LinearGradient(colors:[Color(red:0.98,green:0.92,blue:0.73),Color(red:0.83,green:0.64,blue:0.3)],startPoint:.top,endPoint:.bottom))
+            VStack(spacing:4){Text(title).font(AppFonts.black(26)).foregroundStyle(LinearGradient(colors:[Color(red:0.95,green:0.9,blue:0.78),Color(red:0.8,green:0.69,blue:0.48)],startPoint:.top,endPoint:.bottom))
                 Text(OnlineGame.label(model.online.timeControl)+(quick ? "・レート戦":"・ルーム対局")).font(AppFonts.ui(11)).foregroundStyle(Lacquer.cream)}
                 .frame(maxWidth:.infinity).padding(.vertical,10).background(LinearGradient(stops:[.init(color:.clear,location:0),.init(color:.black.opacity(0.8),location:0.16),.init(color:.black.opacity(0.8),location:0.84),.init(color:.clear,location:1)],startPoint:.leading,endPoint:.trailing))
                 .padding(.top,10).accessibilityIdentifier("online_matching")

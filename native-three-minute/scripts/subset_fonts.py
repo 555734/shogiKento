@@ -1,4 +1,4 @@
-"""Bundled typefaces (all SIL Open Font License 1.1), subset to the characters the app draws.
+"""The one bundled typeface family, Zen Kaku Gothic New in three weights (SIL Open Font License 1.1), subset to the characters the app draws.
 
 Sources are the Google Fonts repository files pinned by SHA-256. Every Java/Swift string literal, the kana,
 ASCII and common punctuation are kept, so fixed UI text renders in the bundled faces; any other character
@@ -11,10 +11,9 @@ BASE='https://raw.githubusercontent.com/google/fonts/main/ofl/'
 FONTS={
  'ZenKakuGothicNew-Medium.ttf':('zenkakugothicnew','ZEN_SHA_MEDIUM'),
  'ZenKakuGothicNew-Bold.ttf':('zenkakugothicnew','ZEN_SHA_BOLD'),
- 'ShipporiMincho-ExtraBold.ttf':('shipporimincho','SHIPPORI_SHA'),
- 'YujiSyuku-Regular.ttf':('yujisyuku','YUJI_SHA'),
+ 'ZenKakuGothicNew-Black.ttf':('zenkakugothicnew','ZEN_SHA_BLACK'),
 }
-SHA={'ZenKakuGothicNew-Medium.ttf': '651a3f7280b7f36262601ee76d8388a8dc4372dcc67aff025a608939a562b525', 'ZenKakuGothicNew-Bold.ttf': '0081cedabc4921982fcd061f845a005664ac7fb642af2dd34b4007bc63ccd235', 'ShipporiMincho-ExtraBold.ttf': 'bdb787644b4b347e9a7efdd576f0d16ee4528cc9b5c86d23e06fa1a14ae0444c', 'YujiSyuku-Regular.ttf': '82728ebafc8c97391e2dab633414a806f344b8e4e2227d307179f07b548fca61'}
+SHA={'ZenKakuGothicNew-Medium.ttf': '651a3f7280b7f36262601ee76d8388a8dc4372dcc67aff025a608939a562b525', 'ZenKakuGothicNew-Bold.ttf': '0081cedabc4921982fcd061f845a005664ac7fb642af2dd34b4007bc63ccd235', 'ZenKakuGothicNew-Black.ttf': '795819a979184981842994d8f4eb9e14ce443d687bd5e731d6ca67ded8f92261'}
 def fetch(name,family):
  path=SRC/name
  if not path.exists():SRC.mkdir(exist_ok=True);path.write_bytes(urllib.request.urlopen(BASE+family+'/'+name).read())

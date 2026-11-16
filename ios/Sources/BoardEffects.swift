@@ -79,7 +79,7 @@ struct MoveEffectLayer:View {
                     let k=b/MoveEffect.check,alpha=k<0.15 ? k/0.15:k>0.75 ? (1-k)/0.25:1,size=effect.reduced ? 60:60*(0.8+0.2*MoveEffect.easeOut(min(1,k/0.25)))
                     let c=CGPoint(x:board.rect.midX,y:board.rect.midY)
                     InkBand.draw(context,left:board.rect.minX,right:board.rect.maxX,centerY:c.y,half:size*0.62,alpha:alpha)
-                    InkBand.word(context,Text("王手").font(AppFonts.brush(size)),at:CGPoint(x:c.x,y:c.y+2),size:size,colors:[Color(red:1,green:0.47,blue:0.36),Color(red:0.81,green:0.13,blue:0.09)],alpha:alpha)
+                    InkBand.word(context,Text("王手").font(AppFonts.black(size)),at:CGPoint(x:c.x,y:c.y+2),size:size,colors:[Color(red:0.91,green:0.44,blue:0.36),Color(red:0.69,green:0.15,blue:0.11)],alpha:alpha)
                 }
                 if effect.reduced{banner();return}
                 if t<MoveEffect.tween {
@@ -166,7 +166,7 @@ struct GameBanner:Equatable {
 struct GameBannerLayer:View {
     let banner:GameBanner
     /// Gold leaf, washi white and a little vermilion.
-    private static let colors:[Color]=[Color(red:0.91,green:0.77,blue:0.42),Color(red:0.96,green:0.89,blue:0.66),Color(red:0.78,green:0.56,blue:0.18),Color(red:0.85,green:0.29,blue:0.2),Color(red:1,green:0.96,blue:0.88)]
+    private static let colors:[Color]=[Color(red:0.86,green:0.77,blue:0.56),Color(red:0.94,green:0.89,blue:0.75),Color(red:0.72,green:0.58,blue:0.35),Color(red:0.6,green:0.16,blue:0.13),Color(red:0.97,green:0.94,blue:0.89)]
     var body:some View {
         TimelineView(.animation(paused:!banner.animating)){timeline in
             Canvas{context,size in
@@ -177,7 +177,7 @@ struct GameBannerLayer:View {
                     if !banner.reduced && t<GameBanner.flash{context.fill(Path(CGRect(origin:.zero,size:size)),with:.color(.white.opacity(0.86*(1-t/GameBanner.flash))))}
                     let alpha=k<0.12 ? k/0.12:k>0.7 ? (1-k)/0.3:1,font=banner.reduced ? 50:50*(0.6+0.4*MoveEffect.easeOut(min(1,k/0.45)))
                     InkBand.draw(context,left:0,right:size.width,centerY:c.y+4,half:44,alpha:alpha)
-                    InkBand.word(context,Text("対局開始").font(AppFonts.brush(font)),at:CGPoint(x:c.x,y:c.y-8),size:font,colors:[Color(red:0.98,green:0.92,blue:0.73),Color(red:0.83,green:0.64,blue:0.3)],alpha:alpha)
+                    InkBand.word(context,Text("対局開始").font(AppFonts.black(font)),at:CGPoint(x:c.x,y:c.y-8),size:font,colors:[Color(red:0.95,green:0.9,blue:0.78),Color(red:0.8,green:0.69,blue:0.48)],alpha:alpha)
                     context.draw(Text(sub).font(AppFonts.ui(12.5)).kerning(1).foregroundColor(Color(red:0.93,green:0.88,blue:0.78).opacity(0.9*alpha)),at:CGPoint(x:c.x,y:c.y+34))
                 case .end(let outcome,let detail):
                     if outcome>0 && !banner.reduced && t<GameBanner.confetti {
@@ -192,9 +192,9 @@ struct GameBannerLayer:View {
                     }
                     let k=banner.reduced ? 1:MoveEffect.easeOut(min(1,t/GameBanner.endText)),font=74*(banner.reduced ? 1:0.72+0.28*k),cy=c.y-40
                     let word=outcome>0 ? "勝ち":outcome<0 ? "負け":"引き分け"
-                    let colors=outcome>0 ? [Color(red:0.98,green:0.92,blue:0.72),Color(red:0.8,green:0.59,blue:0.25)]:outcome<0 ? [Color(red:0.9,green:0.88,blue:0.85),Color(red:0.6,green:0.64,blue:0.7)]:[Color(red:0.96,green:0.92,blue:0.84),Color(red:0.8,green:0.73,blue:0.6)]
+                    let colors=outcome>0 ? [Color(red:0.95,green:0.9,blue:0.78),Color(red:0.8,green:0.69,blue:0.48)]:outcome<0 ? [Color(red:0.9,green:0.88,blue:0.85),Color(red:0.6,green:0.64,blue:0.7)]:[Color(red:0.96,green:0.92,blue:0.84),Color(red:0.8,green:0.73,blue:0.6)]
                     InkBand.draw(context,left:0,right:size.width,centerY:cy+4,half:62,alpha:k)
-                    InkBand.word(context,Text(word).font(AppFonts.brush(outcome==0 ? font*0.8:font)),at:CGPoint(x:c.x,y:cy-6),size:font,colors:colors,alpha:k)
+                    InkBand.word(context,Text(word).font(AppFonts.black(outcome==0 ? font*0.8:font)),at:CGPoint(x:c.x,y:cy-6),size:font,colors:colors,alpha:k)
                     context.draw(Text(detail).font(AppFonts.ui(13)).kerning(0.8).foregroundColor(Color(red:0.93,green:0.88,blue:0.78).opacity(0.9*k)),at:CGPoint(x:c.x,y:cy+46))
                 }
             }

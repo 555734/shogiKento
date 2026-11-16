@@ -1,7 +1,7 @@
 import SwiftUI
 import UIKit
 
-private let gold=Color(red:1,green:0.86,blue:0.59),cream=Color(red:1,green:0.94,blue:0.81),burgundy=Color(red:0.25,green:0.04,blue:0.06)
+private let gold=Color(red:0.86,green:0.77,blue:0.56),cream=Color(red:1,green:0.94,blue:0.81),burgundy=Color(red:0.25,green:0.04,blue:0.06)
 struct RootView:View {
     @EnvironmentObject var model:AppModel
     @EnvironmentObject var coffee:CoffeeStore
@@ -36,13 +36,13 @@ struct HomeView:View {
     var body: some View {
         GeometryReader {geo in
             ScrollView {VStack(spacing:15){
-                Text("AI将棋検討").font(AppFonts.mincho(58)).minimumScaleFactor(0.6).lineLimit(1).foregroundStyle(LinearGradient(colors:[cream,gold,Color(red:0.7,green:0.43,blue:0.12)],startPoint:.top,endPoint:.bottom)).shadow(color:.black,radius:2,y:3).frame(height:max(140,min(240,geo.size.height*0.29))).padding(.horizontal,16).padding(.top,32).accessibilityLabel("AI将棋検討")
+                Text("AI将棋検討").font(AppFonts.black(58)).minimumScaleFactor(0.6).lineLimit(1).foregroundStyle(LinearGradient(colors:[cream,gold,Color(red:0.7,green:0.43,blue:0.12)],startPoint:.top,endPoint:.bottom)).shadow(color:.black,radius:2,y:3).frame(height:max(140,min(240,geo.size.height*0.29))).padding(.horizontal,16).padding(.top,32).accessibilityLabel("AI将棋検討")
                 Spacer(minLength:15)
-                Button{model.enter(.study)}label:{HStack(spacing:22){Image(systemName:"circle.dashed").font(.system(size:65,weight:.thin));VStack(alignment:.leading,spacing:15){Text("検討モード").font(AppFonts.mincho(34));Divider().overlay(gold);Text("合法手で検討・自由配置にも切替可").font(AppFonts.mincho(12))}}.padding(24).frame(maxWidth:.infinity,minHeight:145).background(LinearGradient(colors:[Color(red:0.7,green:0.03,blue:0.04),burgundy],startPoint:.topLeading,endPoint:.bottomTrailing))}.buttonStyle(HomeCard()).accessibilityIdentifier("mode_study")
-                Button{model.enter(.match)}label:{HStack(spacing:22){Image(uiImage:AppAssets.piece(8)).resizable().scaledToFit().frame(width:56,height:66);VStack(alignment:.leading,spacing:8){Text("対局モード").font(AppFonts.mincho(26));Text("CPUと対局・時間や先後を設定").font(AppFonts.mincho(14))};Spacer()}.padding(.horizontal,22).padding(.vertical,12).frame(maxWidth:.infinity).background(Color(red:0.12,green:0.09,blue:0.06))}.buttonStyle(HomeCard()).accessibilityIdentifier("mode_match")
-                Button{model.enter(.online)}label:{HStack(spacing:22){Image(systemName:"person.2.wave.2").font(.system(size:38,weight:.light)).frame(width:56,height:56);VStack(alignment:.leading,spacing:8){Text("オンライン対戦").font(AppFonts.mincho(26));Text("無料・P2Pで人と3分切れ負け").font(AppFonts.mincho(14))};Spacer()}.padding(.horizontal,22).padding(.vertical,12).frame(maxWidth:.infinity).background(Color(red:0.06,green:0.1,blue:0.16))}.buttonStyle(HomeCard()).accessibilityIdentifier("mode_online")
-                Button{paste=true}label:{Label("棋譜を貼り付け",systemImage:"doc.text").font(AppFonts.mincho(23)).frame(maxWidth:.infinity,minHeight:60).background(Color.black.opacity(0.83))}.buttonStyle(HomeCard()).accessibilityIdentifier("open_paste")
-                Button{model.enter(.archive)}label:{Label("過去の棋譜",systemImage:"clock.arrow.circlepath").font(AppFonts.mincho(22)).frame(maxWidth:.infinity,minHeight:56).background(Color.black.opacity(0.83))}.buttonStyle(HomeCard()).accessibilityIdentifier("open_archive")
+                Button{model.enter(.study)}label:{HStack(spacing:22){Image(systemName:"circle.dashed").font(.system(size:65,weight:.thin));VStack(alignment:.leading,spacing:15){Text("検討モード").font(AppFonts.black(34));Divider().overlay(gold);Text("合法手で検討・自由配置にも切替可").font(AppFonts.black(12))}}.padding(24).frame(maxWidth:.infinity,minHeight:145).background(LinearGradient(colors:[Color(red:0.7,green:0.03,blue:0.04),burgundy],startPoint:.topLeading,endPoint:.bottomTrailing))}.buttonStyle(HomeCard()).accessibilityIdentifier("mode_study")
+                Button{model.enter(.match)}label:{HStack(spacing:22){Image(uiImage:AppAssets.piece(8)).resizable().scaledToFit().frame(width:56,height:66);VStack(alignment:.leading,spacing:8){Text("対局モード").font(AppFonts.black(26));Text("CPUと対局・時間や先後を設定").font(AppFonts.black(14))};Spacer()}.padding(.horizontal,22).padding(.vertical,12).frame(maxWidth:.infinity).background(Color(red:0.12,green:0.09,blue:0.06))}.buttonStyle(HomeCard()).accessibilityIdentifier("mode_match")
+                Button{model.enter(.online)}label:{HStack(spacing:22){Image(systemName:"person.2.wave.2").font(.system(size:38,weight:.light)).frame(width:56,height:56);VStack(alignment:.leading,spacing:8){Text("オンライン対戦").font(AppFonts.black(26));Text("無料・P2Pで人と3分切れ負け").font(AppFonts.black(14))};Spacer()}.padding(.horizontal,22).padding(.vertical,12).frame(maxWidth:.infinity).background(Color(red:0.06,green:0.1,blue:0.16))}.buttonStyle(HomeCard()).accessibilityIdentifier("mode_online")
+                Button{paste=true}label:{Label("棋譜を貼り付け",systemImage:"doc.text").font(AppFonts.black(23)).frame(maxWidth:.infinity,minHeight:60).background(Color.black.opacity(0.83))}.buttonStyle(HomeCard()).accessibilityIdentifier("open_paste")
+                Button{model.enter(.archive)}label:{Label("過去の棋譜",systemImage:"clock.arrow.circlepath").font(AppFonts.black(22)).frame(maxWidth:.infinity,minHeight:56).background(Color.black.opacity(0.83))}.buttonStyle(HomeCard()).accessibilityIdentifier("open_archive")
                 TestAdSlot(placement:"home")
                 Spacer(minLength:35)
             }.padding(.horizontal,20).frame(maxWidth:560,minHeight:geo.size.height).frame(maxWidth:.infinity)}
@@ -80,7 +80,7 @@ struct BoardScreen:View {
         }}.frame(minHeight:viewport.size.height,alignment:model.screen == .match ? .center:.top)
             TestAdSlot(placement:model.screen == .study ? "study":"match").id(model.screen.rawValue).padding(.horizontal,12)
         }.frame(maxWidth:600).frame(maxWidth:.infinity).padding(.bottom,15)}}
-        .background(Image(uiImage:AppAssets.image("background")).resizable().scaledToFill().overlay(ProgressTint(moves:model.screen == .match ? model.session.match.moves:-1)).ignoresSafeArea())
+        .background(Image(uiImage:AppAssets.image("background")).resizable().scaledToFill().overlay(Color(red:0.04,green:0.01,blue:0.02).opacity(0.3)).overlay(ProgressTint(moves:model.screen == .match ? model.session.match.moves:-1)).ignoresSafeArea())
         .sheet(isPresented:$matchSettings,onDismiss:{model.setMatchSettingsOpen(false)}){MatchSettingsView(options:model.matchOptions).onAppear{model.setMatchSettingsOpen(true)}}
         .alert("投了しますか？",isPresented:$resign){Button("キャンセル",role:.cancel){};Button("投了",role:.destructive){model.resign()}}
         .alert("対局をやり直しますか？",isPresented:$restart){Button("キャンセル",role:.cancel){};Button("やり直す",role:.destructive){model.restartMatch()}}
@@ -138,7 +138,7 @@ struct PlayerIcon:View {
         ZStack{
             if art.size.width>0 {Image(uiImage:art).resizable().scaledToFill().clipShape(Circle())}
             else {Circle().fill(RadialGradient(colors:[me ? Color(red:0.29,green:0.53,blue:0.75):Color(red:Double(rgb>>16&255)/255,green:Double(rgb>>8&255)/255,blue:Double(rgb&255)/255),me ? Color(red:0.11,green:0.23,blue:0.36):Color(red:0.16,green:0.06,blue:0.05)],center:.init(x:0.5,y:0.35),startRadius:2,endRadius:40))
-                .overlay(Text(me ? "自":MatchOptions.cpuGlyphs[level-1]).font(AppFonts.mincho(26)).foregroundStyle(Color(red:1,green:0.95,blue:0.84)))}
+                .overlay(Text(me ? "自":MatchOptions.cpuGlyphs[level-1]).font(AppFonts.black(26)).foregroundStyle(Color(red:1,green:0.95,blue:0.84)))}
         }.overlay(Circle().strokeBorder(lit ? Lacquer.hairlineLit:Color(red:0.63,green:0.53,blue:0.41).opacity(0.6),lineWidth:1.5))
         .overlay(alignment:.bottom){Text(side==1 ? "先手":"後手").font(AppFonts.ui(9.5,bold:true)).foregroundStyle(side==1 ? .white:Color(red:0.16,green:0.1,blue:0.06)).padding(.horizontal,5).padding(.vertical,1).background(RoundedRectangle(cornerRadius:3).fill(side==1 ? Color(red:0.09,green:0.06,blue:0.05):Color(red:0.95,green:0.91,blue:0.83))).overlay(RoundedRectangle(cornerRadius:3).strokeBorder(Lacquer.hairlineLit.opacity(0.7),lineWidth:0.8)).offset(y:5)}
     }
@@ -278,7 +278,7 @@ struct SettingsView:View {
     @State private var licenses=false
     @ObservedObject private var adPrivacy=AdPrivacy.shared
     var body:some View{NavigationStack{Form{Section{Toggle("効果音（SE）",isOn:$sound).accessibilityIdentifier("sound");Text("効果音の音量 \(Int(volume))%");Slider(value:$volume,in:0...100,step:1).accessibilityIdentifier("volume");Button("効果音を試す"){model.previewSound()}.disabled(!sound || volume==0);Toggle("着手時のバイブレーション",isOn:$vibration).accessibilityIdentifier("vibration");Button("振動を試す"){UIImpactFeedbackGenerator(style:.light).impactOccurred()}.disabled(!vibration);Toggle("演出を減らす（低スペック端末向け）",isOn:$reducedEffects).accessibilityIdentifier("reduced_effects")}header:{Text("音・振動・演出の設定")}footer:{Text("設定は自動保存されます。音量・振動・消音は端末本体の設定にも従います。")};Section{Button(coffee.owned ? "☕ コーヒー応援・購入済み／復元":"☕ コーヒーを奢る・広告除去と最強AI"){coffeeSheet=true}.accessibilityIdentifier("coffee_settings")};Section{Text(AdPrivacy.testing ? "この版はGoogleの公式テスト広告のみを表示します。広告の取得で通信が発生します。本番配信・収益化は行いません。":"広告は年齢に配慮した内容に制限し、パーソナライズしません。広告の取得には通信が必要です。").font(AppFonts.style(12,.caption));if adPrivacy.optionsRequired{Button("広告のプライバシー設定"){adPrivacy.showOptions()}.accessibilityIdentifier("ad_privacy")}};Section{Button("ライセンスとAIについて"){licenses=true}}}.navigationTitle("設定").toolbar{Button("閉じる"){dismiss()}.accessibilityIdentifier("settings_close")}.sheet(isPresented:$coffeeSheet){CoffeeView()}.sheet(isPresented:$licenses){NavigationStack{ScrollView{Text(licenseText).font(.caption.monospaced()).padding()}.navigationTitle("ライセンス").toolbar{Button("閉じる"){licenses=false}}}}}}
-    var licenseText:String {let header="やねうら王 9.80git / つようら王11micro\nエンジン GPL-3.0 / 評価関数 MIT\n対応ソースとビルド手順：https://github.com/555734/shogiKento\n\n";return header+["YaneuraOu-GPL-3.0","TsuyouraOu11micro-MIT","zenkakugothicnew-OFL","shipporimincho-OFL","yujisyuku-OFL"].compactMap{Bundle.main.url(forResource:$0,withExtension:"txt",subdirectory:"GameAssets/licenses").flatMap{try? String(contentsOf:$0,encoding:.utf8)}}.joined(separator:"\n\n")}
+    var licenseText:String {let header="やねうら王 9.80git / つようら王11micro\nエンジン GPL-3.0 / 評価関数 MIT\n対応ソースとビルド手順：https://github.com/555734/shogiKento\n\n";return header+["YaneuraOu-GPL-3.0","TsuyouraOu11micro-MIT","zenkakugothicnew-OFL"].compactMap{Bundle.main.url(forResource:$0,withExtension:"txt",subdirectory:"GameAssets/licenses").flatMap{try? String(contentsOf:$0,encoding:.utf8)}}.joined(separator:"\n\n")}
 }
 
 /// On-board promotion choice replacing the OS dialog: the promoted and the unpromoted piece side by side over the

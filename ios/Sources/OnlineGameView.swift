@@ -1,6 +1,6 @@
 import SwiftUI
 
-private let gold=Color(red:1,green:0.84,blue:0.48),cream=Color(red:1,green:0.94,blue:0.81),ink=Color(red:0.16,green:0.07,blue:0.03),lacquer=Color(red:0.19,green:0.05,blue:0.06)
+private let gold=Color(red:0.86,green:0.77,blue:0.56),cream=Color(red:1,green:0.94,blue:0.81),ink=Color(red:0.16,green:0.07,blue:0.03),lacquer=Color(red:0.19,green:0.05,blue:0.06)
 
 /// The online game: a header with the connection, the opponent's card and komadai, the board with the last move
 /// marked, the player's komadai and card, the turn pill, and a result card with the rating change at the end.
@@ -148,7 +148,7 @@ private struct OnlineResultCard:View {
     private var titleColors:[Color] {game.winner==game.mySide ? [Color(red:1,green:0.95,blue:0.7),gold,Color(red:0.78,green:0.5,blue:0.14)]:[cream,Color(red:0.7,green:0.75,blue:0.85)]}
     var body:some View {
         VStack(spacing:8){
-            Text(title).font(AppFonts.brush(42)).foregroundStyle(LinearGradient(colors:titleColors,startPoint:.top,endPoint:.bottom)).shadow(color:.black,radius:2,y:2)
+            Text(title).font(AppFonts.black(42)).foregroundStyle(LinearGradient(colors:titleColors,startPoint:.top,endPoint:.bottom)).shadow(color:.black,radius:2,y:2)
             Text(game.result).font(AppFonts.style(15,.subheadline)).foregroundStyle(cream.opacity(0.85))
             if let r=model.online.lastResult{
                 let d=r.after-r.before,signed=(d>=0 ? "+":"")+"\(d)",spoken:String="レート \(r.before) → \(r.after)（\(signed)）"

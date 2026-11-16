@@ -1,13 +1,13 @@
 import SwiftUI
 import CoreText
 
-/// Bundled typefaces (SIL OFL 1.1; GameAssets/fonts, licenses in GameAssets/licenses), shared with Android:
-/// Zen Kaku Gothic New for UI text, Shippori Mincho for titles, Yuji Syuku (brush) for the match banners.
+/// The app's one typeface family, shared with Android: Zen Kaku Gothic New (SIL OFL 1.1; GameAssets/fonts, license in
+/// GameAssets/licenses) in Medium, Bold and Black.
 /// Subset to the app's own strings; other characters fall back to the system font.
 enum AppFonts {
-    static let medium="ZenKakuGothicNew-Medium",bold="ZenKakuGothicNew-Bold",minchoName="ShipporiMincho-ExtraBold",brushName="YujiSyuku-Regular"
+    static let medium="ZenKakuGothicNew-Medium",bold="ZenKakuGothicNew-Bold",blackName="ZenKakuGothicNew-Black"
     static func register(){
-        for name in [medium,bold,minchoName,brushName]{
+        for name in [medium,bold,blackName]{
             if let url=Bundle.main.url(forResource:name,withExtension:"ttf",subdirectory:"GameAssets/fonts"){_=CTFontManagerRegisterFontsForURL(url as CFURL,.process,nil)}
         }
     }
@@ -15,15 +15,15 @@ enum AppFonts {
     static func ui(_ size:CGFloat,bold heavy:Bool=false)->Font {.custom(heavy ? bold:medium,fixedSize:size)}
     /// UI text that follows Dynamic Type like the system text style it replaces.
     static func style(_ size:CGFloat,_ style:Font.TextStyle,bold heavy:Bool=false)->Font {.custom(heavy ? bold:medium,size:size,relativeTo:style)}
-    static func mincho(_ size:CGFloat)->Font {.custom(minchoName,fixedSize:size)}
-    static func brush(_ size:CGFloat)->Font {.custom(brushName,fixedSize:size)}
+    /// Titles, big buttons and the match banners.
+    static func black(_ size:CGFloat)->Font {.custom(blackName,fixedSize:size)}
 }
 
 /// Shared lacquer palette for panels and buttons.
 enum Lacquer {
     static let inkTop=Color(red:0.10,green:0.043,blue:0.031).opacity(0.92),inkBottom=Color(red:0.055,green:0.02,blue:0.016).opacity(0.92)
     static let hairline=Color(red:0.85,green:0.71,blue:0.42).opacity(0.4),hairlineLit=Color(red:0.86,green:0.72,blue:0.42)
-    static let cream=Color(red:0.96,green:0.92,blue:0.82),vermilionTop=Color(red:0.72,green:0.25,blue:0.16),vermilionBottom=Color(red:0.54,green:0.14,blue:0.09)
+    static let cream=Color(red:0.96,green:0.92,blue:0.82),vermilionTop=Color(red:0.59,green:0.16,blue:0.13),vermilionBottom=Color(red:0.33,green:0.06,blue:0.04)
     static var ink:LinearGradient {LinearGradient(colors:[inkTop,inkBottom],startPoint:.top,endPoint:.bottom)}
 }
 

@@ -15,8 +15,8 @@ shutil.copy(ASSETS/'ai/provenance.json',OUT/'ai/provenance.json')
 for name in ['YaneuraOu-GPL-3.0.txt','TsuyouraOu11micro-MIT.txt']:shutil.copy(ASSETS/'licenses'/name,OUT/'licenses'/name)
 # Bundled OFL typefaces shared with Android (scripts/subset_fonts.py there), with their licenses.
 (OUT/'fonts').mkdir(exist_ok=True)
-for face in ['ZenKakuGothicNew-Medium','ZenKakuGothicNew-Bold','ShipporiMincho-ExtraBold','YujiSyuku-Regular']:shutil.copy(ASSETS/'fonts'/(face+'.ttf'),OUT/'fonts'/(face+'.ttf'))
-for family in ['zenkakugothicnew','shipporimincho','yujisyuku']:shutil.copy(ASSETS/'licenses'/(family+'-OFL.txt'),OUT/'licenses'/(family+'-OFL.txt'))
+for face in ['ZenKakuGothicNew-Medium','ZenKakuGothicNew-Bold','ZenKakuGothicNew-Black']:shutil.copy(ASSETS/'fonts'/(face+'.ttf'),OUT/'fonts'/(face+'.ttf'))
+for family in ['zenkakugothicnew']:shutil.copy(ASSETS/'licenses'/(family+'-OFL.txt'),OUT/'licenses'/(family+'-OFL.txt'))
 icons=ROOT/'Assets.xcassets/AppIcon.appiconset';icons.mkdir(parents=True,exist_ok=True)
 from brand_icon import icon as make_icon
 images=[];icon=make_icon()
