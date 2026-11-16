@@ -1,0 +1,3 @@
+CI emulator (software rendering), 10 moves back to back with continuous redraw. Physical-device 60fps is not measured here.
+effects reduced: frames=59 median=66ms p95=183ms over17ms=47
+full effects:    frames=59 median=66ms p95=199ms over17ms=47
