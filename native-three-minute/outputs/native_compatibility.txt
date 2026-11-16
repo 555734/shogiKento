@@ -1,0 +1,1 @@
+PASS actual OS SIGSEGV of native child, exit=139, automatic scalar executable selection, 3 legal candidates, persisted compatibility across engine recreation. Injected signal verifies recovery; original Motorola crash cause remains unconfirmed.
