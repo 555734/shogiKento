@@ -1,0 +1,60 @@
+[    5.570578] audit: type=1400 audit(1794801471.024:74): apparmor="STATUS" operation="profile_load" profile="unconfined" name="notify-send" pid=560 comm="apparmor_parser"
+[    5.571884] audit: type=1400 audit(1794801471.025:75): apparmor="STATUS" operation="profile_load" profile="unconfined" name="nc.openbsd" pid=557 comm="apparmor_parser"
+[    5.572074] audit: type=1400 audit(1794801471.026:76): apparmor="STATUS" operation="profile_load" profile="unconfined" name="notepadqq" pid=559 comm="apparmor_parser"
+[    5.573707] audit: type=1400 audit(1794801471.027:77): apparmor="STATUS" operation="profile_load" profile="unconfined" name="nvidia_modprobe" pid=562 comm="apparmor_parser"
+[    5.573715] audit: type=1400 audit(1794801471.027:78): apparmor="STATUS" operation="profile_load" profile="unconfined" name="nvidia_modprobe//kmod" pid=562 comm="apparmor_parser"
+[    5.649299] /dev/sr0: Can't lookup blockdev
+[    5.736848] 8021q: 802.1Q VLAN Support v1.8
+[    5.791413] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+[    5.791897] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[    5.792059] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06c7248db18c600'
+[    5.792125] faux_driver regulatory: Direct firmware load for regulatory.db failed with error -2
+[    5.792129] cfg80211: failed to load regulatory.db
+[    7.844166] EXT4-fs (sda1): resizing filesystem from 19370235 to 39031035 blocks
+[    8.814903] EXT4-fs (sda1): resized filesystem to 39031035
+[    8.831567] ephemeral0: Can't lookup blockdev
+[    8.904258] systemd-fstab-generator[1048]: 'ephemeral0' is not a device path, ignoring x-systemd.device-timeout= option.
+[    9.903467] ephemeral0: Can't lookup blockdev
+[   10.475453] loop0: detected capacity change from 0 to 8
+[   10.522741] NET: Registered PF_QIPCRTR protocol family
+[   10.758031] kauditd_printk_skb: 111 callbacks suppressed
+[   10.758038] audit: type=1400 audit(1794801476.212:190): apparmor="STATUS" operation="profile_replace" info="same as current profile, skipping" profile="unconfined" name="/usr/lib/snapd/snap-confine" pid=1472 comm="apparmor_parser"
+[   11.143745] Adding 3145724k swap on /swapfile.  Priority:-1 extents:8 across:57606140k 
+[   11.487826] systemd-fstab-generator[1693]: 'ephemeral0' is not a device path, ignoring x-systemd.device-timeout= option.
+[   11.542167] audit: type=1400 audit(1794801476.996:191): apparmor="STATUS" operation="profile_load" profile="unconfined" name="docker-default" pid=1716 comm="apparmor_parser"
+[   11.801473] Initializing XFRM netlink socket
+[   11.820376] bridge: filtering via arp/ip/ip6tables is no longer available by default. Update your scripts to load br_netfilter if you need this.
+[   13.414679] systemd-fstab-generator[2072]: 'ephemeral0' is not a device path, ignoring x-systemd.device-timeout= option.
+[   13.762296] systemd-fstab-generator[2145]: 'ephemeral0' is not a device path, ignoring x-systemd.device-timeout= option.
+[   18.172941] hv_netvsc 000d3a32-2736-000d-3a32-2736000d3a32 eth0: VF slot 1 added
+[   18.175595] hv_pci ec2e5018-3066-4029-bce7-2f2f3113e96b: PCI VMBus probing: Using version 0x10004
+[   18.177212] hv_pci ec2e5018-3066-4029-bce7-2f2f3113e96b: PCI host bridge to bus 3066:00
+[   18.177218] pci_bus 3066:00: root bus resource [mem 0xfc0000000-0xfc00fffff window]
+[   18.177222] pci_bus 3066:00: No busn resource found for root bus, will use [bus 00-ff]
+[   18.180119] pci 3066:00:02.0: [15b3:1016] type 00 class 0x020000 PCIe Endpoint
+[   18.184693] pci 3066:00:02.0: BAR 0 [mem 0xfc0000000-0xfc00fffff 64bit pref]
+[   18.185479] pci 3066:00:02.0: enabling Extended Tags
+[   18.194803] pci 3066:00:02.0: 0.000 Gb/s available PCIe bandwidth, limited by Unknown x0 link at 3066:00:02.0 (capable of 63.008 Gb/s with 8.0 GT/s PCIe x8 link)
+[   18.201599] pci_bus 3066:00: busn_res: [bus 00-ff] end is updated to 00
+[   18.201609] pci 3066:00:02.0: BAR 0 [mem 0xfc0000000-0xfc00fffff 64bit pref]: assigned
+[   18.425635] mlx5_core 3066:00:02.0: enabling device (0000 -> 0002)
+[   18.427999] mlx5_core 3066:00:02.0: firmware version: 14.30.5026
+[   18.565730] mlx5_core 3066:00:02.0: Flow counters bulk query buffer size increased, bulk_query_len(8)
+[   18.649645] hv_netvsc 000d3a32-2736-000d-3a32-2736000d3a32 eth0: VF registering: eth1
+[   18.649701] mlx5_core 3066:00:02.0 eth1: joined to eth0
+[   18.650301] mlx5_core 3066:00:02.0: MLX5E: StrdRq(0) RqSz(1024) StrdSz(256) RxCqeCmprss(0 basic)
+[   18.670769] mlx5_core 3066:00:02.0 enP12390s1: renamed from eth1
+[   18.698913] MACsec IEEE 802.1AE
+[   18.804620] mlx5_core 3066:00:02.0 enP12390s1: Link up
+[   18.833404] hv_netvsc 000d3a32-2736-000d-3a32-2736000d3a32 eth0: Data path switched to VF: enP12390s1
+[   18.833636] mlx5_core 3066:00:02.0 mlx5_0: Port: 1 Link ACTIVE
+[   49.057501] hv_balloon: Max. dynamic memory size: 16384 MB
+[  323.150413] audit: type=1400 audit(1794801788.603:192): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/nsswitch.conf" pid=4795 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[  323.150432] audit: type=1400 audit(1794801788.603:193): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/passwd" pid=4795 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[  323.315262] audit: type=1400 audit(1794801788.767:194): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/nsswitch.conf" pid=4800 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[  323.315280] audit: type=1400 audit(1794801788.767:195): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/passwd" pid=4800 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[  400.763713] kvm: kvm [5350]: vcpu0, guest rIP: 0xffffffffa0409cbd Unhandled WRMSR(0xc0010007) = 0xffff
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456214] Code: 85 62 fd ff ff 44 0f 29 a4 24 10 03 00 00 66 45 0f 6f ca 0f 28 e8 0f 29 ac 24 a0 00 00 00 66 0f 3a 17 ea 00 c1 e2 04 48 63 d2 <f3> 0f 6f a4 0a e0 84 01 00 f3 0f 6f 84 0a 20 85 01 00 66 0f 70 d4
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+[  802.456381] Code: 85 62 fd ff ff 44 0f 29 a4 24 10 03 00 00 66 45 0f 6f ca 0f 28 e8 0f 29 ac 24 a0 00 00 00 66 0f 3a 17 ea 00 c1 e2 04 48 63 d2 <f3> 0f 6f a4 0a e0 84 01 00 f3 0f 6f 84 0a 20 85 01 00 66 0f 70 d4

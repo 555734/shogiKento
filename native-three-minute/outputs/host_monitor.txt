@@ -1,0 +1,513 @@
+04:06:02
+Mem:           15983        6822        1747          51        7809        9160
+4985896 262 Sl
+04:06:07
+Mem:           15983        6854        1684          51        7840        9128
+5014624 262 Sl
+04:06:12
+Mem:           15983        6939        1584          51        7855        9043
+5092732 263 Sl
+04:06:17
+Mem:           15983        7019        1500          51        7859        8963
+5168432 264 Sl
+04:06:22
+Mem:           15983        7070        1407          51        7902        8912
+5225180 266 Sl
+04:06:28
+Mem:           15983        7070        1401          51        7908        8912
+5229260 269 Sl
+04:06:33
+Mem:           15983        7069        1394          51        7915        8913
+5233252 269 Sl
+04:06:38
+Mem:           15983        7073        1388          51        7918        8909
+5234100 269 Sl
+04:06:43
+Mem:           15983        7079        1372          51        7928        8904
+5235512 270 Sl
+04:06:48
+Mem:           15983        7079        1303          51        7996        8903
+5234560 272 Sl
+04:06:53
+Mem:           15983        7080        1286          51        8013        8902
+5234260 274 Sl
+04:06:58
+Mem:           15983        7079        1271          51        8028        8903
+5234128 277 Sl
+04:07:03
+Mem:           15983        7085        1262          51        8031        8897
+5233900 279 Sl
+04:07:08
+Mem:           15983        7163        1177          51        8038        8819
+5311796 279 Sl
+04:07:13
+Mem:           15983        7157        1178          51        8044        8825
+5312376 280 Sl
+04:07:18
+Mem:           15983        7155        1172          51        8051        8827
+5311632 280 Sl
+04:07:23
+Mem:           15983        7168        1085          51        8126        8814
+5321084 278 Sl
+04:07:28
+Mem:           15983        7167        1020          51        8191        8815
+5319612 276 Sl
+04:07:34
+Mem:           15983        7167        1020          51        8191        8815
+5320528 274 Sl
+04:07:39
+Mem:           15983        7166        1021          51        8192        8816
+5319816 272 Sl
+04:07:44
+Mem:           15983        7176        1010          51        8192        8806
+5330900 271 Sl
+04:07:49
+Mem:           15983        7186         999          51        8194        8796
+5340536 270 Sl
+04:07:54
+Mem:           15983        7189         973          51        8216        8793
+5341632 270 Sl
+04:07:59
+Mem:           15983        7190         966          51        8222        8792
+5343748 268 Sl
+04:08:04
+Mem:           15983        7190         964          51        8224        8792
+5342796 268 Sl
+04:08:09
+Mem:           15983        7185         967          51        8227        8797
+5339776 270 Sl
+04:08:14
+Mem:           15983        7187         961          51        8230        8795
+5341064 271 Sl
+04:08:19
+Mem:           15983        7186         958          51        8234        8796
+5338612 273 Sl
+04:08:24
+Mem:           15983        7187         955          51        8236        8795
+5338452 272 Sl
+04:08:29
+Mem:           15983        7186         954          51        8238        8796
+5338452 268 Sl
+04:08:34
+Mem:           15983        7187         950          51        8241        8795
+5337808 267 Sl
+04:08:39
+Mem:           15983        7187         950          51        8241        8795
+5336760 267 Sl
+04:08:44
+Mem:           15983        7194         943          52        8241        8788
+5341932 268 Sl
+04:08:49
+Mem:           15983        7193         941          51        8245        8790
+5341740 267 Sl
+04:08:54
+Mem:           15983        7192         940          51        8246        8790
+5341820 266 Sl
+04:08:59
+Mem:           15983        7192         940          51        8247        8790
+5339976 267 Sl
+04:09:04
+Mem:           15983        7188         943          51        8247        8794
+5338064 267 Sl
+04:09:10
+Mem:           15983        7205         923          52        8251        8777
+5338384 266 Sl
+04:09:15
+Mem:           15983        7200         927          52        8252        8783
+5336212 266 Sl
+04:09:20
+Mem:           15983        7191         931          52        8256        8791
+5339868 268 Sl
+04:09:25
+Mem:           15983        7193         923          52        8262        8789
+5342068 269 Sl
+04:09:30
+Mem:           15983        7193         923          52        8263        8789
+5342544 270 Sl
+04:09:35
+Mem:           15983        7249         863          52        8267        8733
+5390148 272 Sl
+04:09:40
+Mem:           15983        7252         857          52        8269        8730
+5392008 274 Sl
+04:09:45
+Mem:           15983        7250         855          52        8274        8732
+5391188 273 Sl
+04:09:50
+Mem:           15983        7243         857          52        8279        8740
+5387592 274 Sl
+04:09:55
+Mem:           15983        7245         853          52        8280        8737
+5391836 274 Sl
+04:10:00
+Mem:           15983        7246         852          52        8281        8736
+5391408 274 Sl
+04:10:05
+Mem:           15983        7240         857          52        8281        8742
+5391032 275 Sl
+04:10:11
+Mem:           15983        7241         856          52        8282        8741
+5400064 277 Sl
+04:10:16
+Mem:           15983        7243         852          52        8283        8739
+5400248 278 Sl
+04:10:21
+Mem:           15983        7246         849          52        8284        8736
+5401204 280 Sl
+04:10:26
+Mem:           15983        7245         846          52        8287        8737
+5400380 277 Sl
+04:10:31
+Mem:           15983        7245         842          52        8292        8737
+5398948 278 Sl
+04:10:36
+Mem:           15983        7243         841          52        8295        8739
+5397132 279 Sl
+04:10:41
+Mem:           15983        7252         831          52        8295        8730
+5406672 278 Sl
+04:10:46
+Mem:           15983        7253         829          52        8296        8729
+5406672 276 Sl
+04:10:51
+Mem:           15983        7249         833          52        8296        8733
+5408392 275 Sl
+04:10:56
+Mem:           15983        7251         828          52        8299        8731
+5408292 275 Sl
+04:11:01
+Mem:           15983        7252         827          52        8300        8730
+5407488 275 Sl
+04:11:06
+Mem:           15983        7253         824          52        8302        8729
+5406416 273 Sl
+04:11:11
+Mem:           15983        7290         171         142        9008        8692
+5500304 271 Il
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:11:17
+Mem:           15983        7298         191         142        8980        8684
+5491852 268 Il
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:11:22
+Mem:           15983        7446         239         272        8914        8536
+5624944 265 Il
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:11:27
+Mem:           15983        7473         201         272        8924        8509
+5624948 262 Il
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:11:32
+Mem:           15983        7425         231         272        8942        8557
+5624948 259 Il
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:11:37
+Mem:           15983        7434         239         272        8926        8548
+5624948 256 Il
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:11:42
+Mem:           15983        7424         229         272        8945        8558
+5624948 253 Il
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:11:47
+Mem:           15983        7414         250         272        8934        8568
+5624948 250 Il
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:11:52
+Mem:           15983        7420         259         272        8919        8562
+5624948 247 Il
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:11:57
+Mem:           15983        7414         380         272        8804        8568
+5624948 244 Il
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:12:02
+Mem:           15983        2045       10684          50        3648       13937
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:12:08
+Mem:           15983        2040       10688          50        3650       13942
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:12:13
+Mem:           15983        2035       10693          50        3650       13947
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:12:18
+Mem:           15983        2035       10693          50        3650       13948
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:12:23
+Mem:           15983        2035       10693          50        3650       13947
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:12:28
+Mem:           15983        2035       10693          50        3650       13947
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:12:33
+Mem:           15983        2035       10693          50        3650       13948
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:12:38
+Mem:           15983        2034       10693          50        3650       13948
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:12:43
+Mem:           15983        2036       10692          50        3650       13946
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:12:48
+Mem:           15983        2033       10694          50        3651       13949
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:12:53
+Mem:           15983        2034       10693          50        3651       13948
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:12:58
+Mem:           15983        2034       10692          50        3651       13948
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:13:03
+Mem:           15983        2035       10691          50        3651       13947
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:13:08
+Mem:           15983        2036       10691          50        3651       13947
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:13:13
+Mem:           15983        2037       10689          50        3651       13945
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:13:18
+Mem:           15983        2039       10687          50        3651       13943
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:13:23
+Mem:           15983        2038       10688          50        3651       13944
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:13:28
+Mem:           15983        2038       10688          50        3651       13944
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:13:33
+Mem:           15983        2038       10688          50        3651       13944
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:13:38
+Mem:           15983        2037       10689          50        3651       13945
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:13:43
+Mem:           15983        2037       10689          50        3651       13945
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:13:48
+Mem:           15983        2037       10689          50        3651       13945
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:13:53
+Mem:           15983        2036       10690          50        3651       13946
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:13:58
+Mem:           15983        2036       10690          50        3651       13946
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:14:03
+Mem:           15983        2036       10690          50        3651       13946
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:14:08
+Mem:           15983        2035       10690          51        3653       13947
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:14:13
+Mem:           15983        2036       10689          51        3653       13946
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:14:18
+Mem:           15983        2035       10689          51        3653       13947
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:14:23
+Mem:           15983        2035       10689          51        3653       13947
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:14:28
+Mem:           15983        2035       10689          51        3653       13947
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:14:33
+Mem:           15983        2035       10690          51        3653       13947
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:14:38
+Mem:           15983        2035       10690          51        3653       13947
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:14:43
+Mem:           15983        2035       10690          51        3653       13947
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:14:48
+Mem:           15983        2035       10690          51        3653       13948
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:14:53
+Mem:           15983        2035       10690          51        3653       13947
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:14:58
+Mem:           15983        2035       10690          51        3653       13947
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:15:04
+Mem:           15983        2035       10689          51        3653       13947
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:15:09
+Mem:           15983        2035       10689          51        3654       13948
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:15:14
+Mem:           15983        2035       10688          51        3654       13947
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:15:19
+Mem:           15983        2036       10688          51        3654       13947
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:15:24
+Mem:           15983        2036       10688          51        3655       13947
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:15:29
+Mem:           15983        2036       10688          51        3655       13946
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:15:34
+Mem:           15983        2036       10687          51        3655       13946
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:15:39
+Mem:           15983        2037       10687          51        3655       13945
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:15:44
+Mem:           15983        2037       10686          51        3655       13945
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:15:49
+Mem:           15983        2038       10686          51        3655       13944
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:15:54
+Mem:           15983        2038       10685          51        3655       13944
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:15:59
+Mem:           15983        2040       10684          51        3655       13942
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:16:04
+Mem:           15983        2041       10682          51        3655       13941
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:16:09
+Mem:           15983        2041       10682          51        3655       13941
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:16:14
+Mem:           15983        2042       10682          51        3655       13940
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:16:19
+Mem:           15983        2041       10683          51        3655       13941
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:16:24
+Mem:           15983        2041       10683          51        3655       13941
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:16:29
+Mem:           15983        2041       10683          51        3655       13941
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:16:34
+Mem:           15983        2043       10681          51        3655       13939
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:16:39
+Mem:           15983        2044       10679          51        3655       13938
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:16:44
+Mem:           15983        2045       10679          51        3655       13937
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:16:49
+Mem:           15983        2045       10678          51        3655       13937
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:16:54
+Mem:           15983        2045       10678          51        3655       13937
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:16:59
+Mem:           15983        2044       10679          51        3655       13938
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:17:04
+Mem:           15983        2044       10679          51        3655       13938
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:17:09
+Mem:           15983        2044       10679          51        3655       13938
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:17:14
+Mem:           15983        2044       10679          51        3655       13938
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:17:19
+Mem:           15983        2044       10679          51        3655       13938
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:17:24
+Mem:           15983        2044       10679          51        3655       13938
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:17:29
+Mem:           15983        2044       10679          51        3655       13938
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:17:34
+Mem:           15983        2044       10679          51        3655       13938
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:17:39
+Mem:           15983        2044       10679          51        3655       13938
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:17:44
+Mem:           15983        2044       10679          51        3655       13938
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
+04:17:49
+Mem:           15983        2086       10417          52        3876       13896
+[  802.456195] RenderThread[5733]: segfault at 58f4c362e0f0 ip 000058f459878fe7 sp 0000731ba7e71d10 error 4 likely on CPU 0 (core 0, socket 0)
+[  802.456369] RenderThread[5732]: segfault at 58f4014ce0f0 ip 000058f459878fe7 sp 0000731babc5bd10 error 4 likely on CPU 2 (core 1, socket 0)
