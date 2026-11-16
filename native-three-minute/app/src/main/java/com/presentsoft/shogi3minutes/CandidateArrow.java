@@ -22,6 +22,6 @@ final class CandidateArrow {
   Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);paint.setColor(Color.argb(ALPHA[i],255,91,24));canvas.drawPath(path,paint);
   paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(unit*.018f);paint.setColor(Color.argb(ALPHA[i],255,225,159));canvas.drawPath(path,paint);
   if(drop&&source!=null){paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(Math.max(1.2f,unit*.04f));paint.setColor(Color.argb(ALPHA[i],255,91,24));canvas.drawRoundRect(new RectF(source.left-1,source.top-1,source.right+1,source.bottom+1),4,4,paint);}
-  if(drop){paint.setStyle(Paint.Style.FILL);paint.setTextAlign(Paint.Align.CENTER);paint.setTypeface(Typeface.DEFAULT_BOLD);paint.setTextSize(unit*.23f);paint.setColor(Color.argb(ALPHA[i],139,45,7));canvas.drawText("打",target.right-unit*.16f,target.top+unit*.27f,paint);}
+  if(drop){paint.setStyle(Paint.Style.FILL);paint.setTextAlign(Paint.Align.CENTER);paint.setTypeface(Fonts.bold);paint.setTextSize(unit*.23f);paint.setColor(Color.argb(ALPHA[i],139,45,7));canvas.drawText("打",target.right-unit*.16f,target.top+unit*.27f,paint);}
  }
 }

@@ -6,7 +6,7 @@ import android.app.*;import android.content.*;import android.graphics.*;import a
  */
 final class AccountDialog {
  static final int GOLD=0xffffdea0,CREAM=0xfffff1d6,DIM=0xffc9bba5;
- static TextView label(Context c,String text,float size,int color){TextView t=new TextView(c);t.setText(text);t.setTextSize(size);t.setTextColor(color);return t;}
+ static TextView label(Context c,String text,float size,int color){TextView t=new TextView(c);t.setText(text);t.setTextSize(size);t.setTextColor(color);t.setTypeface(Fonts.medium);return t;}
  /** The rating after each rated game, drawn as a line. */
  static final class Graph extends View {final int[] points;final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);Graph(Context c,int[] p){super(c);points=p;setContentDescription("レートの推移");}
   @Override protected void onDraw(Canvas c){c.drawColor(0x40000000);if(points.length<2)return;int lo=Integer.MAX_VALUE,hi=Integer.MIN_VALUE;for(int p:points){lo=Math.min(lo,p);hi=Math.max(hi,p);}
@@ -15,8 +15,8 @@ final class AccountDialog {
  static AlertDialog create(MainActivity activity){
   MainActivity.Online online=MainActivity.online;OnlineAccount a=online.account;float density=activity.getResources().getDisplayMetrics().density;int pad=Math.round(18*density);
   LinearLayout body=new LinearLayout(activity);body.setOrientation(LinearLayout.VERTICAL);body.setPadding(pad,pad/2,pad,pad/2);
-  TextView title=label(activity,"アカウント",22,GOLD);title.setTypeface(null,Typeface.BOLD);title.setPadding(pad,pad,pad,pad/3);
-  TextView name=label(activity,a.name,20,CREAM);name.setTag("account_name");name.setTypeface(null,Typeface.BOLD);body.addView(name);
+  TextView title=label(activity,"アカウント",22,GOLD);title.setTypeface(Fonts.bold);title.setPadding(pad,pad,pad,pad/3);
+  TextView name=label(activity,a.name,20,CREAM);name.setTag("account_name");name.setTypeface(Fonts.bold);body.addView(name);
   TextView id=label(activity,"ID "+a.shortId(),11,DIM);id.setTextIsSelectable(true);body.addView(id);
   TextView rating=label(activity,"レート "+a.rating+(a.provisional()?"（暫定 "+a.games+"/"+Rating.PROVISIONAL_GAMES+"局）":""),26,GOLD);rating.setTag("account_rating");rating.setPadding(0,pad/2,0,0);body.addView(rating);
   TextView record=label(activity,a.games+"局 · "+a.wins+"勝 "+a.losses+"敗 "+a.draws+"分",15,CREAM);record.setTag("account_record");body.addView(record);
@@ -57,7 +57,7 @@ final class AccountDialog {
   rankButton.setOnClickListener(v->{rankStatus.setText("ランキングを読み込んでいます…");rankButton.setEnabled(false);List<String> relays=Netplay.relays();String me=online.account.key.publicHex;
    new Thread(()->{List<Profiles.Profile> top=new ArrayList<>();try{top=Profiles.ranking(Profiles.fetch(relays,javax.net.ssl.HttpsURLConnection.getDefaultHostnameVerifier(),Profiles.rankingFilter(300),8000),1);}catch(InterruptedException ignored){}
     final List<Profiles.Profile> list=top;activity.runOnUiThread(()->{rankButton.setEnabled(true);rankList.removeAllViews();rankStatus.setText(list.isEmpty()?"公開プロフィールが見つかりませんでした":"公開プロフィール"+list.size()+"件（各端末が計算した値）");
-     for(int i=0;i<list.size()&&i<100;i++){Profiles.Profile p=list.get(i);TextView row=label(activity,(i+1)+".  "+MainActivity.shortName(p.name,12)+"   "+p.rating+"   "+p.games+"局",14,p.pubkey.equals(me)?GOLD:CREAM);if(p.pubkey.equals(me))row.setTypeface(null,Typeface.BOLD);rankList.addView(row);}});},"profile-ranking").start();});
+     for(int i=0;i<list.size()&&i<100;i++){Profiles.Profile p=list.get(i);TextView row=label(activity,(i+1)+".  "+MainActivity.shortName(p.name,12)+"   "+p.rating+"   "+p.games+"局",14,p.pubkey.equals(me)?GOLD:CREAM);if(p.pubkey.equals(me))row.setTypeface(Fonts.bold);rankList.addView(row);}});},"profile-ranking").start();});
   dialog.setOnDismissListener(d->activity.view.invalidate());
   return dialog;
  }

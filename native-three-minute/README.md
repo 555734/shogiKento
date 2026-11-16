@@ -196,3 +196,7 @@ Epic Online Services（EOS）について: EOSも無料ですが、Epic開発者
 | `res/raw/clock_tick.wav` | 持ち時間残り10秒以下の秒読み |
 
 1手につき1音（王手＞成り＞駒取り＞着手の優先）。振動は自分の着手時のみ15ms。効果音・振動・演出を減らすは設定画面でオン／オフできます。
+
+## Fonts
+
+UI text uses bundled typefaces under the SIL Open Font License 1.1: Zen Kaku Gothic New (Medium, Bold), Shippori Mincho (ExtraBold) and Yuji Syuku (Regular), from the Google Fonts repository. `scripts/subset_fonts.py` downloads the pinned originals (SHA-256 checked) into the ignored `fonts-src/`, subsets them to the app's own strings into `app/src/main/assets/fonts/`, and stores each OFL text in `app/src/main/assets/licenses/`. Other characters fall back to the system font.

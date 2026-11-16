@@ -39,7 +39,7 @@ public final class MainActivity extends Activity {
  CoffeeBilling coffee;final Runnable coffeeObserver=()->coffeeChanged();boolean coffeeDialogOpen,launchingArchive;
  AppSettings settings;RecordStore records;boolean archiveErrorShown;
  BoardView view;boolean resumed;AlertDialog choiceDialog;ClipboardKifImport clipboardImport;
- @Override public void onCreate(Bundle b){super.onCreate(b);setVolumeControlStream(android.media.AudioManager.STREAM_MUSIC);getWindow().setStatusBarColor(0xff400b0c);getWindow().setNavigationBarColor(0xff400b0c);getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);coffee=CoffeeBilling.get(this);coffee.registerLaunch();settings=new AppSettings(this);if(online.accounts==null){online.accounts=new AccountStore(this);online.account=online.accounts.load();if(online.accounts.settledAbandoned)publishProfile();}records=new RecordStore(new File(getFilesDir(),"records"));view=new BoardView();SafeWindow.setContent(this,view);updateBack();clipboardImport=new ClipboardKifImport(this);coffee.observe(coffeeObserver);if(b!=null)view.enterMode(b.getInt("screen_mode",HOME));}
+ @Override public void onCreate(Bundle b){super.onCreate(b);Fonts.load(getAssets());setVolumeControlStream(android.media.AudioManager.STREAM_MUSIC);getWindow().setStatusBarColor(0xff400b0c);getWindow().setNavigationBarColor(0xff400b0c);getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);coffee=CoffeeBilling.get(this);coffee.registerLaunch();settings=new AppSettings(this);if(online.accounts==null){online.accounts=new AccountStore(this);online.account=online.accounts.load();if(online.accounts.settledAbandoned)publishProfile();}records=new RecordStore(new File(getFilesDir(),"records"));view=new BoardView();SafeWindow.setContent(this,view);updateBack();clipboardImport=new ClipboardKifImport(this);coffee.observe(coffeeObserver);if(b!=null)view.enterMode(b.getInt("screen_mode",HOME));}
  @Override protected void onResume(){super.onResume();resumed=true;coffee.registerLaunch();launchingArchive=false;view.resumeMode();clipboardImport.resume();coffee.refresh(false);scheduleCoffeeOffer();}
  @Override protected void onPause(){clipboardImport.pause();view.pauseMode();resumed=false;view.save();super.onPause();}
  @Override protected void onStop(){super.onStop();if(!isChangingConfigurations()&&!coffeeDialogOpen&&!launchingArchive)coffee.backgrounded=true;}
@@ -159,17 +159,31 @@ public final class MainActivity extends Activity {
       float f=cover?Math.max(rect.width()/b.getWidth(),rect.height()/b.getHeight()):Math.min(rect.width()/b.getWidth(),rect.height()/b.getHeight());
       float w=b.getWidth()*f,h=b.getHeight()*f;image(c,path,null,new RectF(rect.centerX()-w/2,rect.centerY()-h/2,rect.centerX()+w/2,rect.centerY()+h/2));}
     void text(Canvas c,String s,float x,float y,float size,int color){paint.reset();paint.setAntiAlias(true);paint.setTextSize(size);paint.setColor(color);
-      paint.setTypeface(Typeface.create("sans-serif",Typeface.BOLD));paint.setTextAlign(Paint.Align.CENTER);paint.setShadowLayer(2,0,1,0xff260600);c.drawText(s,x,y,paint);}
+      paint.setTypeface(Fonts.bold);paint.setTextAlign(Paint.Align.CENTER);paint.setShadowLayer(1.5f,0,1,0x99160402);c.drawText(s,x,y,paint);}
     void tray(Canvas c,float y){tray(c,y,52);}
     void tray(Canvas c,float y,float height){String p="ui/piece_tray_fu_kei_gin.png";
       image(c,p,new Rect(381,194,541,552),new RectF(12,y,35,y+height));image(c,p,new Rect(541,194,601,552),new RectF(35,y,365,y+height));image(c,p,new Rect(1629,194,1789,552),new RectF(365,y,388,y+height));}
+    static final int INK_TOP=0xeb1a0b08,INK_BOTTOM=0xeb0e0504,HAIRLINE=0x66d8b46a,HAIRLINE_LIT=0xffdcb86c;
+    /** Lacquer-ink panel: a deep vertical gradient with gold hairlines above and below. */
     void darkPanel(Canvas c,RectF rect){
-      if(panelTexture==null)panelTexture=Bitmap.createBitmap(load("ui/piece_tray_fu_kei_gin.png"),541,258,60,230);
-      // Shader, matrix and tint are reused: panels are redrawn on every animation frame.
-      if(panelShader==null)panelShader=new BitmapShader(panelTexture,Shader.TileMode.REPEAT,Shader.TileMode.CLAMP);
-      paint.reset();paint.setAntiAlias(true);paint.setFilterBitmap(true);float f=rect.height()/panelTexture.getHeight();panelMatrix.setScale(f,f);panelMatrix.postTranslate(rect.left,rect.top);panelShader.setLocalMatrix(panelMatrix);
-      paint.setShader(panelShader);paint.setColorFilter(PANEL_TINT);c.drawRect(rect,paint);paint.setShader(null);paint.setColorFilter(null);
-      paint.reset();paint.setColor(0xff5a4c3d);paint.setStrokeWidth(.6f);c.drawLine(rect.left,rect.top,rect.right,rect.top,paint);c.drawLine(rect.left,rect.bottom,rect.right,rect.bottom,paint);
+      paint.reset();paint.setShader(new LinearGradient(0,rect.top,0,rect.bottom,INK_TOP,INK_BOTTOM,Shader.TileMode.CLAMP));c.drawRect(rect,paint);paint.setShader(null);
+      paint.setColor(HAIRLINE);c.drawRect(rect.left,rect.top,rect.right,rect.top+.8f,paint);c.drawRect(rect.left,rect.bottom-.8f,rect.right,rect.bottom,paint);
+    }
+    /** Rounded ink card with a gold hairline; lit cards get a brighter edge and an inner rule. */
+    void inkCard(Canvas c,RectF r,float radius,boolean lit){
+      paint.reset();paint.setAntiAlias(true);paint.setShader(new LinearGradient(0,r.top,0,r.bottom,INK_TOP,INK_BOTTOM,Shader.TileMode.CLAMP));c.drawRoundRect(r,radius,radius,paint);paint.setShader(null);
+      paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(lit?1.3f:.9f);paint.setColor(lit?HAIRLINE_LIT:HAIRLINE);c.drawRoundRect(r,radius,radius,paint);
+      if(lit){RectF in=new RectF(r);in.inset(3.5f,3.5f);paint.setStrokeWidth(.6f);paint.setColor(0x55dcb86c);c.drawRoundRect(in,Math.max(0,radius-3),Math.max(0,radius-3),paint);}
+    }
+    static final int PRIMARY=0,SECONDARY=1,DANGER=2;
+    /** Buttons: PRIMARY vermilion lacquer, SECONDARY ink, DANGER an outlined vermilion; all with a gold or vermilion hairline. */
+    void button(Canvas c,RectF r,int style,String label,float size){
+      paint.reset();paint.setAntiAlias(true);float radius=Math.min(7,r.height()/2);
+      if(style==PRIMARY){paint.setShader(new LinearGradient(0,r.top,0,r.bottom,0xffb8402a,0xff8a2416,Shader.TileMode.CLAMP));c.drawRoundRect(r,radius,radius,paint);paint.setShader(null);}
+      else{paint.setColor(style==DANGER?0x40a8321f:0xb3120605);c.drawRoundRect(r,radius,radius,paint);}
+      paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(style==DANGER?1.2f:.9f);paint.setColor(style==PRIMARY?0xb3f0c27a:style==DANGER?0xffcf5a40:0x99d8b46a);c.drawRoundRect(r,radius,radius,paint);
+      paint.reset();paint.setAntiAlias(true);paint.setTypeface(Fonts.bold);paint.setTextSize(size);paint.setLetterSpacing(.06f);paint.setTextAlign(Paint.Align.CENTER);paint.setColor(style==DANGER?0xffffc4b4:0xfff6ead2);
+      Paint.FontMetrics m=paint.getFontMetrics();c.drawText(label,r.centerX(),r.centerY()-(m.ascent+m.descent)/2,paint);
     }
     void clockPanel(Canvas c,float y,long time,boolean active){
       long sec=(Math.max(0,time)+999)/1000;String st=String.format(Locale.US,"%02d:%02d",sec/60,sec%60);
@@ -220,21 +234,28 @@ public final class MainActivity extends Activity {
   /** One confirmation step on the board before resigning. */
   boolean resignConfirm;
   RectF[] resignButtons(){float cy=boardY+boardHeight/2;return new RectF[]{new RectF(70,cy+8,196,cy+52),new RectF(204,cy+8,330,cy+52)};}
-  void drawResignConfirm(Canvas c){if(!resignConfirm)return;float cy=boardY+boardHeight/2;paint.reset();paint.setAntiAlias(true);paint.setColor(0xe8200807);c.drawRoundRect(50,cy-62,350,cy+66,14,14,paint);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(1.6f);paint.setColor(0xffffd27a);c.drawRoundRect(50,cy-62,350,cy+66,14,14,paint);
-   text(c,"投了しますか？",200,cy-20,22,Color.WHITE);RectF[] b=resignButtons();int[] fills={0xffa8352a,0xff4a3a2c};String[] labels={"投了する","続ける"};
-   for(int i=0;i<2;i++){paint.reset();paint.setAntiAlias(true);paint.setColor(fills[i]);c.drawRoundRect(b[i],10,10,paint);text(c,labels[i],b[i].centerX(),b[i].centerY()+6,16,Color.WHITE);}}
+  void drawResignConfirm(Canvas c){if(!resignConfirm)return;float cy=boardY+boardHeight/2;inkCard(c,new RectF(50,cy-62,350,cy+66),10,true);
+   styledText(c,"投了しますか？",200,cy-18,22,0xfff3e6cf,true,Paint.Align.CENTER,Fonts.mincho);RectF[] b=resignButtons();
+   button(c,b[0],PRIMARY,"投了する",16);button(c,b[1],SECONDARY,"続ける",16);}
   void resignTouch(float x,float y){RectF[] b=resignButtons();resignConfirm=false;if(b[0].contains(x,y)&&started&&game.winner==0){clock.settle(SystemClock.elapsedRealtime());game.resign(humanSide());clearSelection();save();}invalidate();}
+  /** Ink bar: three quiet text actions divided by hairlines, and 投了 as an outlined vermilion button. */
+  void matchToolbar(Canvas c){darkPanel(c,new RectF(0,0,400,MATCH_BAR));
+   styledText(c,"‹ モード",45,28.5f,15,0xffeadfc8,false,Paint.Align.CENTER,null);styledText(c,"やり直し",145,28.5f,15,0xffeadfc8,false,Paint.Align.CENTER,null);styledText(c,"対局設定",253,28.5f,15,0xffeadfc8,false,Paint.Align.CENTER,null);
+   paint.reset();paint.setColor(0x40d8b46a);for(float x:new float[]{92,199,306})c.drawRect(x,13,x+.8f,MATCH_BAR-13,paint);
+   button(c,new RectF(320,7,392,MATCH_BAR-7),DANGER,"投了",15);}
   /** Match player panel: icon, name, clock (red at 30s) and komadai, 1.5x; the side to move is lit, the other dimmed. */
   void matchPanel(Canvas c,int side,float y){float h=matchPanelH;boolean turn=started&&game.winner==0&&game.turn==side,me=side==humanSide();RectF r=new RectF(4,y,396,y+h);
-   darkPanel(c,r);paint.reset();paint.setAntiAlias(true);if(turn){paint.setColor(0x40ffd27a);c.drawRect(r,paint);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(2.4f);paint.setColor(0xffffd27a);c.drawRect(r.left+1,r.top+1,r.right-1,r.bottom-1,paint);}else{paint.setColor(0x66000000);c.drawRect(r,paint);}
+   inkCard(c,r,8,turn);if(!turn){paint.reset();paint.setAntiAlias(true);paint.setColor(0x47000000);c.drawRoundRect(r,8,8,paint);}
    float icon=Math.min(h-14,60);drawPlayerIcon(c,side,new RectF(10,y+(h-icon)/2,10+icon,y+(h-icon)/2+icon),turn);float tx=18+icon;
-   leftText(c,playerName(side),tx,y+h/2-8,16,turn?0xffffe3ae:0xffd9cfc2);
-   long left=game.remaining[side==1?0:1],sec=(Math.max(0,left)+999)/1000;leftText(c,String.format(Locale.US,"%02d:%02d",sec/60,sec%60),tx,y+h/2+26,33,left<=30000?0xffff5a4a:(turn?Color.WHITE:0xffbdb4aa));
-   int count=handCount(side);if(count==0){text(c,"持ち駒なし",310,y+h/2+6,13.5f,0xffc5c0b9);return;}long frame=frameTime();
+   styledText(c,playerName(side),tx,y+h/2-8,15.5f,turn?0xfff3e6cf:0xffb9ad9e,false,Paint.Align.LEFT,null);
+   long left=game.remaining[side==1?0:1],sec=(Math.max(0,left)+999)/1000;clockText(c,String.format(Locale.US,"%02d:%02d",sec/60,sec%60),tx,y+h/2+26,33,left<=30000?0xffff6450:(turn?0xfffff8ec:0xffa89d90));
+   int count=handCount(side);if(count==0){styledText(c,"持ち駒なし",310,y+h/2+5,13,0x99d9cfc2,false,Paint.Align.CENTER,null);return;}long frame=frameTime();
    int i=0;for(int n=1;n<=handLimit();n++)if(game.hands[side==1?0:1][n]>0){float x=handX(i,count);int shown=game.hands[side==1?0:1][n]-(effects.handPending(side,n,frame)?1:0);RectF box=handBox(x,y);
     if(selectedSide==side&&selectedHand==n)fitted(c,"ui/highlight_selected_gold.png",new RectF(box.left-4,y+2,box.right+4,y+h-2),false);
     if(shown>0){float pop=effects.handScale(side,n,frame);drawPiece(c,side*n,box,commonHeight(box.width(),box.height())*pop);text(c,""+shown,box.right-3,box.bottom+12,14*pop,Color.WHITE);}i++;}
   }
+  /** Clock digits in the bold UI face with tabular figures, so the time does not shift as it counts down. */
+  void clockText(Canvas c,String s,float x,float y,float size,int color){paint.reset();paint.setAntiAlias(true);paint.setTypeface(Fonts.bold);paint.setFontFeatureSettings("tnum");paint.setTextSize(size);paint.setColor(color);paint.setShadowLayer(1.5f,0,1,0x99160402);c.drawText(s,x,y,paint);}
   /** あなた / the CPU persona with its rank label (目安), each with the side tag. */
   String playerName(int side){MatchOptions o=matchOptions();return side==humanSide()?"あなた":o.cpuName()+"　"+o.cpuRank();}
   /** Generated icon (assets/generated/avatars) when supplied, otherwise an original emblem drawn per level. */
@@ -244,8 +265,8 @@ public final class MainActivity extends Activity {
    paint.reset();paint.setAntiAlias(true);if(hasAsset(path)){c.save();Path clip=new Path();clip.addOval(r,Path.Direction.CW);c.clipPath(clip);image(c,path,null,r);c.restore();}
    else{paint.setShader(new RadialGradient(r.centerX(),r.top+r.height()*.35f,r.width()*.7f,new int[]{me?0xff4a86c0:(MatchOptions.CPU_COLORS[level-1]|0xff000000),me?0xff1d3a5c:0xff2a0f0c},null,Shader.TileMode.CLAMP));c.drawOval(r,paint);paint.setShader(null);
     text(c,me?"自":MatchOptions.CPU_GLYPHS[level-1],r.centerX(),r.centerY()+r.height()*.18f,r.height()*.5f,0xfffff1d6);}
-   paint.reset();paint.setAntiAlias(true);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(2.4f);paint.setColor(lit?0xffffd27a:0xff9b8670);c.drawOval(r,paint);
-   String tag=side==1?"先手":"後手";paint.reset();paint.setAntiAlias(true);paint.setColor(side==1?0xff1f1f1f:0xfff2ead8);RectF t=new RectF(r.centerX()-15,r.bottom-11,r.centerX()+15,r.bottom+3);c.drawRoundRect(t,6,6,paint);text(c,tag,t.centerX(),t.bottom-3.5f,9.5f,side==1?Color.WHITE:0xff2a1a10);}
+   paint.reset();paint.setAntiAlias(true);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(1.5f);paint.setColor(lit?HAIRLINE_LIT:0x99a08868);c.drawOval(r,paint);
+   String tag=side==1?"先手":"後手";paint.reset();paint.setAntiAlias(true);paint.setColor(side==1?0xff17100c:0xfff2e8d4);RectF t=new RectF(r.centerX()-15,r.bottom-11,r.centerX()+15,r.bottom+3);c.drawRoundRect(t,3,3,paint);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(.8f);paint.setColor(0xb3d8b46a);c.drawRoundRect(t,3,3,paint);styledText(c,tag,t.centerX(),t.bottom-3.8f,9,side==1?0xfff2e8d4:0xff2a1a10,true,Paint.Align.CENTER,null);}
   void hand(Canvas c,int side,float y){
    if(mode==ONLINE){onlineKomadai(c,side,y);return;}
    if(mode==MATCH){matchPanel(c,side,y);return;}
@@ -276,9 +297,10 @@ public final class MainActivity extends Activity {
    if(mode==ONLINE&&online.game==null){onlineLobby(c);c.restore();return;}
    observeFlow();
    if(mode==ONLINE)onlineTopBar(c);
-   if(mode==MATCH){darkPanel(c,new RectF(4,0,396,MATCH_BAR));text(c,"モード",45,29,16,0xfff5e4c8);text(c,"やり直し",145,29,15.5f,Color.WHITE);text(c,"対局設定",253,29,15.5f,Color.WHITE);paint.reset();paint.setAntiAlias(true);paint.setColor(0xffa8352a);c.drawRoundRect(318,5,392,MATCH_BAR-5,6,6,paint);text(c,"投了",355,29,16,Color.WHITE);}
+   if(mode==MATCH)matchToolbar(c);
    hand(c,-viewSide(),topHandY());board(c);lastMoveColors(c);selectionColors(c);long frame=frameTime();for(int r=0;r<9;r++)for(int col=0;col<9;col++)if(game.board[r][col]!=0&&!effects.hides(r,col,frame))boardPiece(c,game.board[r][col],cell(r,col));lastMoveFrame(c);hand(c,viewSide(),bottomHandY());if(mode!=STUDY)effects.draw(c,geometry,frame);drawCandidateArrows(c);drawPick(c);if(mode!=STUDY){effects.drawStart(c,boardRect(),frame);effects.drawEnd(c,boardRect(),frame);if(mode==MATCH&&game.winner!=0&&effects.endButtonsVisible(frame))drawEndButtons(c);}
-   if(mode==MATCH){String status=game.winner==2?game.result:game.winner!=0?(game.winner==humanSide()?"勝利":"敗北")+"・"+game.result:!ai.ready?(aiError==null?"AI読み込み中…":"AIエラー・対局設定から再試行"):!started?"タップして対局開始":game.turn==humanSide()?(game.checked(humanSide())?"王手です・あなたの手番":"あなたの手番"):"CPUの手番";text(c,status,200,bottomHandY()+matchPanelH+28,18,game.winner==0&&started&&game.turn==humanSide()?0xffffe08a:Color.WHITE);if(!started){float cy=boardY+boardHeight/2;paint.reset();paint.setAntiAlias(true);paint.setColor(0xe0300909);c.drawRoundRect(60,cy-44,340,cy+44,14,14,paint);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(1.6f);paint.setColor(0xffffd27a);c.drawRoundRect(60,cy-44,340,cy+44,14,14,paint);text(c,ai.ready?"タップして対局開始":"AI読み込み中…",200,cy+10,26,0xffffdd8b);}drawResignConfirm(c);}else if(mode==ONLINE)onlineStatus(c);else analysisPanel(c);c.restore();
+   if(mode==MATCH){String status=game.winner==2?game.result:game.winner!=0?(game.winner==humanSide()?"勝利":"敗北")+"・"+game.result:!ai.ready?(aiError==null?"AI読み込み中…":"AIエラー・対局設定から再試行"):!started?"タップして対局開始":game.turn==humanSide()?(game.checked(humanSide())?"王手です・あなたの手番":"あなたの手番"):"CPUの手番";text(c,status,200,bottomHandY()+matchPanelH+28,17,game.winner==0&&started&&game.turn==humanSide()?0xfff0d48e:0xfff3e6cf);if(!started){float cy=boardY+boardHeight/2;effects.band(c,boardX,boardX+boardSize,cy,38,1);
+    paint.reset();paint.setAntiAlias(true);paint.setTypeface(Fonts.mincho);paint.setTextSize(25);paint.setLetterSpacing(.12f);paint.setTextAlign(Paint.Align.CENTER);paint.setShader(new LinearGradient(0,cy-14,0,cy+10,0xfffaeab8,0xffd0a050,Shader.TileMode.CLAMP));c.drawText(ai.ready?"タップして対局開始":"AI読み込み中…",200,cy+9,paint);paint.setShader(null);}drawResignConfirm(c);}else if(mode==ONLINE)onlineStatus(c);else analysisPanel(c);c.restore();
    long tick=frameTime();if(frozenFrame<0&&(effects.active(tick)||effects.overlayAnimating(tick)||effects.tintFading(tick)))postInvalidateOnAnimation();
   }
   int candidateArrowCount(){return mode==STUDY&&analysisResult!=null&&analysisBoard!=null?Math.min(3,analysisRoots.size()):0;}
@@ -326,7 +348,7 @@ public final class MainActivity extends Activity {
    showChoice(d);int current=0;for(int i=0;i<moveEntries.size();i++)if(moveEntries.get(i).kind==EvaluationHistory.ListEntry.MOVE&&moveEntries.get(i).row.current)current=i;list.setSelection(Math.max(0,current-3));
   }
   android.widget.TextView moveRow(EvaluationHistory.ListEntry e,android.widget.TextView t){
-   float dp=getResources().getDisplayMetrics().density;t.setText(e.text());t.setTypeface(null,e.kind==EvaluationHistory.ListEntry.MOVE&&!e.row.fork()?Typeface.NORMAL:Typeface.BOLD);t.setGravity(Gravity.CENTER_VERTICAL);t.setMinHeight(Math.round(44*dp));
+   float dp=getResources().getDisplayMetrics().density;t.setText(e.text());t.setTypeface(e.kind==EvaluationHistory.ListEntry.MOVE&&!e.row.fork()?Fonts.medium:Fonts.bold);t.setGravity(Gravity.CENTER_VERTICAL);t.setMinHeight(Math.round(44*dp));
    t.setMaxLines(Integer.MAX_VALUE);t.setEllipsize(null);
    if(e.kind==EvaluationHistory.ListEntry.TAB){
     android.graphics.drawable.GradientDrawable tab=new android.graphics.drawable.GradientDrawable();tab.setCornerRadius(18*dp);tab.setColor(e.expanded?0xfff7c98b:0xfffde9d2);tab.setStroke(Math.round(1.5f*dp),0xffc8742e);
@@ -404,8 +426,8 @@ public final class MainActivity extends Activity {
   RectF boardRect(){return new RectF(boardX,boardY,boardX+boardSize,boardY+boardHeight);}
   /** もう一局 / 検討する / ホームへ, under the result in CPU matches. */
   RectF[] endButtons(){float y=boardY+boardHeight/2+48;return new RectF[]{new RectF(14,y,136,y+42),new RectF(139,y,261,y+42),new RectF(264,y,386,y+42)};}
-  void drawEndButtons(Canvas c){String[] labels={"もう一局","検討する","ホームへ"};int[] fills={0xffc0392b,0xff285681,0xff4a3a2c};RectF[] b=endButtons();
-   for(int i=0;i<3;i++){paint.reset();paint.setAntiAlias(true);paint.setColor(fills[i]);c.drawRoundRect(b[i],10,10,paint);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(1.4f);paint.setColor(0xffffd27a);c.drawRoundRect(b[i],10,10,paint);text(c,labels[i],b[i].centerX(),b[i].centerY()+6,15,Color.WHITE);}}
+  void drawEndButtons(Canvas c){String[] labels={"もう一局","検討する","ホームへ"};RectF[] b=endButtons();
+   for(int i=0;i<3;i++)button(c,b[i],i==0?PRIMARY:SECONDARY,labels[i],15);}
   /** Handles the result buttons; returns true when the tap was used. */
   boolean endButtonTouch(float x,float y){if(mode!=MATCH||game.winner==0||!effects.endButtonsVisible(SystemClock.uptimeMillis()))return false;RectF[] b=endButtons();
    if(b[0].contains(x,y)){restart();started=true;clock.resume(SystemClock.elapsedRealtime(),true);save();scheduleCpu();invalidate();return true;}
@@ -432,10 +454,10 @@ public final class MainActivity extends Activity {
    float left=Math.max(a.left+2,Math.min(z.right-2-total,cell.centerX()-total/2)),top=Math.max(a.top+2,Math.min(z.bottom-2-h,cell.centerY()-h/2));
    return new RectF[]{new RectF(left,top,left+w,top+h),new RectF(left+w+gap,top,left+total,top+h)};}
   void drawPick(Canvas c){if(pick==null)return;RectF[] r=pickRects();RectF all=new RectF(r[0].left-6,r[0].top-6,r[1].right+6,r[1].bottom+18);
-   paint.reset();paint.setAntiAlias(true);paint.setColor(0xd0200807);c.drawRoundRect(all,10,10,paint);
-   for(int i=0;i<2;i++){paint.reset();paint.setAntiAlias(true);paint.setColor(i==0?0xfffff0d6:0xfff3e6cf);c.drawRoundRect(r[i],8,8,paint);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(2);paint.setColor(i==0?0xffe0392b:0xffb58a47);c.drawRoundRect(r[i],8,8,paint);
+   inkCard(c,all,9,false);
+   for(int i=0;i<2;i++){paint.reset();paint.setAntiAlias(true);paint.setShader(new LinearGradient(0,r[i].top,0,r[i].bottom,0xfff8efdc,i==0?0xffeedcc0:0xffe6d9c2,Shader.TileMode.CLAMP));c.drawRoundRect(r[i],5,5,paint);paint.setShader(null);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(i==0?1.8f:1);paint.setColor(i==0?0xffc8402c:0xffa88850);c.drawRoundRect(r[i],5,5,paint);
     int p=pick.side*(i==0?pick.base+8:pick.base);drawPiece(c,p,r[i],Math.min(r[i].height()*.86f,boardPieceHeight()*1.15f));
-    text(c,pick.edit?(i==0?"成る":"元の駒"):(i==0?"成る":"成らない"),r[i].centerX(),r[i].bottom+13,10.5f,i==0?0xffffb4a8:Color.WHITE);}}
+    styledText(c,pick.edit?(i==0?"成る":"元の駒"):(i==0?"成る":"成らない"),r[i].centerX(),r[i].bottom+13,10.5f,i==0?0xffffb4a0:0xfff3e6cf,true,Paint.Align.CENTER,null);}}
   /** A tap on an option commits it; any other tap cancels the move and keeps the piece selected, like the old dialog's cancel. */
   void choosePick(float x,float y){RectF[] r=pickRects();PromotionPick p=pick;pick=null;if(r[0].contains(x,y))p.promote.run();else if(r[1].contains(x,y))p.plain.run();invalidate();}
   void choose(int r,int col){
@@ -560,7 +582,7 @@ public final class MainActivity extends Activity {
    else{text(c,"オンライン対戦",200,62,24,0xffffe3ae);text(c,"完全無料・登録不要・3分／10分切れ負け",200,84,11,Color.WHITE);
     OnlineAccount a=online.account;float ay=ACCOUNT_CARD_Y;darkPanel(c,new RectF(4,ay,396,ay+44));
     if(a!=null){leftText(c,shortName(a.name,12),14,ay+18,13,0xffffe3ae);leftText(c,"レート "+a.ratingText()+" · "+a.wins+"勝"+a.losses+"敗"+a.draws+"分",14,ay+36,10,Color.WHITE);}
-    paint.reset();paint.setAntiAlias(true);paint.setColor(0xff285681);c.drawRoundRect(300,ay+8,390,ay+36,4,4,paint);text(c,"アカウント",345,ay+27,11,Color.WHITE);}
+    button(c,new RectF(300,ay+8,390,ay+36),SECONDARY,"アカウント",11);}
    for(int i=0;i<2;i++){RectF r=timeRect(i);boolean on=OnlineGame.TIME_CONTROLS[i].equals(online.timeControl);paint.reset();paint.setAntiAlias(true);paint.setColor(on?0xffffd27a:0xa0000000);c.drawRoundRect(r,18,18,paint);
     paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(1.2f);paint.setColor(on?0xffffe3ae:0x80ffd27a);c.drawRoundRect(r,18,18,paint);text(c,OnlineGame.label(OnlineGame.TIME_CONTROLS[i]),r.centerX(),r.centerY()+5,13,on?0xff3a1606:(online.seekMode>=0?0x80ffffff:Color.WHITE));}
    String[][] labels=room?new String[][]{{"ルームを作る","6桁のコードを友だちに伝えます"},{"ルームに参加","友だちのコードを入力します"}}:new String[][]{{"ランダム対戦","レート戦・近いレートの相手と対局"}};int[] modes=room?new int[]{Netplay.HOST,Netplay.GUEST}:new int[]{Netplay.QUICK};
@@ -572,23 +594,22 @@ public final class MainActivity extends Activity {
    if(online.seekMode==Netplay.HOST&&online.roomCode!=null){text(c,"ルームコード "+online.roomCode.substring(0,3)+" "+online.roomCode.substring(3)+"（"+OnlineGame.label(online.timeControl).replace("切れ負け","")+"）",200,y+64,18,0xffffdd8b);text(c,online.status,200,y+84,10,Color.WHITE);}
    else{text(c,online.seekMode<0?(room?"ルームを作るか、コードで参加してください":"持ち時間を選んでランダム対戦"):online.status.isEmpty()?"開始しています…":online.status,200,y+64,12,Color.WHITE);if(online.seekMode==Netplay.GUEST&&online.roomCode!=null)text(c,"ルーム "+online.roomCode,200,y+84,10,0xffdfd8cc);}
    if(!online.notice.isEmpty())text(c,online.notice,200,y+102,9.5f,0xffffb9b3);
-   if(online.seekMode>=0){paint.reset();paint.setAntiAlias(true);paint.setColor(0xff285681);c.drawRoundRect(120,y+110,280,y+142,4,4,paint);text(c,"キャンセル",200,y+131,12,Color.WHITE);}
+   if(online.seekMode>=0)button(c,new RectF(120,y+110,280,y+142),SECONDARY,"キャンセル",12);
    float n=y+168;text(c,"P2Pで直接つなぎ、つながらない時だけ公開リレーを経由します",200,n,9,0xfff2e6d0);text(c,"対戦相手にはあなたのIPアドレスが伝わります",200,n+16,9,0xfff2e6d0);text(c,"対局中はアプリを離れても時計は止まりません",200,n+32,9,0xfff2e6d0);
   }
   // ---- online game screen: header, player cards, komadai, turn pill and result card ----
   static final int GOLD=0xffffd27a,CREAM=0xfffff1d6,INK=0xff2a1208;
   float onlineStatusY(){return bottomHandY()+100;}
   void pill(Canvas c,RectF r,int fill,int stroke){paint.reset();paint.setAntiAlias(true);paint.setColor(fill);c.drawRoundRect(r,r.height()/2,r.height()/2,paint);if(stroke!=0){paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(1);paint.setColor(stroke);c.drawRoundRect(r,r.height()/2,r.height()/2,paint);}}
-  float textWidth(String s,float size,boolean bold){paint.reset();paint.setTextSize(size);paint.setTypeface(bold?Typeface.DEFAULT_BOLD:Typeface.DEFAULT);return paint.measureText(s);}
-  void styledText(Canvas c,String s,float x,float y,float size,int color,boolean bold,Paint.Align align,Typeface face){paint.reset();paint.setAntiAlias(true);paint.setTextSize(size);paint.setColor(color);paint.setTypeface(face!=null?face:bold?Typeface.DEFAULT_BOLD:Typeface.DEFAULT);paint.setTextAlign(align);c.drawText(s,x,y,paint);}
+  float textWidth(String s,float size,boolean bold){paint.reset();paint.setTextSize(size);paint.setTypeface(bold?Fonts.bold:Fonts.medium);return paint.measureText(s);}
+  void styledText(Canvas c,String s,float x,float y,float size,int color,boolean bold,Paint.Align align,Typeface face){paint.reset();paint.setAntiAlias(true);paint.setTextSize(size);paint.setColor(color);paint.setTypeface(face!=null?face:bold?Fonts.bold:Fonts.medium);paint.setTextAlign(align);c.drawText(s,x,y,paint);}
   void onlineTopBar(Canvas c){OnlineGame g=online.game;
    paint.reset();paint.setAntiAlias(true);paint.setShader(new LinearGradient(0,0,0,32,0xf2241010,0xf2110707,Shader.TileMode.CLAMP));c.drawRect(4,0,396,32,paint);paint.setShader(null);paint.setColor(0x80b58a47);c.drawRect(4,31,396,32,paint);
    styledText(c,"‹ ロビー",14,21,11,0xfff5e4c8,true,Paint.Align.LEFT,null);
    int dot=online.direct?0xff6ee07a:g.started?0xffffc857:0xffaaaaaa;String route=(online.direct?"P2P直結":g.started?"リレー経由":"接続中…")+(online.rtt>=0&&g.started?" "+online.rtt+"ms":"");
    float w=textWidth(route,10,true)+30,cx=200;pill(c,new RectF(cx-w/2,6,cx+w/2,26),0x99000000,(dot&0x00ffffff)|0x99000000);paint.reset();paint.setAntiAlias(true);paint.setColor(dot);c.drawCircle(cx-w/2+11,16,3.5f,paint);
    styledText(c,route,cx-w/2+20,20,10,CREAM,true,Paint.Align.LEFT,null);
-   if(!g.over()||!g.peerLeft){boolean resignButton=!g.over();int fill=resignButton?0xffa8352a:g.rematchMine?0xff5a5050:GOLD;pill(c,new RectF(320,5,391,27),fill,resignButton?0xffe0806f:0);
-    styledText(c,resignButton?"投了":g.rematchMine?"申込済":"再戦",355.5f,21,11,resignButton||g.rematchMine?Color.WHITE:INK,true,Paint.Align.CENTER,null);}
+   if(!g.over()||!g.peerLeft){boolean resignButton=!g.over();button(c,new RectF(320,5,391,27),resignButton?DANGER:g.rematchMine?SECONDARY:PRIMARY,resignButton?"投了":g.rematchMine?"申込済":"再戦",11);}
   }
   /** Pieces in hand on a lacquer tray: the player's on the right, the opponent's mirrored to the left as across a real board. */
   void onlineKomadai(Canvas c,int side,float y){boolean me=side==viewSide();RectF r=new RectF(4,y,396,y+44);
@@ -617,7 +638,7 @@ public final class MainActivity extends Activity {
    styledText(c,detail.length()>30?detail.substring(0,29)+"…":detail,48,y+35,8.5f,0xc0fff1d6,false,Paint.Align.LEFT,null);
    styledText(c,side==1?"▲ 先手":"△ 後手",388,y+12,8.5f,0xccfff1d6,true,Paint.Align.RIGHT,null);
    long sec=(ms+999)/1000;String clock=String.format(Locale.US,"%02d:%02d",sec/60,sec%60);RectF pillRect=new RectF(318,y+16,390,y+40);
-   pill(c,pillRect,low?0xffd8392f:active?GOLD:0x1fffffff,low||active?0:0x40ffd27a);styledText(c,clock,354,y+34,16,low?Color.WHITE:active?INK:CREAM,true,Paint.Align.CENTER,Typeface.create(Typeface.MONOSPACE,Typeface.BOLD));
+   pill(c,pillRect,low?0xffd8392f:active?GOLD:0x1fffffff,low||active?0:0x40ffd27a);styledText(c,clock,354,y+34,16,low?Color.WHITE:active?INK:CREAM,true,Paint.Align.CENTER,Fonts.bold);
   }
   void onlineStatus(Canvas c){OnlineGame g=online.game;playerCard(c,-viewSide(),34);playerCard(c,viewSide(),bottomHandY()+48);
    float y=onlineStatusY();String s=g.status(SystemClock.elapsedRealtime());long quiet=silence();if(g.started&&!g.over()&&quiet>9000)s+="・相手の応答なし "+quiet/1000+"秒";
@@ -630,9 +651,8 @@ public final class MainActivity extends Activity {
   }
   /** Returns the card's bottom edge. Buttons: 再戦する at x 24..196, ロビーへ at 204..376, y+112..y+146 (see onlineTouch). */
   float resultCard(Canvas c,OnlineGame g,float y){RectF card=new RectF(14,y,386,y+156);boolean win=g.game.winner==g.mySide,draw=g.game.winner==2;
-   paint.reset();paint.setAntiAlias(true);paint.setShader(new LinearGradient(0,y,0,y+156,0xf5341014,0xf2100606,Shader.TileMode.CLAMP));c.drawRoundRect(card,18,18,paint);paint.setShader(null);
-   paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(1.4f);paint.setShader(new LinearGradient(0,y,0,y+156,GOLD,0x33ffd27a,Shader.TileMode.CLAMP));c.drawRoundRect(card,18,18,paint);paint.setShader(null);
-   String title=draw?"引き分け":win?"勝ち":"負け";paint.reset();paint.setAntiAlias(true);paint.setTextSize(30);paint.setTypeface(Typeface.create(Typeface.SERIF,Typeface.BOLD));paint.setTextAlign(Paint.Align.CENTER);
+   inkCard(c,card,10,true);
+   String title=draw?"引き分け":win?"勝ち":"負け";paint.reset();paint.setAntiAlias(true);paint.setTextSize(34);paint.setTypeface(Fonts.brush);paint.setTextAlign(Paint.Align.CENTER);
    paint.setShader(new LinearGradient(0,y+12,0,y+44,win?0xfffff2b3:0xfffff1d6,win?0xffc98a23:0xffaab4c8,Shader.TileMode.CLAMP));c.drawText(title,200,y+42,paint);paint.setShader(null);
    styledText(c,g.game.result,200,y+60,10.5f,0xd9fff1d6,false,Paint.Align.CENTER,null);
    OnlineAccount.Game r=online.lastResult;
@@ -642,8 +662,8 @@ public final class MainActivity extends Activity {
    else if(!online.rated)styledText(c,"フレンド対戦・レート変動なし",200,y+86,10,0xb3fff1d6,false,Paint.Align.CENTER,null);
    if(g.rematchMine)styledText(c,"再戦を申し込みました。相手の返事を待っています",200,y+105,9,CREAM,false,Paint.Align.CENTER,null);
    else if(g.rematchPeer)styledText(c,"相手が再戦を希望しています",200,y+105,9.5f,GOLD,true,Paint.Align.CENTER,null);
-   float by=y+112;if(!g.peerLeft&&!g.rematchMine){paint.reset();paint.setAntiAlias(true);paint.setShader(new LinearGradient(0,by,0,by+34,0xfffff0a8,GOLD,Shader.TileMode.CLAMP));c.drawRoundRect(new RectF(24,by,196,by+34),17,17,paint);paint.setShader(null);styledText(c,"再戦する",110,by+22,12.5f,INK,true,Paint.Align.CENTER,null);}
-   pill(c,new RectF(204,by,376,by+34),0x1affffff,0x80ffd27a);styledText(c,"ロビーへ",290,by+22,12.5f,CREAM,true,Paint.Align.CENTER,null);
+   float by=y+112;if(!g.peerLeft&&!g.rematchMine)button(c,new RectF(24,by,196,by+34),PRIMARY,"再戦する",12.5f);
+   button(c,new RectF(204,by,376,by+34),SECONDARY,"ロビーへ",12.5f);
    return y+156;
   }
   /** The opponent card's second line (the name is shown above it): "レート1520（暫定）· レート戦 · 対戦成績…". */

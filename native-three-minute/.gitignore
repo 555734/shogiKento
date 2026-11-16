@@ -9,3 +9,4 @@ test-classes/
 local.properties
 
 app/src/main/jniLibs/
+fonts-src/

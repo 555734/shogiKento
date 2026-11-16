@@ -7,7 +7,7 @@ final class FeedbackSettingsDialog {
  static AlertDialog create(MainActivity activity){
   AppSettings settings=activity.settings;int pad=Math.round(22*activity.getResources().getDisplayMetrics().density);
   LinearLayout body=new LinearLayout(activity);body.setOrientation(LinearLayout.VERTICAL);body.setPadding(pad,pad/2,pad,pad/2);
-  TextView title=new TextView(activity);title.setText("音・振動・演出の設定");title.setTextSize(22);title.setTextColor(GOLD);title.setTypeface(null,Typeface.BOLD);title.setPadding(pad,pad,pad,pad/2);
+  TextView title=new TextView(activity);title.setText("音・振動・演出の設定");title.setTextSize(22);title.setTextColor(GOLD);title.setTypeface(Fonts.bold);title.setPadding(pad,pad,pad,pad/2);
   Switch sound=new Switch(activity);sound.setTag("setting_sound");sound.setText("効果音（SE）");sound.setTextColor(CREAM);sound.setTextSize(17);sound.setMinHeight(pad*2+8);sound.setChecked(settings.sound());body.addView(sound);
   TextView volume=new TextView(activity);volume.setTag("setting_volume_label");volume.setText("効果音の音量  "+settings.volume()+"%");volume.setTextColor(CREAM);volume.setTextSize(15);volume.setPadding(0,pad/2,0,pad/3);body.addView(volume);
   SeekBar slider=new SeekBar(activity);slider.setTag("setting_volume");slider.setContentDescription("効果音の音量");slider.setMax(100);slider.setProgress(settings.volume());slider.setProgressTintList(ColorStateList.valueOf(GOLD));slider.setThumbTintList(ColorStateList.valueOf(GOLD));body.addView(slider,new LinearLayout.LayoutParams(-1,pad*2+8));
