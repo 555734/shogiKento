@@ -1,0 +1,16 @@
+relays open swift=6 android=6 of 8; swift STUN replies=12 candidates=["13.105.117.236:42775"] symmetric=false
+match time 549ms
+no direct path within 10 s (relay only)
+swift<->java live move latency median=140ms max=221ms n=10
+PASS live public relays: 27 checks
+diagnostics swift:
+handshake: 4330ms recv offer 0870e8 via wss://relay.snort.social | 4331ms accept 0870e8 | 4529ms recv confirm 0870e8 via wss://relay.snort.social | 4529ms matched 0870e8 role 1
+state=matched relays=6/8 candidates=["13.105.117.236:42775"] symmetric=false link: direct=false route=relay rtt=-1 relayRtt=211 udp=54/0 relay=19/19 candidates=1 rejected=0
+wss://yabu.me open ok=19 rejected=0 received=0 clock=no Date header
+wss://relay.snort.social open ok=21 rejected=0 received=20 clock=0s
+wss://nostr-pub.wellorder.net closed ok=0 rejected=0 received=0 clock=no Date header last=The request timed out.
+wss://relay.primal.net open ok=15 rejected=0 received=0 clock=0s
+wss://nos.lol open ok=21 rejected=0 received=0 clock=0s
+wss://nostr.mom open ok=21 rejected=0 received=2 clock=0s
+wss://nostr.oxtr.dev open ok=16 rejected=1 received=0 clock=0s writes=paused last=rate limited
+wss://relay.damus.io closed ok=0 rejected=0 received=0 clock=0s last=HTTP 521
