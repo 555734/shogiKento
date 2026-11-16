@@ -1,0 +1,886 @@
+[
+  {
+    "file": "Shogi_3min.apk",
+    "size": 33184795,
+    "sha256": "3f85b6c5ae4031ba87a53a068a20a755de0ecd6c4b02775f9c6f1faf123e0886",
+    "parts": [
+      "Shogi_3min.apk.part000",
+      "Shogi_3min.apk.part001",
+      "Shogi_3min.apk.part002",
+      "Shogi_3min.apk.part003",
+      "Shogi_3min.apk.part004",
+      "Shogi_3min.apk.part005",
+      "Shogi_3min.apk.part006",
+      "Shogi_3min.apk.part007",
+      "Shogi_3min.apk.part008",
+      "Shogi_3min.apk.part009",
+      "Shogi_3min.apk.part010",
+      "Shogi_3min.apk.part011",
+      "Shogi_3min.apk.part012",
+      "Shogi_3min.apk.part013",
+      "Shogi_3min.apk.part014",
+      "Shogi_3min.apk.part015",
+      "Shogi_3min.apk.part016",
+      "Shogi_3min.apk.part017",
+      "Shogi_3min.apk.part018",
+      "Shogi_3min.apk.part019",
+      "Shogi_3min.apk.part020",
+      "Shogi_3min.apk.part021",
+      "Shogi_3min.apk.part022",
+      "Shogi_3min.apk.part023",
+      "Shogi_3min.apk.part024",
+      "Shogi_3min.apk.part025",
+      "Shogi_3min.apk.part026",
+      "Shogi_3min.apk.part027",
+      "Shogi_3min.apk.part028",
+      "Shogi_3min.apk.part029",
+      "Shogi_3min.apk.part030",
+      "Shogi_3min.apk.part031",
+      "Shogi_3min.apk.part032",
+      "Shogi_3min.apk.part033",
+      "Shogi_3min.apk.part034",
+      "Shogi_3min.apk.part035",
+      "Shogi_3min.apk.part036",
+      "Shogi_3min.apk.part037",
+      "Shogi_3min.apk.part038",
+      "Shogi_3min.apk.part039",
+      "Shogi_3min.apk.part040",
+      "Shogi_3min.apk.part041",
+      "Shogi_3min.apk.part042",
+      "Shogi_3min.apk.part043",
+      "Shogi_3min.apk.part044",
+      "Shogi_3min.apk.part045",
+      "Shogi_3min.apk.part046",
+      "Shogi_3min.apk.part047",
+      "Shogi_3min.apk.part048",
+      "Shogi_3min.apk.part049",
+      "Shogi_3min.apk.part050",
+      "Shogi_3min.apk.part051",
+      "Shogi_3min.apk.part052",
+      "Shogi_3min.apk.part053",
+      "Shogi_3min.apk.part054",
+      "Shogi_3min.apk.part055"
+    ]
+  },
+  {
+    "file": "Shogi_3min_complete_source.zip",
+    "size": 34763533,
+    "sha256": "42021fff5d14decca2cdbd8273e8161b51495176e77e13be6fda9474f50d36ab",
+    "parts": [
+      "Shogi_3min_complete_source.zip.part000",
+      "Shogi_3min_complete_source.zip.part001",
+      "Shogi_3min_complete_source.zip.part002",
+      "Shogi_3min_complete_source.zip.part003",
+      "Shogi_3min_complete_source.zip.part004",
+      "Shogi_3min_complete_source.zip.part005",
+      "Shogi_3min_complete_source.zip.part006",
+      "Shogi_3min_complete_source.zip.part007",
+      "Shogi_3min_complete_source.zip.part008",
+      "Shogi_3min_complete_source.zip.part009",
+      "Shogi_3min_complete_source.zip.part010",
+      "Shogi_3min_complete_source.zip.part011",
+      "Shogi_3min_complete_source.zip.part012",
+      "Shogi_3min_complete_source.zip.part013",
+      "Shogi_3min_complete_source.zip.part014",
+      "Shogi_3min_complete_source.zip.part015",
+      "Shogi_3min_complete_source.zip.part016",
+      "Shogi_3min_complete_source.zip.part017",
+      "Shogi_3min_complete_source.zip.part018",
+      "Shogi_3min_complete_source.zip.part019",
+      "Shogi_3min_complete_source.zip.part020",
+      "Shogi_3min_complete_source.zip.part021",
+      "Shogi_3min_complete_source.zip.part022",
+      "Shogi_3min_complete_source.zip.part023",
+      "Shogi_3min_complete_source.zip.part024",
+      "Shogi_3min_complete_source.zip.part025",
+      "Shogi_3min_complete_source.zip.part026",
+      "Shogi_3min_complete_source.zip.part027",
+      "Shogi_3min_complete_source.zip.part028",
+      "Shogi_3min_complete_source.zip.part029",
+      "Shogi_3min_complete_source.zip.part030",
+      "Shogi_3min_complete_source.zip.part031",
+      "Shogi_3min_complete_source.zip.part032",
+      "Shogi_3min_complete_source.zip.part033",
+      "Shogi_3min_complete_source.zip.part034",
+      "Shogi_3min_complete_source.zip.part035",
+      "Shogi_3min_complete_source.zip.part036",
+      "Shogi_3min_complete_source.zip.part037",
+      "Shogi_3min_complete_source.zip.part038",
+      "Shogi_3min_complete_source.zip.part039",
+      "Shogi_3min_complete_source.zip.part040",
+      "Shogi_3min_complete_source.zip.part041",
+      "Shogi_3min_complete_source.zip.part042",
+      "Shogi_3min_complete_source.zip.part043",
+      "Shogi_3min_complete_source.zip.part044",
+      "Shogi_3min_complete_source.zip.part045",
+      "Shogi_3min_complete_source.zip.part046",
+      "Shogi_3min_complete_source.zip.part047",
+      "Shogi_3min_complete_source.zip.part048",
+      "Shogi_3min_complete_source.zip.part049",
+      "Shogi_3min_complete_source.zip.part050",
+      "Shogi_3min_complete_source.zip.part051",
+      "Shogi_3min_complete_source.zip.part052",
+      "Shogi_3min_complete_source.zip.part053",
+      "Shogi_3min_complete_source.zip.part054",
+      "Shogi_3min_complete_source.zip.part055",
+      "Shogi_3min_complete_source.zip.part056",
+      "Shogi_3min_complete_source.zip.part057"
+    ]
+  },
+  {
+    "file": "verification_logs.zip",
+    "size": 3140744,
+    "sha256": "f9f52c1a52ed02ab75efaec1c9a0b3f0b53da754f29fc5b9e909aec01d8e4d87",
+    "parts": [
+      "verification_logs.zip.part000",
+      "verification_logs.zip.part001",
+      "verification_logs.zip.part002",
+      "verification_logs.zip.part003",
+      "verification_logs.zip.part004",
+      "verification_logs.zip.part005"
+    ]
+  },
+  {
+    "file": "00_launch.png",
+    "size": 15580,
+    "sha256": "c35bacdb98b522206335afa5b9baffd2e4e3352a40749bb747e469cd403af514",
+    "parts": [
+      "00_launch.png.part000"
+    ]
+  },
+  {
+    "file": "00_mode_selection.png",
+    "size": 2312160,
+    "sha256": "a1513e2aaccdb91ad51f8ae54f88a8417217e27844d2d9116107d19338bc30ce",
+    "parts": [
+      "00_mode_selection.png.part000",
+      "00_mode_selection.png.part001",
+      "00_mode_selection.png.part002",
+      "00_mode_selection.png.part003"
+    ]
+  },
+  {
+    "file": "01_initial_and_cpu.png",
+    "size": 1887996,
+    "sha256": "f8d966cf705f64df4ebb80c253cc34ad3d8139f60f5ccb912a728662d12f208c",
+    "parts": [
+      "01_initial_and_cpu.png.part000",
+      "01_initial_and_cpu.png.part001",
+      "01_initial_and_cpu.png.part002",
+      "01_initial_and_cpu.png.part003"
+    ]
+  },
+  {
+    "file": "02_promotion_capture_drop.png",
+    "size": 1697534,
+    "sha256": "f6664b6481022f86ddadb24c7129635d3f7bb3e57492794b5db118d898d949ef",
+    "parts": [
+      "02_promotion_capture_drop.png.part000",
+      "02_promotion_capture_drop.png.part001",
+      "02_promotion_capture_drop.png.part002"
+    ]
+  },
+  {
+    "file": "03_timeout.png",
+    "size": 1511319,
+    "sha256": "d7464bbecc982a74656c3b816e05fe96847773263b2cd70b36e2207f9297fc39",
+    "parts": [
+      "03_timeout.png.part000",
+      "03_timeout.png.part001",
+      "03_timeout.png.part002"
+    ]
+  },
+  {
+    "file": "04_enlarged_native_ai.png",
+    "size": 1872719,
+    "sha256": "36c8003e53eafe5ef8b87f599034a503822a7ed7111c8a0f3ade951b754d5de7",
+    "parts": [
+      "04_enlarged_native_ai.png.part000",
+      "04_enlarged_native_ai.png.part001",
+      "04_enlarged_native_ai.png.part002",
+      "04_enlarged_native_ai.png.part003"
+    ]
+  },
+  {
+    "file": "05_uniform_all_types.png",
+    "size": 2174699,
+    "sha256": "57a106df99b77222c47e92980036c3ed70d7ed32eae968ae33e8b6f12f7d2b43",
+    "parts": [
+      "05_uniform_all_types.png.part000",
+      "05_uniform_all_types.png.part001",
+      "05_uniform_all_types.png.part002",
+      "05_uniform_all_types.png.part003"
+    ]
+  },
+  {
+    "file": "06_study_free_moves.png",
+    "size": 1752127,
+    "sha256": "31de046316f2295c0aa67fa9fbb9d10546c29ef9c5bf0d5e6972e19c24b128b7",
+    "parts": [
+      "06_study_free_moves.png.part000",
+      "06_study_free_moves.png.part001",
+      "06_study_free_moves.png.part002"
+    ]
+  },
+  {
+    "file": "07_study_analysis_initial.png",
+    "size": 1709815,
+    "sha256": "2294b16602d399b0774820527feee222d4881f7760b34aef6bbf07ca186fbf15",
+    "parts": [
+      "07_study_analysis_initial.png.part000",
+      "07_study_analysis_initial.png.part001",
+      "07_study_analysis_initial.png.part002"
+    ]
+  },
+  {
+    "file": "08_study_analysis_gote.png",
+    "size": 1718131,
+    "sha256": "0ac4e0ecf3d2cf1c55173edff82b6893f47e579f8101f2026654dfa1e678cb59",
+    "parts": [
+      "08_study_analysis_gote.png.part000",
+      "08_study_analysis_gote.png.part001",
+      "08_study_analysis_gote.png.part002"
+    ]
+  },
+  {
+    "file": "09_study_invalid_position.png",
+    "size": 1717353,
+    "sha256": "b1caf74279e862c714de3c76ba5c1407e65194863c85fd4044aac0e39f4a8508",
+    "parts": [
+      "09_study_invalid_position.png.part000",
+      "09_study_invalid_position.png.part001",
+      "09_study_invalid_position.png.part002"
+    ]
+  },
+  {
+    "file": "10_study_analysis_final.png",
+    "size": 1710763,
+    "sha256": "58e14fcc408f50b9ebe9d02ec257a04ccf6024785cd2e85669baf3876a4b79f4",
+    "parts": [
+      "10_study_analysis_final.png.part000",
+      "10_study_analysis_final.png.part001",
+      "10_study_analysis_final.png.part002"
+    ]
+  },
+  {
+    "file": "11_evaluation_graph_sente.png",
+    "size": 1742919,
+    "sha256": "6ad6e8f6800819dd04f5363a989aad49cdcbc1dcbf4fd3de30acb0245f135db7",
+    "parts": [
+      "11_evaluation_graph_sente.png.part000",
+      "11_evaluation_graph_sente.png.part001",
+      "11_evaluation_graph_sente.png.part002"
+    ]
+  },
+  {
+    "file": "12_evaluation_graph_history.png",
+    "size": 1750971,
+    "sha256": "a374e9c2d6d9c3302afe1070438ca82d12f6a223ebecc3061306356da0cb2d0a",
+    "parts": [
+      "12_evaluation_graph_history.png.part000",
+      "12_evaluation_graph_history.png.part001",
+      "12_evaluation_graph_history.png.part002"
+    ]
+  },
+  {
+    "file": "13_evaluation_graph_restored.png",
+    "size": 1753128,
+    "sha256": "3746fd4effbf4c71cd9c7666851c6c050b262118e43628a9df1aba19974daa98",
+    "parts": [
+      "13_evaluation_graph_restored.png.part000",
+      "13_evaluation_graph_restored.png.part001",
+      "13_evaluation_graph_restored.png.part002"
+    ]
+  },
+  {
+    "file": "14_reported_position.png",
+    "size": 1735795,
+    "sha256": "eee7a3a0064021231599b07061c81a8f9254cdb693ef6b93c62ff6d1c101e3f7",
+    "parts": [
+      "14_reported_position.png.part000",
+      "14_reported_position.png.part001",
+      "14_reported_position.png.part002"
+    ]
+  },
+  {
+    "file": "15_ai_recovery.png",
+    "size": 1734720,
+    "sha256": "7aaa5bdbdb3d8eaa8c6a35e005ec6e53a4aebaffac5060103ccac3fe351a17b3",
+    "parts": [
+      "15_ai_recovery.png.part000",
+      "15_ai_recovery.png.part001",
+      "15_ai_recovery.png.part002"
+    ]
+  },
+  {
+    "file": "16_match_promotion_popup.png",
+    "size": 1687300,
+    "sha256": "fca6812419187bacc6b1f93544942afc81a89615003aa09afe2fd905bc221bbd",
+    "parts": [
+      "16_match_promotion_popup.png.part000",
+      "16_match_promotion_popup.png.part001",
+      "16_match_promotion_popup.png.part002"
+    ]
+  },
+  {
+    "file": "17_study_promotion_popup.png",
+    "size": 1177498,
+    "sha256": "a8f10c0959581b78f47fd7969d99d4f40cf9562057dd51561be83842c20e6a5b",
+    "parts": [
+      "17_study_promotion_popup.png.part000",
+      "17_study_promotion_popup.png.part001"
+    ]
+  },
+  {
+    "file": "18_study_promoted_piece.png",
+    "size": 1519675,
+    "sha256": "7554414118de27ce0c5c3a95de98cf3a4dde9469c066f6e6169f8c8da594ea0f",
+    "parts": [
+      "18_study_promoted_piece.png.part000",
+      "18_study_promoted_piece.png.part001",
+      "18_study_promoted_piece.png.part002"
+    ]
+  },
+  {
+    "file": "19_reference_study_layout.png",
+    "size": 1709423,
+    "sha256": "9d2e0654000b5b5796eaa0711aee79120d0552932fcc89f8c53e4a02e362a566",
+    "parts": [
+      "19_reference_study_layout.png.part000",
+      "19_reference_study_layout.png.part001",
+      "19_reference_study_layout.png.part002"
+    ]
+  },
+  {
+    "file": "20_reference_match_layout.png",
+    "size": 1872808,
+    "sha256": "b181f1d96826af4e1c12b0b552626131190fd15ec1f90a3e4a2077437c211fbc",
+    "parts": [
+      "20_reference_match_layout.png.part000",
+      "20_reference_match_layout.png.part001",
+      "20_reference_match_layout.png.part002",
+      "20_reference_match_layout.png.part003"
+    ]
+  },
+  {
+    "file": "21_continuous_initial.png",
+    "size": 1709331,
+    "sha256": "47fdfc1e210987443e88a12cd0712431f8c9f1ebd7458413151273ac672bb608",
+    "parts": [
+      "21_continuous_initial.png.part000",
+      "21_continuous_initial.png.part001",
+      "21_continuous_initial.png.part002"
+    ]
+  },
+  {
+    "file": "22_continuous_later.png",
+    "size": 1710841,
+    "sha256": "01160628f563de4136e098709a0753aeb03645d113e8fdbe3c6a0ce32c10d68b",
+    "parts": [
+      "22_continuous_later.png.part000",
+      "22_continuous_later.png.part001",
+      "22_continuous_later.png.part002"
+    ]
+  },
+  {
+    "file": "23_graph_selected_ply.png",
+    "size": 1721072,
+    "sha256": "1a87f5639d82a1595f1c85e4fbeba3e7b897160c8e1d2af9fee4e3b9cea51908",
+    "parts": [
+      "23_graph_selected_ply.png.part000",
+      "23_graph_selected_ply.png.part001",
+      "23_graph_selected_ply.png.part002"
+    ]
+  },
+  {
+    "file": "24_clipboard_confirmation.png",
+    "size": 1433439,
+    "sha256": "f5e9710f74458c936ecd997f006224792e8e03d7d948eab7ffadece466a6c285",
+    "parts": [
+      "24_clipboard_confirmation.png.part000",
+      "24_clipboard_confirmation.png.part001",
+      "24_clipboard_confirmation.png.part002"
+    ]
+  },
+  {
+    "file": "25_clipboard_final_checkmate.png",
+    "size": 1752016,
+    "sha256": "53856eb659ba7e55331cee92315677fdaf739e1880b0b1ec213e80fa90a3d90b",
+    "parts": [
+      "25_clipboard_final_checkmate.png.part000",
+      "25_clipboard_final_checkmate.png.part001",
+      "25_clipboard_final_checkmate.png.part002"
+    ]
+  },
+  {
+    "file": "26_clipboard_previous_analysis.png",
+    "size": 1791610,
+    "sha256": "c753dfcce8f010de3a794499302f296df4bce512d097f2c226301b6e93b24405",
+    "parts": [
+      "26_clipboard_previous_analysis.png.part000",
+      "26_clipboard_previous_analysis.png.part001",
+      "26_clipboard_previous_analysis.png.part002"
+    ]
+  },
+  {
+    "file": "27_clipboard_replace_confirmation.png",
+    "size": 1039453,
+    "sha256": "f9093b6a853439320ddbd4f6c6a7e74bd64261c2369197e731033fb076d647da",
+    "parts": [
+      "27_clipboard_replace_confirmation.png.part000",
+      "27_clipboard_replace_confirmation.png.part001"
+    ]
+  },
+  {
+    "file": "28_clipboard_import_error.png",
+    "size": 1024974,
+    "sha256": "dc0fbd0a3ea0c52ecea4604ded9274227e28f5e2e27876de740dd0919a02c4a7",
+    "parts": [
+      "28_clipboard_import_error.png.part000",
+      "28_clipboard_import_error.png.part001"
+    ]
+  },
+  {
+    "file": "29_clipboard_restored_final.png",
+    "size": 1751957,
+    "sha256": "839ce0df25a6e73b978f5445bcecfad1a9ab0c2acbaf5621aad62b9d6eed63e8",
+    "parts": [
+      "29_clipboard_restored_final.png.part000",
+      "29_clipboard_restored_final.png.part001",
+      "29_clipboard_restored_final.png.part002"
+    ]
+  },
+  {
+    "file": "30_clipboard_streaming_analysis.png",
+    "size": 1778587,
+    "sha256": "60480ddf6176666c44243f21e775c04a8c860608d4312ec1748b90030f109e8d",
+    "parts": [
+      "30_clipboard_streaming_analysis.png.part000",
+      "30_clipboard_streaming_analysis.png.part001",
+      "30_clipboard_streaming_analysis.png.part002"
+    ]
+  },
+  {
+    "file": "31_legal_pawn_highlight.png",
+    "size": 1695821,
+    "sha256": "6a2d48a3ae26c90ccb3deae79faf908b95305ba5a1fa94d3bf2831da6f60268e",
+    "parts": [
+      "31_legal_pawn_highlight.png.part000",
+      "31_legal_pawn_highlight.png.part001",
+      "31_legal_pawn_highlight.png.part002"
+    ]
+  },
+  {
+    "file": "32_legal_rook_capture.png",
+    "size": 1501760,
+    "sha256": "ff7bb88acf13ac84f3fb30f30df84706b318064cb3f200772f009f036cb20241",
+    "parts": [
+      "32_legal_rook_capture.png.part000",
+      "32_legal_rook_capture.png.part001",
+      "32_legal_rook_capture.png.part002"
+    ]
+  },
+  {
+    "file": "33_legal_pinned_piece.png",
+    "size": 1519854,
+    "sha256": "11d8c68c8279458417a544a2c0c49807d2f2cb4716220d7abcae907b74c0491f",
+    "parts": [
+      "33_legal_pinned_piece.png.part000",
+      "33_legal_pinned_piece.png.part001",
+      "33_legal_pinned_piece.png.part002"
+    ]
+  },
+  {
+    "file": "34_legal_drop_highlight.png",
+    "size": 1270683,
+    "sha256": "0f5b178cbd330fdc15022b1c0d13145c91ff711b83a2551de334cd35232f69ec",
+    "parts": [
+      "34_legal_drop_highlight.png.part000",
+      "34_legal_drop_highlight.png.part001",
+      "34_legal_drop_highlight.png.part002"
+    ]
+  },
+  {
+    "file": "35_legal_gote_highlight.png",
+    "size": 1687012,
+    "sha256": "33d39d52042e2d601592e045ad9845622c74b0e7a214e4144d8884b26f96bd9b",
+    "parts": [
+      "35_legal_gote_highlight.png.part000",
+      "35_legal_gote_highlight.png.part001",
+      "35_legal_gote_highlight.png.part002"
+    ]
+  },
+  {
+    "file": "36_archive_empty.png",
+    "size": 114727,
+    "sha256": "a968a4bc9190967f2095301554bdd7b0a3a4bcc4c97436a628c871c9491c8108",
+    "parts": [
+      "36_archive_empty.png.part000"
+    ]
+  },
+  {
+    "file": "37_archive_list.png",
+    "size": 246459,
+    "sha256": "45721d25b4463b1a7392e94a236c162a0d387a39213ead7b745a1cfbc68eb426",
+    "parts": [
+      "37_archive_list.png.part000"
+    ]
+  },
+  {
+    "file": "38_archive_reopened_study.png",
+    "size": 1777956,
+    "sha256": "3ea0d36f86469a8de7ab70d441df5194cd03c8b04ddd1c400f390d162e8ecd7a",
+    "parts": [
+      "38_archive_reopened_study.png.part000",
+      "38_archive_reopened_study.png.part001",
+      "38_archive_reopened_study.png.part002"
+    ]
+  },
+  {
+    "file": "39_archive_match_study.png",
+    "size": 1707654,
+    "sha256": "64500b54661471c63b0a194cda4790d170a4dece0bebb9a75f815fbceefd07ab",
+    "parts": [
+      "39_archive_match_study.png.part000",
+      "39_archive_match_study.png.part001",
+      "39_archive_match_study.png.part002"
+    ]
+  },
+  {
+    "file": "40_archive_restored.png",
+    "size": 254264,
+    "sha256": "2442d48fd25b8c5349e588650c45d9b42538d5be91906ffcd58ff6e1aa6355be",
+    "parts": [
+      "40_archive_restored.png.part000"
+    ]
+  },
+  {
+    "file": "41_home_red_gold.png",
+    "size": 2312254,
+    "sha256": "581e00f859be65cac0047f0f26f0748dbb72b819825811f5760bae1ee459c182",
+    "parts": [
+      "41_home_red_gold.png.part000",
+      "41_home_red_gold.png.part001",
+      "41_home_red_gold.png.part002",
+      "41_home_red_gold.png.part003"
+    ]
+  },
+  {
+    "file": "42_home_settings.png",
+    "size": 960556,
+    "sha256": "5ae1139b120f0be1fae13a9c5aa29b755bd99f4f631f8b9b5ed7848974c30506",
+    "parts": [
+      "42_home_settings.png.part000",
+      "42_home_settings.png.part001"
+    ]
+  },
+  {
+    "file": "42_match_settings.png",
+    "size": 591916,
+    "sha256": "ceb01382dd2a10a209a3a651ea6c08e8c8e7993109bd189bc9013417c4644366",
+    "parts": [
+      "42_match_settings.png.part000"
+    ]
+  },
+  {
+    "file": "43_gote_match.png",
+    "size": 1887830,
+    "sha256": "660b7910fa20378053ed4810b8672c7c84769da2bf0b838080016447142b0471",
+    "parts": [
+      "43_gote_match.png.part000",
+      "43_gote_match.png.part001",
+      "43_gote_match.png.part002",
+      "43_gote_match.png.part003"
+    ]
+  },
+  {
+    "file": "44_ads_study_initial.png",
+    "size": 1709298,
+    "sha256": "58dc0c0f199c5a903cb371178c42617a5e579ac9732e83df2271cdd8253fe437",
+    "parts": [
+      "44_ads_study_initial.png.part000",
+      "44_ads_study_initial.png.part001",
+      "44_ads_study_initial.png.part002"
+    ]
+  },
+  {
+    "file": "45_ads_study_scrolled.png",
+    "size": 745416,
+    "sha256": "e6f9c265426afc5c3d038e220782d5d6a6c7040ca6577f7f3be5b2f43e09eebc",
+    "parts": [
+      "45_ads_study_scrolled.png.part000",
+      "45_ads_study_scrolled.png.part001"
+    ]
+  },
+  {
+    "file": "46_ads_home.png",
+    "size": 1169361,
+    "sha256": "5319ce20e8b9e5511654bec89a16102f613c054bc218b8158f25cbce1241f0d7",
+    "parts": [
+      "46_ads_home.png.part000",
+      "46_ads_home.png.part001"
+    ]
+  },
+  {
+    "file": "47_ads_match.png",
+    "size": 1115104,
+    "sha256": "884b2a1272be943a07e177b9570627867cd0dcb03bc8c73846ca96a65ece7cd6",
+    "parts": [
+      "47_ads_match.png.part000",
+      "47_ads_match.png.part001"
+    ]
+  },
+  {
+    "file": "48_ads_archive.png",
+    "size": 174784,
+    "sha256": "032ac9bda44955cc7dafee00d545ad4c6f242d2b40b079ca1b70864adcf2aa2b",
+    "parts": [
+      "48_ads_archive.png.part000"
+    ]
+  },
+  {
+    "file": "49_ads_official_sdk.png",
+    "size": 1165509,
+    "sha256": "6f0d7c3346324c028bcc6c04f46c7b7badf83c6db78b3ec023ea40efa83cc54d",
+    "parts": [
+      "49_ads_official_sdk.png.part000",
+      "49_ads_official_sdk.png.part001"
+    ]
+  },
+  {
+    "file": "50_coffee_offer.png",
+    "size": 1240679,
+    "sha256": "b6a734b2a22ab5bd67434e948a65df343ffabe6bf067db22ecc264a185fd0bdc",
+    "parts": [
+      "50_coffee_offer.png.part000",
+      "50_coffee_offer.png.part001",
+      "50_coffee_offer.png.part002"
+    ]
+  },
+  {
+    "file": "50_mode_selection_online.png",
+    "size": 2311384,
+    "sha256": "98003073806a67ca62e06199b44ed8d6ae2f67d586a9c5365d79faf334736b22",
+    "parts": [
+      "50_mode_selection_online.png.part000",
+      "50_mode_selection_online.png.part001",
+      "50_mode_selection_online.png.part002",
+      "50_mode_selection_online.png.part003"
+    ]
+  },
+  {
+    "file": "50_variation_65_0.png",
+    "size": 385341,
+    "sha256": "3a13aed2b05e112ad97eea3b7b33ab6e5c458a4dc1ddfeefdd681f40fcd2efae",
+    "parts": [
+      "50_variation_65_0.png.part000"
+    ]
+  },
+  {
+    "file": "50_variation_65_1.png",
+    "size": 385356,
+    "sha256": "2ad26e9d5fbbc0e237b2738cf54005e7ad0541f4a1e181aa7d10611278f58af3",
+    "parts": [
+      "50_variation_65_1.png.part000"
+    ]
+  },
+  {
+    "file": "50_variation_65_2.png",
+    "size": 390106,
+    "sha256": "8e1fd7c2a77c9ac1ed1bd63d129f8d23fb451f5d163f268008ce925dad05a486",
+    "parts": [
+      "50_variation_65_2.png.part000"
+    ]
+  },
+  {
+    "file": "50_variation_line.png",
+    "size": 369334,
+    "sha256": "8619f8a82b4e0d19e73033111dcf5e0e38cdccfb5d5b93980ca3b45f022ba698",
+    "parts": [
+      "50_variation_line.png.part000"
+    ]
+  },
+  {
+    "file": "51_coffee_purchased.png",
+    "size": 1264756,
+    "sha256": "b1e82e79f6ce72794568f51845a0a65ddab83d81e2e2eb4e22033004d8986674",
+    "parts": [
+      "51_coffee_purchased.png.part000",
+      "51_coffee_purchased.png.part001",
+      "51_coffee_purchased.png.part002"
+    ]
+  },
+  {
+    "file": "51_online_lobby.png",
+    "size": 1438513,
+    "sha256": "660686258b6548d98ce742330f2db649d4be93a018992e1538c35693001baae1",
+    "parts": [
+      "51_online_lobby.png.part000",
+      "51_online_lobby.png.part001",
+      "51_online_lobby.png.part002"
+    ]
+  },
+  {
+    "file": "52_coffee_startup_offer.png",
+    "size": 1269717,
+    "sha256": "32496d56f84f380b8339b2b5fa6da9db69623322040d7a02a6b440d06ca50c3c",
+    "parts": [
+      "52_coffee_startup_offer.png.part000",
+      "52_coffee_startup_offer.png.part001",
+      "52_coffee_startup_offer.png.part002"
+    ]
+  },
+  {
+    "file": "52_online_game.png",
+    "size": 1961929,
+    "sha256": "9b20dc5ce1bb9644f86e778d637edc4d5a940c014d2d2a926f12e2b9f41023be",
+    "parts": [
+      "52_online_game.png.part000",
+      "52_online_game.png.part001",
+      "52_online_game.png.part002",
+      "52_online_game.png.part003"
+    ]
+  },
+  {
+    "file": "53_online_result.png",
+    "size": 1617831,
+    "sha256": "10c83511e253c389f7d50579fea3ec6efd3d675e748334b4776caec13791eda5",
+    "parts": [
+      "53_online_result.png.part000",
+      "53_online_result.png.part001",
+      "53_online_result.png.part002"
+    ]
+  },
+  {
+    "file": "54_online_rematch_flipped.png",
+    "size": 1956642,
+    "sha256": "bc75322a6b875477d1fc4528958c3ea01d703e84dbffca1b4575dbe8c4305986",
+    "parts": [
+      "54_online_rematch_flipped.png.part000",
+      "54_online_rematch_flipped.png.part001",
+      "54_online_rematch_flipped.png.part002",
+      "54_online_rematch_flipped.png.part003"
+    ]
+  },
+  {
+    "file": "55_online_room_code.png",
+    "size": 1389613,
+    "sha256": "278acdf1de8b0553e8913d7c3c7039bd34bfc5e25c7775c122bd613d2418f926",
+    "parts": [
+      "55_online_room_code.png.part000",
+      "55_online_room_code.png.part001",
+      "55_online_room_code.png.part002"
+    ]
+  },
+  {
+    "file": "56_online_account.png",
+    "size": 344348,
+    "sha256": "851fbc2940565d0a8cfd881a6c67a85af075868b5ed6b6f52f0386f5e34c0632",
+    "parts": [
+      "56_online_account.png.part000"
+    ]
+  },
+  {
+    "file": "57_online_room_page.png",
+    "size": 1396210,
+    "sha256": "2f09f32f2abf8a85854593e8618b13cbd9f7cde8cc28aa6f1fc7543e0d30cfe0",
+    "parts": [
+      "57_online_room_page.png.part000",
+      "57_online_room_page.png.part001",
+      "57_online_room_page.png.part002"
+    ]
+  },
+  {
+    "file": "58_online_bot_wait.png",
+    "size": 1776741,
+    "sha256": "fb9c0c31e516678f8e1874f179d4a8664c9e4f30e37f73a245825c23a1984b65",
+    "parts": [
+      "58_online_bot_wait.png.part000",
+      "58_online_bot_wait.png.part001",
+      "58_online_bot_wait.png.part002"
+    ]
+  },
+  {
+    "file": "59_online_bot_game.png",
+    "size": 1963941,
+    "sha256": "f9d6db184b1b4a7c4c1751bd640916d9938b032144c98ed1905ae12ec57f6e52",
+    "parts": [
+      "59_online_bot_game.png.part000",
+      "59_online_bot_game.png.part001",
+      "59_online_bot_game.png.part002",
+      "59_online_bot_game.png.part003"
+    ]
+  },
+  {
+    "file": "60_move_tween.png",
+    "size": 1504499,
+    "sha256": "7c7e6d73b9188ed00c5b4c109b34bee9c6c35e527e03349558543bc4a77cee7d",
+    "parts": [
+      "60_move_tween.png.part000",
+      "60_move_tween.png.part001",
+      "60_move_tween.png.part002"
+    ]
+  },
+  {
+    "file": "61_capture_flight.png",
+    "size": 1889090,
+    "sha256": "e34bdd0230265a171fbbae27e08d64463775106ddd1bd31dd54db6956af88644",
+    "parts": [
+      "61_capture_flight.png.part000",
+      "61_capture_flight.png.part001",
+      "61_capture_flight.png.part002",
+      "61_capture_flight.png.part003"
+    ]
+  },
+  {
+    "file": "62_promotion_flip.png",
+    "size": 1875399,
+    "sha256": "7f5d0540ab562f9fe78c45167d61469b488b26bbc8d1748be1a2bf7b12a5bc8c",
+    "parts": [
+      "62_promotion_flip.png.part000",
+      "62_promotion_flip.png.part001",
+      "62_promotion_flip.png.part002",
+      "62_promotion_flip.png.part003"
+    ]
+  },
+  {
+    "file": "63_check_banner.png",
+    "size": 1797107,
+    "sha256": "c0af7d670ac3e606eaaa6e9ca8bb7fea92e12699368e8236415e8edb9d0d6441",
+    "parts": [
+      "63_check_banner.png.part000",
+      "63_check_banner.png.part001",
+      "63_check_banner.png.part002"
+    ]
+  },
+  {
+    "file": "64_match_start.png",
+    "size": 1790151,
+    "sha256": "9bff34d18f4a5d8cdf0b238ff1ada2c54198ed5ebce723f9e3df85b0cd83f2f6",
+    "parts": [
+      "64_match_start.png.part000",
+      "64_match_start.png.part001",
+      "64_match_start.png.part002"
+    ]
+  },
+  {
+    "file": "65_match_win.png",
+    "size": 1688792,
+    "sha256": "fed4ec6fdbe5408053f666278b9b1b3b27ba519ac8800b4c6bd7837891a9ee52",
+    "parts": [
+      "65_match_win.png.part000",
+      "65_match_win.png.part001",
+      "65_match_win.png.part002"
+    ]
+  },
+  {
+    "file": "66_layout_endgame_tint.png",
+    "size": 1768790,
+    "sha256": "a4c5075bc401d0397ffa05270547b64016842c4c69ee18828fcc6f6b8c4510c0",
+    "parts": [
+      "66_layout_endgame_tint.png.part000",
+      "66_layout_endgame_tint.png.part001",
+      "66_layout_endgame_tint.png.part002"
+    ]
+  }
+]

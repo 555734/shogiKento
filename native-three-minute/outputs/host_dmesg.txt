@@ -1,0 +1,60 @@
+[    3.951031] cpu_based_exec_ctrl unsupported with eVMCS: 0x20000
+[    3.951036] vmentry_ctrl unsupported with eVMCS: 0x100000
+[    3.951038] vmexit_ctrl unsupported with eVMCS: 0x10000000
+[    4.121670] hv_utils: KVP IC version 4.0
+[    4.204012] EXT4-fs (nvme0n1p13): Supports (experimental) DIO atomic writes awu_min: 4096, awu_max: 4096
+[    4.215667] EXT4-fs (nvme0n1p13): mounted filesystem c328c821-908f-4fda-8b0f-0248ed9f3d0b r/w with ordered data mode. Quota mode: none.
+[    4.298002] audit: type=1400 audit(1794846639.859:2): apparmor="STATUS" operation="profile_load" profile="unconfined" name="QtWebEngineProcess" pid=384 comm="apparmor_parser"
+[    4.298239] audit: type=1400 audit(1794846639.860:3): apparmor="STATUS" operation="profile_load" profile="unconfined" name=4D6F6E676F444220436F6D70617373 pid=383 comm="apparmor_parser"
+[    4.298270] audit: type=1400 audit(1794846639.860:4): apparmor="STATUS" operation="profile_load" profile="unconfined" name="1password" pid=381 comm="apparmor_parser"
+[    4.299098] audit: type=1400 audit(1794846639.861:5): apparmor="STATUS" operation="profile_load" profile="unconfined" name="Discord" pid=382 comm="apparmor_parser"
+[    4.304355] audit: type=1400 audit(1794846639.866:6): apparmor="STATUS" operation="profile_load" profile="unconfined" name="babeld" pid=389 comm="apparmor_parser"
+[    4.304540] audit: type=1400 audit(1794846639.866:7): apparmor="STATUS" operation="profile_load" profile="unconfined" name="balena-etcher" pid=390 comm="apparmor_parser"
+[    4.305565] audit: type=1400 audit(1794846639.867:8): apparmor="STATUS" operation="profile_load" profile="unconfined" name="alsamixer" pid=387 comm="apparmor_parser"
+[    4.307544] audit: type=1400 audit(1794846639.869:9): apparmor="STATUS" operation="profile_load" profile="unconfined" name="bfdd" pid=397 comm="apparmor_parser"
+[    4.310742] audit: type=1400 audit(1794846639.872:10): apparmor="STATUS" operation="profile_load" profile="unconfined" name="bgpd" pid=399 comm="apparmor_parser"
+[    4.481151] /dev/sr0: Can't lookup blockdev
+[    4.534218] mana 7870:00:00.0 ens1: Configured vPort 0 PD 18 DB 16
+[    4.541040] mana 7870:00:00.0 ens1: Configured steering vPort 0 entries 64
+[    4.541707] hv_netvsc f8615163-0000-1000-2000-7ced8db268c1 eth0: Data path switched to VF: ens1
+[    4.542259] mana 7870:00:00.0 mana_0: Port: 1 Link ACTIVE
+[    4.560470] 8021q: 802.1Q VLAN Support v1.8
+[    4.628971] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+[    4.629348] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[    4.629538] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06c7248db18c600'
+[    4.629619] faux_driver regulatory: Direct firmware load for regulatory.db failed with error -2
+[    4.629624] cfg80211: failed to load regulatory.db
+[    6.678223] hv_netvsc f8615163-0000-1000-2000-7ced8db268c1 eth0: Data path switched from VF: ens1
+[    6.678458] mana 7870:00:00.0 ens1: Configured steering vPort 0 entries 64
+[    6.707562] mana 7870:00:00.0 mana_0: Port: 1 Link DOWN
+[    7.234759] mana 7870:00:00.0 ens1: Configured vPort 0 PD 18 DB 16
+[    7.243266] mana 7870:00:00.0 ens1: Configured steering vPort 0 entries 64
+[    7.243884] hv_netvsc f8615163-0000-1000-2000-7ced8db268c1 eth0: Data path switched to VF: ens1
+[    7.244091] mana 7870:00:00.0 mana_0: Port: 1 Link ACTIVE
+[    9.065382] EXT4-fs (nvme0n1p1): resizing filesystem from 19370235 to 39031035 blocks
+[    9.998513] EXT4-fs (nvme0n1p1): resized filesystem to 39031035
+[   10.067645] ephemeral0: Can't lookup blockdev
+[   10.122339] systemd-fstab-generator[852]: 'ephemeral0' is not a device path, ignoring x-systemd.device-timeout= option.
+[   10.784696] ephemeral0: Can't lookup blockdev
+[   10.942577] kauditd_printk_skb: 175 callbacks suppressed
+[   10.942582] audit: type=1400 audit(1794846646.504:186): apparmor="STATUS" operation="profile_replace" info="same as current profile, skipping" profile="unconfined" name="rsyslogd" pid=992 comm="apparmor_parser"
+[   10.995769] audit: type=1400 audit(1794846646.557:187): apparmor="DENIED" operation="sendmsg" class="file" profile="systemd-detect-virt" name="/att/systemd-detect-virt/run/systemd/journal/socket" pid=1115 comm="systemd-detect-" requested_mask="w" denied_mask="w" fsuid=0 ouid=0
+[   10.999958] audit: type=1400 audit(1794846646.561:188): apparmor="DENIED" operation="capable" class="cap" profile="systemd-detect-virt" pid=1115 comm="systemd-detect-" capability=38  capname="perfmon"
+[   11.001873] audit: type=1400 audit(1794846646.563:189): apparmor="DENIED" operation="sendmsg" class="file" profile="systemd-detect-virt" name="/att/systemd-detect-virt/run/systemd/notify" pid=1115 comm="systemd-detect-" requested_mask="w" denied_mask="w" fsuid=0 ouid=0
+[   11.115746] block nvme0n1: No UUID available providing old NGUID
+[   11.219409] NET: Registered PF_QIPCRTR protocol family
+[   11.239373] loop0: detected capacity change from 0 to 8
+[   11.452847] audit: type=1400 audit(1794846647.014:190): apparmor="STATUS" operation="profile_replace" info="same as current profile, skipping" profile="unconfined" name="/usr/lib/snapd/snap-confine" pid=1253 comm="apparmor_parser"
+[   11.779610] audit: type=1400 audit(1794846647.341:191): apparmor="STATUS" operation="profile_load" profile="unconfined" name="docker-default" pid=1384 comm="apparmor_parser"
+[   11.902373] Adding 3145724k swap on /swapfile.  Priority:-1 extents:5 across:4202492k SS
+[   12.028578] Initializing XFRM netlink socket
+[   12.043920] bridge: filtering via arp/ip/ip6tables is no longer available by default. Update your scripts to load br_netfilter if you need this.
+[   12.359047] systemd-fstab-generator[1689]: 'ephemeral0' is not a device path, ignoring x-systemd.device-timeout= option.
+[   13.305771] systemd-fstab-generator[1875]: 'ephemeral0' is not a device path, ignoring x-systemd.device-timeout= option.
+[   13.564848] systemd-fstab-generator[1947]: 'ephemeral0' is not a device path, ignoring x-systemd.device-timeout= option.
+[   49.714078] hv_balloon: Max. dynamic memory size: 16384 MB
+[  296.248997] audit: type=1400 audit(1794846931.808:192): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/nsswitch.conf" pid=4553 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[  296.249007] audit: type=1400 audit(1794846931.808:193): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/passwd" pid=4553 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[  296.376638] audit: type=1400 audit(1794846931.935:194): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/nsswitch.conf" pid=4558 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[  296.376648] audit: type=1400 audit(1794846931.935:195): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/passwd" pid=4558 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[  407.994018] kvm: kvm [5137]: vcpu0, guest rIP: 0xffffffff9bc09cbd Unhandled WRMSR(0xc2) = 0xffff
