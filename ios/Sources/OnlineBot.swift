@@ -10,7 +10,7 @@ import Foundation
     static let names=["ひよこ","すずめ","めじろ","うぐいす","つばめ","かもめ","はやぶさ","たか","わし","くまたか"],levels=10,games=100
     static func clamp(_ level:Int)->Int {max(1,min(levels,level))}
     static func rating(_ level:Int)->Int {700+150*(clamp(level)-1)}
-    static func name(_ level:Int)->String {"ボット・\(names[clamp(level)-1])（Lv.\(clamp(level))）"}
+    static func name(_ level:Int)->String {"ボット・\(names[clamp(level)-1])"}
     static func pubkey(_ level:Int)->String {"bot-lv\(clamp(level))-v1"}
     /// The level whose rating is closest to the player's (the weaker one on a tie).
     static func level(for playerRating:Int)->Int {var best=1;for k in 2...levels where abs(rating(k)-playerRating)<abs(rating(best)-playerRating){best=k};return best}

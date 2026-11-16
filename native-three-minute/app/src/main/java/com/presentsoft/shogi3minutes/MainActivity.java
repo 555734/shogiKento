@@ -755,7 +755,7 @@ public final class MainActivity extends Activity {
    return y+156;
   }
   /** The opponent card's second line (the name is shown above it): "レート1520（暫定）· レート戦 · 対戦成績…". */
-  String opponentDetail(){OnlineIdentity p=online.peer;if(online.bot!=null&&p!=null){int[] h=online.account==null?new int[3]:online.account.headToHead(p.pubkey);return "ボット · レート"+p.rating+" · レート戦"+(h[0]+h[1]+h[2]>0?" · 対戦成績"+h[0]+"勝"+h[1]+"敗"+h[2]+"分":"");}if(p==null)return online.rated?"相手の情報を確認しています…":"フレンド対戦（レート変動なし）";
+  String opponentDetail(){OnlineIdentity p=online.peer;if(online.bot!=null&&p!=null){int[] h=online.account==null?new int[3]:online.account.headToHead(p.pubkey);return "ボット Lv."+online.bot.level+" · レート"+p.rating+" · レート戦"+(h[0]+h[1]+h[2]>0?" · 対戦成績"+h[0]+"勝"+h[1]+"敗"+h[2]+"分":"");}if(p==null)return online.rated?"相手の情報を確認しています…":"フレンド対戦（レート変動なし）";
    int[] h=online.account==null?new int[3]:online.account.headToHead(p.pubkey);return "レート"+p.rating+(p.games<Rating.PROVISIONAL_GAMES?"（暫定）":"")+(online.rated?" · レート戦":" · レート変動なし")+(h[0]+h[1]+h[2]>0?" · 対戦成績"+h[0]+"勝"+h[1]+"敗"+h[2]+"分":"");}
   @Override public boolean performClick(){super.performClick();return true;}
  }

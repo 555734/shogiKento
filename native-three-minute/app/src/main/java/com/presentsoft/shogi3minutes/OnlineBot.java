@@ -13,7 +13,7 @@ final class OnlineBot {
  static final String[] NAMES={"ひよこ","すずめ","めじろ","うぐいす","つばめ","かもめ","はやぶさ","たか","わし","くまたか"};
  static final int LEVELS=10,GAMES=100;
  static int rating(int level){return 700+150*(clamp(level)-1);}
- static String name(int level){return "ボット・"+NAMES[clamp(level)-1]+"（Lv."+clamp(level)+"）";}
+ static String name(int level){return "ボット・"+NAMES[clamp(level)-1];}
  static String pubkey(int level){return "bot-lv"+clamp(level)+"-v1";}
  static int clamp(int level){return Math.max(1,Math.min(LEVELS,level));}
  /** The level whose rating is closest to the player's (the weaker one on a tie). */
