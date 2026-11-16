@@ -1,0 +1,60 @@
+[    5.598440] audit: type=1400 audit(1794803577.703:11): apparmor="STATUS" operation="profile_load" profile="unconfined" name="brave" pid=485 comm="apparmor_parser"
+[    5.599896] audit: type=1400 audit(1794803577.705:12): apparmor="STATUS" operation="profile_load" profile="unconfined" name="buildah" pid=487 comm="apparmor_parser"
+[    5.606545] audit: type=1400 audit(1794803577.711:13): apparmor="STATUS" operation="profile_load" profile="unconfined" name="Xorg" pid=478 comm="apparmor_parser"
+[    5.606551] audit: type=1400 audit(1794803577.711:14): apparmor="STATUS" operation="profile_load" profile="unconfined" name="Xorg_wrap" pid=478 comm="apparmor_parser"
+[    5.608319] audit: type=1400 audit(1794803577.713:15): apparmor="STATUS" operation="profile_load" profile="unconfined" name="bwrap" pid=488 comm="apparmor_parser"
+[    5.784689] /dev/sr0: Can't lookup blockdev
+[    5.873634] 8021q: 802.1Q VLAN Support v1.8
+[    5.924437] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+[    5.924770] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[    5.924913] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06c7248db18c600'
+[    5.924996] faux_driver regulatory: Direct firmware load for regulatory.db failed with error -2
+[    5.925001] cfg80211: failed to load regulatory.db
+[    8.976951] EXT4-fs (sda1): resizing filesystem from 19370235 to 39031035 blocks
+[    9.993235] EXT4-fs (sda1): resized filesystem to 39031035
+[   10.008848] ephemeral0: Can't lookup blockdev
+[   10.071766] systemd-fstab-generator[1053]: 'ephemeral0' is not a device path, ignoring x-systemd.device-timeout= option.
+[   10.936060] ephemeral0: Can't lookup blockdev
+[   11.069260] kauditd_printk_skb: 170 callbacks suppressed
+[   11.069265] audit: type=1400 audit(1794803583.174:186): apparmor="STATUS" operation="profile_replace" info="same as current profile, skipping" profile="unconfined" name="rsyslogd" pid=1217 comm="apparmor_parser"
+[   11.102493] audit: type=1400 audit(1794803583.207:187): apparmor="DENIED" operation="sendmsg" class="file" profile="systemd-detect-virt" name="/att/systemd-detect-virt/run/systemd/journal/socket" pid=1320 comm="systemd-detect-" requested_mask="w" denied_mask="w" fsuid=0 ouid=0
+[   11.107802] audit: type=1400 audit(1794803583.213:188): apparmor="DENIED" operation="capable" class="cap" profile="systemd-detect-virt" pid=1320 comm="systemd-detect-" capability=38  capname="perfmon"
+[   11.108327] audit: type=1400 audit(1794803583.213:189): apparmor="DENIED" operation="sendmsg" class="file" profile="systemd-detect-virt" name="/att/systemd-detect-virt/run/systemd/notify" pid=1320 comm="systemd-detect-" requested_mask="w" denied_mask="w" fsuid=0 ouid=0
+[   11.403364] loop0: detected capacity change from 0 to 8
+[   11.501180] NET: Registered PF_QIPCRTR protocol family
+[   11.638374] audit: type=1400 audit(1794803583.743:190): apparmor="STATUS" operation="profile_replace" info="same as current profile, skipping" profile="unconfined" name="/usr/lib/snapd/snap-confine" pid=1456 comm="apparmor_parser"
+[   11.863736] Adding 3145724k swap on /swapfile.  Priority:-1 extents:8 across:57606140k 
+[   12.661349] audit: type=1400 audit(1794803584.766:191): apparmor="STATUS" operation="profile_load" profile="unconfined" name="docker-default" pid=1650 comm="apparmor_parser"
+[   12.686295] systemd-fstab-generator[1699]: 'ephemeral0' is not a device path, ignoring x-systemd.device-timeout= option.
+[   12.963201] Initializing XFRM netlink socket
+[   12.992974] bridge: filtering via arp/ip/ip6tables is no longer available by default. Update your scripts to load br_netfilter if you need this.
+[   14.425422] systemd-fstab-generator[2074]: 'ephemeral0' is not a device path, ignoring x-systemd.device-timeout= option.
+[   14.734692] systemd-fstab-generator[2144]: 'ephemeral0' is not a device path, ignoring x-systemd.device-timeout= option.
+[   49.020916] hv_balloon: Max. dynamic memory size: 16384 MB
+[   58.874382] hv_netvsc 3833c5da-b3ab-3833-c5da-b3ab3833c5da eth0: VF slot 1 added
+[   58.875935] hv_pci 96868e20-7e19-4757-a180-5153dc2722dc: PCI VMBus probing: Using version 0x10004
+[   58.877396] hv_pci 96868e20-7e19-4757-a180-5153dc2722dc: PCI host bridge to bus 7e19:00
+[   58.877403] pci_bus 7e19:00: root bus resource [mem 0xfc0000000-0xfc00fffff window]
+[   58.877408] pci_bus 7e19:00: No busn resource found for root bus, will use [bus 00-ff]
+[   58.882081] pci 7e19:00:02.0: [15b3:1016] type 00 class 0x020000 PCIe Endpoint
+[   58.887092] pci 7e19:00:02.0: BAR 0 [mem 0xfc0000000-0xfc00fffff 64bit pref]
+[   58.887889] pci 7e19:00:02.0: enabling Extended Tags
+[   58.897209] pci 7e19:00:02.0: 0.000 Gb/s available PCIe bandwidth, limited by Unknown x0 link at 7e19:00:02.0 (capable of 63.008 Gb/s with 8.0 GT/s PCIe x8 link)
+[   58.904127] pci_bus 7e19:00: busn_res: [bus 00-ff] end is updated to 00
+[   58.904137] pci 7e19:00:02.0: BAR 0 [mem 0xfc0000000-0xfc00fffff 64bit pref]: assigned
+[   59.133379] mlx5_core 7e19:00:02.0: enabling device (0000 -> 0002)
+[   59.136478] mlx5_core 7e19:00:02.0: firmware version: 14.30.5032
+[   59.273019] mlx5_core 7e19:00:02.0: Flow counters bulk query buffer size increased, bulk_query_len(8)
+[   59.351551] hv_netvsc 3833c5da-b3ab-3833-c5da-b3ab3833c5da eth0: VF registering: eth1
+[   59.351713] mlx5_core 7e19:00:02.0 eth1: joined to eth0
+[   59.352305] mlx5_core 7e19:00:02.0: MLX5E: StrdRq(0) RqSz(1024) StrdSz(256) RxCqeCmprss(0 basic)
+[   59.369693] mlx5_core 7e19:00:02.0 enP32281s1: renamed from eth1
+[   59.399652] MACsec IEEE 802.1AE
+[   59.511653] mlx5_core 7e19:00:02.0 enP32281s1: Link up
+[   59.541699] hv_netvsc 3833c5da-b3ab-3833-c5da-b3ab3833c5da eth0: Data path switched to VF: enP32281s1
+[   59.541924] mlx5_core 7e19:00:02.0 mlx5_0: Port: 1 Link ACTIVE
+[  746.972364] audit: type=1400 audit(1794804319.077:192): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/nsswitch.conf" pid=4891 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[  746.972403] audit: type=1400 audit(1794804319.077:193): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/passwd" pid=4891 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[  747.118551] audit: type=1400 audit(1794804319.224:194): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/nsswitch.conf" pid=4896 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[  747.118560] audit: type=1400 audit(1794804319.224:195): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/passwd" pid=4896 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[  826.910280] kvm: kvm [5441]: vcpu0, guest rIP: 0xffffffffa8409cbd Unhandled WRMSR(0xc0010007) = 0xffff
