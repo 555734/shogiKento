@@ -15,7 +15,7 @@ import Foundation
     /// The level whose rating is closest to the player's (the weaker one on a tie).
     static func level(for playerRating:Int)->Int {var best=1;for k in 2...levels where abs(rating(k)-playerRating)<abs(rating(best)-playerRating){best=k};return best}
     /// How long a random match waits for a person before the bot steps in (UI tests shorten it).
-    static var waitMillis:Int64=20000
+    static var waitMillis:Int64=8000
     var identity:OnlineIdentity {OnlineIdentity(pubkey:Self.pubkey(level),name:Self.name(level),rating:Self.rating(level),games:Self.games)}
     let level:Int
     private(set) var closed=false

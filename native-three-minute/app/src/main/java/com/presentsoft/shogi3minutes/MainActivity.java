@@ -8,7 +8,7 @@ public final class MainActivity extends Activity {
   /** The account (loaded once per process), the opponent's verified card, whether the session is rated, the round whose card was sent, the last rated result. */
   OnlineAccount account;AccountStore accounts;OnlineIdentity peer;boolean rated;int cardRound;OnlineAccount.Game lastResult;
   /** The bot opponent of the current game (null against a person), and the random-match seek its timer belongs to. */
-  OnlineBot bot;long seekToken;}
+  OnlineBot bot;long seekToken,seekStarted;}
  static final Online online=new Online();
  /** Netplay callbacks arrive on network threads; state changes only on the main thread and only for the current session. */
  static final class OnlineEvents implements Netplay.Listener {
@@ -313,7 +313,7 @@ public final class MainActivity extends Activity {
   float homeMatchY(){return homeLayout().match.top;}float homeStudyY(){return homeLayout().study.top;}
   float homeImportY(){return homeLayout().paste.top;}float homeArchiveY(){return homeLayout().archive.top;}float homeOnlineY(){return homeLayout().online.top;}
   @Override protected void onDraw(Canvas c){super.onDraw(c);c.save();c.clipRect(0,0,getWidth(),getHeight());if(mode==HOME){c.translate(offsetX,-studyScroll*scale);c.scale(scale,scale);homeScreen.draw(c,H,load(HomeScreen.BACKGROUND),load(HomeScreen.TITLE),load("pieces/normal/ou.png"));c.restore();return;}fitted(c,BACKGROUND_ART,new RectF(0,0,getWidth(),getHeight()),true);paint.reset();paint.setColor(0x4d0a0204);c.drawRect(0,0,getWidth(),getHeight(),paint);if(mode==MATCH||mode==ONLINE&&online.game!=null){int tint=effects.tint(game.movesPlayed,frameTime());if(Color.alpha(tint)>0){paint.reset();paint.setColor(tint);c.drawRect(0,0,getWidth(),getHeight(),paint);}}c.translate(offsetX,-studyScroll*scale);c.scale(scale,scale);
-   if(mode==ONLINE&&online.game==null){onlineLobby(c);c.restore();if(online.seekMode>=0&&frozenFrame<0&&!settings.reducedEffects())postInvalidateOnAnimation();return;}
+   if(mode==ONLINE&&online.game==null){onlineLobby(c);c.restore();if(online.seekMode>=0&&frozenFrame<0)postInvalidateOnAnimation();return;}
    observeFlow();
    if(mode==ONLINE)onlineTopBar(c);
    if(mode==MATCH)matchToolbar(c);
@@ -578,14 +578,16 @@ public final class MainActivity extends Activity {
   RectF lobbyBackRect(){return new RectF(12,lobbyButtonY(0)+4,112,lobbyButtonY(0)+56);}
   RectF roomButton(int i){float y=lobbyButtonY(i);return new RectF(12,y,388,y+54);}
   float lobbyPanelY(){return online.roomPage?lobbyButtonY(2)+2:lobbyButtonY(1)+12;}
-  // Matching screen while a seek runs: the empty board with a searching light, and 中止.
-  RectF matchingBoard(){float h=376*BOARD_HEIGHT_RATIO;return new RectF(12,112,388,112+h);}
-  RectF cancelRect(){RectF b=matchingBoard();return new RectF(212,b.bottom+70,388,b.bottom+126);}
+  // Matching screen while a seek runs: a game-clock dial whose gold arc fills over the wait, the player's komadai, and 中止.
+  float clockY(){return online.seekMode==Netplay.HOST?336:276;}
+  static final float CLOCK_R=96;
+  RectF trayRect(){float y=clockY()+CLOCK_R+20;return new RectF(12,y,388,y+56);}
+  RectF cancelRect(){float y=trayRect().bottom+80;return new RectF(212,y,388,y+56);}
   void chooseTimeControl(String tc){if(online.seekMode>=0||!OnlineGame.validTimeControl(tc))return;online.timeControl=tc;getPreferences(MODE_PRIVATE).edit().putString("online_tc",tc).apply();invalidate();}
   void openRoomPage(boolean open){if(open==online.roomPage)return;stopSeek();online.roomPage=open;online.notice="";invalidate();}
   void startSeek(int seekMode,String code){Netplay n=online.net;if(n==null){online.notice="通信を準備しています…";ensureNetplay();invalidate();return;}
    n.rating=online.account.rating;n.games=online.account.games;online.seekMode=seekMode;online.roomCode=code;online.notice="";online.status="";n.seek(seekMode,code,online.timeControl);
-   long token=++online.seekToken;if(seekMode==Netplay.QUICK)mainLoop.postDelayed(()->{if(online.seekToken==token&&online.seekMode==Netplay.QUICK&&online.game==null&&online.net==n){if(!ai.ready)configureAi();startBotGame(this::botMove);}},OnlineBot.waitMillis);invalidate();}
+   online.seekStarted=SystemClock.uptimeMillis();long token=++online.seekToken;if(seekMode==Netplay.QUICK)mainLoop.postDelayed(()->{if(online.seekToken==token&&online.seekMode==Netplay.QUICK&&online.game==null&&online.net==n){if(!ai.ready)configureAi();startBotGame(this::botMove);}},OnlineBot.waitMillis);invalidate();}
   void lobbyTouch(float x,float y){
    if(online.seekMode>=0){if(cancelRect().contains(x,y)){stopSeek();invalidate();}return;}
    if(y>=ACCOUNT_CARD_Y&&y<=ACCOUNT_CARD_Y+44&&x>=12&&x<=388){showChoice(AccountDialog.create(MainActivity.this));return;}
@@ -625,33 +627,37 @@ public final class MainActivity extends Activity {
    float t=y+68;if(!online.notice.isEmpty()){text(c,online.notice,200,t,10,0xffffb9b3);t+=18;}
    styledText(c,"P2Pで直接つなぎ、つながらない時だけ公開リレーを経由します",200,t,9,0xccf2e6d0,false,Paint.Align.CENTER,null);styledText(c,"対戦相手にはあなたのIPアドレスが伝わります・対局中は時計が止まりません",200,t+15,9,0xccf2e6d0,false,Paint.Align.CENTER,null);
   }
-  /** While seeking: the empty board under a slowly wandering light, the room code for a host, the status and 中止. */
-  void matchingScreen(Canvas c){boolean quick=online.seekMode==Netplay.QUICK;long now=frameTime();
+  /** While seeking: a game-clock dial (the gold arc fills until the bot steps in; a turning segment while a room waits), the player's komadai and 中止. */
+  void matchingScreen(Canvas c){boolean quick=online.seekMode==Netplay.QUICK;long now=SystemClock.uptimeMillis(),elapsed=Math.max(0,now-online.seekStarted);
    darkPanel(c,new RectF(0,0,400,32));styledText(c,"オンライン対戦",200,21.5f,12,0xfff3e6cf,true,Paint.Align.CENTER,null);
-   effects.band(c,0,400,70,30,1);effects.word(c,quick?"対戦相手を探しています":online.seekMode==Netplay.HOST?"相手の参加を待っています":"ルームに接続しています",30,30,200,81,0xfff2e6c6,0xffccb07a,1);
-   String sub=OnlineGame.label(online.timeControl)+(quick?"・レート戦":"・ルーム対局");styledText(c,sub,200,96,10.5f,0xffeadfc8,false,Paint.Align.CENTER,null);
-   RectF b=matchingBoard();paint.reset();paint.setColor(0x99000000);c.drawRoundRect(new RectF(b.left-4,b.top-4,b.right+4,b.bottom+4),6,6,paint);
-   image(c,BOARD_ART,null,b);paint.reset();paint.setAntiAlias(true);paint.setColor(0xff4d2b0a);paint.setStrokeWidth(.75f);float cw=b.width()*.98f/9,ch=b.height()*.98f/9,x0=b.left+b.width()*.01f,y0=b.top+b.height()*.01f;
-   for(int i=0;i<=9;i++){c.drawLine(x0+i*cw,y0,x0+i*cw,y0+9*ch,paint);c.drawLine(x0,y0+i*ch,x0+9*cw,y0+i*ch,paint);}
-   paint.reset();paint.setColor(0x8c0a0402);c.drawRect(b,paint);
-   if(settings.reducedEffects())glow(c,b.centerX(),b.centerY(),110,1);else{float s=(now%600000)/1000f;for(int k=4;k>=0;k--){float t=s-k*.09f;float ox=b.centerX()+b.width()*.30f*(float)Math.sin(t*1.1),oy=b.centerY()+b.height()*.26f*(float)Math.sin(t*.83+1.3),pulse=1+.12f*(float)Math.sin(t*4.2);
-     glow(c,ox,oy,(k==0?118:96-k*10)*pulse,k==0?1:.22f/k);}}
-   if(online.seekMode==Netplay.HOST&&online.roomCode!=null){RectF r=new RectF(70,b.centerY()-52,330,b.centerY()+52);inkCard(c,r,10,true);styledText(c,"ルームコード",200,r.top+24,11,0xffeadfc8,false,Paint.Align.CENTER,null);
-    paint.reset();paint.setAntiAlias(true);paint.setTypeface(Fonts.bold);paint.setFontFeatureSettings("tnum");paint.setTextSize(38);paint.setLetterSpacing(.12f);paint.setTextAlign(Paint.Align.CENTER);paint.setColor(0xffeedcb2);c.drawText(online.roomCode.substring(0,3)+" "+online.roomCode.substring(3),200,r.top+66,paint);
-    styledText(c,"友だちに伝えてください",200,r.top+88,10,0xffcfc3b0,false,Paint.Align.CENTER,null);}
-   float y=b.bottom+24;styledText(c,online.status.isEmpty()?"開始しています…":online.status,200,y,13,0xfff3e6cf,true,Paint.Align.CENTER,null);
-   if(quick)styledText(c,"相手が"+OnlineBot.waitMillis/1000+"秒見つからない時は、レートの近いボットと対局します",200,y+20,10,0xffcfc3b0,false,Paint.Align.CENTER,null);
-   else if(online.seekMode==Netplay.GUEST&&online.roomCode!=null)styledText(c,"ルーム "+online.roomCode,200,y+20,10.5f,0xffcfc3b0,false,Paint.Align.CENTER,null);
-   if(!online.notice.isEmpty())text(c,online.notice,200,y+38,10,0xffffb9b3);
+   goldTitle(c,quick?"対戦相手を探しています":online.seekMode==Netplay.HOST?"相手の参加を待っています":"ルームに接続しています",200,78,22);
+   styledText(c,OnlineGame.label(online.timeControl)+(quick?"・レート戦":"・ルーム対局"),200,100,10.5f,0xffeadfc8,false,Paint.Align.CENTER,null);
+   if(online.seekMode==Netplay.HOST&&online.roomCode!=null){RectF r=new RectF(70,116,330,200);inkCard(c,r,10,true);styledText(c,"ルームコード",200,r.top+20,10.5f,0xffeadfc8,false,Paint.Align.CENTER,null);
+    paint.reset();paint.setAntiAlias(true);paint.setTypeface(Fonts.black);paint.setFontFeatureSettings("tnum");paint.setTextSize(34);paint.setLetterSpacing(.12f);paint.setTextAlign(Paint.Align.CENTER);paint.setColor(0xffeedcb2);c.drawText(online.roomCode.substring(0,3)+" "+online.roomCode.substring(3),200,r.top+58,paint);
+    styledText(c,"友だちに伝えてください",200,r.top+76,9.5f,0xffcfc3b0,false,Paint.Align.CENTER,null);}
+   float cx=200,cy=clockY(),R=CLOCK_R;
+   paint.reset();paint.setAntiAlias(true);paint.setColor(0x80000000);c.drawCircle(cx,cy+3,R+6,paint);
+   paint.setShader(new LinearGradient(0,cy-R,0,cy+R,INKS,new float[]{0,.55f,1},Shader.TileMode.CLAMP));c.drawCircle(cx,cy,R+4,paint);paint.setShader(null);
+   paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(1.2f);paint.setColor(CHAMPAGNE_RIM);c.drawCircle(cx,cy,R+4,paint);paint.setStrokeWidth(.7f);paint.setColor(0x55dcc48e);c.drawCircle(cx,cy,R-16,paint);
+   for(int k=0;k<60;k++){double a=Math.PI*2*k/60;float r0=R-(k%5==0?10:5),r1=R-2;paint.setStrokeWidth(k%5==0?1.6f:.8f);paint.setColor(k%5==0?0xccdcc48e:0x66dcc48e);
+    c.drawLine(cx+r0*(float)Math.sin(a),cy-r0*(float)Math.cos(a),cx+r1*(float)Math.sin(a),cy-r1*(float)Math.cos(a),paint);}
+   RectF ring=new RectF(cx-R+8,cy-R+8,cx+R-8,cy+R-8);paint.setStrokeCap(Paint.Cap.ROUND);paint.setStrokeWidth(6);
+   if(quick){float pr=Math.min(1,elapsed/(float)OnlineBot.waitMillis);paint.setColor(0x33dcc48e);c.drawArc(ring,-90,360,false,paint);paint.setColor(0xffdcc48e);c.drawArc(ring,-90,Math.max(1,360*pr),false,paint);}
+   else{paint.setColor(0x33dcc48e);c.drawArc(ring,-90,360,false,paint);paint.setColor(0xffdcc48e);c.drawArc(ring,(elapsed%3000)/3000f*360-90,70,false,paint);}
+   paint.reset();paint.setAntiAlias(true);paint.setTypeface(Fonts.black);paint.setFontFeatureSettings("tnum");paint.setTextSize(50);paint.setTextAlign(Paint.Align.CENTER);paint.setColor(CREAM);
+   long sec=elapsed/1000;c.drawText(String.format(Locale.US,"%d:%02d",sec/60,sec%60),cx,cy+14,paint);
+   styledText(c,quick?OnlineBot.waitMillis/1000+"秒でボットと対局":"経過時間",cx,cy+38,10,0xffcfc3b0,false,Paint.Align.CENTER,null);
+   // The player's komadai: name and rating on the left, the 王将 waiting on the right.
+   RectF tray=trayRect();inkCard(c,tray,8,false);OnlineAccount a=online.account;
+   if(a!=null){styledText(c,shortName(a.name,12),26,tray.top+24,14,0xfff3e6cf,true,Paint.Align.LEFT,null);styledText(c,"レート "+a.ratingText(),26,tray.top+42,10.5f,0xffcfc3b0,false,Paint.Align.LEFT,null);}
+   drawPiece(c,8,new RectF(tray.right-60,tray.top+5,tray.right-16,tray.bottom-5),tray.height()-12);
+   float y=tray.bottom+26;styledText(c,online.status.isEmpty()?"開始しています…":online.status,200,y,12.5f,0xfff3e6cf,true,Paint.Align.CENTER,null);
+   if(quick)styledText(c,"相手が"+OnlineBot.waitMillis/1000+"秒見つからない時は、レートの近いボットと対局します",200,y+19,9.5f,0xffcfc3b0,false,Paint.Align.CENTER,null);
+   else if(online.seekMode==Netplay.GUEST&&online.roomCode!=null)styledText(c,"ルーム "+online.roomCode,200,y+19,10.5f,0xffcfc3b0,false,Paint.Align.CENTER,null);
+   if(!online.notice.isEmpty())text(c,online.notice,200,y+36,10,0xffffb9b3);
    styledText(c,online.net==null?"未接続":"公開リレー "+online.relaysOpen+"/"+online.relaysTotal,24,cancelRect().centerY()+4,10,online.relaysOpen>0?0xff9be59b:0xffffd471,false,Paint.Align.LEFT,null);
-   bigButton(c,cancelRect(),RED,"中止",24);
+   bigButton(c,cancelRect(),RED,"中止",22);
   }
-  Bitmap glowBitmap;
-  /** A soft white-violet light, rasterised once and drawn scaled (no per-frame gradient shaders). */
-  void glow(Canvas c,float x,float y,float radius,float alpha){
-   if(glowBitmap==null){int n=192;glowBitmap=Bitmap.createBitmap(n,n,Bitmap.Config.ARGB_8888);Paint g=new Paint(Paint.ANTI_ALIAS_FLAG);
-    g.setShader(new RadialGradient(n/2f,n/2f,n/2f,new int[]{0xffffffff,0xfffff6ff,0xd0e8b8ff,0x707a6cff,0x203050ff,0x00203070},new float[]{0,.14f,.3f,.55f,.8f,1},Shader.TileMode.CLAMP));new Canvas(glowBitmap).drawCircle(n/2f,n/2f,n/2f,g);}
-   paint.reset();paint.setFilterBitmap(true);paint.setAlpha(Math.round(255*Math.max(0,Math.min(1,alpha))));c.drawBitmap(glowBitmap,null,new RectF(x-radius,y-radius,x+radius,y+radius),paint);}
   /** Large title: the black weight in champagne with a soft drop shadow. */
   void goldTitle(Canvas c,String s,float x,float y,float size){paint.reset();paint.setAntiAlias(true);paint.setTypeface(Fonts.black);paint.setTextSize(size);paint.setLetterSpacing(.14f);paint.setTextAlign(Paint.Align.CENTER);
    paint.setColor(0x8c000000);c.drawText(s,x,y+1.5f,paint);paint.setShader(new LinearGradient(0,y-size*.8f,0,y,0xfff2e6c6,0xffccb07a,Shader.TileMode.CLAMP));c.drawText(s,x,y,paint);paint.setShader(null);}

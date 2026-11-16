@@ -105,7 +105,7 @@ final class OnlineSmoke {
    t.tap(45,26);waitFor(t,()->MainActivity.online.game==null&&MainActivity.online.bot==null&&!MainActivity.online.roomPage,5000,"leaving the bot game returns to the lobby");
    t.tap(45,26);waitFor(t,()->t.v.mode==MainActivity.HOME&&MainActivity.online.net==null,5000,"leaving online mode disconnects");
    t.check(relay.rejected==0,"every app event accepted by strict relay");report.append("relay accepted=").append(relay.accepted).append(" forwarded=").append(relay.forwarded).append(" rejected=").append(relay.rejected).append('\n');
-  }finally{OnlineBot.waitMillis=20000;Netplay.relayOverride=null;Netplay.stunOverride=null;UdpEndpoint.allowLoopback=false;Netplay.lobbyTag="shogikento-v1-3m";}
+  }finally{OnlineBot.waitMillis=8000;Netplay.relayOverride=null;Netplay.stunOverride=null;UdpEndpoint.allowLoopback=false;Netplay.lobbyTag="shogikento-v1-3m";}
   try(PrintWriter out=new PrintWriter(new File(t.getTargetContext().getExternalFilesDir(null),"online_play.txt"))){out.println("PASS native online mode: touch-driven quick match, direct UDP, sounds, resign, rematch with flipped board, hosted room, joined room, leave/disconnect");out.print(report);}
  }
 }

@@ -22,7 +22,7 @@ final class OnlineBot {
  interface Brain {void choose(ShogiGame game,int level,java.util.function.Consumer<ShogiGame.Move> done);}
  static final Brain GREEDY=(g,level,done)->done.accept(g.cpuChoice());
  /** How long a random match waits for a person before the bot steps in. Tests shorten it. */
- static long waitMillis=20000;
+ static long waitMillis=8000;
  /** Thinking time per move: 1 to 4 seconds, never more than a fortieth of the bot's remaining time. */
  static final long THINK_MIN=1000,THINK_SPREAD=3000;
  interface Scheduler {void after(long millis,Runnable r);long now();}

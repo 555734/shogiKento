@@ -21,7 +21,7 @@ struct OnlineState {
     /// was sent, and the last settled rated result for the result line.
     var peer:OnlineIdentity?,rated=false,cardRound=0,lastResult:OnlineAccount.Game?
     /// The bot opponent of the current game (nil against a person) and the random-match seek its timer belongs to.
-    var bot:OnlineBot?,seekToken=0
+    var bot:OnlineBot?,seekToken=0,seekStarted=Date()
 }
 
 enum OnlineEvent {case status(String),relays(Int,Int),network(String),matched(Int),message(String),path(Bool,Int,String),peerLeft,failed(String)}
@@ -130,7 +130,7 @@ extension AppModel {
     func startSeek(_ mode:Int,code:String?){
         guard let net else{online.notice="通信を準備しています…";ensureNetplay();return}
         net.rating=account.rating;net.games=account.games;online.seekMode=mode;online.roomCode=code;online.notice="";online.status="";net.seek(mode,code:code,timeControl:online.timeControl)
-        online.seekToken+=1;let token=online.seekToken
+        online.seekStarted=Date();online.seekToken+=1;let token=online.seekToken
         if mode==Netplay.quick{let wait=OnlineBot.waitMillis;Task{@MainActor [weak self] in try? await Task.sleep(nanoseconds:UInt64(max(0,wait))*1_000_000)
             guard let self,self.online.seekToken==token,self.online.seekMode==Netplay.quick,self.online.game==nil,self.net===net else{return};self.startBotGame()}}
     }
@@ -274,50 +274,56 @@ struct GlossButtonStyle:ButtonStyle {
             .scaleEffect(configuration.isPressed ? 0.97:1).opacity(enabled ? 1:0.5)
     }
 }
-/// While a seek runs: the empty board under a slowly wandering light, the room code for a host, the status and 中止.
+/// While a seek runs: a game-clock dial whose gold arc fills until the bot steps in (a turning segment while a room
+/// waits), the host's room code, the player's komadai, the status and 中止.
 struct MatchingView:View {
     @EnvironmentObject var model:AppModel
     private var quick:Bool {model.online.seekMode==Netplay.quick}
     private var title:String {quick ? "対戦相手を探しています":model.online.seekMode==Netplay.host ? "相手の参加を待っています":"ルームに接続しています"}
     var body:some View {
-        VStack(spacing:10){
-            VStack(spacing:4){Text(title).font(AppFonts.black(26)).foregroundStyle(LinearGradient(colors:[Color(red:0.95,green:0.9,blue:0.78),Color(red:0.8,green:0.69,blue:0.48)],startPoint:.top,endPoint:.bottom))
+        VStack(spacing:12){
+            VStack(spacing:4){Text(title).font(AppFonts.black(22)).kerning(2).foregroundStyle(LinearGradient(colors:[Color(red:0.95,green:0.9,blue:0.78),Color(red:0.8,green:0.69,blue:0.48)],startPoint:.top,endPoint:.bottom))
                 Text(OnlineGame.label(model.online.timeControl)+(quick ? "・レート戦":"・ルーム対局")).font(AppFonts.ui(11)).foregroundStyle(Lacquer.cream)}
-                .frame(maxWidth:.infinity).padding(.vertical,10).background(LinearGradient(stops:[.init(color:.clear,location:0),.init(color:.black.opacity(0.8),location:0.16),.init(color:.black.opacity(0.8),location:0.84),.init(color:.clear,location:1)],startPoint:.leading,endPoint:.trailing))
-                .padding(.top,10).accessibilityIdentifier("online_matching")
-            ZStack{
-                Image(uiImage:AppAssets.image("board")).resizable()
-                Canvas{context,size in var grid=Path();for i in 0...9{let x=size.width*(0.01+0.98*Double(i)/9),y=size.height*(0.01+0.98*Double(i)/9);grid.move(to:CGPoint(x:x,y:size.height*0.01));grid.addLine(to:CGPoint(x:x,y:size.height*0.99));grid.move(to:CGPoint(x:size.width*0.01,y:y));grid.addLine(to:CGPoint(x:size.width*0.99,y:y))};context.stroke(grid,with:.color(Color(red:0.3,green:0.15,blue:0.03)),lineWidth:0.8)}
-                Color(red:0.04,green:0.02,blue:0.01).opacity(0.55)
-                SearchLight(still:model.reducedEffects)
-                if model.online.seekMode==Netplay.host,let room=model.online.roomCode{
-                    VStack(spacing:6){Text("ルームコード").font(AppFonts.ui(11));Text(verbatim:"\(room.prefix(3)) \(room.suffix(3))").font(AppFonts.ui(38,bold:true).monospacedDigit()).kerning(4).foregroundStyle(Color(red:1,green:0.89,blue:0.68)).accessibilityIdentifier("online_room_code");Text("友だちに伝えてください").font(AppFonts.ui(10)).opacity(0.8)}
-                        .foregroundStyle(Lacquer.cream).padding(.horizontal,26).padding(.vertical,14).inkCard(radius:10,lit:true)}
-            }.aspectRatio(1226/1283.0,contentMode:.fit).clipShape(RoundedRectangle(cornerRadius:4)).padding(4).background(RoundedRectangle(cornerRadius:6).fill(.black.opacity(0.6))).padding(.horizontal,8)
-            Text(model.online.status.isEmpty ? "開始しています…":model.online.status).font(AppFonts.ui(14,bold:true)).foregroundStyle(Lacquer.cream).accessibilityIdentifier("online_lobby_status")
+                .padding(.top,14).accessibilityIdentifier("online_matching")
+            if model.online.seekMode==Netplay.host,let room=model.online.roomCode{
+                VStack(spacing:4){Text("ルームコード").font(AppFonts.ui(11));Text(verbatim:"\(room.prefix(3)) \(room.suffix(3))").font(AppFonts.black(34).monospacedDigit()).kerning(4).foregroundStyle(Color(red:0.93,green:0.86,blue:0.7)).accessibilityIdentifier("online_room_code");Text("友だちに伝えてください").font(AppFonts.ui(10)).opacity(0.8)}
+                    .foregroundStyle(Lacquer.cream).padding(.horizontal,26).padding(.vertical,10).inkCard(radius:10,lit:true)}
+            MatchClock(start:model.online.seekStarted,waitMillis:quick ? OnlineBot.waitMillis:nil).frame(width:204,height:204)
+            HStack{VStack(alignment:.leading,spacing:3){Text(model.account.name).font(AppFonts.ui(14,bold:true));Text(verbatim:"レート \(model.account.ratingText)").font(AppFonts.ui(11)).opacity(0.8)};Spacer()
+                Image(uiImage:AppAssets.piece(8)).resizable().scaledToFit().frame(width:44,height:46)}
+                .foregroundStyle(Lacquer.cream).padding(.horizontal,14).padding(.vertical,6).inkCard().padding(.horizontal,14)
+            Text(model.online.status.isEmpty ? "開始しています…":model.online.status).font(AppFonts.ui(13,bold:true)).foregroundStyle(Lacquer.cream).accessibilityIdentifier("online_lobby_status")
             if quick{Text("相手が\(OnlineBot.waitMillis/1000)秒見つからない時は、レートの近いボットと対局します").font(AppFonts.ui(11)).foregroundStyle(Lacquer.cream.opacity(0.8)).multilineTextAlignment(.center).accessibilityIdentifier("online_bot_note")}
             else if model.online.seekMode==Netplay.guest,let room=model.online.roomCode{Text(verbatim:"ルーム \(room)").font(AppFonts.ui(11)).foregroundStyle(Lacquer.cream.opacity(0.8))}
             if !model.online.notice.isEmpty{Text(model.online.notice).font(AppFonts.ui(11)).foregroundStyle(.orange).accessibilityIdentifier("online_notice")}
             HStack{Text(model.net==nil ? "未接続":"公開リレー \(model.online.relaysOpen)/\(model.online.relaysTotal)").font(AppFonts.ui(11)).foregroundStyle(model.online.relaysOpen>0 ? .green:.yellow);Spacer()
-                Button("中止"){model.cancelSeek()}.buttonStyle(GlossButtonStyle(kind:.red,size:24,height:56)).frame(width:170).accessibilityIdentifier("online_cancel")}.padding(.horizontal,14)
+                Button("中止"){model.cancelSeek()}.buttonStyle(GlossButtonStyle(kind:.red,size:22,height:54)).frame(width:170).accessibilityIdentifier("online_cancel")}.padding(.horizontal,14)
         }
     }
 }
-/// A soft white-violet light wandering over the board (still when effects are reduced).
-struct SearchLight:View {
-    let still:Bool
+/// A game-clock dial: minute ticks, the elapsed time, and a gold arc that fills over `waitMillis` (or turns while a room waits).
+struct MatchClock:View {
+    let start:Date,waitMillis:Int64?
     var body:some View {
-        TimelineView(.animation(paused:still)){timeline in
-            Canvas{context,size in
-                let t=timeline.date.timeIntervalSinceReferenceDate.truncatingRemainder(dividingBy:600)
-                for k in stride(from:4,through:0,by:-1){
-                    let s=still ? 0:t-Double(k)*0.09,x=size.width/2+(still ? 0:size.width*0.3*sin(s*1.1)),y=size.height/2+(still ? 0:size.height*0.26*sin(s*0.83+1.3))
-                    let r=(k==0 ? 118.0:96-Double(k)*10)*(still ? 1:1+0.12*sin(s*4.2))*size.width/376,a=k==0 ? 1:0.22/Double(k)
-                    var c=context;c.opacity=a
-                    c.fill(Path(ellipseIn:CGRect(x:x-r,y:y-r,width:r*2,height:r*2)),with:.radialGradient(Gradient(stops:[.init(color:.white,location:0),.init(color:Color(red:1,green:0.97,blue:1),location:0.14),.init(color:Color(red:0.91,green:0.72,blue:1).opacity(0.82),location:0.3),.init(color:Color(red:0.48,green:0.42,blue:1).opacity(0.44),location:0.55),.init(color:Color(red:0.19,green:0.31,blue:1).opacity(0.13),location:0.8),.init(color:.clear,location:1)]),center:CGPoint(x:x,y:y),startRadius:0,endRadius:r))
-                    if still{break}
+        TimelineView(.animation){timeline in
+            let elapsed=max(0,timeline.date.timeIntervalSince(start))
+            ZStack{
+                Circle().fill(LinearGradient(colors:LacquerUI.ink,startPoint:.top,endPoint:.bottom)).shadow(color:.black.opacity(0.5),radius:3,y:3)
+                Circle().strokeBorder(LacquerUI.rim,lineWidth:1.2)
+                Canvas{context,size in
+                    let c=CGPoint(x:size.width/2,y:size.height/2),R=size.width/2-6
+                    for k in 0..<60{let a=Double(k)*Double.pi/30,r0=R-(k%5==0 ? 10:5);var p=Path();p.move(to:CGPoint(x:c.x+r0*sin(a),y:c.y-r0*cos(a)));p.addLine(to:CGPoint(x:c.x+(R-2)*sin(a),y:c.y-(R-2)*cos(a)))
+                        context.stroke(p,with:.color(Color(red:0.86,green:0.77,blue:0.56).opacity(k%5==0 ? 0.8:0.4)),lineWidth:k%5==0 ? 1.6:0.8)}
+                    let ring=CGRect(x:c.x-R+10,y:c.y-R+10,width:(R-10)*2,height:(R-10)*2)
+                    context.stroke(Path(ellipseIn:ring),with:.color(Color(red:0.86,green:0.77,blue:0.56).opacity(0.2)),style:StrokeStyle(lineWidth:6))
+                    var arc=Path()
+                    if let wait=waitMillis{let p=min(1,elapsed*1000/Double(max(1,wait)));arc.addArc(center:c,radius:R-10,startAngle:.degrees(-90),endAngle:.degrees(-90+max(1,360*p)),clockwise:false)}
+                    else{let s=elapsed.truncatingRemainder(dividingBy:3)/3*360-90;arc.addArc(center:c,radius:R-10,startAngle:.degrees(s),endAngle:.degrees(s+70),clockwise:false)}
+                    context.stroke(arc,with:.color(Color(red:0.86,green:0.77,blue:0.56)),style:StrokeStyle(lineWidth:6,lineCap:.round))
                 }
+                VStack(spacing:2){Text(String(format:"%d:%02d",Int(elapsed)/60,Int(elapsed)%60)).font(AppFonts.black(48).monospacedDigit()).foregroundStyle(LacquerUI.ivory)
+                    Text(waitMillis.map{"\($0/1000)秒でボットと対局"} ?? "経過時間").font(AppFonts.ui(10)).foregroundStyle(Lacquer.cream.opacity(0.8))}.offset(y:6)
             }
-        }.allowsHitTesting(false).accessibilityHidden(true)
+        }.accessibilityHidden(true)
     }
 }
