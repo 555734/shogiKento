@@ -185,7 +185,7 @@ struct OnlineScreen:View {
     /// The account as one quiet line: the name brightest, the rating dimmer, a small link.
     private var accountCard:some View {
         Button{accountSheet=true}label:{HStack(alignment:.firstTextBaseline,spacing:8){Text(model.account.name).font(AppFonts.ui(14,bold:true)).foregroundStyle(Lacquer.cream);Text(verbatim:"レート \(model.account.ratingText)").font(AppFonts.ui(11)).foregroundStyle(Lacquer.cream.opacity(0.6));Spacer()
-                Text("アカウント ›").font(AppFonts.ui(11)).foregroundStyle(gold.opacity(0.85))}.padding(.vertical,8).overlay(alignment:.bottom){Rectangle().fill(Lacquer.hairline).frame(height:0.8)}}
+                Text("アカウント ›").font(AppFonts.ui(11)).foregroundStyle(gold.opacity(0.85))}.padding(.vertical,8).contentShape(Rectangle()).overlay(alignment:.bottom){Rectangle().fill(Lacquer.hairline).frame(height:0.8)}}
             .buttonStyle(.plain).accessibilityIdentifier("online_account")
     }
     private func note(_ text:String)->some View {Text(text).font(AppFonts.ui(11)).foregroundStyle(Lacquer.cream.opacity(0.6)).multilineTextAlignment(.center).frame(maxWidth:.infinity)}
