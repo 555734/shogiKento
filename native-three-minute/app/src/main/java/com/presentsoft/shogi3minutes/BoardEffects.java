@@ -91,8 +91,23 @@ final class BoardEffects {
  void drawCheckBanner(Canvas c,Geometry g,long t){long b=t-TWEEN/2;if(b<0||b>=CHECK)return;float k=b/(float)CHECK,alpha=k<.15f?k/.15f:k>.75f?(1-k)/.25f:1,size=reduced?60:60*(.8f+.2f*easeOut(Math.min(1,k/.25f)));
   RectF a=g.cell(0,0),z=g.cell(8,8);float left=Math.min(a.left,z.left),right=Math.max(a.right,z.right),cx=(left+right)/2,cy=(Math.min(a.top,z.top)+Math.max(a.bottom,z.bottom))/2;
   band(c,left,right,cy,size*.62f,alpha);
-  paint.reset();paint.setAntiAlias(true);paint.setTextAlign(Paint.Align.CENTER);paint.setTypeface(Fonts.brush);paint.setTextSize(size);float base=cy+size*.36f;
-  paint.setShader(new LinearGradient(0,cy-size*.5f,0,base,Color.argb(Math.round(255*alpha),255,120,92),Color.argb(Math.round(255*alpha),206,34,24),Shader.TileMode.CLAMP));c.drawText("王手",cx,base,paint);paint.setShader(null);}
+  word(c,"王手",60,size,cx,cy+size*.36f,0xffff785c,0xffce2218,alpha);}
+ // ---- Banner words ----
+ /** Device pixels per logical unit, set by the view so cached words stay sharp. */
+ float pixelScale=1;
+ private final java.util.HashMap<String,Bitmap> words=new java.util.HashMap<>();private final java.util.HashMap<String,float[]> wordMetrics=new java.util.HashMap<>();
+ /**
+  * A brush-face word with a vertical gradient, rasterised once at its full size into a bitmap and then drawn
+  * scaled and faded: the brush outlines are complex, and redrawing them as glyphs every animation frame is costly.
+  */
+ void word(Canvas c,String text,float full,float size,float cx,float baseline,int top,int bottom,float alpha){
+  String key=text+"|"+full+"|"+top+"|"+bottom+"|"+pixelScale;Bitmap b=words.get(key);float[] m=wordMetrics.get(key);
+  if(b==null){Paint p=new Paint(Paint.ANTI_ALIAS_FLAG);p.setTypeface(Fonts.brush);p.setTextSize(full*pixelScale);Paint.FontMetrics fm=p.getFontMetrics();
+   int w=Math.max(1,(int)Math.ceil(p.measureText(text))+4),h=Math.max(1,(int)Math.ceil(fm.descent-fm.ascent)+4);float base=2-fm.ascent;
+   b=Bitmap.createBitmap(w,h,Bitmap.Config.ARGB_8888);p.setShader(new LinearGradient(0,base-full*pixelScale*.8f,0,base,top,bottom,Shader.TileMode.CLAMP));new Canvas(b).drawText(text,2,base,p);
+   m=new float[]{w/pixelScale,h/pixelScale,base/pixelScale};words.put(key,b);wordMetrics.put(key,m);}
+  float k=size/full,w=m[0]*k,h=m[1]*k,top0=baseline-m[2]*k;
+  paint.reset();paint.setAntiAlias(true);paint.setFilterBitmap(true);paint.setAlpha(Math.round(255*Math.max(0,Math.min(1,alpha))));c.drawBitmap(b,null,new RectF(cx-w/2,top0,cx+w/2,top0+h),paint);}
  /** A dark band with gold hairlines, fading out toward both ends: the stage for the start, check and result words. */
  void band(Canvas c,float left,float right,float cy,float half,float alpha){int ink=Color.argb(Math.round(214*alpha),16,5,4),gold=Color.argb(Math.round(220*alpha),222,184,104);
   paint.reset();paint.setAntiAlias(true);paint.setShader(new LinearGradient(left,0,right,0,new int[]{ink&0x00ffffff,ink,ink,ink&0x00ffffff},new float[]{0,.16f,.84f,1},Shader.TileMode.CLAMP));c.drawRect(left,cy-half,right,cy+half,paint);
@@ -128,8 +143,7 @@ final class BoardEffects {
   if(!reduced&&t<FLASH){paint.reset();paint.setColor(Color.argb(Math.round(200*(1-t/(float)FLASH)),255,255,255));c.drawRect(board,paint);}
   float alpha=k<.12f?k/.12f:k>.7f?(1-k)/.3f:1,size=reduced?50:50*(.6f+.4f*easeOut(Math.min(1,k/.45f)));
   band(c,board.left,board.right,cy+4,44,alpha);
-  paint.reset();paint.setAntiAlias(true);paint.setTextAlign(Paint.Align.CENTER);paint.setTypeface(Fonts.brush);paint.setTextSize(size);float base=cy+size*.2f-2;
-  paint.setShader(new LinearGradient(0,base-size*.8f,0,base,Color.argb(Math.round(255*alpha),250,234,186),Color.argb(Math.round(255*alpha),212,162,76),Shader.TileMode.CLAMP));c.drawText("対局開始",cx,base,paint);paint.setShader(null);
+  word(c,"対局開始",50,size,cx,cy+size*.2f-2,0xfffaeaba,0xffd4a24c,alpha);
   paint.setTypeface(Fonts.medium);paint.setTextSize(12.5f);paint.setLetterSpacing(.08f);paint.setColor(Color.argb(Math.round(230*alpha),236,224,200));c.drawText(startSub,cx,cy+38,paint);}
  void drawEnd(Canvas c,RectF board,long now){if(!ended())return;long t=now-endAt;float cx=board.centerX(),cy=board.centerY()-40;
   for(int i=0;i<confetti.length/6;i++){float s=t/1000f;if(t>=CONFETTI)break;float x=confetti[i*6]+confetti[i*6+2]*s,y=confetti[i*6+1]+confetti[i*6+3]*s+60*s*s;if(y>board.bottom)continue;
@@ -138,8 +152,7 @@ final class BoardEffects {
    paint.reset();paint.setAntiAlias(true);paint.setColor(CONFETTI_COLORS[(int)confetti[i*6+5]]);paint.setAlpha(Math.round(235*Math.max(0,1-t/(float)CONFETTI)));c.save();c.rotate(confetti[i*6+4]+s*160,x,y);c.drawRect(x-3.6f*turn,y-2.4f,x+3.6f*turn,y+2.4f,paint);c.restore();}
   float k=reduced?1:easeOut(Math.min(1,t/(float)END_TEXT)),size=74*(reduced?1:.72f+.28f*k);String word=endOutcome>0?"勝ち":endOutcome<0?"負け":"引き分け";
   band(c,board.left,board.right,cy+4,62,k);
-  paint.reset();paint.setAntiAlias(true);paint.setTextAlign(Paint.Align.CENTER);paint.setTypeface(Fonts.brush);paint.setTextSize(endOutcome==0?size*.8f:size);float base=cy+size*.26f;
-  int top=endOutcome>0?0xfffaeab8:endOutcome<0?0xffe6e1d8:0xfff4ead6,bottom=endOutcome>0?0xffcc9640:endOutcome<0?0xff98a2b2:0xffcdbb98;
-  paint.setShader(new LinearGradient(0,base-size*.8f,0,base,(top&0x00ffffff)|Math.round(255*k)<<24,(bottom&0x00ffffff)|Math.round(255*k)<<24,Shader.TileMode.CLAMP));c.drawText(word,cx,base,paint);paint.setShader(null);
+  int top=endOutcome>0?0xfffaeab8:endOutcome<0?0xffe6e1d8:0xfff4ead6,bottom=endOutcome>0?0xffcc9640:endOutcome<0?0xff98a2b2:0xffcdbb98;float f=endOutcome==0?.8f:1;
+  word(c,word,74*f,size*f,cx,cy+size*.26f,top,bottom,k);
   paint.setTypeface(Fonts.medium);paint.setTextSize(13);paint.setLetterSpacing(.06f);paint.setColor(Color.argb(Math.round(230*k),236,224,200));c.drawText(endDetail,cx,cy+50,paint);}
 }

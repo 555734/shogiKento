@@ -281,7 +281,7 @@ public final class MainActivity extends Activity {
   }
   @Override protected void onSizeChanged(int w,int h,int ow,int oh){layoutBoard(w,h);}
   void layoutBoard(int w,int h){
-   if(w<=0||h<=0)return;scale=w/400f;offsetX=0;H=h/scale;boardSize=400;boardHeight=boardSize*BOARD_HEIGHT_RATIO;boardX=0;boardY=mode==STUDY?46:mode==ONLINE?128:80;
+   if(w<=0||h<=0)return;scale=w/400f;effects.pixelScale=scale;offsetX=0;H=h/scale;boardSize=400;boardHeight=boardSize*BOARD_HEIGHT_RATIO;boardX=0;boardY=mode==STUDY?46:mode==ONLINE?128:80;
    if(mode==MATCH){matchPanelH=Math.max(70,Math.min(112,(H-MATCH_BAR-boardHeight-MATCH_STATUS-24)/2));float low=MATCH_BAR+8+matchPanelH+4,high=H-(boardHeight+4+matchPanelH+MATCH_STATUS);boardY=Math.max(low,Math.min(high,(H-boardHeight)/2));}
    studyContentHeight=coffee.unlocked()?Math.max(H,mode==STUDY?analysisY()+ANALYSIS_HEIGHT+8:mode==MATCH?bottomHandY()+matchPanelH+MATCH_STATUS+8:0):adTop()+adHeight()+16;studyScroll=Math.max(0,Math.min(studyScroll,maxStudyScroll()));
   }
@@ -653,8 +653,7 @@ public final class MainActivity extends Activity {
   /** Returns the card's bottom edge. Buttons: 再戦する at x 24..196, ロビーへ at 204..376, y+112..y+146 (see onlineTouch). */
   float resultCard(Canvas c,OnlineGame g,float y){RectF card=new RectF(14,y,386,y+156);boolean win=g.game.winner==g.mySide,draw=g.game.winner==2;
    inkCard(c,card,10,true);
-   String title=draw?"引き分け":win?"勝ち":"負け";paint.reset();paint.setAntiAlias(true);paint.setTextSize(34);paint.setTypeface(Fonts.brush);paint.setTextAlign(Paint.Align.CENTER);
-   paint.setShader(new LinearGradient(0,y+12,0,y+44,win?0xfffff2b3:0xfffff1d6,win?0xffc98a23:0xffaab4c8,Shader.TileMode.CLAMP));c.drawText(title,200,y+42,paint);paint.setShader(null);
+   String title=draw?"引き分け":win?"勝ち":"負け";effects.word(c,title,34,34,200,y+42,win?0xfffff2b3:0xfffff1d6,win?0xffc98a23:0xffaab4c8,1);
    styledText(c,g.game.result,200,y+60,10.5f,0xd9fff1d6,false,Paint.Align.CENTER,null);
    OnlineAccount.Game r=online.lastResult;
    if(r!=null){int d=r.after-r.before;String chip=(d>=0?"+":"")+d,before=r.before+"  →",after=""+r.after;float bw=textWidth(before,13,false),aw=textWidth(after,20,true),cw=textWidth(chip,12,true)+16,total=bw+8+aw+8+cw,x0=200-total/2;
