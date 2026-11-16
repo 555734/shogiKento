@@ -676,7 +676,7 @@ public final class MainActivity extends Activity {
    int ink=on?CREAM:0xff8f8270;float cx=r.left+40,cy=r.centerY();paint.reset();paint.setAntiAlias(true);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(1.8f);paint.setColor(ink);paint.setStrokeCap(Paint.Cap.ROUND);
    if(kind==0){float R=15;c.drawCircle(cx,cy,R,paint);c.drawOval(new RectF(cx-R*.45f,cy-R,cx+R*.45f,cy+R),paint);c.drawLine(cx-R,cy,cx+R,cy,paint);}
    else{for(int k=0;k<2;k++){float hx=cx-8+k*16,hy=cy-6;c.drawCircle(hx,hy,5.5f,paint);c.drawArc(new RectF(hx-10,hy+8,hx+10,hy+26),200,140,false,paint);}}
-   paint.reset();paint.setAntiAlias(true);paint.setTypeface(Fonts.black);paint.setTextSize(17);paint.setLetterSpacing(.06f);paint.setColor(ink);c.drawText(kind==0?"ランダム":"ルーム",r.left+66,cy+6,paint);}
+   paint.reset();paint.setAntiAlias(true);paint.setTypeface(Fonts.black);paint.setTextSize(17);paint.setLetterSpacing(.06f);paint.setTextAlign(Paint.Align.LEFT);paint.setColor(ink);c.drawText(kind==0?"ランダム":"ルーム",r.left+70,cy+6,paint);}
   /** Time-control segment: big minutes and a small caption; chosen in red lacquer. */
   void segmentDraw(Canvas c,RectF r,String big,String small,boolean on){
    paint.reset();paint.setAntiAlias(true);paint.setShader(new LinearGradient(0,r.top,0,r.bottom,on?CRIMSON:INKS,new float[]{0,.55f,1},Shader.TileMode.CLAMP));c.drawRoundRect(r,8,8,paint);paint.setShader(null);
