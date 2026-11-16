@@ -11,7 +11,7 @@ struct MatchSettingsView:View {
             Form {
                 Section("AIの強さ") {
                     Stepper("Lv.\(options.level) / 10",value:$options.level,in:1...10).accessibilityIdentifier("match_level")
-                    Text("Lv.10はコーヒー応援の特典です。Lv.が高いほど探索量が増えます。").font(.caption)
+                    Text("Lv.10はコーヒー応援の特典です。Lv.が高いほど探索量が増えます。").font(AppFonts.style(12,.caption))
                 }
                 Section("持ち時間（双方・切れ負け）") {
                     Picker("持ち時間",selection:$options.minutes) {
@@ -25,7 +25,7 @@ struct MatchSettingsView:View {
                     }.pickerStyle(.segmented).accessibilityIdentifier("match_side")
                 }
                 Section {
-                    Text("設定を変えると現在の対局は棋譜に保存され、新しい盤面へ適用されます。キャンセルでは変更しません。").font(.caption)
+                    Text("設定を変えると現在の対局は棋譜に保存され、新しい盤面へ適用されます。キャンセルでは変更しません。").font(AppFonts.style(12,.caption))
                     Button(options.level==10 && !coffee.owned ? "Lv.10を解放する":"設定を適用"){if options.level==10 && !coffee.owned{coffeeSheet=true}else{model.applyMatchOptions(options);dismiss()}}.accessibilityIdentifier("apply_match_settings")
                 }
             }.navigationTitle("対局設定").sheet(isPresented:$coffeeSheet){CoffeeView()}.toolbar{Button("キャンセル"){dismiss()}}

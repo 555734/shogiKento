@@ -72,14 +72,14 @@ struct MoveEffectLayer:View {
                 if let king=effect.checkKing,t<MoveEffect.tween+MoveEffect.check {
                     let a=effect.reduced ? 0.6:abs(sin(Double.pi*3*t/(MoveEffect.tween+MoveEffect.check))),k=board.center(king)
                     let r=CGRect(x:k.x-cell.width/2,y:k.y-cell.height/2,width:cell.width,height:cell.height)
-                    context.fill(Path(r),with:.color(Color(red:0.9,green:0.12,blue:0.12).opacity(0.67*a)));context.stroke(Path(r),with:.color(Color(red:1,green:0.35,blue:0.3).opacity(a)),lineWidth:1.6)
+                    context.fill(Path(r),with:.color(Color(red:0.84,green:0.14,blue:0.09).opacity(0.51*a)));context.stroke(Path(r.insetBy(dx:2.2,dy:2.2)),with:.color(Color(red:1,green:0.41,blue:0.33).opacity(a)),lineWidth:2)
                 }
                 func banner(){
                     guard effect.checkKing != nil else{return};let b=t-MoveEffect.tween/2;guard b>=0,b<MoveEffect.check else{return}
-                    let k=b/MoveEffect.check,alpha=k<0.15 ? k/0.15:k>0.75 ? (1-k)/0.25:1,size=effect.reduced ? 54:54*(0.8+0.2*MoveEffect.easeOut(min(1,k/0.25)))
+                    let k=b/MoveEffect.check,alpha=k<0.15 ? k/0.15:k>0.75 ? (1-k)/0.25:1,size=effect.reduced ? 60:60*(0.8+0.2*MoveEffect.easeOut(min(1,k/0.25)))
                     let c=CGPoint(x:board.rect.midX,y:board.rect.midY)
-                    context.fill(Path(roundedRect:CGRect(x:c.x-size*1.35,y:c.y-size*0.62,width:size*2.7,height:size*1.24),cornerRadius:12),with:.color(Color(red:0.16,green:0,blue:0).opacity(0.6*alpha)))
-                    context.draw(Text("王手").font(.system(size:size,weight:.black,design:.serif)).foregroundColor(Color(red:0.85,green:0.1,blue:0.1).opacity(alpha)),at:c)
+                    InkBand.draw(context,left:board.rect.minX,right:board.rect.maxX,centerY:c.y,half:size*0.62,alpha:alpha)
+                    InkBand.word(context,Text("王手").font(AppFonts.brush(size)),at:CGPoint(x:c.x,y:c.y+2),size:size,colors:[Color(red:1,green:0.47,blue:0.36),Color(red:0.81,green:0.13,blue:0.09)],alpha:alpha)
                 }
                 if effect.reduced{banner();return}
                 if t<MoveEffect.tween {
@@ -165,7 +165,8 @@ struct GameBanner:Equatable {
 
 struct GameBannerLayer:View {
     let banner:GameBanner
-    private static let colors:[Color]=[Color(red:1,green:0.82,blue:0.35),Color(red:0.89,green:0.25,blue:0.23),.white,Color(red:0.25,green:0.56,blue:0.88),Color(red:0.31,green:0.77,blue:0.42)]
+    /// Gold leaf, washi white and a little vermilion.
+    private static let colors:[Color]=[Color(red:0.91,green:0.77,blue:0.42),Color(red:0.96,green:0.89,blue:0.66),Color(red:0.78,green:0.56,blue:0.18),Color(red:0.85,green:0.29,blue:0.2),Color(red:1,green:0.96,blue:0.88)]
     var body:some View {
         TimelineView(.animation(paused:!banner.animating)){timeline in
             Canvas{context,size in
@@ -174,28 +175,49 @@ struct GameBannerLayer:View {
                 case .start(let sub):
                     guard t<GameBanner.startDuration else{return};let k=t/GameBanner.startDuration
                     if !banner.reduced && t<GameBanner.flash{context.fill(Path(CGRect(origin:.zero,size:size)),with:.color(.white.opacity(0.86*(1-t/GameBanner.flash))))}
-                    let alpha=k<0.12 ? k/0.12:k>0.7 ? (1-k)/0.3:1,font=banner.reduced ? 44:44*(0.6+0.55*MoveEffect.easeOut(min(1,k/0.45)))
-                    context.fill(Path(roundedRect:CGRect(x:c.x-150,y:c.y-font*1.05,width:300,height:font*1.8+26),cornerRadius:14),with:.color(Color(red:0.12,green:0.02,blue:0.02).opacity(0.67*alpha)))
-                    context.draw(Text("対局開始").font(.system(size:font,weight:.black,design:.serif)).foregroundColor(Color(red:1,green:0.87,blue:0.55).opacity(alpha)),at:CGPoint(x:c.x,y:c.y-font*0.1))
-                    context.draw(Text(sub).font(.system(size:14,weight:.bold)).foregroundColor(.white.opacity(alpha)),at:CGPoint(x:c.x,y:c.y+font*0.55+8))
+                    let alpha=k<0.12 ? k/0.12:k>0.7 ? (1-k)/0.3:1,font=banner.reduced ? 50:50*(0.6+0.4*MoveEffect.easeOut(min(1,k/0.45)))
+                    InkBand.draw(context,left:0,right:size.width,centerY:c.y+4,half:44,alpha:alpha)
+                    InkBand.word(context,Text("対局開始").font(AppFonts.brush(font)),at:CGPoint(x:c.x,y:c.y-8),size:font,colors:[Color(red:0.98,green:0.92,blue:0.73),Color(red:0.83,green:0.64,blue:0.3)],alpha:alpha)
+                    context.draw(Text(sub).font(AppFonts.ui(12.5)).kerning(1).foregroundColor(Color(red:0.93,green:0.88,blue:0.78).opacity(0.9*alpha)),at:CGPoint(x:c.x,y:c.y+34))
                 case .end(let outcome,let detail):
                     if outcome>0 && !banner.reduced && t<GameBanner.confetti {
                         var rng=SeededRandom(seed:UInt64(banner.start.timeIntervalSince1970*1000))
                         for _ in 0..<90 {
                             let x0=rng.next()*size.width,y0=(-rng.next()*0.5)*size.height,vx=(rng.next()-0.5)*60,vy=120+rng.next()*160,rot=rng.next()*360,color=Self.colors[Int(rng.next()*5)%5]
                             let x=x0+vx*t,y=y0+vy*t+60*t*t;guard y<size.height else{continue}
-                            var p=context;p.translateBy(x:x,y:y);p.rotate(by:.degrees(rot+t*240));p.opacity=max(0,1-t/GameBanner.confetti)
-                            p.fill(Path(CGRect(x:-3.5,y:-2,width:7,height:4)),with:.color(color))
+                            var p=context;p.translateBy(x:x,y:y);p.rotate(by:.degrees(rot+t*160));p.opacity=0.92*max(0,1-t/GameBanner.confetti)
+                            // Each leaf turns as it falls: its width follows the cosine of its own phase.
+                            let turn=0.25+0.75*abs(cos(rot*0.05+t*5));p.fill(Path(CGRect(x:-3.6*turn,y:-2.4,width:7.2*turn,height:4.8)),with:.color(color))
                         }
                     }
-                    let k=banner.reduced ? 1:MoveEffect.easeOut(min(1,t/GameBanner.endText)),font=64*(banner.reduced ? 1:0.7+0.3*k),cy=c.y-40
-                    let word=outcome>0 ? "勝ち":outcome<0 ? "負け":"引き分け",color=outcome>0 ? Color(red:1,green:0.82,blue:0.35):outcome<0 ? Color(red:0.66,green:0.78,blue:1):.white
-                    context.fill(Path(roundedRect:CGRect(x:c.x-150,y:cy-font*0.95,width:300,height:font*1.45+30),cornerRadius:16),with:.color(Color(red:0.09,green:0.02,blue:0.02).opacity(0.78*k)))
-                    context.draw(Text(word).font(.system(size:font,weight:.black,design:.serif)).foregroundColor(color.opacity(k)),at:CGPoint(x:c.x,y:cy-font*0.1))
-                    context.draw(Text(detail).font(.system(size:14,weight:.bold)).foregroundColor(.white.opacity(k)),at:CGPoint(x:c.x,y:cy+font*0.5+8))
+                    let k=banner.reduced ? 1:MoveEffect.easeOut(min(1,t/GameBanner.endText)),font=74*(banner.reduced ? 1:0.72+0.28*k),cy=c.y-40
+                    let word=outcome>0 ? "勝ち":outcome<0 ? "負け":"引き分け"
+                    let colors=outcome>0 ? [Color(red:0.98,green:0.92,blue:0.72),Color(red:0.8,green:0.59,blue:0.25)]:outcome<0 ? [Color(red:0.9,green:0.88,blue:0.85),Color(red:0.6,green:0.64,blue:0.7)]:[Color(red:0.96,green:0.92,blue:0.84),Color(red:0.8,green:0.73,blue:0.6)]
+                    InkBand.draw(context,left:0,right:size.width,centerY:cy+4,half:62,alpha:k)
+                    InkBand.word(context,Text(word).font(AppFonts.brush(outcome==0 ? font*0.8:font)),at:CGPoint(x:c.x,y:cy-6),size:font,colors:colors,alpha:k)
+                    context.draw(Text(detail).font(AppFonts.ui(13)).kerning(0.8).foregroundColor(Color(red:0.93,green:0.88,blue:0.78).opacity(0.9*k)),at:CGPoint(x:c.x,y:cy+46))
                 }
             }
         }.allowsHitTesting(false).accessibilityHidden(true)
+    }
+}
+
+/// A dark band with gold hairlines, fading toward both ends: the stage for the start, check and result words.
+enum InkBand {
+    static func draw(_ context:GraphicsContext,left:CGFloat,right:CGFloat,centerY:CGFloat,half:CGFloat,alpha:Double){
+        let ink=Color(red:0.063,green:0.02,blue:0.016),gold=Color(red:0.87,green:0.72,blue:0.41)
+        let fill=Gradient(stops:[.init(color:ink.opacity(0),location:0),.init(color:ink.opacity(0.84*alpha),location:0.16),.init(color:ink.opacity(0.84*alpha),location:0.84),.init(color:ink.opacity(0),location:1)])
+        let line=Gradient(stops:[.init(color:gold.opacity(0),location:0),.init(color:gold.opacity(0.86*alpha),location:0.28),.init(color:gold.opacity(0.86*alpha),location:0.72),.init(color:gold.opacity(0),location:1)])
+        let start=CGPoint(x:left,y:centerY),end=CGPoint(x:right,y:centerY)
+        context.fill(Path(CGRect(x:left,y:centerY-half,width:right-left,height:half*2)),with:.linearGradient(fill,startPoint:start,endPoint:end))
+        context.fill(Path(CGRect(x:left,y:centerY-half,width:right-left,height:0.9)),with:.linearGradient(line,startPoint:start,endPoint:end))
+        context.fill(Path(CGRect(x:left,y:centerY+half-0.9,width:right-left,height:0.9)),with:.linearGradient(line,startPoint:start,endPoint:end))
+    }
+    /// A banner word filled with a vertical gradient (resolved text shading works from iOS 15).
+    static func word(_ context:GraphicsContext,_ text:Text,at p:CGPoint,size:CGFloat,colors:[Color],alpha:Double){
+        var c=context;c.opacity=alpha;var resolved=c.resolve(text)
+        resolved.shading = .linearGradient(Gradient(colors:colors),startPoint:CGPoint(x:p.x,y:p.y-size*0.5),endPoint:CGPoint(x:p.x,y:p.y+size*0.45))
+        c.draw(resolved,at:p)
     }
 }
 
@@ -211,14 +233,13 @@ struct MatchEndButtons:View {
     @EnvironmentObject var model:AppModel
     var body:some View {
         HStack(spacing:6){
-            button("もう一局",Color(red:0.75,green:0.22,blue:0.17),"end_again"){model.restartMatch();model.startMatch()}
-            button("検討する",Color(red:0.16,green:0.34,blue:0.5),"end_study"){if model.session.study.moves>0{model.archiveOffer=model.session.match}else{model.open(model.session.match)}}
-            button("ホームへ",Color(red:0.29,green:0.23,blue:0.17),"end_home"){model.enter(.home)}
+            button("もう一局",.primary,"end_again"){model.restartMatch();model.startMatch()}
+            button("検討する",.secondary,"end_study"){if model.session.study.moves>0{model.archiveOffer=model.session.match}else{model.open(model.session.match)}}
+            button("ホームへ",.secondary,"end_home"){model.enter(.home)}
         }.padding(.horizontal,8)
     }
-    func button(_ title:String,_ fill:Color,_ id:String,_ action:@escaping ()->Void)->some View {
-        Button(action:action){Text(title).font(.system(size:15,weight:.bold)).foregroundStyle(.white).frame(maxWidth:.infinity,minHeight:42)
-            .background(RoundedRectangle(cornerRadius:10).fill(fill)).overlay(RoundedRectangle(cornerRadius:10).stroke(Color(red:1,green:0.82,blue:0.48),lineWidth:1.4))}.buttonStyle(.plain).accessibilityIdentifier(id)
+    func button(_ title:String,_ kind:LacquerButtonStyle.Kind,_ id:String,_ action:@escaping ()->Void)->some View {
+        Button(action:action){Text(title).frame(maxWidth:.infinity)}.buttonStyle(LacquerButtonStyle(kind:kind,size:15,minHeight:42)).accessibilityIdentifier(id)
     }
 }
 

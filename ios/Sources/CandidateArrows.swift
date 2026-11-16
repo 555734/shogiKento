@@ -44,7 +44,7 @@ struct CandidateArrows:View {
                 let alpha=CandidateArrowGeometry.opacities[index]
                 context.fill(path,with:.color(Color(red:1,green:91.0/255,blue:24.0/255).opacity(alpha)))
                 context.stroke(path,with:.color(Color(red:1,green:225.0/255,blue:159.0/255).opacity(alpha)),lineWidth:unit*0.018)
-                if move.drop>0{context.draw(Text("打").font(.system(size:unit*0.23,weight:.bold)).foregroundColor(Color(red:139.0/255,green:45.0/255,blue:7.0/255).opacity(alpha)),at:CGPoint(x:target.x+unit*0.34,y:target.y-unit*0.32))}
+                if move.drop>0{context.draw(Text("打").font(AppFonts.ui(unit*0.23,bold:true)).foregroundColor(Color(red:139.0/255,green:45.0/255,blue:7.0/255).opacity(alpha)),at:CGPoint(x:target.x+unit*0.34,y:target.y-unit*0.32))}
             }
         }.clipped().allowsHitTesting(false)
             .accessibilityElement(children:.ignore).accessibilityLabel("候補手の矢印")
@@ -71,7 +71,7 @@ struct DropCandidateArrows:View {
                 context.stroke(Path(roundedRect:hand.insetBy(dx:-1,dy:-1),cornerRadius:4),with:.color(orange),lineWidth:max(1.2,unit*0.04))
                 context.fill(path,with:.color(orange))
                 context.stroke(path,with:.color(Color(red:1,green:225.0/255,blue:159.0/255).opacity(alpha)),lineWidth:unit*0.018)
-                context.draw(Text("打").font(.system(size:unit*0.23,weight:.bold)).foregroundColor(Color(red:139.0/255,green:45.0/255,blue:7.0/255).opacity(alpha)),at:CGPoint(x:target.x+unit*0.34,y:target.y-unit*0.32))
+                context.draw(Text("打").font(AppFonts.ui(unit*0.23,bold:true)).foregroundColor(Color(red:139.0/255,green:45.0/255,blue:7.0/255).opacity(alpha)),at:CGPoint(x:target.x+unit*0.34,y:target.y-unit*0.32))
             }
         }.allowsHitTesting(false).accessibilityHidden(true)
     }

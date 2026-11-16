@@ -36,18 +36,18 @@ struct HomeView:View {
     var body: some View {
         GeometryReader {geo in
             ScrollView {VStack(spacing:15){
-                Text("AI将棋検討").font(.system(size:58,weight:.bold,design:.serif)).minimumScaleFactor(0.6).lineLimit(1).foregroundStyle(LinearGradient(colors:[cream,gold,Color(red:0.7,green:0.43,blue:0.12)],startPoint:.top,endPoint:.bottom)).shadow(color:.black,radius:2,y:3).frame(height:max(140,min(240,geo.size.height*0.29))).padding(.horizontal,16).padding(.top,32).accessibilityLabel("AI将棋検討")
+                Text("AI将棋検討").font(AppFonts.mincho(58)).minimumScaleFactor(0.6).lineLimit(1).foregroundStyle(LinearGradient(colors:[cream,gold,Color(red:0.7,green:0.43,blue:0.12)],startPoint:.top,endPoint:.bottom)).shadow(color:.black,radius:2,y:3).frame(height:max(140,min(240,geo.size.height*0.29))).padding(.horizontal,16).padding(.top,32).accessibilityLabel("AI将棋検討")
                 Spacer(minLength:15)
-                Button{model.enter(.study)}label:{HStack(spacing:22){Image(systemName:"circle.dashed").font(.system(size:65,weight:.thin));VStack(alignment:.leading,spacing:15){Text("検討モード").font(.system(size:34,weight:.bold,design:.serif));Divider().overlay(gold);Text("合法手で検討・自由配置にも切替可").font(.system(size:12,design:.serif))}}.padding(24).frame(maxWidth:.infinity,minHeight:145).background(LinearGradient(colors:[Color(red:0.7,green:0.03,blue:0.04),burgundy],startPoint:.topLeading,endPoint:.bottomTrailing))}.buttonStyle(HomeCard()).accessibilityIdentifier("mode_study")
-                Button{model.enter(.match)}label:{HStack(spacing:22){Image(uiImage:AppAssets.piece(8)).resizable().scaledToFit().frame(width:56,height:66);VStack(alignment:.leading,spacing:8){Text("対局モード").font(.system(size:26,weight:.bold,design:.serif));Text("CPUと対局・時間や先後を設定").font(.system(size:14,design:.serif))};Spacer()}.padding(.horizontal,22).padding(.vertical,12).frame(maxWidth:.infinity).background(Color(red:0.12,green:0.09,blue:0.06))}.buttonStyle(HomeCard()).accessibilityIdentifier("mode_match")
-                Button{model.enter(.online)}label:{HStack(spacing:22){Image(systemName:"person.2.wave.2").font(.system(size:38,weight:.light)).frame(width:56,height:56);VStack(alignment:.leading,spacing:8){Text("オンライン対戦").font(.system(size:26,weight:.bold,design:.serif));Text("無料・P2Pで人と3分切れ負け").font(.system(size:14,design:.serif))};Spacer()}.padding(.horizontal,22).padding(.vertical,12).frame(maxWidth:.infinity).background(Color(red:0.06,green:0.1,blue:0.16))}.buttonStyle(HomeCard()).accessibilityIdentifier("mode_online")
-                Button{paste=true}label:{Label("棋譜を貼り付け",systemImage:"doc.text").font(.system(size:23,weight:.bold,design:.serif)).frame(maxWidth:.infinity,minHeight:60).background(Color.black.opacity(0.83))}.buttonStyle(HomeCard()).accessibilityIdentifier("open_paste")
-                Button{model.enter(.archive)}label:{Label("過去の棋譜",systemImage:"clock.arrow.circlepath").font(.system(size:22,weight:.bold,design:.serif)).frame(maxWidth:.infinity,minHeight:56).background(Color.black.opacity(0.83))}.buttonStyle(HomeCard()).accessibilityIdentifier("open_archive")
+                Button{model.enter(.study)}label:{HStack(spacing:22){Image(systemName:"circle.dashed").font(.system(size:65,weight:.thin));VStack(alignment:.leading,spacing:15){Text("検討モード").font(AppFonts.mincho(34));Divider().overlay(gold);Text("合法手で検討・自由配置にも切替可").font(AppFonts.mincho(12))}}.padding(24).frame(maxWidth:.infinity,minHeight:145).background(LinearGradient(colors:[Color(red:0.7,green:0.03,blue:0.04),burgundy],startPoint:.topLeading,endPoint:.bottomTrailing))}.buttonStyle(HomeCard()).accessibilityIdentifier("mode_study")
+                Button{model.enter(.match)}label:{HStack(spacing:22){Image(uiImage:AppAssets.piece(8)).resizable().scaledToFit().frame(width:56,height:66);VStack(alignment:.leading,spacing:8){Text("対局モード").font(AppFonts.mincho(26));Text("CPUと対局・時間や先後を設定").font(AppFonts.mincho(14))};Spacer()}.padding(.horizontal,22).padding(.vertical,12).frame(maxWidth:.infinity).background(Color(red:0.12,green:0.09,blue:0.06))}.buttonStyle(HomeCard()).accessibilityIdentifier("mode_match")
+                Button{model.enter(.online)}label:{HStack(spacing:22){Image(systemName:"person.2.wave.2").font(.system(size:38,weight:.light)).frame(width:56,height:56);VStack(alignment:.leading,spacing:8){Text("オンライン対戦").font(AppFonts.mincho(26));Text("無料・P2Pで人と3分切れ負け").font(AppFonts.mincho(14))};Spacer()}.padding(.horizontal,22).padding(.vertical,12).frame(maxWidth:.infinity).background(Color(red:0.06,green:0.1,blue:0.16))}.buttonStyle(HomeCard()).accessibilityIdentifier("mode_online")
+                Button{paste=true}label:{Label("棋譜を貼り付け",systemImage:"doc.text").font(AppFonts.mincho(23)).frame(maxWidth:.infinity,minHeight:60).background(Color.black.opacity(0.83))}.buttonStyle(HomeCard()).accessibilityIdentifier("open_paste")
+                Button{model.enter(.archive)}label:{Label("過去の棋譜",systemImage:"clock.arrow.circlepath").font(AppFonts.mincho(22)).frame(maxWidth:.infinity,minHeight:56).background(Color.black.opacity(0.83))}.buttonStyle(HomeCard()).accessibilityIdentifier("open_archive")
                 TestAdSlot(placement:"home")
                 Spacer(minLength:35)
             }.padding(.horizontal,20).frame(maxWidth:560,minHeight:geo.size.height).frame(maxWidth:.infinity)}
                 .background(Image(uiImage:AppAssets.image("home_background")).resizable().scaledToFill().ignoresSafeArea())
-                .overlay(alignment:.topTrailing){Button{settings=true}label:{VStack(spacing:2){Image(systemName:"gearshape").font(.title3);Text("設定").font(.caption2)}.frame(width:48,height:48).background(burgundy.opacity(0.8)).clipShape(RoundedRectangle(cornerRadius:9)).overlay(RoundedRectangle(cornerRadius:9).stroke(gold.opacity(0.7)))}.accessibilityIdentifier("settings").padding(12)}
+                .overlay(alignment:.topTrailing){Button{settings=true}label:{VStack(spacing:2){Image(systemName:"gearshape").font(.title3);Text("設定").font(AppFonts.style(11,.caption2))}.frame(width:48,height:48).background(burgundy.opacity(0.8)).clipShape(RoundedRectangle(cornerRadius:9)).overlay(RoundedRectangle(cornerRadius:9).stroke(gold.opacity(0.7)))}.accessibilityIdentifier("settings").padding(12)}
         }
     }
 }
@@ -66,11 +66,11 @@ struct BoardScreen:View {
                 .overlay{if model.screen == .match && model.session.winner != 0 && model.banner != nil{MatchEndButtons().offset(y:70).transition(.opacity.animation(.easeIn(duration:0.25).delay(model.reducedEffects ? 0:GameBanner.buttonsAfter)))}}
             if model.screen == .match{MatchPanel(side:model.humanSide)}else{HandView(side:1)}
             if model.screen == .match {
-                Text(model.session.winner != 0 ? model.session.match.result:!model.session.matchStarted ? "対局を開始してください":model.thinking ? "CPUの手番":"あなたの手番").font(.system(size:20,weight:.bold)).foregroundStyle(model.session.matchStarted && model.session.winner==0 && model.position.side==model.humanSide ? gold:cream).accessibilityIdentifier("match_status")
+                Text(model.session.winner != 0 ? model.session.match.result:!model.session.matchStarted ? "対局を開始してください":model.thinking ? "CPUの手番":"あなたの手番").font(AppFonts.ui(18,bold:true)).foregroundStyle(model.session.matchStarted && model.session.winner==0 && model.position.side==model.humanSide ? Color(red:0.94,green:0.83,blue:0.56):Lacquer.cream).accessibilityIdentifier("match_status")
                 Text("\(model.session.match.moves)手目").accessibilityIdentifier("match_ply")
-                if !model.session.matchStarted{Button{model.startMatch()}label:{Text("対局開始").font(.system(size:22,weight:.heavy)).padding(.horizontal,28).padding(.vertical,6)}.buttonStyle(.borderedProminent).tint(Color(red:0.75,green:0.22,blue:0.17)).accessibilityIdentifier("start_match")}
-                HStack {Button("やり直し"){restart=true};Spacer();Button("AI再試行"){model.scheduleCPU()}.disabled(!model.thinking && model.position.side==model.humanSide);Spacer();Button("投了"){resign=true}.disabled(!model.session.matchStarted || model.session.winner != 0)}.buttonStyle(.bordered).padding(.horizontal)
-                Button("対局設定 · \(model.matchOptions.minutes)分 / AI Lv.\(model.matchOptions.level) / あなた\(model.humanSide==1 ? "先手":"後手")"){matchSettings=true}.buttonStyle(.bordered).accessibilityIdentifier("match_settings").padding(.horizontal)
+                if !model.session.matchStarted{Button{model.startMatch()}label:{Text("対局開始").padding(.horizontal,28)}.buttonStyle(LacquerButtonStyle(kind:.primary,size:20,minHeight:46)).accessibilityIdentifier("start_match")}
+                HStack {Button("やり直し"){restart=true}.buttonStyle(LacquerButtonStyle());Spacer();Button("AI再試行"){model.scheduleCPU()}.buttonStyle(LacquerButtonStyle()).disabled(!model.thinking && model.position.side==model.humanSide);Spacer();Button("投了"){resign=true}.buttonStyle(LacquerButtonStyle(kind:.danger)).disabled(!model.session.matchStarted || model.session.winner != 0)}.padding(.horizontal)
+                Button("対局設定 · \(model.matchOptions.minutes)分 / AI Lv.\(model.matchOptions.level) / あなた\(model.humanSide==1 ? "先手":"後手")"){matchSettings=true}.buttonStyle(LacquerButtonStyle(size:13)).accessibilityIdentifier("match_settings").padding(.horizontal)
             }else{AnalysisView(showMoves:$showMoves)}
         }.overlayPreferenceValue(ArrowAnchorKey.self){anchors in GeometryReader{proxy in
             MoveEffectOverlay(anchors:anchors,proxy:proxy)
@@ -118,14 +118,13 @@ struct MatchPanel:View {
         HStack(spacing:10){
             PlayerIcon(side:side,lit:turn).frame(width:58,height:58)
             VStack(alignment:.leading,spacing:0){
-                Text(model.playerName(side)).font(.system(size:16,weight:.bold)).foregroundStyle(turn ? gold:cream.opacity(0.85)).lineLimit(1).minimumScaleFactor(0.7)
-                Text(String(format:"%02d:%02d",time/60,time%60)).font(.system(size:33,weight:.bold,design:.monospaced)).foregroundStyle(seconds<=30 ? Color(red:1,green:0.35,blue:0.29):turn ? .white:cream.opacity(0.75)).accessibilityIdentifier("match_clock_\(side)")
+                Text(model.playerName(side)).font(AppFonts.ui(15.5)).foregroundStyle(turn ? Lacquer.cream:Color(red:0.73,green:0.68,blue:0.62)).lineLimit(1).minimumScaleFactor(0.7)
+                Text(String(format:"%02d:%02d",time/60,time%60)).font(AppFonts.ui(33,bold:true).monospacedDigit()).foregroundStyle(seconds<=30 ? Color(red:1,green:0.39,blue:0.31):turn ? Color(red:1,green:0.97,blue:0.93):Color(red:0.66,green:0.62,blue:0.56)).accessibilityIdentifier("match_clock_\(side)")
             }.layoutPriority(1)
             Spacer(minLength:0)
-            ForEach(1..<8,id:\.self){p in let n=model.position.hands[side==1 ? 0:1][p],shown=model.shownHand(side,p);if n>0{Button{model.selectHand(p,side:side)}label:{ZStack(alignment:.bottomTrailing){Image(uiImage:AppAssets.piece(p*side)).resizable().scaledToFit().rotationEffect(.degrees(side*model.viewSide<0 ? 180:0));Text("\(shown)").font(.system(size:14,weight:.heavy)).foregroundStyle(.white).padding(.horizontal,3).background(.black.opacity(0.7))}.opacity(shown>0 ? 1:0).scaleEffect(model.handPop==HandSlot(side:side,piece:p) ? 1.28:1).frame(maxWidth:48,maxHeight:54).background(model.selectedHand==p && model.selectedSide==side ? .yellow.opacity(0.4):.clear)}.buttonStyle(.plain).anchorPreference(key:ArrowAnchorKey.self,value:.bounds){["hand_\(side)_\(p)":$0]}.accessibilityIdentifier("hand_\(side)_\(p)")}}
+            ForEach(1..<8,id:\.self){p in let n=model.position.hands[side==1 ? 0:1][p],shown=model.shownHand(side,p);if n>0{Button{model.selectHand(p,side:side)}label:{ZStack(alignment:.bottomTrailing){Image(uiImage:AppAssets.piece(p*side)).resizable().scaledToFit().rotationEffect(.degrees(side*model.viewSide<0 ? 180:0));Text("\(shown)").font(AppFonts.ui(14,bold:true)).foregroundStyle(.white).padding(.horizontal,3).background(.black.opacity(0.7))}.opacity(shown>0 ? 1:0).scaleEffect(model.handPop==HandSlot(side:side,piece:p) ? 1.28:1).frame(maxWidth:48,maxHeight:54).background(model.selectedHand==p && model.selectedSide==side ? .yellow.opacity(0.4):.clear)}.buttonStyle(.plain).anchorPreference(key:ArrowAnchorKey.self,value:.bounds){["hand_\(side)_\(p)":$0]}.accessibilityIdentifier("hand_\(side)_\(p)")}}
         }.foregroundStyle(cream).padding(.horizontal,10).frame(height:76)
-        .background(turn ? Color(red:0.33,green:0.2,blue:0.1).opacity(0.94):Color.black.opacity(0.82))
-        .overlay(Rectangle().strokeBorder(turn ? gold:Color.clear,lineWidth:2.4))
+        .inkCard(radius:8,lit:turn).overlay{if !turn{RoundedRectangle(cornerRadius:8).fill(.black.opacity(0.28)).allowsHitTesting(false)}}
         .anchorPreference(key:ArrowAnchorKey.self,value:.bounds){["handbar_\(side)":$0]}
     }
 }
@@ -139,18 +138,18 @@ struct PlayerIcon:View {
         ZStack{
             if art.size.width>0 {Image(uiImage:art).resizable().scaledToFill().clipShape(Circle())}
             else {Circle().fill(RadialGradient(colors:[me ? Color(red:0.29,green:0.53,blue:0.75):Color(red:Double(rgb>>16&255)/255,green:Double(rgb>>8&255)/255,blue:Double(rgb&255)/255),me ? Color(red:0.11,green:0.23,blue:0.36):Color(red:0.16,green:0.06,blue:0.05)],center:.init(x:0.5,y:0.35),startRadius:2,endRadius:40))
-                .overlay(Text(me ? "自":MatchOptions.cpuGlyphs[level-1]).font(.system(size:26,weight:.heavy,design:.serif)).foregroundStyle(Color(red:1,green:0.95,blue:0.84)))}
-        }.overlay(Circle().strokeBorder(lit ? gold:Color(red:0.61,green:0.53,blue:0.44),lineWidth:2.4))
-        .overlay(alignment:.bottom){Text(side==1 ? "先手":"後手").font(.system(size:9.5,weight:.bold)).foregroundStyle(side==1 ? .white:Color(red:0.16,green:0.1,blue:0.06)).padding(.horizontal,5).padding(.vertical,1).background(Capsule().fill(side==1 ? Color(white:0.12):Color(red:0.95,green:0.92,blue:0.85))).offset(y:5)}
+                .overlay(Text(me ? "自":MatchOptions.cpuGlyphs[level-1]).font(AppFonts.mincho(26)).foregroundStyle(Color(red:1,green:0.95,blue:0.84)))}
+        }.overlay(Circle().strokeBorder(lit ? Lacquer.hairlineLit:Color(red:0.63,green:0.53,blue:0.41).opacity(0.6),lineWidth:1.5))
+        .overlay(alignment:.bottom){Text(side==1 ? "先手":"後手").font(AppFonts.ui(9.5,bold:true)).foregroundStyle(side==1 ? .white:Color(red:0.16,green:0.1,blue:0.06)).padding(.horizontal,5).padding(.vertical,1).background(RoundedRectangle(cornerRadius:3).fill(side==1 ? Color(red:0.09,green:0.06,blue:0.05):Color(red:0.95,green:0.91,blue:0.83))).overlay(RoundedRectangle(cornerRadius:3).strokeBorder(Lacquer.hairlineLit.opacity(0.7),lineWidth:0.8)).offset(y:5)}
     }
 }
 struct HandView:View {
     @EnvironmentObject var model:AppModel
     let side:Int
     var body:some View {
-        HStack(spacing:5){VStack(alignment:.leading,spacing:3){Text(model.screen == .match || model.screen == .online ? ((side==model.viewSide ? "あなた":model.screen == .online ? "相手":"CPU")+"・"+(side==1 ? "先手":"後手")):(side==1 ? "先手":"後手")).font(.caption);if model.screen == .match{let time=max(0,Int(ceil(model.session.clocks[side==1 ? 0:1])));Text(String(format:"%02d:%02d",time/60,time%60)).font(.system(.title3,design:.monospaced))}else if model.screen == .online,let game=model.online.game{let time=Int(ceil(Double(max(0,game.remaining(side,AppModel.onlineNow)))/1000));Text(String(format:"%02d:%02d",time/60,time%60)).font(.system(.title3,design:.monospaced)).foregroundStyle(game.started && !game.over && game.turn==side ? gold:cream).accessibilityIdentifier("online_clock_\(side)")}else{Text("検討・時計なし").font(.caption2)}}.frame(minWidth:90,alignment:.leading)
+        HStack(spacing:5){VStack(alignment:.leading,spacing:3){Text(model.screen == .match || model.screen == .online ? ((side==model.viewSide ? "あなた":model.screen == .online ? "相手":"CPU")+"・"+(side==1 ? "先手":"後手")):(side==1 ? "先手":"後手")).font(AppFonts.style(12,.caption));if model.screen == .match{let time=max(0,Int(ceil(model.session.clocks[side==1 ? 0:1])));Text(String(format:"%02d:%02d",time/60,time%60)).font(.system(.title3,design:.monospaced))}else if model.screen == .online,let game=model.online.game{let time=Int(ceil(Double(max(0,game.remaining(side,AppModel.onlineNow)))/1000));Text(String(format:"%02d:%02d",time/60,time%60)).font(.system(.title3,design:.monospaced)).foregroundStyle(game.started && !game.over && game.turn==side ? gold:cream).accessibilityIdentifier("online_clock_\(side)")}else{Text("検討・時計なし").font(AppFonts.style(11,.caption2))}}.frame(minWidth:90,alignment:.leading)
             Spacer(minLength:0)
-            ForEach(1..<(model.screen == .study && model.freePlacement ? 9:8),id:\.self){p in let n=model.position.hands[side==1 ? 0:1][p],shown=model.shownHand(side,p);if n>0{Button{model.selectHand(p,side:side)}label:{ZStack(alignment:.bottomTrailing){Image(uiImage:AppAssets.piece(p*side)).resizable().scaledToFit().rotationEffect(.degrees(side*model.viewSide<0 ? 180:0));Text("\(shown)").font(.caption.bold()).foregroundStyle(.white).padding(2).background(.black.opacity(0.7))}.opacity(shown>0 ? 1:0).scaleEffect(model.handPop==HandSlot(side:side,piece:p) ? 1.28:1).frame(maxWidth:36,maxHeight:40).background(model.selectedHand==p && model.selectedSide==side ? .yellow.opacity(0.4):.clear)}.buttonStyle(.plain).anchorPreference(key:ArrowAnchorKey.self,value:.bounds){["hand_\(side)_\(p)":$0]}.accessibilityIdentifier("hand_\(side)_\(p)")}}
+            ForEach(1..<(model.screen == .study && model.freePlacement ? 9:8),id:\.self){p in let n=model.position.hands[side==1 ? 0:1][p],shown=model.shownHand(side,p);if n>0{Button{model.selectHand(p,side:side)}label:{ZStack(alignment:.bottomTrailing){Image(uiImage:AppAssets.piece(p*side)).resizable().scaledToFit().rotationEffect(.degrees(side*model.viewSide<0 ? 180:0));Text("\(shown)").font(AppFonts.style(12,.caption,bold:true)).foregroundStyle(.white).padding(2).background(.black.opacity(0.7))}.opacity(shown>0 ? 1:0).scaleEffect(model.handPop==HandSlot(side:side,piece:p) ? 1.28:1).frame(maxWidth:36,maxHeight:40).background(model.selectedHand==p && model.selectedSide==side ? .yellow.opacity(0.4):.clear)}.buttonStyle(.plain).anchorPreference(key:ArrowAnchorKey.self,value:.bounds){["hand_\(side)_\(p)":$0]}.accessibilityIdentifier("hand_\(side)_\(p)")}}
         }.foregroundStyle(cream).padding(.horizontal,8).frame(height:48).background(.black.opacity(0.72)).anchorPreference(key:ArrowAnchorKey.self,value:.bounds){["handbar_\(side)":$0]}
     }
 }
@@ -158,14 +157,14 @@ struct AnalysisView:View {
     @EnvironmentObject var model:AppModel
     @Binding var showMoves:Bool
     var body:some View {VStack(alignment:.leading,spacing:12){
-        HStack {Text(model.score.map{String(format:"先手 %.1f%%",$0.percentage)} ?? "先手 ―").foregroundStyle(.blue);Spacer();Text(model.score.map{String(format:"後手 %.1f%%",100-$0.percentage)} ?? "後手 ―").foregroundStyle(.red)}.font(.title3.bold())
-        Text("形勢の目安 · 深さ \(model.depth) / \(model.nodes)ノード").font(.caption2).foregroundStyle(.secondary)
+        HStack {Text(model.score.map{String(format:"先手 %.1f%%",$0.percentage)} ?? "先手 ―").foregroundStyle(.blue);Spacer();Text(model.score.map{String(format:"後手 %.1f%%",100-$0.percentage)} ?? "後手 ―").foregroundStyle(.red)}.font(AppFonts.style(20,.title3,bold:true))
+        Text("形勢の目安 · 深さ \(model.depth) / \(model.nodes)ノード").font(AppFonts.style(11,.caption2)).foregroundStyle(.secondary)
         HStack {Menu(model.freePlacement ? "自由配置 ▾":"合法手 ▾"){Button("通常移動（合法手のみ）"){model.setFree(false)};Button("自由配置"){model.setFree(true)}}.accessibilityIdentifier("study_operation");Spacer();Button("解析：\(model.position.side==1 ? "先手":"後手") ▾"){model.changeSide()}}
-        if model.candidates.isEmpty{Text(model.analysisStatus).font(.subheadline).accessibilityIdentifier("analysis_status");if !model.analyzing{Button("解析を再試行"){model.refreshAnalysis()}}}
-        else{ForEach(Array(model.candidates.enumerated()),id:\.offset){index,c in HStack{Text("\(index+1). \(model.position.notation(c.move))");Spacer();Text(c.score.text)}.font(.subheadline).accessibilityElement(children:.combine).accessibilityIdentifier("candidate_\(index)")};Text(model.analysisStatus).font(.caption2).accessibilityIdentifier("analysis_status")}
-        HStack {Text("評価値の推移（先手基準）");Spacer();Text("\(model.session.cursor)手目").accessibilityIdentifier("study_ply")}.font(.caption)
+        if model.candidates.isEmpty{Text(model.analysisStatus).font(AppFonts.style(15,.subheadline)).accessibilityIdentifier("analysis_status");if !model.analyzing{Button("解析を再試行"){model.refreshAnalysis()}}}
+        else{ForEach(Array(model.candidates.enumerated()),id:\.offset){index,c in HStack{Text("\(index+1). \(model.position.notation(c.move))");Spacer();Text(c.score.text)}.font(AppFonts.style(15,.subheadline)).accessibilityElement(children:.combine).accessibilityIdentifier("candidate_\(index)")};Text(model.analysisStatus).font(AppFonts.style(11,.caption2)).accessibilityIdentifier("analysis_status")}
+        HStack {Text("評価値の推移（先手基準）");Spacer();Text("\(model.session.cursor)手目").accessibilityIdentifier("study_ply")}.font(AppFonts.style(12,.caption))
         EvaluationGraph().frame(height:85)
-        HStack(spacing:5){ForEach(Array(["初期","前へ","次へ","最終","手順"].enumerated()),id:\.offset){i,label in Button{switch i{case 0:model.seek(0);case 1:model.seek(model.session.cursor-1);case 2:model.seek(model.session.cursor+1);case 3:model.seek(model.session.study.moves);default:showMoves=true}}label:{NavLabel(label:label,forks:i==2 ? model.session.studyBranchesAfterCursor:0)}.font(.subheadline).frame(maxWidth:.infinity).buttonStyle(.bordered).accessibilityIdentifier("ply_\(i)")}}
+        HStack(spacing:5){ForEach(Array(["初期","前へ","次へ","最終","手順"].enumerated()),id:\.offset){i,label in Button{switch i{case 0:model.seek(0);case 1:model.seek(model.session.cursor-1);case 2:model.seek(model.session.cursor+1);case 3:model.seek(model.session.study.moves);default:showMoves=true}}label:{NavLabel(label:label,forks:i==2 ? model.session.studyBranchesAfterCursor:0)}.font(AppFonts.style(15,.subheadline)).frame(maxWidth:.infinity).buttonStyle(.bordered).accessibilityIdentifier("ply_\(i)")}}
     }.padding(14).background(.black.opacity(0.78)).foregroundStyle(cream)}
 }
 struct EvaluationGraph:View {
@@ -180,7 +179,7 @@ struct EvaluationGraph:View {
 struct NavLabel:View {
     let label:String
     let forks:Int
-    var body:some View {VStack(spacing:1){Text(label);if forks>0{Text("◆分岐\(forks)通り").font(.system(size:9,weight:.bold)).foregroundStyle(gold)}}}
+    var body:some View {VStack(spacing:1){Text(label);if forks>0{Text("◆分岐\(forks)通り").font(AppFonts.ui(9,bold:true)).foregroundStyle(gold)}}}
 }
 struct MoveListView:View {
     @EnvironmentObject var model:AppModel
@@ -189,7 +188,7 @@ struct MoveListView:View {
     var title:String {model.session.studyLine.last?.offMain==true ? "手順（変化を表示中）":"手順（本譜）"}
     var body:some View {NavigationStack{ScrollViewReader{proxy in
         List {
-            Section {Text("◆の手には分岐があります。下の「分岐」タブをタップすると展開・収納できます。「次へ」「最終」は表示中の手順を進み、分岐を選んでいない所では本譜（元の棋譜）を進みます。").font(.caption).foregroundStyle(.secondary)}
+            Section {Text("◆の手には分岐があります。下の「分岐」タブをタップすると展開・収納できます。「次へ」「最終」は表示中の手順を進み、分岐を選んでいない所では本譜（元の棋譜）を進みます。").font(AppFonts.style(12,.caption)).foregroundStyle(.secondary)}
             ForEach(model.session.studyLine){row in MoveLineEntry(row:row,expanded:binding(row.ply)){dismiss()}}
         }.listStyle(.plain).onAppear{proxy.scrollTo(model.session.cursor,anchor:.center)}
     }.navigationTitle(title).toolbar{Button("閉じる"){dismiss()}}}}
@@ -220,9 +219,9 @@ struct BranchTab:View {
     var body:some View {
         Button{withAnimation(.easeInOut(duration:0.2)){expanded.toggle()}}label:{HStack(spacing:6){
             Image(systemName:expanded ? "chevron.down":"chevron.right").font(.caption.bold())
-            Text(text).font(.subheadline.bold())
+            Text(text).font(AppFonts.style(15,.subheadline,bold:true))
             Spacer()
-            Text(expanded ? "収納":"展開").font(.caption)
+            Text(expanded ? "収納":"展開").font(AppFonts.style(12,.caption))
         }.foregroundStyle(Color(red:0.54,green:0.23,blue:0.07)).padding(.horizontal,12).padding(.vertical,7)
          .background(Capsule().fill(expanded ? Color(red:0.97,green:0.79,blue:0.55):Color(red:0.99,green:0.91,blue:0.82)))
          .overlay(Capsule().stroke(Color(red:0.78,green:0.45,blue:0.18),lineWidth:1.5))}
@@ -255,9 +254,9 @@ struct ArchiveView:View {
     var body:some View {ScrollView{VStack(alignment:.leading,spacing:12){
         if model.records.isEmpty{Text("まだ棋譜がありません。取り込みや対局をすると自動保存されます。").padding()}
         if model.damagedRecords>0{Text("読み込めない棋譜が\(model.damagedRecords)件あります。").foregroundStyle(.orange)}
-        ForEach(model.records){r in Button{if model.session.study.moves>0{model.archiveOffer=r}else{model.open(r)}}label:{VStack(alignment:.leading,spacing:7){Text("\(r.source=="match" ? "対局":"コピー") · \(r.title)").font(.title3.bold());Text("\(r.sente) 対 \(r.gote)");Text("\(r.moves)手 · \(r.result)");Text(r.created,style:.date).font(.caption)}.frame(maxWidth:.infinity,alignment:.leading).padding(16).foregroundStyle(Color(red:0.25,green:0.14,blue:0.07)).background(LinearGradient(colors:[cream,gold],startPoint:.leading,endPoint:.trailing)).clipShape(RoundedRectangle(cornerRadius:12))}.accessibilityIdentifier("record_\(r.id)")}
+        ForEach(model.records){r in Button{if model.session.study.moves>0{model.archiveOffer=r}else{model.open(r)}}label:{VStack(alignment:.leading,spacing:7){Text("\(r.source=="match" ? "対局":"コピー") · \(r.title)").font(AppFonts.style(20,.title3,bold:true));Text("\(r.sente) 対 \(r.gote)");Text("\(r.moves)手 · \(r.result)");Text(r.created,style:.date).font(AppFonts.style(12,.caption))}.frame(maxWidth:.infinity,alignment:.leading).padding(16).foregroundStyle(Color(red:0.25,green:0.14,blue:0.07)).background(LinearGradient(colors:[cream,gold],startPoint:.leading,endPoint:.trailing)).clipShape(RoundedRectangle(cornerRadius:12))}.accessibilityIdentifier("record_\(r.id)")}
         TestAdSlot(placement:"archive")
-        Text("端末内に保存されています。棋譜を選ぶと検討で開きます。").font(.caption).foregroundStyle(.secondary)
+        Text("端末内に保存されています。棋譜を選ぶと検討で開きます。").font(AppFonts.style(12,.caption)).foregroundStyle(.secondary)
     }.padding(16).frame(maxWidth:650).frame(maxWidth:.infinity)}}
 }
 struct PasteView:View {
@@ -265,7 +264,7 @@ struct PasteView:View {
     @EnvironmentObject var model:AppModel
     @Environment(\.dismiss) var dismiss
     @State private var text=""
-    var body:some View{NavigationStack{VStack(alignment:.leading,spacing:18){Text("iOSのプライバシー保護に合わせ、下の貼り付けボタンから棋譜を取り込みます。").font(.subheadline);PasteButton(payloadType:String.self){values in if let first=values.first{text=first}}.accessibilityIdentifier("system_paste");TextEditor(text:$text).accessibilityIdentifier("kif_text").font(.system(.body,design:.monospaced)).overlay(RoundedRectangle(cornerRadius:8).stroke(gold.opacity(0.5)));Button("棋譜を読み込む"){onLoad(text)}.buttonStyle(.borderedProminent).disabled(text.isEmpty).accessibilityIdentifier("load_kif")}.padding().navigationTitle("棋譜を貼り付け").toolbar{Button("閉じる"){dismiss()}}}}
+    var body:some View{NavigationStack{VStack(alignment:.leading,spacing:18){Text("iOSのプライバシー保護に合わせ、下の貼り付けボタンから棋譜を取り込みます。").font(AppFonts.style(15,.subheadline));PasteButton(payloadType:String.self){values in if let first=values.first{text=first}}.accessibilityIdentifier("system_paste");TextEditor(text:$text).accessibilityIdentifier("kif_text").font(.system(.body,design:.monospaced)).overlay(RoundedRectangle(cornerRadius:8).stroke(gold.opacity(0.5)));Button("棋譜を読み込む"){onLoad(text)}.buttonStyle(.borderedProminent).disabled(text.isEmpty).accessibilityIdentifier("load_kif")}.padding().navigationTitle("棋譜を貼り付け").toolbar{Button("閉じる"){dismiss()}}}}
 }
 struct SettingsView:View {
     @EnvironmentObject var model:AppModel
@@ -278,8 +277,8 @@ struct SettingsView:View {
     @AppStorage("reduced_effects") private var reducedEffects=false
     @State private var licenses=false
     @ObservedObject private var adPrivacy=AdPrivacy.shared
-    var body:some View{NavigationStack{Form{Section{Toggle("効果音（SE）",isOn:$sound).accessibilityIdentifier("sound");Text("効果音の音量 \(Int(volume))%");Slider(value:$volume,in:0...100,step:1).accessibilityIdentifier("volume");Button("効果音を試す"){model.previewSound()}.disabled(!sound || volume==0);Toggle("着手時のバイブレーション",isOn:$vibration).accessibilityIdentifier("vibration");Button("振動を試す"){UIImpactFeedbackGenerator(style:.light).impactOccurred()}.disabled(!vibration);Toggle("演出を減らす（低スペック端末向け）",isOn:$reducedEffects).accessibilityIdentifier("reduced_effects")}header:{Text("音・振動・演出の設定")}footer:{Text("設定は自動保存されます。音量・振動・消音は端末本体の設定にも従います。")};Section{Button(coffee.owned ? "☕ コーヒー応援・購入済み／復元":"☕ コーヒーを奢る・広告除去と最強AI"){coffeeSheet=true}.accessibilityIdentifier("coffee_settings")};Section{Text(AdPrivacy.testing ? "この版はGoogleの公式テスト広告のみを表示します。広告の取得で通信が発生します。本番配信・収益化は行いません。":"広告は年齢に配慮した内容に制限し、パーソナライズしません。広告の取得には通信が必要です。").font(.caption);if adPrivacy.optionsRequired{Button("広告のプライバシー設定"){adPrivacy.showOptions()}.accessibilityIdentifier("ad_privacy")}};Section{Button("ライセンスとAIについて"){licenses=true}}}.navigationTitle("設定").toolbar{Button("閉じる"){dismiss()}.accessibilityIdentifier("settings_close")}.sheet(isPresented:$coffeeSheet){CoffeeView()}.sheet(isPresented:$licenses){NavigationStack{ScrollView{Text(licenseText).font(.caption.monospaced()).padding()}.navigationTitle("ライセンス").toolbar{Button("閉じる"){licenses=false}}}}}}
-    var licenseText:String {let header="やねうら王 9.80git / つようら王11micro\nエンジン GPL-3.0 / 評価関数 MIT\n対応ソースとビルド手順：https://github.com/555734/shogiKento\n\n";return header+["YaneuraOu-GPL-3.0","TsuyouraOu11micro-MIT"].compactMap{Bundle.main.url(forResource:$0,withExtension:"txt",subdirectory:"GameAssets/licenses").flatMap{try? String(contentsOf:$0,encoding:.utf8)}}.joined(separator:"\n\n")}
+    var body:some View{NavigationStack{Form{Section{Toggle("効果音（SE）",isOn:$sound).accessibilityIdentifier("sound");Text("効果音の音量 \(Int(volume))%");Slider(value:$volume,in:0...100,step:1).accessibilityIdentifier("volume");Button("効果音を試す"){model.previewSound()}.disabled(!sound || volume==0);Toggle("着手時のバイブレーション",isOn:$vibration).accessibilityIdentifier("vibration");Button("振動を試す"){UIImpactFeedbackGenerator(style:.light).impactOccurred()}.disabled(!vibration);Toggle("演出を減らす（低スペック端末向け）",isOn:$reducedEffects).accessibilityIdentifier("reduced_effects")}header:{Text("音・振動・演出の設定")}footer:{Text("設定は自動保存されます。音量・振動・消音は端末本体の設定にも従います。")};Section{Button(coffee.owned ? "☕ コーヒー応援・購入済み／復元":"☕ コーヒーを奢る・広告除去と最強AI"){coffeeSheet=true}.accessibilityIdentifier("coffee_settings")};Section{Text(AdPrivacy.testing ? "この版はGoogleの公式テスト広告のみを表示します。広告の取得で通信が発生します。本番配信・収益化は行いません。":"広告は年齢に配慮した内容に制限し、パーソナライズしません。広告の取得には通信が必要です。").font(AppFonts.style(12,.caption));if adPrivacy.optionsRequired{Button("広告のプライバシー設定"){adPrivacy.showOptions()}.accessibilityIdentifier("ad_privacy")}};Section{Button("ライセンスとAIについて"){licenses=true}}}.navigationTitle("設定").toolbar{Button("閉じる"){dismiss()}.accessibilityIdentifier("settings_close")}.sheet(isPresented:$coffeeSheet){CoffeeView()}.sheet(isPresented:$licenses){NavigationStack{ScrollView{Text(licenseText).font(.caption.monospaced()).padding()}.navigationTitle("ライセンス").toolbar{Button("閉じる"){licenses=false}}}}}}
+    var licenseText:String {let header="やねうら王 9.80git / つようら王11micro\nエンジン GPL-3.0 / 評価関数 MIT\n対応ソースとビルド手順：https://github.com/555734/shogiKento\n\n";return header+["YaneuraOu-GPL-3.0","TsuyouraOu11micro-MIT","zenkakugothicnew-OFL","shipporimincho-OFL","yujisyuku-OFL"].compactMap{Bundle.main.url(forResource:$0,withExtension:"txt",subdirectory:"GameAssets/licenses").flatMap{try? String(contentsOf:$0,encoding:.utf8)}}.joined(separator:"\n\n")}
 }
 
 /// On-board promotion choice replacing the OS dialog: the promoted and the unpromoted piece side by side over the
@@ -295,16 +294,16 @@ struct PromotionPicker:View {
             HStack(spacing:gap){
                 option(sign*(abs(piece)+8),"成る",pro,width:w,height:h,primary:true).accessibilityIdentifier("promote_yes")
                 option(piece,"成らない",plain,width:w,height:h,primary:false).accessibilityIdentifier("promote_no")
-            }.padding(6).background(RoundedRectangle(cornerRadius:10).fill(Color(red:0.13,green:0.03,blue:0.03).opacity(0.82)))
+            }.padding(6).inkCard(radius:9)
             .position(x:left+total/2,y:top+h/2+8)
         }
     }
     func option(_ piece:Int,_ label:String,_ move:Move,width:CGFloat,height:CGFloat,primary:Bool)->some View {
         Button{model.commit(move)}label:{VStack(spacing:2){
             Image(uiImage:AppAssets.piece(piece)).resizable().scaledToFit().rotationEffect(.degrees(piece*model.viewSide<0 ? 180:0)).padding(4)
-                .frame(width:width,height:height).background(RoundedRectangle(cornerRadius:8).fill(Color(red:1,green:0.94,blue:0.84)))
-                .overlay(RoundedRectangle(cornerRadius:8).stroke(primary ? Color(red:0.88,green:0.22,blue:0.17):Color(red:0.71,green:0.54,blue:0.28),lineWidth:2))
-            Text(label).font(.system(size:11,weight:.bold)).foregroundStyle(primary ? Color(red:1,green:0.7,blue:0.66):.white)
+                .frame(width:width,height:height).background(RoundedRectangle(cornerRadius:5).fill(LinearGradient(colors:[Color(red:0.97,green:0.94,blue:0.86),primary ? Color(red:0.93,green:0.86,blue:0.75):Color(red:0.9,green:0.85,blue:0.76)],startPoint:.top,endPoint:.bottom)))
+                .overlay(RoundedRectangle(cornerRadius:5).stroke(primary ? Color(red:0.78,green:0.25,blue:0.17):Color(red:0.66,green:0.53,blue:0.31),lineWidth:primary ? 1.8:1))
+            Text(label).font(AppFonts.ui(11,bold:true)).foregroundStyle(primary ? Color(red:1,green:0.71,blue:0.63):Lacquer.cream)
         }}.buttonStyle(.plain)
     }
 }

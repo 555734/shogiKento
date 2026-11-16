@@ -153,23 +153,23 @@ struct OnlineScreen:View {
     }
     private var timePicker:some View {
         HStack(spacing:8){ForEach(OnlineGame.timeControls,id:\.self){tc in let on=model.online.timeControl==tc
-            Button{model.chooseTimeControl(tc)}label:{Text(OnlineGame.label(tc)).font(.system(size:15,weight:.bold)).foregroundStyle(on ? burgundy:cream).frame(maxWidth:.infinity,minHeight:38)
+            Button{model.chooseTimeControl(tc)}label:{Text(OnlineGame.label(tc)).font(AppFonts.ui(15,bold:true)).foregroundStyle(on ? burgundy:cream).frame(maxWidth:.infinity,minHeight:38)
                 .background(Capsule().fill(on ? gold:Color.black.opacity(0.6))).overlay(Capsule().stroke(gold.opacity(on ? 1:0.5),lineWidth:1.2))}
                 .buttonStyle(.plain).disabled(model.online.seekMode>=0).accessibilityIdentifier("online_tc_\(tc)")}}
     }
     private func seekButton(_ title:String,_ caption:String,_ mode:Int,_ id:String,_ action:@escaping ()->Void)->some View {
         let active=model.online.seekMode==mode
-        return Button{if model.online.seekMode<0{action()}}label:{VStack(spacing:6){Text(title+(active ? "・待機中":"")).font(.system(size:22,weight:.bold,design:.serif)).foregroundStyle(active ? gold:cream);Text(caption).font(.system(size:13,design:.serif))}.frame(maxWidth:.infinity,minHeight:78).background(Color.black.opacity(0.8))}
+        return Button{if model.online.seekMode<0{action()}}label:{VStack(spacing:6){Text(title+(active ? "・待機中":"")).font(AppFonts.mincho(22)).foregroundStyle(active ? gold:cream);Text(caption).font(AppFonts.mincho(13))}.frame(maxWidth:.infinity,minHeight:78).background(Color.black.opacity(0.8))}
             .buttonStyle(HomeCard()).disabled(model.online.seekMode>=0 && !active).accessibilityIdentifier(id)
     }
     private var statusPanel:some View {
         VStack(alignment:.leading,spacing:6){
-            Text(model.net==nil ? "未接続":"公開リレー接続 \(model.online.relaysOpen)/\(model.online.relaysTotal)"+(model.online.relaysOpen==0 ? "（接続中…）":"")).font(.caption).foregroundStyle(model.online.relaysOpen>0 ? .green:.yellow).accessibilityIdentifier("online_relays")
-            Text(model.online.network.isEmpty ? "UDP候補を収集しています…":model.online.network).font(.caption2).foregroundStyle(cream.opacity(0.85))
-            if model.online.seekMode==Netplay.host,let room=model.online.roomCode{Text(verbatim:"ルームコード \(room.prefix(3)) \(room.suffix(3))（\(OnlineGame.label(model.online.timeControl))）").font(.system(size:22,weight:.bold,design:.monospaced)).foregroundStyle(gold).frame(maxWidth:.infinity).accessibilityIdentifier("online_room_code")}
-            Text(model.online.seekMode<0 ? (model.online.roomPage ? "ルームを作るか、コードで参加してください":"持ち時間を選んでランダム対戦"):model.online.status.isEmpty ? "開始しています…":model.online.status).font(.subheadline).frame(maxWidth:.infinity).accessibilityIdentifier("online_lobby_status")
-            if model.online.seekMode==Netplay.guest,let room=model.online.roomCode{Text(verbatim:"ルーム \(room)").font(.caption).frame(maxWidth:.infinity)}
-            if !model.online.notice.isEmpty{Text(model.online.notice).font(.caption).foregroundStyle(.orange).frame(maxWidth:.infinity).accessibilityIdentifier("online_notice")}
+            Text(model.net==nil ? "未接続":"公開リレー接続 \(model.online.relaysOpen)/\(model.online.relaysTotal)"+(model.online.relaysOpen==0 ? "（接続中…）":"")).font(AppFonts.style(12,.caption)).foregroundStyle(model.online.relaysOpen>0 ? .green:.yellow).accessibilityIdentifier("online_relays")
+            Text(model.online.network.isEmpty ? "UDP候補を収集しています…":model.online.network).font(AppFonts.style(11,.caption2)).foregroundStyle(cream.opacity(0.85))
+            if model.online.seekMode==Netplay.host,let room=model.online.roomCode{Text(verbatim:"ルームコード \(room.prefix(3)) \(room.suffix(3))（\(OnlineGame.label(model.online.timeControl))）").font(AppFonts.ui(22,bold:true).monospacedDigit()).foregroundStyle(gold).frame(maxWidth:.infinity).accessibilityIdentifier("online_room_code")}
+            Text(model.online.seekMode<0 ? (model.online.roomPage ? "ルームを作るか、コードで参加してください":"持ち時間を選んでランダム対戦"):model.online.status.isEmpty ? "開始しています…":model.online.status).font(AppFonts.style(15,.subheadline)).frame(maxWidth:.infinity).accessibilityIdentifier("online_lobby_status")
+            if model.online.seekMode==Netplay.guest,let room=model.online.roomCode{Text(verbatim:"ルーム \(room)").font(AppFonts.style(12,.caption)).frame(maxWidth:.infinity)}
+            if !model.online.notice.isEmpty{Text(model.online.notice).font(AppFonts.style(12,.caption)).foregroundStyle(.orange).frame(maxWidth:.infinity).accessibilityIdentifier("online_notice")}
             if model.online.seekMode>=0{Button("キャンセル"){model.cancelSeek()}.buttonStyle(.bordered).frame(maxWidth:.infinity).accessibilityIdentifier("online_cancel")}
         }.padding(14).foregroundStyle(cream).background(.black.opacity(0.78)).clipShape(RoundedRectangle(cornerRadius:10))
     }
@@ -178,23 +178,23 @@ struct OnlineScreen:View {
     }
     private var mainLobby:some View {
         VStack(spacing:12){
-            Text("3分／10分切れ負け・無料のオンライン対戦").font(.system(size:20,weight:.bold,design:.serif)).foregroundStyle(gold).padding(.top,12)
-            Button{accountSheet=true}label:{HStack{VStack(alignment:.leading,spacing:4){Text(model.account.name).font(.headline);Text(verbatim:"レート \(model.account.ratingText) · \(model.account.wins)勝\(model.account.losses)敗\(model.account.draws)分").font(.caption)};Spacer();Label("アカウント",systemImage:"person.crop.circle").font(.subheadline)}
+            Text("3分／10分切れ負け・無料のオンライン対戦").font(AppFonts.mincho(20)).foregroundStyle(gold).padding(.top,12)
+            Button{accountSheet=true}label:{HStack{VStack(alignment:.leading,spacing:4){Text(model.account.name).font(AppFonts.style(17,.headline,bold:true));Text(verbatim:"レート \(model.account.ratingText) · \(model.account.wins)勝\(model.account.losses)敗\(model.account.draws)分").font(AppFonts.style(12,.caption))};Spacer();Label("アカウント",systemImage:"person.crop.circle").font(AppFonts.style(15,.subheadline))}
                 .padding(12).foregroundStyle(cream).background(Color.black.opacity(0.78)).clipShape(RoundedRectangle(cornerRadius:10))}.buttonStyle(.plain).accessibilityIdentifier("online_account")
             timePicker
             seekButton("ランダム対戦","レート戦・近いレートの相手と対局",Netplay.quick,"online_quick"){model.startSeek(Netplay.quick,code:nil)}
-            Button{model.openRoomPage(true)}label:{Text("ルームで友だちと対局 ›").font(.footnote.bold()).foregroundStyle(gold).padding(.horizontal,16).padding(.vertical,7).background(Capsule().fill(Color.black.opacity(0.45))).overlay(Capsule().stroke(gold.opacity(0.6),lineWidth:1))}
+            Button{model.openRoomPage(true)}label:{Text("ルームで友だちと対局 ›").font(AppFonts.style(13,.footnote,bold:true)).foregroundStyle(gold).padding(.horizontal,16).padding(.vertical,7).background(Capsule().fill(Color.black.opacity(0.45))).overlay(Capsule().stroke(gold.opacity(0.6),lineWidth:1))}
                 .buttonStyle(.plain).accessibilityIdentifier("online_room_page")
             statusPanel
-            Text("サーバーを使わず、公開Nostrリレーで相手を探してP2P（UDP）で直接つながります。直結できない回線ではリレー経由で対局を続けます。Android版とも対戦できます。対戦相手にはあなたのIPアドレスが伝わります。対局中はアプリを離れても時計は止まりません。").font(.caption2).foregroundStyle(cream.opacity(0.8)).padding(.horizontal,6)
+            Text("サーバーを使わず、公開Nostrリレーで相手を探してP2P（UDP）で直接つながります。直結できない回線ではリレー経由で対局を続けます。Android版とも対戦できます。対戦相手にはあなたのIPアドレスが伝わります。対局中はアプリを離れても時計は止まりません。").font(AppFonts.style(11,.caption2)).foregroundStyle(cream.opacity(0.8)).padding(.horizontal,6)
         }.padding(.horizontal,16)
     }
     private var roomPage:some View {
         VStack(spacing:12){
-            HStack{Button{model.openRoomPage(false)}label:{Label("戻る",systemImage:"chevron.left").font(.subheadline.bold()).foregroundStyle(cream)}.buttonStyle(.plain).accessibilityIdentifier("online_room_back");Spacer()}.padding(.top,8)
-            Text("ルーム対局").font(.system(size:24,weight:.bold,design:.serif)).foregroundStyle(gold)
-            Text("6桁のコードで友だちと対局・レート変動なし").font(.caption).foregroundStyle(cream)
-            Text("持ち時間（ルームを作る側が決めます）").font(.caption2).foregroundStyle(cream.opacity(0.85))
+            HStack{Button{model.openRoomPage(false)}label:{Label("戻る",systemImage:"chevron.left").font(AppFonts.style(15,.subheadline,bold:true)).foregroundStyle(cream)}.buttonStyle(.plain).accessibilityIdentifier("online_room_back");Spacer()}.padding(.top,8)
+            Text("ルーム対局").font(AppFonts.mincho(24)).foregroundStyle(gold)
+            Text("6桁のコードで友だちと対局・レート変動なし").font(AppFonts.style(12,.caption)).foregroundStyle(cream)
+            Text("持ち時間（ルームを作る側が決めます）").font(AppFonts.style(11,.caption2)).foregroundStyle(cream.opacity(0.85))
             timePicker
             seekButton("ルームを作る","6桁のコードを友だちに伝えます",Netplay.host,"online_host"){model.hostRoom()}
             seekButton("ルームに参加","友だちのコードを入力します",Netplay.guest,"online_join"){code="";joining=true}

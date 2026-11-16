@@ -81,7 +81,7 @@ struct CoffeeView:View {
     @EnvironmentObject var coffee:CoffeeStore
     @Environment(\.dismiss) var dismiss
     var body:some View {NavigationStack{Form{
-        Section {Text("コーヒーを1杯奢って、開発を応援").font(.title2.bold());Label("すべての広告を非表示",systemImage:"rectangle.slash");Label("対局AIの最強レベル Lv.10を解放",systemImage:"crown");Text("買い切り・追加料金なし。同じストアのアカウントで復元できます。AndroidとiOSの購入は共通ではありません。").font(.caption)}
+        Section {Text("コーヒーを1杯奢って、開発を応援").font(AppFonts.style(22,.title2,bold:true));Label("すべての広告を非表示",systemImage:"rectangle.slash");Label("対局AIの最強レベル Lv.10を解放",systemImage:"crown");Text("買い切り・追加料金なし。同じストアのアカウントで復元できます。AndroidとiOSの購入は共通ではありません。").font(AppFonts.style(12,.caption))}
         Section {Text(coffee.owned ? "購入済みです。ありがとうございます。":coffee.message).accessibilityIdentifier("coffee_status");Button(coffee.owned ? "購入済み":coffee.price.map{"コーヒーを奢る · \($0)"} ?? "価格を確認中（日本向け予定200円）"){Task{await coffee.buy()}}.disabled(!coffee.canBuy).accessibilityIdentifier("coffee_buy");Button("購入を復元する"){Task{await coffee.restore()}}.disabled(coffee.busy).accessibilityIdentifier("coffee_restore")}
         Section {Toggle("今後、起動時に表示しない",isOn:$coffee.hideOffer).accessibilityIdentifier("coffee_hide_offer")}
     }.navigationTitle("☕ コーヒーを奢る").toolbar{Button("閉じる"){dismiss()}.disabled(coffee.busy).accessibilityIdentifier("coffee_close")}.onAppear{coffee.offerPending=false}.task{if !coffee.fixture{await coffee.loadProduct()}}}}
