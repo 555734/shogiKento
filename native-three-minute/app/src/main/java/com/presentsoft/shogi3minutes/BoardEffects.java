@@ -85,7 +85,7 @@ final class BoardEffects {
   if(checkRow>=0)drawCheckBanner(c,g,t);
  }
  /** The checked king's square blinks red three times (solid when effects are reduced). */
- void drawCheckSquare(Canvas c,RectF r,long t){if(t>=CHECK+TWEEN)return;float a=reduced?.6f:(float)Math.abs(Math.sin(Math.PI*3*t/(double)(CHECK+TWEEN)));
+ void drawCheckSquare(Canvas c,RectF r,long t){if(t>=CHECK+TWEEN)return;float a=reduced?.6f:(float)Math.abs(Math.sin(Math.PI*3*t/(double)(CHECK+TWEEN)));if(a<.004f)return;
   paint.reset();paint.setAntiAlias(true);paint.setColor(Color.argb(Math.round(130*a),214,36,24));c.drawRect(r,paint);RectF in=new RectF(r);in.inset(1.2f,1.2f);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(2f);paint.setColor(Color.argb(Math.round(255*a),255,104,84));c.drawRect(in,paint);}
  /** 王手 in the brush face on a dark band across the board centre for 600ms, growing in and fading out. */
  void drawCheckBanner(Canvas c,Geometry g,long t){long b=t-TWEEN/2;if(b<0||b>=CHECK)return;float k=b/(float)CHECK,alpha=k<.15f?k/.15f:k>.75f?(1-k)/.25f:1,size=reduced?60:60*(.8f+.2f*easeOut(Math.min(1,k/.25f)));
@@ -106,12 +106,20 @@ final class BoardEffects {
    int w=Math.max(1,(int)Math.ceil(p.measureText(text))+4),h=Math.max(1,(int)Math.ceil(fm.descent-fm.ascent)+4);float base=2-fm.ascent;
    b=Bitmap.createBitmap(w,h,Bitmap.Config.ARGB_8888);p.setShader(new LinearGradient(0,base-full*pixelScale*.8f,0,base,top,bottom,Shader.TileMode.CLAMP));new Canvas(b).drawText(text,2,base,p);
    m=new float[]{w/pixelScale,h/pixelScale,base/pixelScale};words.put(key,b);wordMetrics.put(key,m);}
+  if(alpha<.004f)return;
   float k=size/full,w=m[0]*k,h=m[1]*k,top0=baseline-m[2]*k;
   paint.reset();paint.setAntiAlias(true);paint.setFilterBitmap(true);paint.setAlpha(Math.round(255*Math.max(0,Math.min(1,alpha))));c.drawBitmap(b,null,new RectF(cx-w/2,top0,cx+w/2,top0+h),paint);}
  /** A dark band with gold hairlines, fading out toward both ends: the stage for the start, check and result words. */
- void band(Canvas c,float left,float right,float cy,float half,float alpha){int ink=Color.argb(Math.round(214*alpha),16,5,4),gold=Color.argb(Math.round(220*alpha),222,184,104);
-  paint.reset();paint.setAntiAlias(true);paint.setShader(new LinearGradient(left,0,right,0,new int[]{ink&0x00ffffff,ink,ink,ink&0x00ffffff},new float[]{0,.16f,.84f,1},Shader.TileMode.CLAMP));c.drawRect(left,cy-half,right,cy+half,paint);
-  paint.setShader(new LinearGradient(left,0,right,0,new int[]{gold&0x00ffffff,gold,gold,gold&0x00ffffff},new float[]{0,.28f,.72f,1},Shader.TileMode.CLAMP));c.drawRect(left,cy-half,right,cy-half+.9f,paint);c.drawRect(left,cy+half-.9f,right,cy+half,paint);paint.setShader(null);}
+ void band(Canvas c,float left,float right,float cy,float half,float alpha){if(alpha<.004f)return;
+  // Drawn from two small cached strips scaled to size and faded with the paint alpha, not from gradient shaders
+  // rebuilt every frame (a near-transparent gradient each animation frame crashed the emulator's GL renderer).
+  if(bandInk==null){bandInk=strip(0xd6100504,.16f);bandGold=strip(0xdcdeb868,.28f);}
+  paint.reset();paint.setFilterBitmap(true);paint.setAlpha(Math.round(255*Math.min(1,alpha)));
+  c.drawBitmap(bandInk,null,new RectF(left,cy-half,right,cy+half),paint);c.drawBitmap(bandGold,null,new RectF(left,cy-half,right,cy-half+.9f),paint);c.drawBitmap(bandGold,null,new RectF(left,cy+half-.9f,right,cy+half),paint);}
+ Bitmap bandInk,bandGold;
+ /** One-pixel-high strip of color whose alpha ramps up over the first `edge` of the width and down over the last. */
+ static Bitmap strip(int color,float edge){int w=256;int[] px=new int[w];for(int x=0;x<w;x++){float t=(x+.5f)/w,f=Math.min(1,Math.min(t,1-t)/edge);px[x]=Math.round(Color.alpha(color)*f)<<24|(color&0x00ffffff);}
+  return Bitmap.createBitmap(px,w,1,Bitmap.Config.ARGB_8888);}
  // ---- Background tint by game progress ----
  /** Opening (0-30 moves) keeps the lacquer red; middle game warms to amber, late middle game deepens to crimson, endgame turns to night indigo. */
  static final int[] STAGE_TINTS={0x00000000,0x38ffa020,0x4c8a0a3c,0x5c141a5a};
