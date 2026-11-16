@@ -1,0 +1,4 @@
+PASS native TsuyouraOu11micro MultiPV=3: initial/edit/free consecutive moves/promotion/capture/drop/undo/reset/side toggle/resume; all candidates Java-legal, distinct and same-depth; current SFEN only; invalid boards explained; no automatic moves or clocks.
+1	7g7f	+64	depth=1
+2	3g3f	+56	depth=1
+3	3i3h	+52	depth=1
