@@ -27,7 +27,7 @@ final class FlowTests:XCTestCase {
     func testOnlineMatchAgainstAndroidBot()throws {
         let env=ProcessInfo.processInfo.environment
         guard let relay=env["ONLINE_RELAY"],!relay.isEmpty,let lobby=env["ONLINE_LOBBY"] else{throw XCTSkip("needs the CI local relay and Android bot")}
-        let app=XCUIApplication();app.launchArguments=["-coffee-test-suppress","-ads-fixture","-online-reset-account"];app.launchEnvironment["ONLINE_RELAY"]=relay;app.launchEnvironment["ONLINE_LOBBY"]=lobby;app.launch()
+        let app=XCUIApplication();app.launchArguments=["-coffee-test-suppress","-ads-fixture","-online-reset-account"];app.launchEnvironment["ONLINE_RELAY"]=relay;app.launchEnvironment["ONLINE_LOBBY"]=lobby;app.launchEnvironment["ONLINE_BOT_WAIT_MS"]="600000";app.launch()
         for _ in 0..<3{if app.buttons["mode_online"].isHittable{break};edgeScroll(app)};tap("mode_online",app)
         XCTAssertTrue(app.staticTexts["online_relays"].waitForExistence(timeout:10));expectation(for:NSPredicate(format:"label CONTAINS %@","接続 1/1"),evaluatedWith:app.staticTexts["online_relays"]);waitForExpectations(timeout:15);shot("20-online-lobby")
         // Account: a fresh device account starts at 1500 (provisional); renaming updates the card shown to opponents.
