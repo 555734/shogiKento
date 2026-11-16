@@ -662,7 +662,7 @@ public final class MainActivity extends Activity {
   }
   /** Large title: the black weight in champagne with a soft drop shadow. */
   void goldTitle(Canvas c,String s,float x,float y,float size){paint.reset();paint.setAntiAlias(true);paint.setTypeface(Fonts.black);paint.setTextSize(size);paint.setLetterSpacing(.14f);paint.setTextAlign(Paint.Align.CENTER);
-   paint.setColor(0x8c000000);c.drawText(s,x,y+1.5f,paint);paint.setShader(new LinearGradient(0,y-size*.8f,0,y,0xfff2e6c6,0xffccb07a,Shader.TileMode.CLAMP));c.drawText(s,x,y,paint);paint.setShader(null);}
+   paint.setColor(0x8c000000);c.drawText(s,x,y+1.5f,paint);paint.setShader(new LinearGradient(0,y-size*.8f,0,y,0xfffbf3de,0xffe2cc96,Shader.TileMode.CLAMP));c.drawText(s,x,y,paint);paint.setShader(null);}
   static final int GOLDEN=0,RED=1;
   /** Large lacquer button: drop shadow, three-stop body, glossy top half, light rim, outlined white label. */
   void bigButton(Canvas c,RectF r,int kind,String label,float size){float rad=Math.min(10,r.height()*.24f);

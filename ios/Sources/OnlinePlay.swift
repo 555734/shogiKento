@@ -179,7 +179,7 @@ struct OnlineScreen:View {
                 .buttonStyle(.plain).disabled(model.online.seekMode>=0).accessibilityIdentifier("online_tc_\(tc)")}}
     }
     private func hero(_ title:String,_ caption:String)->some View {
-        VStack(spacing:8){Text(title).font(AppFonts.black(32)).kerning(4).foregroundStyle(LinearGradient(colors:[Color(red:0.95,green:0.9,blue:0.78),Color(red:0.8,green:0.69,blue:0.48)],startPoint:.top,endPoint:.bottom)).shadow(color:.black.opacity(0.55),radius:0,x:0,y:1.5)
+        VStack(spacing:8){Text(title).font(AppFonts.black(32)).kerning(4).foregroundStyle(LinearGradient(colors:[Color(red:0.98,green:0.95,blue:0.87),Color(red:0.89,green:0.8,blue:0.59)],startPoint:.top,endPoint:.bottom)).shadow(color:.black.opacity(0.55),radius:0,x:0,y:1.5)
             Text(caption).font(AppFonts.ui(11)).foregroundStyle(Lacquer.cream.opacity(0.7))}
     }
     /// The account as one quiet line: the name brightest, the rating dimmer, a small link.
