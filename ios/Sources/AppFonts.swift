@@ -41,7 +41,7 @@ extension View {func inkCard(radius:CGFloat=8,lit:Bool=false)->some View {modifi
 /// Buttons: primary vermilion lacquer, secondary ink, danger an outlined vermilion; all with a hairline.
 struct LacquerButtonStyle:ButtonStyle {
     enum Kind {case primary,secondary,danger}
-    var kind:Kind=.secondary,size:CGFloat=15,minHeight:CGFloat=40
+    var kind:Kind = .secondary,size:CGFloat=15,minHeight:CGFloat=40
     @Environment(\.isEnabled) private var enabled
     func makeBody(configuration:Configuration)->some View {
         let shape=RoundedRectangle(cornerRadius:7)
