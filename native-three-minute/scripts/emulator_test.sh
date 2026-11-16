@@ -16,6 +16,8 @@ adb shell am force-stop com.presentsoft.shogi3minutes
 set +e
 # Streamed while the tests run, so the log survives even if the emulator stops answering mid-run.
 (adb logcat -v threadtime > outputs/logcat_live.txt 2>&1 &)
+# Host-side view of the emulator: memory and the emulator process, every 5 seconds.
+(while true; do date -u +%T; free -m | sed -n 2p; ps -C qemu-system-x86_64 -o rss=,pcpu=,stat= ; sudo dmesg | grep -iE "oom|killed process|segfault|qemu" | tail -3; sleep 5; done > outputs/host_monitor.txt 2>&1 &)
 timeout 660s adb shell am instrument -w com.presentsoft.shogi3minutes.test/com.presentsoft.shogi3minutes.NativeSmokeTest | tee outputs/instrumentation.txt
 test_status=${PIPESTATUS[0]}
 adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/screenshots outputs/ || true
@@ -37,6 +39,7 @@ adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/test_ads.txt o
 adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/coffee_purchase.txt outputs/ || true
 adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/online_play.txt outputs/ || true
 adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/move_effect_frames.txt outputs/ || true
+sudo dmesg | tail -60 > outputs/host_dmesg.txt 2>&1 || true
 adb shell dumpsys gfxinfo com.presentsoft.shogi3minutes > outputs/gfxinfo.txt || true
 adb shell dumpsys meminfo com.presentsoft.shogi3minutes > outputs/meminfo.txt
 adb logcat -d > outputs/logcat.txt
