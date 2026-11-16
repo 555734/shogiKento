@@ -21,6 +21,21 @@ final class OnlineTests:XCTestCase {
         x.requestRematch(100);y.requestRematch(100);deliver(&x,&y,100);XCTAssertEqual(x.round,2);XCTAssertEqual(x.mySide,-1);XCTAssertTrue(y.myTurn)
     }
 
+    /// The random-match bot: labelled as a bot, weak one-ply moves that are always legal, rated against its fixed rating.
+    @MainActor func testWeakBotMovesAndRating()throws {
+        XCTAssertTrue(OnlineBot.name.contains("ボット"));XCTAssertEqual(OnlineBot.identity.rating,OnlineBot.rating)
+        var (a,b)=pair();var now:Int64=0
+        for _ in 0..<60 where !a.over {now+=500
+            if a.myTurn{let usi=try XCTUnwrap(OnlineBot.choice(a));XCTAssertTrue(a.legal.contains(usi));XCTAssertTrue(a.localMove(usi,now),usi)}
+            else{let usi=try XCTUnwrap(OnlineBot.choice(b));XCTAssertTrue(b.legal.contains(usi));XCTAssertTrue(b.localMove(usi,now),usi)}
+            deliver(&a,&b,now);XCTAssertEqual(a.sfen,b.sfen)}
+        var account=OnlineAccount(name:"テスト");let key=Secp256k1.Key.random()
+        guard case .begun=account.settle(rated:true,opponent:OnlineBot.identity,game:a,now:1,myKey:key.publicHex) else{return XCTFail("bot game is rated")}
+        if !a.over{a.resign()};guard case .settled(let entry)=account.settle(rated:true,opponent:OnlineBot.identity,game:a,now:2,myKey:key.publicHex) else{return XCTFail("bot game settles")}
+        let score=a.winner==2 ? 0.5:a.winner==a.mySide ? 1:0
+        XCTAssertEqual(entry.opponentName,OnlineBot.name);XCTAssertEqual(entry.after,Rating.next(Rating.initial,games:0,OnlineBot.rating,score:score))
+    }
+
     /// Keychain secret and JSON record survive a reload; an unfinished rated game is settled as a loss on load.
     func testAccountStoreAndRatedLifecycle()throws {
         let store=OnlineAccountStore(service:"test-\(UUID().uuidString)",defaults:UserDefaults(suiteName:"online-test-\(UUID().uuidString)")!);defer{store.deleteAll()}

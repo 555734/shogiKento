@@ -24,7 +24,8 @@ def fetch(name,family):
 def characters():
  text=''
  for f in list((ROOT/'app/src/main/java').rglob('*.java'))+list((ROOT.parent/'ios/Sources').rglob('*.swift')):
-  for lit in re.findall(r'"((?:[^"\\\\]|\\\\.)*)"',f.read_text(encoding='utf-8')):text+=lit
+  # Every non-ASCII character of the sources (string literals and comments alike): a small superset.
+  text+=''.join(ch for ch in f.read_text(encoding='utf-8') if ord(ch)>127)
  text+=''.join(chr(c) for c in range(0x20,0x7f))+''.join(chr(c) for c in range(0x3041,0x3097))+''.join(chr(c) for c in range(0x30a1,0x30fb))
  text+='、。・ー「」『』（）［］【】〜！？：／％＋－×▲△▼▶◆●○◇☆★…　'+'一二三四五六七八九十百千'
  return ''.join(sorted(set(text)))

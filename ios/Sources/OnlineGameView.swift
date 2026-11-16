@@ -34,8 +34,8 @@ struct OnlineGameView:View {
 private struct OnlineHeader:View {
     @EnvironmentObject var model:AppModel
     let game:OnlineGame
-    private var dot:Color {model.online.direct ? Color(red:0.43,green:0.88,blue:0.48):game.started ? Color(red:1,green:0.78,blue:0.34):.gray}
-    private var route:String {let rtt=model.online.rtt>=0 ? " \(model.online.rtt)ms":"";return model.online.direct ? "P2P直結"+rtt:game.started ? "リレー経由"+rtt:"接続中…"}
+    private var dot:Color {model.online.bot != nil ? Color(red:0.86,green:0.72,blue:0.42):model.online.direct ? Color(red:0.43,green:0.88,blue:0.48):game.started ? Color(red:1,green:0.78,blue:0.34):.gray}
+    private var route:String {if model.online.bot != nil{return "ボット対局"};let rtt=model.online.rtt>=0 ? " \(model.online.rtt)ms":"";return model.online.direct ? "P2P直結"+rtt:game.started ? "リレー経由"+rtt:"接続中…"}
     var body:some View {
         HStack(spacing:6){
             HStack(spacing:6){Circle().fill(dot).frame(width:8,height:8).shadow(color:dot,radius:4);Text(route).font(AppFonts.style(12,.caption,bold:true)).accessibilityIdentifier("online_route")}
@@ -79,6 +79,7 @@ private struct OnlinePlayerCard:View {
         if me {let a=model.account;return "レート\(a.rating)"+(a.provisional ? "（暫定）":"")+" · \(a.wins)勝\(a.losses)敗\(a.draws)分"}
         guard let p=model.online.peer else{return model.online.rated ? "相手の情報を確認しています…":"フレンド対戦（レート変動なし）"}
         let h=model.account.headToHead(p.pubkey),record=h.wins+h.losses+h.draws>0 ? " · 対戦成績\(h.wins)勝\(h.losses)敗\(h.draws)分":""
+        if model.online.bot != nil{return "ボット（弱め）· レート\(p.rating) · レート戦"+record}
         return "レート\(p.rating)"+(p.games<Rating.provisionalGames ? "（暫定）":"")+(model.online.rated ? " · レート戦":" · レート変動なし")+record
     }
     private var clock:String {let s=Int((millis+999)/1000);return String(format:"%02d:%02d",s/60,s%60)}

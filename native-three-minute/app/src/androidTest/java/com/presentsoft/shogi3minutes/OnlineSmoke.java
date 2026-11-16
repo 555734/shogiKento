@@ -40,7 +40,7 @@ final class OnlineSmoke {
  static void run(NativeSmokeTest t)throws Exception{
   StringBuilder report=new StringBuilder();
   try(LocalRelay relay=new LocalRelay()){
-   Netplay.relayOverride=Collections.singletonList(relay.url());Netplay.stunOverride=Collections.emptyList();UdpEndpoint.allowLoopback=true;Netplay.lobbyTag="android-instrumentation";
+   OnlineBot.waitMillis=600000;Netplay.relayOverride=Collections.singletonList(relay.url());Netplay.stunOverride=Collections.emptyList();UdpEndpoint.allowLoopback=true;Netplay.lobbyTag="android-instrumentation";
    t.tap(45,26);t.main(()->t.check(t.v.mode==MainActivity.HOME,"back to mode selection"));t.screenshot("50_mode_selection_online.png");
    float[] y=new float[1];t.main(()->y[0]=t.v.homeOnlineY()+26);t.tap(200,y[0]);t.main(()->t.check(t.v.mode==MainActivity.ONLINE,"online mode selected by touch"));
    waitFor(t,()->MainActivity.online.net!=null&&MainActivity.online.relaysOpen==1,15000,"app connected to relay");waitFor(t,()->!MainActivity.online.network.isEmpty(),5000,"UDP candidates summarized");
@@ -89,9 +89,23 @@ final class OnlineSmoke {
    report.append("room games move latency ms: ").append(roomLatency).append('\n');
    t.tap(45,26);t.clickDialog("投了して退出");waitFor(t,()->host.game.over(),8000,"host sees guest leave");host.net.close();
    t.tap(45,26);t.main(()->t.check(t.v.mode==MainActivity.ONLINE&&!MainActivity.online.roomPage,"back from the room page returns to the lobby"));
+   // Nobody else seeks: after the wait the random match starts against the labelled weak bot, rated like a person.
+   OnlineBot.waitMillis=1500;int[] botBefore=new int[2];t.main(()->{botBefore[0]=MainActivity.online.account.rating;botBefore[1]=MainActivity.online.account.games;y[0]=t.v.lobbyButtonY(0)+26;});
+   t.tap(200,y[0]);t.main(()->t.check(MainActivity.online.seekMode==Netplay.QUICK&&MainActivity.online.bot==null,"random match seeking a person first"));SystemClock.sleep(400);t.screenshot("58_online_bot_wait.png");
+   waitFor(t,()->MainActivity.online.bot!=null&&MainActivity.online.game!=null&&MainActivity.online.game.started,10000,"bot game starts when nobody is found");
+   t.main(()->{t.check(MainActivity.online.peer!=null&&MainActivity.online.peer.name.contains("ボット")&&MainActivity.online.rated&&MainActivity.online.seekMode<0,"bot is named as a bot and the game is rated");
+    t.check(t.v.opponentDetail().startsWith("ボット"),"opponent card says ボット");});orientation(t);
+   for(int i=0;i<3;i++){boolean[] mine=new boolean[1];int[] plyBefore=new int[1];t.main(()->{mine[0]=MainActivity.online.game.myTurn();plyBefore[0]=MainActivity.online.game.game.movesPlayed;});
+    if(mine[0]){ShogiGame.Move[] m=new ShogiGame.Move[1];t.main(()->m[0]=simpleMove(MainActivity.online.game.game,MainActivity.online.game.mySide));t.realSquareTap(m[0].fromRow,m[0].fromCol);t.realSquareTap(m[0].row,m[0].col);
+     waitFor(t,()->MainActivity.online.game.game.movesPlayed==plyBefore[0]+1,5000,"own move against the bot");}
+    else waitFor(t,()->MainActivity.online.game.game.movesPlayed==plyBefore[0]+1,10000,"bot answers within its thinking time");}
+   t.screenshot("59_online_bot_game.png");
+   t.tap(355,16);t.clickDialog("投了");waitFor(t,()->MainActivity.online.game.over()&&MainActivity.online.lastResult!=null,8000,"resigning against the bot settles the rated game");
+   t.main(()->{OnlineAccount a=MainActivity.online.account;t.check(a.games==botBefore[1]+1&&a.rating==Rating.next(botBefore[0],botBefore[1],OnlineBot.RATING,0)&&a.history.get(a.history.size()-1).opponentName.equals(OnlineBot.NAME),"bot loss rated against the bot's rating");});
+   t.tap(45,26);waitFor(t,()->MainActivity.online.game==null&&MainActivity.online.bot==null&&!MainActivity.online.roomPage,5000,"leaving the bot game returns to the lobby");
    t.tap(45,26);waitFor(t,()->t.v.mode==MainActivity.HOME&&MainActivity.online.net==null,5000,"leaving online mode disconnects");
    t.check(relay.rejected==0,"every app event accepted by strict relay");report.append("relay accepted=").append(relay.accepted).append(" forwarded=").append(relay.forwarded).append(" rejected=").append(relay.rejected).append('\n');
-  }finally{Netplay.relayOverride=null;Netplay.stunOverride=null;UdpEndpoint.allowLoopback=false;Netplay.lobbyTag="shogikento-v1-3m";}
+  }finally{OnlineBot.waitMillis=20000;Netplay.relayOverride=null;Netplay.stunOverride=null;UdpEndpoint.allowLoopback=false;Netplay.lobbyTag="shogikento-v1-3m";}
   try(PrintWriter out=new PrintWriter(new File(t.getTargetContext().getExternalFilesDir(null),"online_play.txt"))){out.println("PASS native online mode: touch-driven quick match, direct UDP, sounds, resign, rematch with flipped board, hosted room, joined room, leave/disconnect");out.print(report);}
  }
 }

@@ -34,10 +34,36 @@ public final class NetplayTest {
   }
   return latency;
  }
+ /** Random-match bot on a virtual clock: replies through the real OnlineGame protocol, plays only legal moves on its own turn, rematches with swapped sides, and is rated like a person. */
+ static void bot(){
+  long[] clock={0};PriorityQueue<long[]> order=new PriorityQueue<>((x,y)->x[0]!=y[0]?Long.compare(x[0],y[0]):Long.compare(x[1],y[1]));Map<Long,Runnable> tasks=new HashMap<>();long[] seq={0};
+  OnlineBot.Scheduler sched=new OnlineBot.Scheduler(){public void after(long ms,Runnable r){long id=seq[0]++;tasks.put(id,r);order.add(new long[]{clock[0]+Math.max(0,ms),id});}public long now(){return clock[0];}};
+  OnlineGame[] player=new OnlineGame[1];int[] botMoves={0},rejected={0};
+  OnlineBot bot=new OnlineBot(sched,m->{boolean move=m.startsWith("MOVE");int before=player[0].game.movesPlayed;int turn=player[0].game.turn;boolean changed=player[0].receive(m,clock[0]);
+   if(move){if(changed&&turn==-player[0].mySide&&player[0].game.movesPlayed==before+1)botMoves[0]++;else rejected[0]++;}},42);
+  player[0]=new OnlineGame(1,bot::fromPlayer,OnlineGame.millis("3m"));bot.game=player[0];
+  OnlineAccount account=new OnlineAccount(OnlineAccount.newSecret(),"テスト");OnlineIdentity id=OnlineBot.identity();ok(id.name.contains("ボット"),"bot name says ボット");
+  player[0].hello(0);java.util.Random rnd=new java.util.Random(7);
+  for(int round=1;round<=2;round++){
+   for(int step=0;step<4000&&!player[0].over();step++){
+    OnlineGame g=player[0];account.settle(true,id,g,clock[0]/1000);
+    if(g.myTurn()){clock[0]+=300+rnd.nextInt(700);ShogiGame.Move m=g.game.cpuChoice();ok(g.localMove(m,clock[0]),"player move accepted");}
+    else{long[] next=order.poll();if(next==null){clock[0]+=50;g.tick(clock[0]);continue;}clock[0]=Math.max(clock[0],next[0]);tasks.remove(next[1]).run();}
+    g.tick(clock[0]);
+   }
+   OnlineGame g=player[0];ok(g.started&&g.over(),"bot game "+round+" finished: "+g.game.result+" after "+g.game.movesPlayed+" plies");ok(rejected[0]==0,"every bot move legal and on its turn");
+   ok(g.game.remaining[OnlineGame.slot(-g.mySide)]<OnlineGame.millis("3m"),"bot's clock ran while it thought");
+   int ratingBefore=account.rating,gamesBefore=account.games;boolean counted=g.game.movesPlayed>=2||g.game.result.equals("時間切れ");int r=account.settle(true,id,g,clock[0]/1000);
+   if(counted){double score=g.game.winner==2?.5:g.game.winner==g.mySide?1:0;ok(r==OnlineAccount.SETTLED&&account.rating==Rating.next(ratingBefore,gamesBefore,OnlineBot.RATING,score)&&account.history.get(account.history.size()-1).opponentName.equals(OnlineBot.NAME),"bot game rated like a person");}
+   if(round==1){int side=g.mySide;g.requestRematch(clock[0]);for(int i=0;i<20&&g.round==1;i++){long[] next=order.poll();if(next==null)break;clock[0]=Math.max(clock[0],next[0]);tasks.remove(next[1]).run();}
+    ok(g.round==2&&g.started&&!g.over()&&g.mySide==-side,"bot accepts a rematch and sides swap");}
+  }
+  ok(botMoves[0]>10,"bot played "+botMoves[0]+" moves");bot.close();
+ }
  static String summary(List<Long> l){if(l.isEmpty())return "n/a";ArrayList<Long> s=new ArrayList<>(l);Collections.sort(s);return "median="+s.get(s.size()/2)+"ms max="+s.get(s.size()-1)+"ms n="+s.size();}
  public static void main(String[] args)throws Exception{
   if(args.length>0&&args[0].equals("--live")){live(args.length>1?args[1]:null);return;}
-  json();schnorr(args.length>0?args[0]:"tests/bip340.csv");stun();candidates();clocks();accounts();
+  json();schnorr(args.length>0?args[0]:"tests/bip340.csv");stun();candidates();clocks();accounts();bot();
   UdpEndpoint.allowLoopback=true;link();
   try(LocalRelay relay=new LocalRelay()){List<String> relays=Collections.singletonList(relay.url());
    profiles(relays);ratingMatch(relays);quickGame(relays);fastDiscovery(relays);relayOnly(relays);failover(relays);manySeekers(relays);rooms(relays);timeControls(relays);relayRestart(relay,relays);

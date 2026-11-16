@@ -20,6 +20,8 @@ struct OnlineState {
     /// The opponent's verified account card, whether this session is rated (random matches), the round whose card
     /// was sent, and the last settled rated result for the result line.
     var peer:OnlineIdentity?,rated=false,cardRound=0,lastResult:OnlineAccount.Game?
+    /// The bot opponent of the current game (nil against a person) and the random-match seek its timer belongs to.
+    var bot:OnlineBot?,seekToken=0
 }
 
 enum OnlineEvent {case status(String),relays(Int,Int),network(String),matched(Int),message(String),path(Bool,Int,String),peerLeft,failed(String)}
@@ -51,6 +53,7 @@ extension AppModel {
         let env=ProcessInfo.processInfo.environment
         if let relay=env["ONLINE_RELAY"],!relay.isEmpty{Netplay.relayOverride=[relay];Netplay.stunOverride=[];UDPEndpoint.allowLoopback=true}
         if let lobby=env["ONLINE_LOBBY"],!lobby.isEmpty{Netplay.lobbyTag=lobby}
+        if let wait=env["ONLINE_BOT_WAIT_MS"].flatMap({Int64($0)}){OnlineBot.waitMillis=wait}
         #endif
         online.notice="";online.status="";online.network="";online.relaysOpen=0;online.relaysTotal=Netplay.relays.count
         do{let n=try Netplay(factory:URLSessionWebSocket.factory);let events=OnlineEvents(model:self,net:n);n.listener=events;onlineEvents=events;net=n;n.start()}
@@ -62,6 +65,8 @@ extension AppModel {
         case .status(let text):online.status=text
         case .relays(let open,let total):online.relaysOpen=open;online.relaysTotal=total
         case .network(let text):online.network=text
+        case .matched where online.bot != nil:net?.stopSeeking()
+        case .message where online.bot != nil,.peerLeft where online.bot != nil:break
         case .matched(let side):var g=OnlineGame(mySide:side,rules:EngineRules(),time:OnlineGame.millis(net?.matchedTimeControl));g.hello(now);online.peer=nil;online.cardRound=0;online.lastResult=nil;online.rated=net?.ratedSession ?? false
             online.flowRound=0;online.flowEnded=false;online.game=g;online.seekMode = -1;online.notice="";online.direct=false;online.rtt = -1;online.route="";flushOnline();showOnlinePosition()
         case .message(let text) where text.hasPrefix("ID "):online.peer=net?.sessionId.flatMap{OnlineIdentity.parse(text,sessionId:$0)};syncAccount()
@@ -72,7 +77,19 @@ extension AppModel {
         }
     }
     /// Sends what the game queued; the network sends it off the main thread, in order.
-    func flushOnline(){if let out=online.game?.outbox,!out.isEmpty{online.game!.outbox=[];for m in out{net?.send(m)}};syncAccount()}
+    func flushOnline(){if let out=online.game?.outbox,!out.isEmpty{online.game!.outbox=[];for m in out{if let bot=online.bot{bot.fromPlayer(m)}else{net?.send(m)}}};syncAccount()}
+    /// No person found within OnlineBot.waitMillis: a rated game against the clearly labelled, weak bot.
+    func startBotGame(){
+        net?.stopSeeking();online.seekMode = -1;online.seekToken+=1;online.roomCode=nil;online.status=""
+        let bot=OnlineBot(game:{[weak self] in self?.online.game},deliver:{[weak self] m in self?.botMessage(m)})
+        var g=OnlineGame(mySide:Bool.random() ? 1:-1,rules:EngineRules(),time:OnlineGame.millis(online.timeControl))
+        online.bot=bot;online.peer=OnlineBot.identity;online.cardRound=0;online.lastResult=nil;online.rated=true;online.notice="";online.direct=false;online.rtt = -1;online.route=""
+        online.flowRound=0;online.flowEnded=false;g.hello(Self.onlineNow);online.game=g;flushOnline();showOnlinePosition()
+    }
+    /// A bot message, applied exactly like one from a remote player.
+    func botMessage(_ text:String){guard online.bot != nil,online.game != nil else{return};let before=position;let moved=online.game!.receive(text,Self.onlineNow);flushOnline()
+        if moved{showOnlinePosition();if online.game!.lastMove != nil{beginMoveEffect(from:before);feedback(human:false,kind:SoundKind.forMove(before,position))}};observeOnlineFlow()}
+    func endBot(){online.seekToken+=1;online.bot?.close();online.bot=nil}
     /// After every game change: settle rated games (persisting each step) and send a fresh account card each round.
     func syncAccount(){
         guard let game=online.game else{return}
@@ -82,7 +99,7 @@ extension AppModel {
         case .aborted:accountStore.saveAccount(account);online.notice="対局不成立のためレートは変動しません"
         case .unchanged:break
         }
-        if game.round != online.cardRound,let net,let sid=net.sessionId{online.cardRound=game.round;net.send(OnlineIdentity.message(accountKey,sessionId:sid,name:account.name,rating:account.rating,games:account.games))}
+        if online.bot==nil,game.round != online.cardRound,let net,let sid=net.sessionId{online.cardRound=game.round;net.send(OnlineIdentity.message(accountKey,sessionId:sid,name:account.name,rating:account.rating,games:account.games))}
     }
     /// Publishes the profile (when allowed) in the background; relays that refuse are simply skipped.
     func publishProfile(){guard account.publish else{return};let a=account,key=accountKey,relays=Netplay.relays;DispatchQueue.global(qos:.utility).async{_=Profiles.publish(a,key:key,relays:relays,factory:URLSessionWebSocket.factory,timeout:8)}}
@@ -108,11 +125,14 @@ extension AppModel {
         if g.over && !online.flowEnded{online.flowEnded=true;playSound(.end);banner=GameBanner(kind:.end(outcome:g.winner==2 ? 0:g.winner==g.mySide ? 1:-1,detail:g.result),reduced:reducedEffects)}}
     func showOnlinePosition(){position=online.game.flatMap{try? Position($0.sfen)} ?? (try! Position());clearSelection()}
     func onlineTick(){guard online.game != nil else{return};online.game!.rttMillis=online.rtt;let was=online.game!.over;online.game!.tick(Self.onlineNow);flushOnline();observeOnlineFlow();if !was && online.game!.over{clearSelection()}
-        online.silenceMillis=net?.link?.silenceMillis ?? 0}
+        online.silenceMillis=online.bot != nil ? 0:net?.link?.silenceMillis ?? 0}
     func onlineCommit(_ move:Move){guard online.game != nil else{return};let before=position;if online.game!.localMove(move.usi,Self.onlineNow){flushOnline();showOnlinePosition();beginMoveEffect(from:before);feedback(human:true,kind:SoundKind.forMove(before,position));observeOnlineFlow()}else{clearSelection()}}
     func startSeek(_ mode:Int,code:String?){
         guard let net else{online.notice="通信を準備しています…";ensureNetplay();return}
         net.rating=account.rating;net.games=account.games;online.seekMode=mode;online.roomCode=code;online.notice="";online.status="";net.seek(mode,code:code,timeControl:online.timeControl)
+        online.seekToken+=1;let token=online.seekToken
+        if mode==Netplay.quick{let wait=OnlineBot.waitMillis;Task{@MainActor [weak self] in try? await Task.sleep(nanoseconds:UInt64(max(0,wait))*1_000_000)
+            guard let self,self.online.seekToken==token,self.online.seekMode==Netplay.quick,self.online.game==nil,self.net===net else{return};self.startBotGame()}}
     }
     func chooseTimeControl(_ tc:String){guard online.seekMode<0,OnlineGame.validTimeControl(tc) else{return};online.timeControl=tc;UserDefaults.standard.set(tc,forKey:"online_tc")}
     func openRoomPage(_ open:Bool){guard open != online.roomPage else{return};if online.seekMode>=0{cancelSeek()};online.roomPage=open;online.notice=""}
@@ -120,13 +140,13 @@ extension AppModel {
     /// Accepts full-width digits too; the room tag is always derived from the ASCII code, as on Android.
     func joinRoom(_ text:String){let trimmed=text.filter{!$0.isWhitespace},digits=trimmed.compactMap(\.wholeNumberValue)
         guard digits.count==6,digits.count==trimmed.count else{online.notice="ルームコードは6桁の数字です";return};startSeek(Netplay.guest,code:digits.map(String.init).joined())}
-    func cancelSeek(){net?.stopSeeking();online.seekMode = -1;online.roomCode=nil;online.status=""}
+    func cancelSeek(){online.seekToken+=1;net?.stopSeeking();online.seekMode = -1;online.roomCode=nil;online.status=""}
     func onlineResign(){guard online.game != nil else{return};online.game!.resign();flushOnline();clearSelection()}
     func onlineRematch(){guard online.game != nil else{return};online.game!.requestRematch(Self.onlineNow);flushOnline();showOnlinePosition()}
     /// Leaving resigns a running game. With all=true the network closes too (off the main thread; it waits briefly for the goodbye).
     func leaveOnline(all:Bool){
         if online.game != nil{online.game!.resign();flushOnline()}
-        online.game=nil;online.seekMode = -1;online.roomCode=nil;online.direct=false;online.rtt = -1;online.route="";online.notice=""
+        endBot();online.game=nil;online.seekMode = -1;online.roomCode=nil;online.direct=false;online.rtt = -1;online.route="";online.notice=""
         if all{online.roomPage=false;let n=net;net=nil;onlineEvents=nil;online.status="";online.relaysOpen=0;if let n{DispatchQueue.global(qos:.utility).async{n.close()}}}else{net?.stopSeeking()}
         if screen == .online{showOnlinePosition()}
     }
@@ -168,6 +188,7 @@ struct OnlineScreen:View {
             Text(model.online.network.isEmpty ? "UDP候補を収集しています…":model.online.network).font(AppFonts.style(11,.caption2)).foregroundStyle(cream.opacity(0.85))
             if model.online.seekMode==Netplay.host,let room=model.online.roomCode{Text(verbatim:"ルームコード \(room.prefix(3)) \(room.suffix(3))（\(OnlineGame.label(model.online.timeControl))）").font(AppFonts.ui(22,bold:true).monospacedDigit()).foregroundStyle(gold).frame(maxWidth:.infinity).accessibilityIdentifier("online_room_code")}
             Text(model.online.seekMode<0 ? (model.online.roomPage ? "ルームを作るか、コードで参加してください":"持ち時間を選んでランダム対戦"):model.online.status.isEmpty ? "開始しています…":model.online.status).font(AppFonts.style(15,.subheadline)).frame(maxWidth:.infinity).accessibilityIdentifier("online_lobby_status")
+            if model.online.seekMode==Netplay.quick{Text("相手が\(OnlineBot.waitMillis/1000)秒見つからない時は、ボット（弱め）と対局します").font(AppFonts.style(11,.caption2)).foregroundStyle(cream.opacity(0.85)).multilineTextAlignment(.center).frame(maxWidth:.infinity).accessibilityIdentifier("online_bot_note")}
             if model.online.seekMode==Netplay.guest,let room=model.online.roomCode{Text(verbatim:"ルーム \(room)").font(AppFonts.style(12,.caption)).frame(maxWidth:.infinity)}
             if !model.online.notice.isEmpty{Text(model.online.notice).font(AppFonts.style(12,.caption)).foregroundStyle(.orange).frame(maxWidth:.infinity).accessibilityIdentifier("online_notice")}
             if model.online.seekMode>=0{Button("キャンセル"){model.cancelSeek()}.buttonStyle(.bordered).frame(maxWidth:.infinity).accessibilityIdentifier("online_cancel")}
