@@ -23,17 +23,19 @@ final class OnlineTests:XCTestCase {
 
     /// The random-match bot: labelled as a bot, weak one-ply moves that are always legal, rated against its fixed rating.
     @MainActor func testWeakBotMovesAndRating()throws {
-        XCTAssertTrue(OnlineBot.name.contains("ボット"));XCTAssertEqual(OnlineBot.identity.rating,OnlineBot.rating)
+        XCTAssertEqual(Set((1...10).map{OnlineBot.name($0)}).count,10);XCTAssertTrue((1...10).allSatisfy{OnlineBot.name($0).hasPrefix("ボット・")})
+        XCTAssertEqual(OnlineBot.level(for:Rating.initial),6);XCTAssertEqual(OnlineBot.level(for:100),1);XCTAssertEqual(OnlineBot.level(for:4000),10);XCTAssertEqual(OnlineBot.rating(1),700)
+        let bot=OnlineIdentity(pubkey:OnlineBot.pubkey(1),name:OnlineBot.name(1),rating:OnlineBot.rating(1),games:OnlineBot.games)
         var (a,b)=pair();var now:Int64=0
         for _ in 0..<60 where !a.over {now+=500
             if a.myTurn{let usi=try XCTUnwrap(OnlineBot.choice(a));XCTAssertTrue(a.legal.contains(usi));XCTAssertTrue(a.localMove(usi,now),usi)}
             else{let usi=try XCTUnwrap(OnlineBot.choice(b));XCTAssertTrue(b.legal.contains(usi));XCTAssertTrue(b.localMove(usi,now),usi)}
             deliver(&a,&b,now);XCTAssertEqual(a.sfen,b.sfen)}
         var account=OnlineAccount(name:"テスト");let key=Secp256k1.Key.random()
-        guard case .begun=account.settle(rated:true,opponent:OnlineBot.identity,game:a,now:1,myKey:key.publicHex) else{return XCTFail("bot game is rated")}
-        if !a.over{a.resign()};guard case .settled(let entry)=account.settle(rated:true,opponent:OnlineBot.identity,game:a,now:2,myKey:key.publicHex) else{return XCTFail("bot game settles")}
+        guard case .begun=account.settle(rated:true,opponent:bot,game:a,now:1,myKey:key.publicHex) else{return XCTFail("bot game is rated")}
+        if !a.over{a.resign()};guard case .settled(let entry)=account.settle(rated:true,opponent:bot,game:a,now:2,myKey:key.publicHex) else{return XCTFail("bot game settles")}
         let score=a.winner==2 ? 0.5:a.winner==a.mySide ? 1:0
-        XCTAssertEqual(entry.opponentName,OnlineBot.name);XCTAssertEqual(entry.after,Rating.next(Rating.initial,games:0,OnlineBot.rating,score:score))
+        XCTAssertEqual(entry.opponentName,OnlineBot.name(1));XCTAssertEqual(entry.after,Rating.next(Rating.initial,games:0,OnlineBot.rating(1),score:score))
     }
 
     /// Keychain secret and JSON record survive a reload; an unfinished rated game is settled as a loss on load.

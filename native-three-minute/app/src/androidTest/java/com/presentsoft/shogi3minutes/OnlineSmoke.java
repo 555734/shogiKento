@@ -101,7 +101,7 @@ final class OnlineSmoke {
     else waitFor(t,()->MainActivity.online.game.game.movesPlayed==plyBefore[0]+1,10000,"bot answers within its thinking time");}
    t.screenshot("59_online_bot_game.png");
    t.tap(355,16);t.clickDialog("投了");waitFor(t,()->MainActivity.online.game.over()&&MainActivity.online.lastResult!=null,8000,"resigning against the bot settles the rated game");
-   t.main(()->{OnlineAccount a=MainActivity.online.account;t.check(a.games==botBefore[1]+1&&a.rating==Rating.next(botBefore[0],botBefore[1],OnlineBot.RATING,0)&&a.history.get(a.history.size()-1).opponentName.equals(OnlineBot.NAME),"bot loss rated against the bot's rating");});
+   t.main(()->{OnlineAccount a=MainActivity.online.account;t.check(a.games==botBefore[1]+1&&a.rating==Rating.next(botBefore[0],botBefore[1],OnlineBot.rating(OnlineBot.levelFor(botBefore[0])),0)&&a.history.get(a.history.size()-1).opponentName.equals(OnlineBot.name(OnlineBot.levelFor(botBefore[0]))),"bot loss rated against the bot's rating");});
    t.tap(45,26);waitFor(t,()->MainActivity.online.game==null&&MainActivity.online.bot==null&&!MainActivity.online.roomPage,5000,"leaving the bot game returns to the lobby");
    t.tap(45,26);waitFor(t,()->t.v.mode==MainActivity.HOME&&MainActivity.online.net==null,5000,"leaving online mode disconnects");
    t.check(relay.rejected==0,"every app event accepted by strict relay");report.append("relay accepted=").append(relay.accepted).append(" forwarded=").append(relay.forwarded).append(" rejected=").append(relay.rejected).append('\n');

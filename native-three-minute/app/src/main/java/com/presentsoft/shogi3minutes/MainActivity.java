@@ -34,10 +34,10 @@ public final class MainActivity extends Activity {
   byte[] sid=n==null||online.bot!=null?null:n.sessionId();if(sid!=null&&g.round!=online.cardRound){online.cardRound=g.round;n.send(OnlineIdentity.message(a.key,sid,a.name,a.rating,a.games,new java.security.SecureRandom()));}
  }
  /** No person found within OnlineBot.waitMillis: a rated game against the clearly labelled, weak bot. */
- static void startBotGame(){Netplay n=online.net;if(n!=null)n.stopSeeking();online.seekMode=-1;online.seekToken++;online.roomCode=null;online.status="";
+ static void startBotGame(OnlineBot.Brain brain){Netplay n=online.net;if(n!=null)n.stopSeeking();online.seekMode=-1;online.seekToken++;online.roomCode=null;online.status="";
   OnlineBot[] holder=new OnlineBot[1];
-  OnlineBot bot=new OnlineBot(new OnlineBot.Scheduler(){public void after(long ms,Runnable r){mainLoop.postDelayed(r,ms);}public long now(){return SystemClock.elapsedRealtime();}},m->botMessage(holder[0],m),System.nanoTime());holder[0]=bot;
-  online.bot=bot;online.peer=OnlineBot.identity();online.cardRound=0;online.lastResult=null;online.rated=true;online.notice="";online.direct=false;online.rtt=-1;online.route="";
+  OnlineBot bot=new OnlineBot(new OnlineBot.Scheduler(){public void after(long ms,Runnable r){mainLoop.postDelayed(r,ms);}public long now(){return SystemClock.elapsedRealtime();}},m->botMessage(holder[0],m),System.nanoTime(),OnlineBot.levelFor(online.account==null?Rating.INITIAL:online.account.rating),brain);holder[0]=bot;
+  online.bot=bot;online.peer=bot.identity();online.cardRound=0;online.lastResult=null;online.rated=true;online.notice="";online.direct=false;online.rtt=-1;online.route="";
   online.game=new OnlineGame(Math.random()<.5?1:-1,bot::fromPlayer,OnlineGame.millis(online.timeControl));bot.game=online.game;online.game.hello(SystemClock.elapsedRealtime());syncAccount();
   BoardView v=currentView;if(v!=null)v.onlineUpdated();}
  /** A bot message, applied exactly like one from a remote player. */
@@ -253,6 +253,10 @@ public final class MainActivity extends Activity {
    styledText(c,"投了しますか？",200,cy-18,22,0xfff3e6cf,true,Paint.Align.CENTER,Fonts.black);RectF[] b=resignButtons();
    button(c,b[0],PRIMARY,"投了する",16);button(c,b[1],SECONDARY,"続ける",16);}
   void resignTouch(float x,float y){RectF[] b=resignButtons();resignConfirm=false;if(b[0].contains(x,y)&&started&&game.winner==0){clock.settle(SystemClock.elapsedRealtime());game.resign(humanSide());clearSelection();save();}invalidate();}
+ /** Bot moves: level 1 greedy; higher levels the engine with the CPU-match budget one level below. */
+  void botMove(ShogiGame g,int level,java.util.function.Consumer<ShogiGame.Move> done){
+   if(level<=1||!ai.ready||aiError!=null){done.accept(g.cpuChoice());return;}MatchOptions o=new MatchOptions(3,1,level-1);String position=UsiPosition.sfen(g);
+   ai.search(position,o.nodes(),o.millis(),(answer,error)->{ShogiGame.Move m=null;if(error==null&&answer!=null&&UsiPosition.sfen(g).equals(position))m=UsiPosition.legalMove(g,answer.split("\\|")[0]);done.accept(m!=null?m:UsiPosition.sfen(g).equals(position)?g.cpuChoice():null);});}
   /** Ink bar: three quiet text actions divided by hairlines, and 投了 as an outlined vermilion button. */
   void matchToolbar(Canvas c){darkPanel(c,new RectF(0,0,400,MATCH_BAR));
    styledText(c,"‹ モード",45,28.5f,15,0xffeadfc8,false,Paint.Align.CENTER,null);styledText(c,"やり直し",145,28.5f,15,0xffeadfc8,false,Paint.Align.CENTER,null);styledText(c,"対局設定",253,28.5f,15,0xffeadfc8,false,Paint.Align.CENTER,null);
@@ -581,7 +585,7 @@ public final class MainActivity extends Activity {
   void openRoomPage(boolean open){if(open==online.roomPage)return;stopSeek();online.roomPage=open;online.notice="";invalidate();}
   void startSeek(int seekMode,String code){Netplay n=online.net;if(n==null){online.notice="通信を準備しています…";ensureNetplay();invalidate();return;}
    n.rating=online.account.rating;n.games=online.account.games;online.seekMode=seekMode;online.roomCode=code;online.notice="";online.status="";n.seek(seekMode,code,online.timeControl);
-   long token=++online.seekToken;if(seekMode==Netplay.QUICK)mainLoop.postDelayed(()->{if(online.seekToken==token&&online.seekMode==Netplay.QUICK&&online.game==null&&online.net==n)startBotGame();},OnlineBot.waitMillis);invalidate();}
+   long token=++online.seekToken;if(seekMode==Netplay.QUICK)mainLoop.postDelayed(()->{if(online.seekToken==token&&online.seekMode==Netplay.QUICK&&online.game==null&&online.net==n){if(!ai.ready)configureAi();startBotGame(this::botMove);}},OnlineBot.waitMillis);invalidate();}
   void lobbyTouch(float x,float y){
    if(online.seekMode>=0){if(cancelRect().contains(x,y)){stopSeek();invalidate();}return;}
    if(y>=ACCOUNT_CARD_Y&&y<=ACCOUNT_CARD_Y+44&&x>=12&&x<=388){showChoice(AccountDialog.create(MainActivity.this));return;}
@@ -610,7 +614,7 @@ public final class MainActivity extends Activity {
    button(c,new RectF(300,ay+8,380,ay+36),SECONDARY,"アカウント",11);
    for(int i=0;i<2;i++)modeTileDraw(c,modeTile(i),i,i==(room?1:0));
    RectF d=new RectF(12,252,388,298);inkCard(c,d,8,false);
-   String[] lines=room?new String[]{"6桁のルームコードで友だちと対局します。","レートは変動しません。持ち時間はルームを作る側が決めます。"}:new String[]{"近いレートの相手を探して対局。勝敗でレートが変動します。",OnlineBot.waitMillis/1000+"秒で見つからなければ、ボット（弱め）と対局します。"};
+   String[] lines=room?new String[]{"6桁のルームコードで友だちと対局します。","レートは変動しません。持ち時間はルームを作る側が決めます。"}:new String[]{"近いレートの相手を探して対局。勝敗でレートが変動します。",OnlineBot.waitMillis/1000+"秒で見つからなければ、レートの近いボットと対局します。"};
    styledText(c,lines[0],24,d.top+19,10.5f,0xfff3e6cf,false,Paint.Align.LEFT,null);styledText(c,lines[1],24,d.top+36,10.5f,0xfff3e6cf,false,Paint.Align.LEFT,null);
    for(int i=0;i<2;i++){String tc=OnlineGame.TIME_CONTROLS[i];segmentDraw(c,timeRect(i),"10m".equals(tc)?"10分":"3分","切れ負け",tc.equals(online.timeControl));}
    if(room){bigButton(c,roomButton(0),GOLDEN,"ルームを作る",21);bigButton(c,roomButton(1),RED,"ルームに参加",19);}
@@ -636,7 +640,7 @@ public final class MainActivity extends Activity {
     paint.reset();paint.setAntiAlias(true);paint.setTypeface(Fonts.bold);paint.setFontFeatureSettings("tnum");paint.setTextSize(38);paint.setLetterSpacing(.12f);paint.setTextAlign(Paint.Align.CENTER);paint.setColor(0xffeedcb2);c.drawText(online.roomCode.substring(0,3)+" "+online.roomCode.substring(3),200,r.top+66,paint);
     styledText(c,"友だちに伝えてください",200,r.top+88,10,0xffcfc3b0,false,Paint.Align.CENTER,null);}
    float y=b.bottom+24;styledText(c,online.status.isEmpty()?"開始しています…":online.status,200,y,13,0xfff3e6cf,true,Paint.Align.CENTER,null);
-   if(quick)styledText(c,"相手が"+OnlineBot.waitMillis/1000+"秒見つからない時は、ボット（弱め）と対局します",200,y+20,10,0xffcfc3b0,false,Paint.Align.CENTER,null);
+   if(quick)styledText(c,"相手が"+OnlineBot.waitMillis/1000+"秒見つからない時は、レートの近いボットと対局します",200,y+20,10,0xffcfc3b0,false,Paint.Align.CENTER,null);
    else if(online.seekMode==Netplay.GUEST&&online.roomCode!=null)styledText(c,"ルーム "+online.roomCode,200,y+20,10.5f,0xffcfc3b0,false,Paint.Align.CENTER,null);
    if(!online.notice.isEmpty())text(c,online.notice,200,y+38,10,0xffffb9b3);
    styledText(c,online.net==null?"未接続":"公開リレー "+online.relaysOpen+"/"+online.relaysTotal,24,cancelRect().centerY()+4,10,online.relaysOpen>0?0xff9be59b:0xffffd471,false,Paint.Align.LEFT,null);
@@ -751,7 +755,7 @@ public final class MainActivity extends Activity {
    return y+156;
   }
   /** The opponent card's second line (the name is shown above it): "レート1520（暫定）· レート戦 · 対戦成績…". */
-  String opponentDetail(){OnlineIdentity p=online.peer;if(online.bot!=null&&p!=null){int[] h=online.account==null?new int[3]:online.account.headToHead(p.pubkey);return "ボット（弱め）· レート"+p.rating+" · レート戦"+(h[0]+h[1]+h[2]>0?" · 対戦成績"+h[0]+"勝"+h[1]+"敗"+h[2]+"分":"");}if(p==null)return online.rated?"相手の情報を確認しています…":"フレンド対戦（レート変動なし）";
+  String opponentDetail(){OnlineIdentity p=online.peer;if(online.bot!=null&&p!=null){int[] h=online.account==null?new int[3]:online.account.headToHead(p.pubkey);return "ボット · レート"+p.rating+" · レート戦"+(h[0]+h[1]+h[2]>0?" · 対戦成績"+h[0]+"勝"+h[1]+"敗"+h[2]+"分":"");}if(p==null)return online.rated?"相手の情報を確認しています…":"フレンド対戦（レート変動なし）";
    int[] h=online.account==null?new int[3]:online.account.headToHead(p.pubkey);return "レート"+p.rating+(p.games<Rating.PROVISIONAL_GAMES?"（暫定）":"")+(online.rated?" · レート戦":" · レート変動なし")+(h[0]+h[1]+h[2]>0?" · 対戦成績"+h[0]+"勝"+h[1]+"敗"+h[2]+"分":"");}
   @Override public boolean performClick(){super.performClick();return true;}
  }

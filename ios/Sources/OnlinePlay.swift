@@ -81,9 +81,9 @@ extension AppModel {
     /// No person found within OnlineBot.waitMillis: a rated game against the clearly labelled, weak bot.
     func startBotGame(){
         net?.stopSeeking();online.seekMode = -1;online.seekToken+=1;online.roomCode=nil;online.status=""
-        let bot=OnlineBot(game:{[weak self] in self?.online.game},deliver:{[weak self] m in self?.botMessage(m)})
+        let bot=OnlineBot(level:OnlineBot.level(for:account.rating),game:{[weak self] in self?.online.game},deliver:{[weak self] m in self?.botMessage(m)})
         var g=OnlineGame(mySide:Bool.random() ? 1:-1,rules:EngineRules(),time:OnlineGame.millis(online.timeControl))
-        online.bot=bot;online.peer=OnlineBot.identity;online.cardRound=0;online.lastResult=nil;online.rated=true;online.notice="";online.direct=false;online.rtt = -1;online.route=""
+        online.bot=bot;online.peer=bot.identity;online.cardRound=0;online.lastResult=nil;online.rated=true;online.notice="";online.direct=false;online.rtt = -1;online.route=""
         online.flowRound=0;online.flowEnded=false;g.hello(Self.onlineNow);online.game=g;flushOnline();showOnlinePosition()
     }
     /// A bot message, applied exactly like one from a remote player.
@@ -220,7 +220,7 @@ struct OnlineScreen:View {
             goldTitle("対局条件").padding(.top,10)
             accountCard
             modeTiles
-            description(["近いレートの相手を探して対局。勝敗でレートが変動します。","\(OnlineBot.waitMillis/1000)秒で見つからなければ、ボット（弱め）と対局します。"])
+            description(["近いレートの相手を探して対局。勝敗でレートが変動します。","\(OnlineBot.waitMillis/1000)秒で見つからなければ、レートの近いボットと対局します。"])
             timePicker
             HStack(spacing:10){
                 Button("戻る"){model.enter(.home)}.buttonStyle(GlossButtonStyle(kind:.red,size:18,height:52)).frame(width:104)
@@ -295,7 +295,7 @@ struct MatchingView:View {
                         .foregroundStyle(Lacquer.cream).padding(.horizontal,26).padding(.vertical,14).inkCard(radius:10,lit:true)}
             }.aspectRatio(1226/1283.0,contentMode:.fit).clipShape(RoundedRectangle(cornerRadius:4)).padding(4).background(RoundedRectangle(cornerRadius:6).fill(.black.opacity(0.6))).padding(.horizontal,8)
             Text(model.online.status.isEmpty ? "開始しています…":model.online.status).font(AppFonts.ui(14,bold:true)).foregroundStyle(Lacquer.cream).accessibilityIdentifier("online_lobby_status")
-            if quick{Text("相手が\(OnlineBot.waitMillis/1000)秒見つからない時は、ボット（弱め）と対局します").font(AppFonts.ui(11)).foregroundStyle(Lacquer.cream.opacity(0.8)).multilineTextAlignment(.center).accessibilityIdentifier("online_bot_note")}
+            if quick{Text("相手が\(OnlineBot.waitMillis/1000)秒見つからない時は、レートの近いボットと対局します").font(AppFonts.ui(11)).foregroundStyle(Lacquer.cream.opacity(0.8)).multilineTextAlignment(.center).accessibilityIdentifier("online_bot_note")}
             else if model.online.seekMode==Netplay.guest,let room=model.online.roomCode{Text(verbatim:"ルーム \(room)").font(AppFonts.ui(11)).foregroundStyle(Lacquer.cream.opacity(0.8))}
             if !model.online.notice.isEmpty{Text(model.online.notice).font(AppFonts.ui(11)).foregroundStyle(.orange).accessibilityIdentifier("online_notice")}
             HStack{Text(model.net==nil ? "未接続":"公開リレー \(model.online.relaysOpen)/\(model.online.relaysTotal)").font(AppFonts.ui(11)).foregroundStyle(model.online.relaysOpen>0 ? .green:.yellow);Spacer()

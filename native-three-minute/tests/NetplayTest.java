@@ -40,9 +40,11 @@ public final class NetplayTest {
   OnlineBot.Scheduler sched=new OnlineBot.Scheduler(){public void after(long ms,Runnable r){long id=seq[0]++;tasks.put(id,r);order.add(new long[]{clock[0]+Math.max(0,ms),id});}public long now(){return clock[0];}};
   OnlineGame[] player=new OnlineGame[1];int[] botMoves={0},rejected={0};
   OnlineBot bot=new OnlineBot(sched,m->{boolean move=m.startsWith("MOVE");int before=player[0].game.movesPlayed;int turn=player[0].game.turn;boolean changed=player[0].receive(m,clock[0]);
-   if(move){if(changed&&turn==-player[0].mySide&&player[0].game.movesPlayed==before+1)botMoves[0]++;else rejected[0]++;}},42);
+   if(move){if(changed&&turn==-player[0].mySide&&player[0].game.movesPlayed==before+1)botMoves[0]++;else rejected[0]++;}},42,1,null);
   player[0]=new OnlineGame(1,bot::fromPlayer,OnlineGame.millis("3m"));bot.game=player[0];
-  OnlineAccount account=new OnlineAccount(OnlineAccount.newSecret(),"テスト");OnlineIdentity id=OnlineBot.identity();ok(id.name.contains("ボット"),"bot name says ボット");
+  OnlineAccount account=new OnlineAccount(OnlineAccount.newSecret(),"テスト");OnlineIdentity id=bot.identity();ok(id.name.contains("ボット")&&id.rating==700,"bot name says ボット");
+  ok(OnlineBot.levelFor(Rating.INITIAL)==6&&OnlineBot.levelFor(100)==1&&OnlineBot.levelFor(4000)==10&&OnlineBot.rating(10)==2050,"ten bot levels; the closest rating plays");
+  java.util.Set<String> names=new java.util.HashSet<>();for(int k=1;k<=OnlineBot.LEVELS;k++){names.add(OnlineBot.name(k));ok(OnlineBot.name(k).startsWith("ボット・"),"level "+k+" labelled as a bot");}ok(names.size()==10,"ten distinct bots");
   player[0].hello(0);java.util.Random rnd=new java.util.Random(7);
   for(int round=1;round<=2;round++){
    for(int step=0;step<4000&&!player[0].over();step++){
@@ -54,7 +56,7 @@ public final class NetplayTest {
    OnlineGame g=player[0];ok(g.started&&g.over(),"bot game "+round+" finished: "+g.game.result+" after "+g.game.movesPlayed+" plies");ok(rejected[0]==0,"every bot move legal and on its turn");
    ok(g.game.remaining[OnlineGame.slot(-g.mySide)]<OnlineGame.millis("3m"),"bot's clock ran while it thought");
    int ratingBefore=account.rating,gamesBefore=account.games;boolean counted=g.game.movesPlayed>=2||g.game.result.equals("時間切れ");int r=account.settle(true,id,g,clock[0]/1000);
-   if(counted){double score=g.game.winner==2?.5:g.game.winner==g.mySide?1:0;ok(r==OnlineAccount.SETTLED&&account.rating==Rating.next(ratingBefore,gamesBefore,OnlineBot.RATING,score)&&account.history.get(account.history.size()-1).opponentName.equals(OnlineBot.NAME),"bot game rated like a person");}
+   if(counted){double score=g.game.winner==2?.5:g.game.winner==g.mySide?1:0;ok(r==OnlineAccount.SETTLED&&account.rating==Rating.next(ratingBefore,gamesBefore,OnlineBot.rating(1),score)&&account.history.get(account.history.size()-1).opponentName.equals(OnlineBot.name(1)),"bot game rated like a person");}
    if(round==1){int side=g.mySide;g.requestRematch(clock[0]);for(int i=0;i<20&&g.round==1;i++){long[] next=order.poll();if(next==null)break;clock[0]=Math.max(clock[0],next[0]);tasks.remove(next[1]).run();}
     ok(g.round==2&&g.started&&!g.over()&&g.mySide==-side,"bot accepts a rematch and sides swap");}
   }

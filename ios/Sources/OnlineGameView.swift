@@ -79,7 +79,7 @@ private struct OnlinePlayerCard:View {
         if me {let a=model.account;return "レート\(a.rating)"+(a.provisional ? "（暫定）":"")+" · \(a.wins)勝\(a.losses)敗\(a.draws)分"}
         guard let p=model.online.peer else{return model.online.rated ? "相手の情報を確認しています…":"フレンド対戦（レート変動なし）"}
         let h=model.account.headToHead(p.pubkey),record=h.wins+h.losses+h.draws>0 ? " · 対戦成績\(h.wins)勝\(h.losses)敗\(h.draws)分":""
-        if model.online.bot != nil{return "ボット（弱め）· レート\(p.rating) · レート戦"+record}
+        if model.online.bot != nil{return "ボット · レート\(p.rating) · レート戦"+record}
         return "レート\(p.rating)"+(p.games<Rating.provisionalGames ? "（暫定）":"")+(model.online.rated ? " · レート戦":" · レート変動なし")+record
     }
     private var clock:String {let s=Int((millis+999)/1000);return String(format:"%02d:%02d",s/60,s%60)}
