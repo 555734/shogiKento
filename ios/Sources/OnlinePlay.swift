@@ -173,74 +173,64 @@ struct OnlineScreen:View {
     }
     private var timePicker:some View {
         HStack(spacing:10){ForEach(OnlineGame.timeControls,id:\.self){tc in let on=model.online.timeControl==tc
-            Button{model.chooseTimeControl(tc)}label:{VStack(spacing:1){Text(tc=="10m" ? "10分":"3分").font(AppFonts.black(21));Text("切れ負け").font(AppFonts.ui(10,bold:true))}
-                .foregroundStyle(on ? LacquerUI.ivory:LacquerUI.dim).frame(maxWidth:.infinity,minHeight:50)
+            Button{model.chooseTimeControl(tc)}label:{VStack(spacing:1){Text(tc=="10m" ? "10分":"3分").font(AppFonts.black(18));Text("切れ負け").font(AppFonts.ui(9))}
+                .foregroundStyle(on ? LacquerUI.ivory:LacquerUI.dim).frame(maxWidth:.infinity,minHeight:46)
                 .background(RoundedRectangle(cornerRadius:8).fill(LinearGradient(colors:on ? LacquerUI.red:LacquerUI.ink,startPoint:.top,endPoint:.bottom)))
                 .overlay(RoundedRectangle(cornerRadius:8).strokeBorder(on ? LacquerUI.rim:Lacquer.hairline,lineWidth:on ? 1.4:1))}
-                .buttonStyle(.plain).disabled(model.online.seekMode>=0).accessibilityIdentifier("online_tc_\(tc)")}}.padding(.horizontal,28)
+                .buttonStyle(.plain).disabled(model.online.seekMode>=0).accessibilityIdentifier("online_tc_\(tc)")}}
     }
-    private func modeTile(_ title:String,_ caption:String,_ symbol:String,on:Bool,id:String,_ action:@escaping ()->Void)->some View {
-        Button(action:action){HStack(spacing:12){Image(systemName:symbol).font(.system(size:34,weight:.regular)).frame(width:46)
-                VStack(alignment:.leading,spacing:2){Text(title).font(AppFonts.black(18));Text(caption).font(AppFonts.ui(10)).opacity(0.8)};Spacer(minLength:0)}
-            .foregroundStyle(on ? LacquerUI.ivory:LacquerUI.dim).padding(.horizontal,14).frame(maxWidth:.infinity,minHeight:86)
-            .background(RoundedRectangle(cornerRadius:10).fill(LinearGradient(colors:on ? LacquerUI.red:LacquerUI.ink,startPoint:.top,endPoint:.bottom)))
-            .overlay(RoundedRectangle(cornerRadius:10).strokeBorder(on ? LacquerUI.rim:Lacquer.hairline,lineWidth:on ? 1.4:1)).shadow(color:.black.opacity(0.5),radius:2,y:2)}
+    private func modeTile(_ title:String,_ symbol:String,on:Bool,id:String,_ action:@escaping ()->Void)->some View {
+        Button(action:action){HStack(spacing:10){Image(systemName:symbol).font(.system(size:24,weight:.regular));Text(title).font(AppFonts.black(17))}
+            .foregroundStyle(on ? LacquerUI.ivory:LacquerUI.dim).frame(maxWidth:.infinity,minHeight:56)
+            .background(RoundedRectangle(cornerRadius:9).fill(LinearGradient(colors:on ? LacquerUI.red:LacquerUI.ink,startPoint:.top,endPoint:.bottom)))
+            .overlay(RoundedRectangle(cornerRadius:9).strokeBorder(on ? LacquerUI.rim:Lacquer.hairline,lineWidth:on ? 1.4:1))}
             .buttonStyle(.plain).accessibilityIdentifier(id)
     }
     private var modeTiles:some View {
         HStack(spacing:8){
-            modeTile("ランダム","レート戦","globe.asia.australia",on:!model.online.roomPage,id:"online_random_tile"){model.openRoomPage(false)}
-            modeTile("ルーム","友だちと","person.2",on:model.online.roomPage,id:"online_room_page"){model.openRoomPage(true)}
+            modeTile("ランダム","globe.asia.australia",on:!model.online.roomPage,id:"online_random_tile"){model.openRoomPage(false)}
+            modeTile("ルーム","person.2",on:model.online.roomPage,id:"online_room_page"){model.openRoomPage(true)}
         }
     }
-    private func goldTitle(_ text:String)->some View {
-        Text(text).font(AppFonts.black(32)).kerning(4).foregroundStyle(LinearGradient(colors:[Color(red:0.95,green:0.9,blue:0.78),Color(red:0.8,green:0.69,blue:0.48)],startPoint:.top,endPoint:.bottom)).shadow(color:.black.opacity(0.55),radius:0,x:0,y:1.5)
-    }
+    /// The account as one quiet line: the name brightest, the rating dimmer, a small link.
     private var accountCard:some View {
-        Button{accountSheet=true}label:{HStack{VStack(alignment:.leading,spacing:4){Text(model.account.name).font(AppFonts.ui(15,bold:true));Text(verbatim:"レート \(model.account.ratingText) · \(model.account.wins)勝\(model.account.losses)敗\(model.account.draws)分").font(AppFonts.ui(11)).opacity(0.8)};Spacer()
-                Text("アカウント").font(AppFonts.ui(11,bold:true)).padding(.horizontal,12).padding(.vertical,6).overlay(RoundedRectangle(cornerRadius:6).strokeBorder(Lacquer.hairline,lineWidth:0.9))}
-            .padding(12).foregroundStyle(Lacquer.cream).inkCard()}.buttonStyle(.plain).accessibilityIdentifier("online_account")
+        Button{accountSheet=true}label:{HStack(alignment:.firstTextBaseline,spacing:8){Text(model.account.name).font(AppFonts.ui(14,bold:true)).foregroundStyle(Lacquer.cream);Text(verbatim:"レート \(model.account.ratingText)").font(AppFonts.ui(11)).foregroundStyle(Lacquer.cream.opacity(0.6));Spacer()
+                Text("アカウント ›").font(AppFonts.ui(11)).foregroundStyle(gold.opacity(0.85))}.padding(.vertical,8).overlay(alignment:.bottom){Rectangle().fill(Lacquer.hairline).frame(height:0.8)}}
+            .buttonStyle(.plain).accessibilityIdentifier("online_account")
     }
-    private func description(_ lines:[String])->some View {
-        VStack(alignment:.leading,spacing:4){ForEach(lines,id:\.self){Text($0).font(AppFonts.ui(11))}}.foregroundStyle(Lacquer.cream).frame(maxWidth:.infinity,alignment:.leading).padding(12).inkCard()
-    }
+    private func note(_ text:String)->some View {Text(text).font(AppFonts.ui(11)).foregroundStyle(Lacquer.cream.opacity(0.6)).multilineTextAlignment(.center).frame(maxWidth:.infinity)}
     private var networkCard:some View {
-        VStack(alignment:.leading,spacing:4){
-            Text(model.net==nil ? "未接続":"公開リレー接続 \(model.online.relaysOpen)/\(model.online.relaysTotal)"+(model.online.relaysOpen==0 ? "（接続中…）":"")).font(AppFonts.ui(11)).foregroundStyle(model.online.relaysOpen>0 ? .green:.yellow).accessibilityIdentifier("online_relays")
-            Text(model.online.network.isEmpty ? "UDP候補を収集しています…":model.online.network).font(AppFonts.ui(10)).foregroundStyle(Lacquer.cream.opacity(0.75))
-            Text(model.online.roomPage ? "ルームを作るか、コードで参加してください":"持ち時間を選んで対局開始").font(AppFonts.ui(11)).foregroundStyle(Lacquer.cream).accessibilityIdentifier("online_lobby_status")
+        VStack(spacing:6){
+            HStack(spacing:6){Circle().fill(model.online.relaysOpen>0 ? Color.green.opacity(0.8):Color.yellow.opacity(0.8)).frame(width:6,height:6)
+                Text((model.net==nil ? "未接続":"公開リレー \(model.online.relaysOpen)/\(model.online.relaysTotal)")+(model.online.network.isEmpty ? "":" · "+model.online.network)).font(AppFonts.ui(10)).foregroundStyle(Lacquer.cream.opacity(0.6)).lineLimit(1).accessibilityIdentifier("online_relays");Spacer()}
+            Text(model.online.roomPage ? "ルームを作るか、コードで参加してください":"持ち時間を選んで対局開始").font(AppFonts.ui(1)).opacity(0.01).frame(height:1).accessibilityIdentifier("online_lobby_status")
             if !model.online.notice.isEmpty{Text(model.online.notice).font(AppFonts.ui(11)).foregroundStyle(.orange).accessibilityIdentifier("online_notice")}
-        }.frame(maxWidth:.infinity,alignment:.leading).padding(12).inkCard()
+        }
     }
     @ViewBuilder private var lobby:some View {
         if model.online.seekMode>=0 {MatchingView()}else if model.online.roomPage {roomPage}else{mainLobby}
     }
     private var mainLobby:some View {
         VStack(spacing:12){
-            goldTitle("対局条件").padding(.top,10)
-            accountCard
+            accountCard.padding(.top,10)
             modeTiles
-            description(["近いレートの相手を探して対局。勝敗でレートが変動します。","\(OnlineBot.waitMillis/1000)秒で見つからなければ、レートの近いボットと対局します。"])
             timePicker
-            HStack(spacing:10){
-                Button("戻る"){model.enter(.home)}.buttonStyle(GlossButtonStyle(kind:.red,size:18,height:52)).frame(width:104)
-                Button("対局開始"){model.startSeek(Netplay.quick,code:nil)}.buttonStyle(GlossButtonStyle(kind:.golden,size:28,height:62)).accessibilityIdentifier("online_quick")
-            }
-            networkCard
-            Text("サーバーを使わず、公開Nostrリレーで相手を探してP2P（UDP）で直接つながります。直結できない回線ではリレー経由で対局を続けます。Android版とも対戦できます。対戦相手にはあなたのIPアドレスが伝わります。対局中はアプリを離れても時計は止まりません。").font(AppFonts.ui(10)).foregroundStyle(Lacquer.cream.opacity(0.8))
+            note("近いレートの相手と対局・\(OnlineBot.waitMillis/1000)秒で見つからなければボット")
+            Button("対局開始"){model.startSeek(Netplay.quick,code:nil)}.buttonStyle(GlossButtonStyle(kind:.golden,size:30,height:66)).accessibilityIdentifier("online_quick").padding(.top,6)
+            networkCard.padding(.top,8)
+            Text("P2Pで直接つなぎ、つながらない時だけ公開リレーを経由します。相手にはIPアドレスが伝わります。対局中は時計が止まりません。").font(AppFonts.ui(9)).foregroundStyle(Lacquer.cream.opacity(0.45))
         }.padding(.horizontal,14)
     }
     private var roomPage:some View {
         VStack(spacing:12){
-            HStack{Button{model.openRoomPage(false)}label:{Label("ランダム対戦",systemImage:"chevron.left").font(AppFonts.ui(14,bold:true)).foregroundStyle(Lacquer.cream)}.buttonStyle(.plain).accessibilityIdentifier("online_room_back");Spacer()}.padding(.top,8)
-            goldTitle("ルーム対局")
+            HStack{Button{model.openRoomPage(false)}label:{Label("ランダム対戦",systemImage:"chevron.left").font(AppFonts.ui(13,bold:true)).foregroundStyle(Lacquer.cream.opacity(0.8))}.buttonStyle(.plain).accessibilityIdentifier("online_room_back");Spacer()}.padding(.top,8)
             accountCard
             modeTiles
-            description(["6桁のルームコードで友だちと対局します。","レートは変動しません。持ち時間はルームを作る側が決めます。"])
             timePicker
-            Button("ルームを作る"){model.hostRoom()}.buttonStyle(GlossButtonStyle(kind:.golden,size:21,height:54)).accessibilityIdentifier("online_host")
-            Button("ルームに参加"){code="";joining=true}.buttonStyle(GlossButtonStyle(kind:.red,size:19,height:54)).accessibilityIdentifier("online_join")
-            networkCard
+            note("6桁のコードで友だちと対局・レート変動なし")
+            Button("ルームを作る"){model.hostRoom()}.buttonStyle(GlossButtonStyle(kind:.golden,size:22,height:58)).accessibilityIdentifier("online_host").padding(.top,6)
+            Button("コードで参加"){code="";joining=true}.buttonStyle(LacquerButtonStyle(size:15,minHeight:48)).accessibilityIdentifier("online_join")
+            networkCard.padding(.top,8)
         }.padding(.horizontal,14)
     }
 }
