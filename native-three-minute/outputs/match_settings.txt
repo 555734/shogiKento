@@ -1,0 +1,1 @@
+PASS match settings UI, cancel, 5-minute clocks, ten levels, human gote with real CPU opening, rotated OS touch, persistence, archive identity, replay SE and mute/zero-volume/no-op suppression.

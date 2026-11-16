@@ -1,0 +1,60 @@
+[   12.343249] systemd[1]: systemd-hwdb-update.service - Rebuild Hardware Database skipped, unmet condition check ConditionNeedsUpdate=/etc
+[   12.343292] systemd[1]: systemd-pstore.service - Platform Persistent Storage Archival skipped, unmet condition check ConditionDirectoryNotEmpty=/sys/fs/pstore
+[   12.348140] systemd[1]: Starting systemd-random-seed.service - Load/Save OS Random Seed...
+[   12.351076] systemd[1]: systemd-tpm2-setup.service - TPM SRK Setup skipped, unmet condition check ConditionSecurity=measured-uki
+[   12.388200] systemd[1]: Finished systemd-modules-load.service - Load Kernel Modules.
+[   12.389811] systemd[1]: Finished systemd-random-seed.service - Load/Save OS Random Seed.
+[   12.391965] systemd[1]: Starting systemd-sysctl.service - Apply Kernel Variables...
+[   12.393799] systemd-journald[615]: Collecting audit messages is disabled.
+[   12.398154] systemd[1]: Started systemd-journald.service - Journal Service.
+[   12.482904] systemd-journald[615]: Received client request to flush runtime journal.
+[   13.022351] loop0: detected capacity change from 0 to 151600
+[   13.052212] loop1: detected capacity change from 0 to 91568
+[   13.307950] parport_pc 00:02: reported by Plug and Play ACPI
+[   13.319600] vmclock AMZNC10C:00: vmclock0: registered miscdev
+[   13.405222] ppdev: user-space parallel port driver
+[   13.486794] piix4_smbus 0000:00:01.3: SMBus base address uninitialized - upgrade BIOS or use force_addr=0xaddr
+[   13.654193] intel_powerclamp: No package C-state available
+[   13.984145] EXT4-fs (nvme0n1p13): Supports (experimental) DIO atomic writes awu_min: 4096, awu_max: 4096
+[   14.007516] EXT4-fs (nvme0n1p13): mounted filesystem 11999f8e-011e-444a-a50e-01ccb4b16f2e r/w with ordered data mode. Quota mode: none.
+[   14.522263] audit: type=1400 audit(1794820777.501:2): apparmor="STATUS" operation="profile_load" profile="unconfined" name="Discord" pid=831 comm="apparmor_parser"
+[   14.522285] audit: type=1400 audit(1794820777.501:3): apparmor="STATUS" operation="profile_load" profile="unconfined" name=4D6F6E676F444220436F6D70617373 pid=832 comm="apparmor_parser"
+[   14.579442] audit: type=1400 audit(1794820777.558:4): apparmor="STATUS" operation="profile_load" profile="unconfined" name="1password" pid=830 comm="apparmor_parser"
+[   14.579545] audit: type=1400 audit(1794820777.558:5): apparmor="STATUS" operation="profile_load" profile="unconfined" name="QtWebEngineProcess" pid=833 comm="apparmor_parser"
+[   14.612513] audit: type=1400 audit(1794820777.591:6): apparmor="STATUS" operation="profile_load" profile="unconfined" name="balena-etcher" pid=837 comm="apparmor_parser"
+[   14.613136] audit: type=1400 audit(1794820777.592:7): apparmor="STATUS" operation="profile_load" profile="unconfined" name="babeld" pid=836 comm="apparmor_parser"
+[   14.613519] audit: type=1400 audit(1794820777.592:8): apparmor="STATUS" operation="profile_load" profile="unconfined" name="alsamixer" pid=835 comm="apparmor_parser"
+[   14.614969] audit: type=1400 audit(1794820777.593:9): apparmor="STATUS" operation="profile_load" profile="unconfined" name="bfdd" pid=838 comm="apparmor_parser"
+[   14.614973] audit: type=1400 audit(1794820777.593:10): apparmor="STATUS" operation="profile_load" profile="unconfined" name="Xorg" pid=834 comm="apparmor_parser"
+[   14.614974] audit: type=1400 audit(1794820777.593:11): apparmor="STATUS" operation="profile_load" profile="unconfined" name="Xorg_wrap" pid=834 comm="apparmor_parser"
+[   17.476214] 8021q: 802.1Q VLAN Support v1.8
+[   17.550460] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+[   17.550710] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[   17.550843] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06c7248db18c600'
+[   17.551413] faux_driver regulatory: Direct firmware load for regulatory.db failed with error -2
+[   17.551419] cfg80211: failed to load regulatory.db
+[   19.840192] systemd-fstab-generator[1069]: 'ephemeral0' is not a device path, ignoring x-systemd.device-timeout= option.
+[   20.112994] EXT4-fs (dm-0): resizing filesystem from 19370235 to 39031035 blocks
+[   20.369404] EXT4-fs (dm-0): resized filesystem to 39031035
+[   20.378781] ephemeral0: Can't lookup blockdev
+[   20.417962] systemd-fstab-generator[1153]: 'ephemeral0' is not a device path, ignoring x-systemd.device-timeout= option.
+[   21.000597] ephemeral0: Can't lookup blockdev
+[   21.254022] kauditd_printk_skb: 175 callbacks suppressed
+[   21.254048] audit: type=1400 audit(1794820784.232:187): apparmor="STATUS" operation="profile_replace" info="same as current profile, skipping" profile="unconfined" name="rsyslogd" pid=1289 comm="apparmor_parser"
+[   21.350145] audit: type=1400 audit(1794820784.329:188): apparmor="DENIED" operation="sendmsg" class="file" profile="systemd-detect-virt" name="/att/systemd-detect-virt/run/systemd/journal/socket" pid=1395 comm="systemd-detect-" requested_mask="w" denied_mask="w" fsuid=0 ouid=0
+[   21.350242] audit: type=1400 audit(1794820784.329:189): apparmor="DENIED" operation="capable" class="cap" profile="systemd-detect-virt" pid=1395 comm="systemd-detect-" capability=38  capname="perfmon"
+[   21.350279] audit: type=1400 audit(1794820784.329:190): apparmor="DENIED" operation="sendmsg" class="file" profile="systemd-detect-virt" name="/att/systemd-detect-virt/run/systemd/notify" pid=1395 comm="systemd-detect-" requested_mask="w" denied_mask="w" fsuid=0 ouid=0
+[   21.450969] loop2: detected capacity change from 0 to 8
+[   21.848124] audit: type=1400 audit(1794820784.827:191): apparmor="STATUS" operation="profile_replace" info="same as current profile, skipping" profile="unconfined" name="/usr/lib/snapd/snap-confine" pid=1496 comm="apparmor_parser"
+[   22.287165] nvme nvme0: using unchecked data buffer
+[   22.484476] NET: Registered PF_QIPCRTR protocol family
+[   23.390960] zram: Added device: zram0
+[   34.393663] audit: type=1400 audit(1794820797.940:192): apparmor="STATUS" operation="profile_load" profile="unconfined" name="docker-default" pid=1786 comm="apparmor_parser"
+[   34.927849] Initializing XFRM netlink socket
+[   34.941641] bridge: filtering via arp/ip/ip6tables is no longer available by default. Update your scripts to load br_netfilter if you need this.
+[   35.203567] systemd-fstab-generator[2061]: 'ephemeral0' is not a device path, ignoring x-systemd.device-timeout= option.
+[   35.385846] systemd-fstab-generator[2127]: 'ephemeral0' is not a device path, ignoring x-systemd.device-timeout= option.
+[  259.480826] audit: type=1400 audit(1794821023.181:193): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/nsswitch.conf" pid=4687 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[  259.480835] audit: type=1400 audit(1794821023.181:194): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/passwd" pid=4687 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[  259.575054] audit: type=1400 audit(1794821023.275:195): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/nsswitch.conf" pid=4692 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[  259.575063] audit: type=1400 audit(1794821023.275:196): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/passwd" pid=4692 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
