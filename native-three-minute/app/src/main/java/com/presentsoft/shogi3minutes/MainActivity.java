@@ -610,7 +610,7 @@ public final class MainActivity extends Activity {
    button(c,new RectF(300,ay+8,380,ay+36),SECONDARY,"アカウント",11);
    for(int i=0;i<2;i++)modeTileDraw(c,modeTile(i),i,i==(room?1:0));
    RectF d=new RectF(12,252,388,298);inkCard(c,d,8,false);
-   String[] lines=room?new String[]{"6桁のルームコードで友だちと対局します。","レートは変動しません。持ち時間はルームを作る側が決めます。"}:new String[]{"全国のプレイヤーから近いレートの相手を探して対局します。","勝敗でレートが変動します。"+OnlineBot.waitMillis/1000+"秒見つからない時はボット（弱め）と対局。"};
+   String[] lines=room?new String[]{"6桁のルームコードで友だちと対局します。","レートは変動しません。持ち時間はルームを作る側が決めます。"}:new String[]{"近いレートの相手を探して対局。勝敗でレートが変動します。",OnlineBot.waitMillis/1000+"秒で見つからなければ、ボット（弱め）と対局します。"};
    styledText(c,lines[0],24,d.top+19,10.5f,0xfff3e6cf,false,Paint.Align.LEFT,null);styledText(c,lines[1],24,d.top+36,10.5f,0xfff3e6cf,false,Paint.Align.LEFT,null);
    for(int i=0;i<2;i++){String tc=OnlineGame.TIME_CONTROLS[i];segmentDraw(c,timeRect(i),"10m".equals(tc)?"10分":"3分","切れ負け",tc.equals(online.timeControl));}
    if(room){bigButton(c,roomButton(0),GOLDEN,"ルームを作る",21);bigButton(c,roomButton(1),RED,"ルームに参加",19);}
@@ -655,7 +655,7 @@ public final class MainActivity extends Activity {
   static final int GOLDEN=0,RED=1;
   /** Large lacquer button: drop shadow, three-stop body, glossy top half, light rim, outlined white label. */
   void bigButton(Canvas c,RectF r,int kind,String label,float size){float rad=Math.min(12,r.height()*.28f);
-   paint.reset();paint.setAntiAlias(true);paint.setColor(0x8c000000);c.drawRoundRect(new RectF(r.left+1,r.top+3,r.right+1,r.bottom+4),rad,rad,paint);
+   paint.reset();paint.setAntiAlias(true);paint.setColor(0x8c000000);c.drawRoundRect(new RectF(r.left+1,r.top+3,r.right+1,r.bottom+4),rad,rad,paint);paint.setColor(Color.BLACK);
    int[] body=kind==GOLDEN?new int[]{0xffffe07e,0xfff5a425,0xffd06d0c}:new int[]{0xffe25a4b,0xffb4281d,0xff7a130e};
    paint.setShader(new LinearGradient(0,r.top,0,r.bottom,body,new float[]{0,.52f,1},Shader.TileMode.CLAMP));c.drawRoundRect(r,rad,rad,paint);paint.setShader(null);
    RectF gloss=new RectF(r.left+3,r.top+2.5f,r.right-3,r.centerY());paint.setShader(new LinearGradient(0,gloss.top,0,gloss.bottom,0x8cffffff,0x10ffffff,Shader.TileMode.CLAMP));c.drawRoundRect(gloss,rad-2,rad-2,paint);paint.setShader(null);
@@ -666,7 +666,7 @@ public final class MainActivity extends Activity {
    paint.setStyle(Paint.Style.FILL);paint.setColor(0xfffffbf0);c.drawText(label,r.centerX(),base,paint);}
   /** Mode tile: red lacquer with a gold rim when chosen, dark ink otherwise; a drawn icon and a label. */
   void modeTileDraw(Canvas c,RectF r,int kind,boolean on){
-   paint.reset();paint.setAntiAlias(true);paint.setColor(0x80000000);c.drawRoundRect(new RectF(r.left,r.top+2,r.right,r.bottom+3),10,10,paint);
+   paint.reset();paint.setAntiAlias(true);paint.setColor(0x80000000);c.drawRoundRect(new RectF(r.left,r.top+2,r.right,r.bottom+3),10,10,paint);paint.setColor(Color.BLACK);
    paint.setShader(new LinearGradient(0,r.top,0,r.bottom,on?new int[]{0xffd84236,0xffa81d16,0xff6e0d0a}:new int[]{0xff2c2320,0xff1a1311,0xff0e0908},new float[]{0,.5f,1},Shader.TileMode.CLAMP));c.drawRoundRect(r,10,10,paint);paint.setShader(null);
    if(on){RectF gloss=new RectF(r.left+3,r.top+3,r.right-3,r.top+r.height()*.42f);paint.setShader(new LinearGradient(0,gloss.top,0,gloss.bottom,0x55ffffff,0x05ffffff,Shader.TileMode.CLAMP));c.drawRoundRect(gloss,8,8,paint);paint.setShader(null);}
    paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(on?2:1);paint.setColor(on?0xffffd27a:0x66d8b46a);c.drawRoundRect(r,10,10,paint);

@@ -222,7 +222,7 @@ struct OnlineScreen:View {
             goldTitle("対局条件").padding(.top,10)
             accountCard
             modeTiles
-            description(["全国のプレイヤーから近いレートの相手を探して対局します。","勝敗でレートが変動します。\(OnlineBot.waitMillis/1000)秒見つからない時はボット（弱め）と対局。"])
+            description(["近いレートの相手を探して対局。勝敗でレートが変動します。","\(OnlineBot.waitMillis/1000)秒で見つからなければ、ボット（弱め）と対局します。"])
             timePicker
             HStack(spacing:10){
                 Button("戻る"){model.enter(.home)}.buttonStyle(GlossButtonStyle(kind:.red,size:18,height:52)).frame(width:104)
