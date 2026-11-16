@@ -14,6 +14,8 @@ adb shell am start -W -n com.presentsoft.shogi3minutes/.MainActivity | tee outpu
 adb exec-out screencap -p > outputs/screenshots/00_launch.png
 adb shell am force-stop com.presentsoft.shogi3minutes
 set +e
+# Streamed while the tests run, so the log survives even if the emulator stops answering mid-run.
+(adb logcat -v threadtime > outputs/logcat_live.txt 2>&1 &)
 timeout 660s adb shell am instrument -w com.presentsoft.shogi3minutes.test/com.presentsoft.shogi3minutes.NativeSmokeTest | tee outputs/instrumentation.txt
 test_status=${PIPESTATUS[0]}
 adb pull /sdcard/Android/data/com.presentsoft.shogi3minutes/files/screenshots outputs/ || true
