@@ -614,7 +614,7 @@ public final class MainActivity extends Activity {
   }
   /** Pieces in hand on a lacquer tray: the player's on the right, the opponent's mirrored to the left as across a real board. */
   void onlineKomadai(Canvas c,int side,float y){boolean me=side==viewSide();RectF r=new RectF(4,y,396,y+44);
-   paint.reset();paint.setAntiAlias(true);paint.setColor(0x7a000000);c.drawRoundRect(r,10,10,paint);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(0.8f);paint.setColor(0x40ffd27a);c.drawRoundRect(r,10,10,paint);
+   inkCard(c,r,8,false);
    int count=handCount(side);if(count==0){styledText(c,"持ち駒なし",me?378:22,y+27,9,0x80fff1d6,false,me?Paint.Align.RIGHT:Paint.Align.LEFT,null);return;}
    int i=0;for(int n=1;n<=handLimit();n++)if(game.hands[side==1?0:1][n]>0){float x=me?handX(i,count):400-handX(i,count);
     if(selectedSide==side&&selectedHand==n){paint.reset();paint.setAntiAlias(true);paint.setColor(0x73ffd27a);c.drawRoundRect(new RectF(x-19,y+2,x+19,y+42),7,7,paint);}
@@ -627,9 +627,8 @@ public final class MainActivity extends Activity {
    boolean active=g.started&&!g.over()&&game.turn==side;long ms=Math.max(0,g.remaining(side,SystemClock.elapsedRealtime()));boolean low=g.started&&!g.over()&&ms<30000;
    String name=me?(a==null?"あなた":a.name):p==null?"対戦相手":p.name,seed=me?(a==null?"me":a.key.publicHex):p==null?"opponent":p.pubkey;
    String detail=me?(a==null?"":"レート"+a.ratingText()+" · "+a.wins+"勝"+a.losses+"敗"+a.draws+"分"):opponentDetail();
-   RectF r=new RectF(4,y,396,y+44);if(active){paint.reset();paint.setAntiAlias(true);paint.setColor(0x40ffd27a);c.drawRoundRect(new RectF(1,y-3,399,y+47),15,15,paint);}
-   paint.reset();paint.setAntiAlias(true);paint.setShader(new LinearGradient(4,y,396,y,0xf0120808,0xf0361014,Shader.TileMode.CLAMP));c.drawRoundRect(r,13,13,paint);paint.setShader(null);
-   paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(active?1.8f:0.8f);paint.setColor(active?GOLD:0x55b58a47);c.drawRoundRect(r,13,13,paint);
+   RectF r=new RectF(4,y,396,y+44);
+   inkCard(c,r,8,active);
    int h=7;for(int i=0;i<seed.length();i++)h=h*31+seed.charAt(i);float[] hsv={Math.abs(h%360),0.6f,0.8f};int top=Color.HSVToColor(hsv);hsv[2]=0.42f;int bottom=Color.HSVToColor(hsv);
    paint.reset();paint.setAntiAlias(true);paint.setShader(new LinearGradient(10,y+6,40,y+38,top,bottom,Shader.TileMode.CLAMP));c.drawCircle(25,y+22,15,paint);paint.setShader(null);
    paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(1.2f);paint.setColor(0xb3ffd27a);c.drawCircle(25,y+22,15,paint);
