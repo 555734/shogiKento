@@ -304,7 +304,7 @@ public final class MainActivity extends Activity {
    studyContentHeight=coffee.unlocked()?Math.max(H,mode==STUDY?analysisY()+ANALYSIS_HEIGHT+8:mode==MATCH?bottomHandY()+matchPanelH+MATCH_STATUS+8:0):adTop()+adHeight()+16;studyScroll=Math.max(0,Math.min(studyScroll,maxStudyScroll()));
   }
   HomeScreen.Layout homeLayout(){return new HomeScreen.Layout(H);}
-  float adTop(){return Math.max(H,mode==STUDY?analysisY()+ANALYSIS_HEIGHT+8:mode==MATCH?bottomHandY()+matchPanelH+MATCH_STATUS:mode==ONLINE?(online.game!=null?onlineStatusY()+168:online.seekMode>=0?cancelRect().bottom+20:lobbyPanelY()+110):homeLayout().archive.bottom)+16;}
+  float adTop(){return Math.max(H,mode==STUDY?analysisY()+ANALYSIS_HEIGHT+8:mode==MATCH?bottomHandY()+matchPanelH+MATCH_STATUS:mode==ONLINE?(online.game!=null?onlineStatusY()+168:online.seekMode>=0?cancelRect().bottom+20:lobbyPanelY()+30):homeLayout().archive.bottom)+16;}
   float adHeight(){return coffee.unlocked()?0:360*getResources().getDisplayMetrics().density/scale;}
   void updateAd(){if(getWidth()==0)return;if(coffee.unlocked()){if(adCard!=null){adCard.close();removeView(adCard);adCard=null;}adMode=-1;return;}if(adMode!=mode){if(adCard!=null){adCard.close();removeView(adCard);}adMode=mode;adCard=new TestAdCard(MainActivity.this,mode==STUDY?"study":mode==MATCH||mode==ONLINE?"match":"home",getIntent().getBooleanExtra("ads_fixture",false));addView(adCard);adCard.load();}int left=Math.round(12*scale),top=Math.round((adTop()-studyScroll)*scale);adCard.measure(MeasureSpec.makeMeasureSpec(getWidth()-left*2,MeasureSpec.EXACTLY),MeasureSpec.makeMeasureSpec(Math.round(adHeight()*scale),MeasureSpec.EXACTLY));adCard.layout(left,top,getWidth()-left,top+Math.round(adHeight()*scale));}
   @Override protected void onMeasure(int w,int h){super.onMeasure(w,h);if(adCard!=null)adCard.measure(MeasureSpec.makeMeasureSpec(Math.max(0,getMeasuredWidth()-Math.round(24*scale)),MeasureSpec.EXACTLY),MeasureSpec.makeMeasureSpec(Math.round(adHeight()*scale),MeasureSpec.EXACTLY));}
@@ -567,17 +567,17 @@ public final class MainActivity extends Activity {
   void remoteMoved(BoardEffects.Snapshot before,int mover){if(mode!=ONLINE||online.game==null)return;lastMove=online.game.lastMove;if(lastMove!=null&&before!=null)pieceMoved(lastMove,mover,before);clearSelection();if(lastMove!=null)placementSound(moveKind(lastMove,before));invalidate();}
   void confirm(String message,String ok,Runnable action){showChoice(new AlertDialog.Builder(MainActivity.this).setMessage(message).setNegativeButton("キャンセル",null).setPositiveButton(ok,(x,k)->{action.run();invalidate();}).create());}
   /** Lobby: time control, random match, a small link to the room page. Room page: time control, create, join. */
-  // Match-conditions screen, by importance: the big 対局開始 (or the room buttons) first, then the mode and time
-  // choices, then quiet one-line account, description and network notes.
+  // Match-conditions screen: random match is the main action. Its title and time control sit in the middle, the
+  // big 対局開始 low within thumb reach; the room is a small link beneath; account and network are quiet lines.
   static final float ACCOUNT_CARD_Y=76;
-  RectF modeTile(int i){return new RectF(12+i*192,132,196+i*192,190);}
-  /** The room tile: opens the room page from the random-match page. */
-  RectF roomLinkRect(){return modeTile(1);}
-  RectF timeRect(int i){return new RectF(12+i*192,200,196+i*192,244);}
-  float lobbyButtonY(int i){return 296+i*66;}
-  RectF startRect(){return new RectF(12,lobbyButtonY(0),388,lobbyButtonY(0)+66);}
-  RectF roomButton(int i){float y=lobbyButtonY(i);return new RectF(12,y,388,y+(i==0?58:48));}
-  float lobbyPanelY(){return online.roomPage?lobbyButtonY(1)+74:lobbyButtonY(0)+96;}
+  float heroY(){return Math.max(170,H*.36f);}
+  RectF timeRect(int i){float y=heroY()+46;return new RectF(80+i*124,y,196+i*124,y+40);}
+  float lobbyButtonY(int i){return Math.max(heroY()+140,H-214)+i*72;}
+  RectF startRect(){return new RectF(12,lobbyButtonY(0),388,lobbyButtonY(0)+70);}
+  RectF roomButton(int i){float y=lobbyButtonY(i);return new RectF(12,y,388,y+(i==0?62:48));}
+  /** The small link under 対局開始 that opens the room page. */
+  RectF roomLinkRect(){float y=startRect().bottom+14;return new RectF(100,y,300,y+34);}
+  float lobbyPanelY(){return Math.max((online.roomPage?roomButton(1).bottom:roomLinkRect().bottom)+30,H-52);}
   // Matching screen while a seek runs: a game-clock dial whose gold arc fills over the wait, the player's komadai, and 中止.
   float clockY(){return online.seekMode==Netplay.HOST?336:276;}
   static final float CLOCK_R=96;
@@ -591,10 +591,10 @@ public final class MainActivity extends Activity {
   void lobbyTouch(float x,float y){
    if(online.seekMode>=0){if(cancelRect().contains(x,y)){stopSeek();invalidate();}return;}
    if(y>=ACCOUNT_CARD_Y&&y<=ACCOUNT_CARD_Y+44&&x>=12&&x<=388){showChoice(AccountDialog.create(MainActivity.this));return;}
-   for(int i=0;i<2;i++)if(modeTile(i).contains(x,y)){openRoomPage(i==1);return;}
    for(int i=0;i<2;i++)if(timeRect(i).contains(x,y)){chooseTimeControl(OnlineGame.TIME_CONTROLS[i]);return;}
    if(online.roomPage){for(int i=0;i<2;i++)if(roomButton(i).contains(x,y)){if(i==0)startSeek(Netplay.HOST,Netplay.newRoomCode(new java.security.SecureRandom()));else joinRoomDialog();return;}return;}
    if(startRect().contains(x,y)){startSeek(Netplay.QUICK,null);return;}
+   if(roomLinkRect().contains(x,y))openRoomPage(true);
   }
   void joinRoomDialog(){android.widget.EditText field=new android.widget.EditText(MainActivity.this);field.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);field.setFilters(new android.text.InputFilter[]{new android.text.InputFilter.LengthFilter(6)});field.setHint("6桁のルームコード");joinField=field;
    showChoice(new AlertDialog.Builder(MainActivity.this).setTitle("ルームに参加").setMessage("友だちの画面に表示された6桁のコードを入力してください").setView(field).setNegativeButton("キャンセル",null).setPositiveButton("参加",(x,k)->{String code=field.getText().toString().trim();
@@ -608,22 +608,27 @@ public final class MainActivity extends Activity {
    if(tapHand(x,y,viewSide(),bottomHandY()))return true;clearSelection();return true;
   }
   void onlineLobby(Canvas c){if(online.seekMode>=0){matchingScreen(c);return;}
-   boolean room=online.roomPage;darkPanel(c,new RectF(0,0,400,32));styledText(c,room?"‹ ランダム対戦":"‹ モード",14,21.5f,12,0xffeadfc8,false,Paint.Align.LEFT,null);styledText(c,room?"ルーム対局":"オンライン対戦",200,21.5f,12,0xfff3e6cf,true,Paint.Align.CENTER,null);
-   // Account: one quiet line, the name brightest.
+   boolean room=online.roomPage;darkPanel(c,new RectF(0,0,400,32));styledText(c,room?"‹ ランダム対戦":"‹ モード",14,21.5f,12,0xffeadfc8,false,Paint.Align.LEFT,null);styledText(c,"オンライン対戦",200,21.5f,12,0xfff3e6cf,true,Paint.Align.CENTER,null);
    OnlineAccount a=online.account;float ay=ACCOUNT_CARD_Y+26;
    if(a!=null){String n=shortName(a.name,12);styledText(c,n,16,ay,13,0xfff3e6cf,true,Paint.Align.LEFT,null);styledText(c,"レート "+a.ratingText(),16+textWidth(n,13,true)+10,ay,10.5f,0x99eadfc8,false,Paint.Align.LEFT,null);}
-   styledText(c,"アカウント ›",386,ay,10.5f,0xccdcc48e,false,Paint.Align.RIGHT,null);
-   paint.reset();paint.setColor(0x33d8b46a);c.drawRect(12,ay+12,388,ay+12.8f,paint);
-   for(int i=0;i<2;i++)modeTileDraw(c,modeTile(i),i,i==(room?1:0));
-   for(int i=0;i<2;i++){String tc=OnlineGame.TIME_CONTROLS[i];segmentDraw(c,timeRect(i),"10m".equals(tc)?"10分":"3分","切れ負け",tc.equals(online.timeControl));}
-   styledText(c,room?"6桁のコードで友だちと対局・レート変動なし":"近いレートの相手と対局・"+OnlineBot.waitMillis/1000+"秒で見つからなければボット",200,270,10.5f,0x99eadfc8,false,Paint.Align.CENTER,null);
-   if(room){bigButton(c,roomButton(0),GOLDEN,"ルームを作る",22);button(c,roomButton(1),SECONDARY,"コードで参加",15);}
-   else bigButton(c,startRect(),GOLDEN,"対局開始",30);
+   styledText(c,"アカウント ›",386,ay,10.5f,0xccdcc48e,false,Paint.Align.RIGHT,null);paint.reset();paint.setColor(0x33d8b46a);c.drawRect(12,ay+12,388,ay+12.8f,paint);
+   // Hero: what this screen is for, in the largest type; its one setting just below in smaller chips.
+   float hy=heroY();goldTitle(c,room?"ルーム対局":"ランダム対戦",200,hy,32);
+   styledText(c,room?"6桁のコードで友だちと対局・レート変動なし":"近いレートの相手と対局・レートが変動します",200,hy+24,11,0xb3eadfc8,false,Paint.Align.CENTER,null);
+   for(int i=0;i<2;i++){String tc=OnlineGame.TIME_CONTROLS[i];chipDraw(c,timeRect(i),"10m".equals(tc)?"10分切れ負け":"3分切れ負け",tc.equals(online.timeControl));}
+   if(!room)styledText(c,OnlineBot.waitMillis/1000+"秒で相手が見つからなければ、レートの近いボットと対局",200,timeRect(0).bottom+24,9.5f,0x80eadfc8,false,Paint.Align.CENTER,null);
+   if(room){bigButton(c,roomButton(0),GOLDEN,"ルームを作る",24);button(c,roomButton(1),SECONDARY,"コードで参加",15);}
+   else{bigButton(c,startRect(),GOLDEN,"対局開始",32);RectF l=roomLinkRect();styledText(c,"友だちとルームで対局 ›",l.centerX(),l.centerY()+4,12,0xccdcc48e,false,Paint.Align.CENTER,null);}
    float y=lobbyPanelY();boolean up=online.relaysOpen>0;paint.reset();paint.setAntiAlias(true);paint.setColor(up?0xff7fcf86:0xffd9b45a);c.drawCircle(18,y-3.5f,3,paint);
-   styledText(c,(online.net==null?(online.connecting?"通信を準備しています":"未接続"):"公開リレー "+online.relaysOpen+"/"+online.relaysTotal)+(online.network.isEmpty()?"":" · "+online.network),27,y,9,0x99eadfc8,false,Paint.Align.LEFT,null);
-   float t=y+20;if(!online.notice.isEmpty()){text(c,online.notice,200,t,10,0xffffb9b3);t+=18;}
-   styledText(c,"P2Pで直接つなぎ、つながらない時だけ公開リレーを経由します",200,t,8.5f,0x73eadfc8,false,Paint.Align.CENTER,null);styledText(c,"相手にはIPアドレスが伝わります・対局中は時計が止まりません",200,t+13,8.5f,0x73eadfc8,false,Paint.Align.CENTER,null);
+   styledText(c,(online.net==null?(online.connecting?"通信を準備しています":"未接続"):"公開リレー "+online.relaysOpen+"/"+online.relaysTotal)+(online.network.isEmpty()?"":" · "+online.network),27,y,9,0x80eadfc8,false,Paint.Align.LEFT,null);
+   styledText(c,"P2Pで直接接続・相手にはIPアドレスが伝わります・対局中は時計が止まりません",200,y+16,8.5f,0x66eadfc8,false,Paint.Align.CENTER,null);
+   if(!online.notice.isEmpty())text(c,online.notice,200,(room?roomButton(1).bottom:startRect().top)-14+(room?36:0),10,0xffffb9b3);
   }
+  /** Time-control chip: a small pill; the chosen one crimson with a champagne rim. */
+  void chipDraw(Canvas c,RectF r,String label,boolean on){float rad=r.height()/2;
+   paint.reset();paint.setAntiAlias(true);paint.setShader(new LinearGradient(0,r.top,0,r.bottom,on?CRIMSON:INKS,new float[]{0,.55f,1},Shader.TileMode.CLAMP));c.drawRoundRect(r,rad,rad,paint);paint.setShader(null);
+   paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(on?1.3f:.9f);paint.setColor(on?CHAMPAGNE_RIM:MUTED_RIM);c.drawRoundRect(r,rad,rad,paint);
+   styledText(c,label,r.centerX(),r.centerY()+4.5f,12.5f,on?CREAM:0xff9a8e80,true,Paint.Align.CENTER,null);}
   /** While seeking: a game-clock dial (the gold arc fills until the bot steps in; a turning segment while a room waits), the player's komadai and 中止. */
   void matchingScreen(Canvas c){boolean quick=online.seekMode==Netplay.QUICK;long now=SystemClock.uptimeMillis(),elapsed=Math.max(0,now-online.seekStarted);
    darkPanel(c,new RectF(0,0,400,32));styledText(c,"オンライン対戦",200,21.5f,12,0xfff3e6cf,true,Paint.Align.CENTER,null);
@@ -669,20 +674,6 @@ public final class MainActivity extends Activity {
    paint.reset();paint.setAntiAlias(true);paint.setTypeface(Fonts.black);paint.setTextSize(size);paint.setLetterSpacing(.1f);paint.setTextAlign(Paint.Align.CENTER);Paint.FontMetrics m=paint.getFontMetrics();float base=r.centerY()-(m.ascent+m.descent)/2;
    if(kind==GOLDEN){paint.setColor(0x66fff8e6);c.drawText(label,r.centerX(),base+1,paint);paint.setColor(0xff2b1a0c);}else{paint.setColor(0x80000000);c.drawText(label,r.centerX(),base+1.2f,paint);paint.setColor(CREAM);}
    c.drawText(label,r.centerX(),base,paint);}
-  /** Mode tile: red lacquer with a gold rim when chosen, dark ink otherwise; a drawn icon and a label. */
-  void modeTileDraw(Canvas c,RectF r,int kind,boolean on){
-   paint.reset();paint.setAntiAlias(true);paint.setShader(new LinearGradient(0,r.top,0,r.bottom,on?CRIMSON:INKS,new float[]{0,.55f,1},Shader.TileMode.CLAMP));c.drawRoundRect(r,9,9,paint);paint.setShader(null);
-   paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(on?1.4f:1);paint.setColor(on?CHAMPAGNE_RIM:MUTED_RIM);c.drawRoundRect(r,9,9,paint);
-   int ink=on?CREAM:0xff8f8270;float cx=r.left+40,cy=r.centerY();paint.reset();paint.setAntiAlias(true);paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(1.8f);paint.setColor(ink);paint.setStrokeCap(Paint.Cap.ROUND);
-   if(kind==0){float R=15;c.drawCircle(cx,cy,R,paint);c.drawOval(new RectF(cx-R*.45f,cy-R,cx+R*.45f,cy+R),paint);c.drawLine(cx-R,cy,cx+R,cy,paint);}
-   else{for(int k=0;k<2;k++){float hx=cx-8+k*16,hy=cy-6;c.drawCircle(hx,hy,5.5f,paint);c.drawArc(new RectF(hx-10,hy+8,hx+10,hy+26),200,140,false,paint);}}
-   paint.reset();paint.setAntiAlias(true);paint.setTypeface(Fonts.black);paint.setTextSize(17);paint.setLetterSpacing(.06f);paint.setTextAlign(Paint.Align.LEFT);paint.setColor(ink);c.drawText(kind==0?"ランダム":"ルーム",r.left+70,cy+6,paint);}
-  /** Time-control segment: big minutes and a small caption; chosen in red lacquer. */
-  void segmentDraw(Canvas c,RectF r,String big,String small,boolean on){
-   paint.reset();paint.setAntiAlias(true);paint.setShader(new LinearGradient(0,r.top,0,r.bottom,on?CRIMSON:INKS,new float[]{0,.55f,1},Shader.TileMode.CLAMP));c.drawRoundRect(r,8,8,paint);paint.setShader(null);
-   paint.setStyle(Paint.Style.STROKE);paint.setStrokeWidth(on?1.4f:1);paint.setColor(on?CHAMPAGNE_RIM:MUTED_RIM);c.drawRoundRect(r,8,8,paint);
-   paint.reset();paint.setAntiAlias(true);paint.setTypeface(Fonts.black);paint.setTextSize(18);paint.setTextAlign(Paint.Align.CENTER);paint.setColor(on?CREAM:0xff8f8270);c.drawText(big,r.centerX(),r.top+r.height()*.5f+2,paint);
-   styledText(c,small,r.centerX(),r.bottom-7,9,on?0xccead8c4:0xff8f8270,false,Paint.Align.CENTER,null);}
   // ---- online game screen: header, player cards, komadai, turn pill and result card ----
   static final int GOLD=0xffdcc48e,CREAM=0xfff4ead8,INK=0xff2b1a0c;
   /** Reduced palette: one crimson lacquer, one champagne gold, warm ink; no orange, no white gloss. */

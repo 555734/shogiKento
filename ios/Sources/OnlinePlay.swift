@@ -161,7 +161,7 @@ struct OnlineScreen:View {
     @State private var accountSheet=false
     var body:some View {
         GeometryReader {viewport in ScrollViewReader {proxy in ScrollView {VStack(spacing:14){
-            if let game=model.online.game {OnlineGameView(game:game,resign:$resign)}else{lobby}
+            if let game=model.online.game {OnlineGameView(game:game,resign:$resign)}else{lobby.frame(minHeight:viewport.size.height-24)}
             TestAdSlot(placement:"match").id("online").padding(.horizontal,12)
         }.frame(minHeight:viewport.size.height,alignment:.top).frame(maxWidth:600).frame(maxWidth:.infinity).padding(.bottom,15)}
             // The result card sits below the board; bring it into view when the game ends.
@@ -172,25 +172,15 @@ struct OnlineScreen:View {
         .sheet(isPresented:$accountSheet){AccountView()}
     }
     private var timePicker:some View {
-        HStack(spacing:10){ForEach(OnlineGame.timeControls,id:\.self){tc in let on=model.online.timeControl==tc
-            Button{model.chooseTimeControl(tc)}label:{VStack(spacing:1){Text(tc=="10m" ? "10分":"3分").font(AppFonts.black(18));Text("切れ負け").font(AppFonts.ui(9))}
-                .foregroundStyle(on ? LacquerUI.ivory:LacquerUI.dim).frame(maxWidth:.infinity,minHeight:46)
-                .background(RoundedRectangle(cornerRadius:8).fill(LinearGradient(colors:on ? LacquerUI.red:LacquerUI.ink,startPoint:.top,endPoint:.bottom)))
-                .overlay(RoundedRectangle(cornerRadius:8).strokeBorder(on ? LacquerUI.rim:Lacquer.hairline,lineWidth:on ? 1.4:1))}
+        HStack(spacing:8){ForEach(OnlineGame.timeControls,id:\.self){tc in let on=model.online.timeControl==tc
+            Button{model.chooseTimeControl(tc)}label:{Text(OnlineGame.label(tc)).font(AppFonts.ui(12.5,bold:true)).foregroundStyle(on ? LacquerUI.ivory:LacquerUI.dim).frame(width:116,height:40)
+                .background(Capsule().fill(LinearGradient(colors:on ? LacquerUI.red:LacquerUI.ink,startPoint:.top,endPoint:.bottom)))
+                .overlay(Capsule().strokeBorder(on ? LacquerUI.rim:Lacquer.hairline,lineWidth:on ? 1.3:0.9))}
                 .buttonStyle(.plain).disabled(model.online.seekMode>=0).accessibilityIdentifier("online_tc_\(tc)")}}
     }
-    private func modeTile(_ title:String,_ symbol:String,on:Bool,id:String,_ action:@escaping ()->Void)->some View {
-        Button(action:action){HStack(spacing:10){Image(systemName:symbol).font(.system(size:24,weight:.regular));Text(title).font(AppFonts.black(17))}
-            .foregroundStyle(on ? LacquerUI.ivory:LacquerUI.dim).frame(maxWidth:.infinity,minHeight:56)
-            .background(RoundedRectangle(cornerRadius:9).fill(LinearGradient(colors:on ? LacquerUI.red:LacquerUI.ink,startPoint:.top,endPoint:.bottom)))
-            .overlay(RoundedRectangle(cornerRadius:9).strokeBorder(on ? LacquerUI.rim:Lacquer.hairline,lineWidth:on ? 1.4:1))}
-            .buttonStyle(.plain).accessibilityIdentifier(id)
-    }
-    private var modeTiles:some View {
-        HStack(spacing:8){
-            modeTile("ランダム","globe.asia.australia",on:!model.online.roomPage,id:"online_random_tile"){model.openRoomPage(false)}
-            modeTile("ルーム","person.2",on:model.online.roomPage,id:"online_room_page"){model.openRoomPage(true)}
-        }
+    private func hero(_ title:String,_ caption:String)->some View {
+        VStack(spacing:8){Text(title).font(AppFonts.black(32)).kerning(4).foregroundStyle(LinearGradient(colors:[Color(red:0.95,green:0.9,blue:0.78),Color(red:0.8,green:0.69,blue:0.48)],startPoint:.top,endPoint:.bottom)).shadow(color:.black.opacity(0.55),radius:0,x:0,y:1.5)
+            Text(caption).font(AppFonts.ui(11)).foregroundStyle(Lacquer.cream.opacity(0.7))}
     }
     /// The account as one quiet line: the name brightest, the rating dimmer, a small link.
     private var accountCard:some View {
@@ -210,27 +200,33 @@ struct OnlineScreen:View {
     @ViewBuilder private var lobby:some View {
         if model.online.seekMode>=0 {MatchingView()}else if model.online.roomPage {roomPage}else{mainLobby}
     }
+    /// Random match is the main action: its title and time control in the middle, 対局開始 low within thumb reach,
+    /// the room as a small link beneath, account and network as quiet lines.
     private var mainLobby:some View {
         VStack(spacing:12){
             accountCard.padding(.top,10)
-            modeTiles
+            Spacer(minLength:30)
+            hero("ランダム対戦","近いレートの相手と対局・レートが変動します")
             timePicker
-            note("近いレートの相手と対局・\(OnlineBot.waitMillis/1000)秒で見つからなければボット")
-            Button("対局開始"){model.startSeek(Netplay.quick,code:nil)}.buttonStyle(GlossButtonStyle(kind:.golden,size:30,height:66)).accessibilityIdentifier("online_quick").padding(.top,6)
-            networkCard.padding(.top,8)
-            Text("P2Pで直接つなぎ、つながらない時だけ公開リレーを経由します。相手にはIPアドレスが伝わります。対局中は時計が止まりません。").font(AppFonts.ui(9)).foregroundStyle(Lacquer.cream.opacity(0.45))
+            note("\(OnlineBot.waitMillis/1000)秒で相手が見つからなければ、レートの近いボットと対局")
+            Spacer(minLength:30)
+            Button("対局開始"){model.startSeek(Netplay.quick,code:nil)}.buttonStyle(GlossButtonStyle(kind:.golden,size:32,height:70)).accessibilityIdentifier("online_quick")
+            Button{model.openRoomPage(true)}label:{Text("友だちとルームで対局 ›").font(AppFonts.ui(12)).foregroundStyle(gold.opacity(0.85)).padding(8)}.buttonStyle(.plain).accessibilityIdentifier("online_room_page")
+            networkCard.padding(.top,4)
+            Text("P2Pで直接接続・相手にはIPアドレスが伝わります・対局中は時計が止まりません").font(AppFonts.ui(9)).foregroundStyle(Lacquer.cream.opacity(0.4)).padding(.bottom,8)
         }.padding(.horizontal,14)
     }
     private var roomPage:some View {
         VStack(spacing:12){
             HStack{Button{model.openRoomPage(false)}label:{Label("ランダム対戦",systemImage:"chevron.left").font(AppFonts.ui(13,bold:true)).foregroundStyle(Lacquer.cream.opacity(0.8))}.buttonStyle(.plain).accessibilityIdentifier("online_room_back");Spacer()}.padding(.top,8)
             accountCard
-            modeTiles
+            Spacer(minLength:30)
+            hero("ルーム対局","6桁のコードで友だちと対局・レート変動なし")
             timePicker
-            note("6桁のコードで友だちと対局・レート変動なし")
-            Button("ルームを作る"){model.hostRoom()}.buttonStyle(GlossButtonStyle(kind:.golden,size:22,height:58)).accessibilityIdentifier("online_host").padding(.top,6)
+            Spacer(minLength:30)
+            Button("ルームを作る"){model.hostRoom()}.buttonStyle(GlossButtonStyle(kind:.golden,size:24,height:62)).accessibilityIdentifier("online_host")
             Button("コードで参加"){code="";joining=true}.buttonStyle(LacquerButtonStyle(size:15,minHeight:48)).accessibilityIdentifier("online_join")
-            networkCard.padding(.top,8)
+            networkCard.padding(.top,4).padding(.bottom,8)
         }.padding(.horizontal,14)
     }
 }
