@@ -1,0 +1,60 @@
+[   16.411280] FS:  0000000000000000(0000) GS:ffff8b78d7e60000(0000) knlGS:0000000000000000
+[   16.411284] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   16.411287] CR2: 000074b43e8f9340 CR3: 000000010acdd003 CR4: 0000000000b70ef0
+[   16.411290] Call Trace:
+[   16.411293]  <TASK>
+[   16.411298]  ? __pfx_autoremove_wake_function+0x10/0x10
+[   16.411698]  drm_atomic_helper_commit_tail+0xa9/0xd0
+[   16.411703]  commit_tail+0x116/0x1b0
+[   16.411707]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   16.411712]  ? drm_atomic_helper_swap_state+0x34b/0x410
+[   16.412139]  drm_atomic_helper_commit+0x153/0x190
+[   16.412567]  drm_atomic_commit+0xad/0xf0
+[   16.412572]  ? __pfx___drm_printfn_info+0x10/0x10
+[   16.412578]  drm_atomic_helper_dirtyfb+0x1d6/0x2c0
+[   16.412584]  drm_fbdev_shmem_helper_fb_dirty+0x4d/0xf0
+[   16.413009]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   16.413510]  drm_fb_helper_fb_dirty+0x1f4/0x450
+[   16.413517]  drm_fb_helper_damage_work+0x2c/0x40
+[   16.413521]  process_one_work+0x1a2/0x380
+[   16.413527]  worker_thread+0x1b8/0x360
+[   16.413962]  ? _raw_spin_unlock_irqrestore+0x11/0x60
+[   16.414387]  ? srso_alias_return_thunk+0x5/0xfbef5
+[   16.414392]  ? __pfx_worker_thread+0x10/0x10
+[   16.414396]  kthread+0xf7/0x130
+[   16.414401]  ? __pfx_kthread+0x10/0x10
+[   16.414820] workqueue: drm_fb_helper_damage_work hogged CPU for >10000us 11 times, consider switching to WQ_UNBOUND
+[   16.415310]  ret_from_fork+0x195/0x2a0
+[   16.415316]  ? __pfx_kthread+0x10/0x10
+[   16.415321]  ? __pfx_kthread+0x10/0x10
+[   16.415325]  ret_from_fork_asm+0x1a/0x30
+[   16.415772]  </TASK>
+[   16.416210] ---[ end trace 0000000000000000 ]---
+[   41.117640] hv_netvsc 7c1e5242-182b-7c1e-5242-182b7c1e5242 eth0: VF slot 1 added
+[   41.119367] hv_pci af238032-412f-49be-bf14-b0c1e597aa5d: PCI VMBus probing: Using version 0x10004
+[   41.120733] hv_pci af238032-412f-49be-bf14-b0c1e597aa5d: PCI host bridge to bus 412f:00
+[   41.120739] pci_bus 412f:00: root bus resource [mem 0xfc0000000-0xfc00fffff window]
+[   41.120745] pci_bus 412f:00: No busn resource found for root bus, will use [bus 00-ff]
+[   41.123806] pci 412f:00:02.0: [15b3:1016] type 00 class 0x020000 PCIe Endpoint
+[   41.128530] pci 412f:00:02.0: BAR 0 [mem 0xfc0000000-0xfc00fffff 64bit pref]
+[   41.129477] pci 412f:00:02.0: enabling Extended Tags
+[   41.138155] pci 412f:00:02.0: 0.000 Gb/s available PCIe bandwidth, limited by Unknown x0 link at 412f:00:02.0 (capable of 63.008 Gb/s with 8.0 GT/s PCIe x8 link)
+[   41.144982] pci_bus 412f:00: busn_res: [bus 00-ff] end is updated to 00
+[   41.144992] pci 412f:00:02.0: BAR 0 [mem 0xfc0000000-0xfc00fffff 64bit pref]: assigned
+[   41.371383] mlx5_core 412f:00:02.0: enabling device (0000 -> 0002)
+[   41.373844] mlx5_core 412f:00:02.0: firmware version: 14.30.5032
+[   41.510370] mlx5_core 412f:00:02.0: Flow counters bulk query buffer size increased, bulk_query_len(8)
+[   41.591671] hv_netvsc 7c1e5242-182b-7c1e-5242-182b7c1e5242 eth0: VF registering: eth1
+[   41.591728] mlx5_core 412f:00:02.0 eth1: joined to eth0
+[   41.592327] mlx5_core 412f:00:02.0: MLX5E: StrdRq(0) RqSz(1024) StrdSz(256) RxCqeCmprss(0 basic)
+[   41.610831] mlx5_core 412f:00:02.0 enP16687s1: renamed from eth1
+[   41.642971] MACsec IEEE 802.1AE
+[   41.753469] mlx5_core 412f:00:02.0 enP16687s1: Link up
+[   41.779227] hv_netvsc 7c1e5242-182b-7c1e-5242-182b7c1e5242 eth0: Data path switched to VF: enP16687s1
+[   41.779469] mlx5_core 412f:00:02.0 mlx5_0: Port: 1 Link ACTIVE
+[   49.056971] hv_balloon: Max. dynamic memory size: 16384 MB
+[ 1068.820662] audit: type=1400 audit(1794903019.632:192): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/nsswitch.conf" pid=4924 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[ 1068.820693] audit: type=1400 audit(1794903019.632:193): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/passwd" pid=4924 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[ 1068.965536] audit: type=1400 audit(1794903019.777:194): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/nsswitch.conf" pid=4929 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[ 1068.965553] audit: type=1400 audit(1794903019.777:195): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/passwd" pid=4929 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[ 1151.501109] kvm: kvm [5479]: vcpu0, guest rIP: 0xffffffffaf809cbd Unhandled WRMSR(0xc0010007) = 0xffff

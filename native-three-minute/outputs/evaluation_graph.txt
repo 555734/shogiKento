@@ -1,0 +1,2 @@
+PASS native percentage bar, score-derived 100-percent complement, real micro score history, moves/captures/undo/branch/reset/recreation, invalid gaps, current-score consistency, full board width and short-screen swipe/tap coordinates.
+Formula: 100/(1+exp(-sente_cp/600)); uncalibrated guide, not measured win probability. Finite cp display 0.1..99.9 percent; mate endpoints.
