@@ -1,0 +1,60 @@
+[    3.794392] mlx5_core 1ca6:00:02.0: MLX5E: StrdRq(1) RqSz(8) StrdSz(256) RxCqeCmprss(0 basic)
+[    3.808300] mlx5_core 1ca6:00:02.0 enP7334s1: renamed from eth1
+[    3.835962] MACsec IEEE 802.1AE
+[    3.962595] workqueue: drm_fb_helper_damage_work hogged CPU for >10000us 4 times, consider switching to WQ_UNBOUND
+[    4.145594] workqueue: drm_fb_helper_damage_work hogged CPU for >10000us 5 times, consider switching to WQ_UNBOUND
+[    4.312638] EXT4-fs (nvme0n1p13): Supports (experimental) DIO atomic writes awu_min: 4096, awu_max: 4096
+[    4.319866] EXT4-fs (nvme0n1p13): mounted filesystem c328c821-908f-4fda-8b0f-0248ed9f3d0b r/w with ordered data mode. Quota mode: none.
+[    4.512598] workqueue: drm_fb_helper_damage_work hogged CPU for >10000us 7 times, consider switching to WQ_UNBOUND
+[    4.517436] hv_utils: KVP IC version 4.0
+[    4.583272] audit: type=1400 audit(1794904044.932:2): apparmor="STATUS" operation="profile_load" profile="unconfined" name=4D6F6E676F444220436F6D70617373 pid=388 comm="apparmor_parser"
+[    4.583280] audit: type=1400 audit(1794904044.933:3): apparmor="STATUS" operation="profile_load" profile="unconfined" name="QtWebEngineProcess" pid=389 comm="apparmor_parser"
+[    4.583450] audit: type=1400 audit(1794904044.933:4): apparmor="STATUS" operation="profile_load" profile="unconfined" name="Discord" pid=387 comm="apparmor_parser"
+[    4.583939] audit: type=1400 audit(1794904044.934:5): apparmor="STATUS" operation="profile_load" profile="unconfined" name="1password" pid=386 comm="apparmor_parser"
+[    4.588055] audit: type=1400 audit(1794904044.937:6): apparmor="STATUS" operation="profile_load" profile="unconfined" name="balena-etcher" pid=393 comm="apparmor_parser"
+[    4.588774] audit: type=1400 audit(1794904044.939:7): apparmor="STATUS" operation="profile_load" profile="unconfined" name="babeld" pid=392 comm="apparmor_parser"
+[    4.590299] audit: type=1400 audit(1794904044.940:8): apparmor="STATUS" operation="profile_load" profile="unconfined" name="alsamixer" pid=391 comm="apparmor_parser"
+[    4.592892] audit: type=1400 audit(1794904044.943:9): apparmor="STATUS" operation="profile_load" profile="unconfined" name="bgpd" pid=395 comm="apparmor_parser"
+[    4.593886] audit: type=1400 audit(1794904044.943:10): apparmor="STATUS" operation="profile_load" profile="unconfined" name="bfdd" pid=394 comm="apparmor_parser"
+[    4.785261] /dev/sr0: Can't lookup blockdev
+[    4.883172] mlx5_core 1ca6:00:02.0 enP7334s1: Link up
+[    4.911237] hv_netvsc e4fade48-b387-e4fa-de48-b387e4fade48 eth0: Data path switched to VF: enP7334s1
+[    4.911962] mlx5_core 1ca6:00:02.0 mlx5_0: Port: 1 Link ACTIVE
+[    4.929750] 8021q: 802.1Q VLAN Support v1.8
+[    4.973535] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+[    4.973879] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[    4.974040] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06c7248db18c600'
+[    4.974112] faux_driver regulatory: Direct firmware load for regulatory.db failed with error -2
+[    4.974118] cfg80211: failed to load regulatory.db
+[    5.385575] hv_netvsc e4fade48-b387-e4fa-de48-b387e4fade48 eth0: Data path switched from VF: enP7334s1
+[    5.407022] mlx5_core 1ca6:00:02.0 mlx5_0: Port: 1 Link DOWN
+[    6.009917] mlx5_core 1ca6:00:02.0 enP7334s1: Link up
+[    6.026152] hv_netvsc e4fade48-b387-e4fa-de48-b387e4fade48 eth0: Data path switched to VF: enP7334s1
+[    6.027489] mlx5_core 1ca6:00:02.0 mlx5_0: Port: 1 Link ACTIVE
+[    6.673797] EXT4-fs (nvme0n1p1): resizing filesystem from 19370235 to 39031035 blocks
+[    7.627517] EXT4-fs (nvme0n1p1): resized filesystem to 39031035
+[    7.697044] ephemeral0: Can't lookup blockdev
+[    7.753890] systemd-fstab-generator[859]: 'ephemeral0' is not a device path, ignoring x-systemd.device-timeout= option.
+[    8.552762] ephemeral0: Can't lookup blockdev
+[    8.763496] kauditd_printk_skb: 175 callbacks suppressed
+[    8.763501] audit: type=1400 audit(1794904049.113:186): apparmor="STATUS" operation="profile_replace" info="same as current profile, skipping" profile="unconfined" name="rsyslogd" pid=1040 comm="apparmor_parser"
+[    8.820996] audit: type=1400 audit(1794904049.170:187): apparmor="DENIED" operation="sendmsg" class="file" profile="systemd-detect-virt" name="/att/systemd-detect-virt/run/systemd/journal/socket" pid=1172 comm="systemd-detect-" requested_mask="w" denied_mask="w" fsuid=0 ouid=0
+[    8.821005] audit: type=1400 audit(1794904049.171:188): apparmor="DENIED" operation="capable" class="cap" profile="systemd-detect-virt" pid=1172 comm="systemd-detect-" capability=38  capname="perfmon"
+[    8.821009] audit: type=1400 audit(1794904049.171:189): apparmor="DENIED" operation="sendmsg" class="file" profile="systemd-detect-virt" name="/att/systemd-detect-virt/run/systemd/notify" pid=1172 comm="systemd-detect-" requested_mask="w" denied_mask="w" fsuid=0 ouid=0
+[    8.903483] block nvme0n1: No UUID available providing old NGUID
+[    9.017179] loop0: detected capacity change from 0 to 8
+[    9.072728] NET: Registered PF_QIPCRTR protocol family
+[    9.246197] audit: type=1400 audit(1794904049.596:190): apparmor="STATUS" operation="profile_replace" info="same as current profile, skipping" profile="unconfined" name="/usr/lib/snapd/snap-confine" pid=1280 comm="apparmor_parser"
+[    9.500596] Adding 3145724k swap on /swapfile.  Priority:-1 extents:8 across:57606140k SS
+[    9.554724] audit: type=1400 audit(1794904049.905:191): apparmor="STATUS" operation="profile_load" profile="unconfined" name="docker-default" pid=1434 comm="apparmor_parser"
+[    9.764332] Initializing XFRM netlink socket
+[    9.787002] bridge: filtering via arp/ip/ip6tables is no longer available by default. Update your scripts to load br_netfilter if you need this.
+[   10.719586] systemd-fstab-generator[1771]: 'ephemeral0' is not a device path, ignoring x-systemd.device-timeout= option.
+[   11.002792] systemd-fstab-generator[1856]: 'ephemeral0' is not a device path, ignoring x-systemd.device-timeout= option.
+[   11.273209] systemd-fstab-generator[1925]: 'ephemeral0' is not a device path, ignoring x-systemd.device-timeout= option.
+[   48.898248] hv_balloon: Max. dynamic memory size: 16384 MB
+[  295.325113] audit: type=1400 audit(1794904335.681:192): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/nsswitch.conf" pid=4539 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[  295.325122] audit: type=1400 audit(1794904335.681:193): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/passwd" pid=4539 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[  295.442290] audit: type=1400 audit(1794904335.798:194): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/nsswitch.conf" pid=4544 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[  295.442305] audit: type=1400 audit(1794904335.798:195): apparmor="DENIED" operation="open" class="file" profile="who" name="/etc/passwd" pid=4544 comm="who" requested_mask="r" denied_mask="r" fsuid=0 ouid=0
+[  409.848998] kvm: kvm [5131]: vcpu0, guest rIP: 0xffffffff81c09cbd Unhandled WRMSR(0xc0010007) = 0xffff

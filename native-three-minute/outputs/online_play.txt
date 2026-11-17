@@ -1,0 +1,4 @@
+PASS native online mode: touch-driven quick match, direct UDP, sounds, resign, rematch with flipped board, hosted room, joined room, leave/disconnect
+quick match + rematch move latency (touch to peer / peer to app) ms: [1076, 56, 971, 113, 639, 105, 827, 65, 60, 929, 52, 917]
+room games move latency ms: [1507, 45, 205, 738]
+relay accepted=40 forwarded=41 rejected=0
